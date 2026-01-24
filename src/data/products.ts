@@ -1356,5 +1356,681 @@ export const productsData: Record<string, MBTIProfile> = {
             }
         ]
     },
+    ISTJ: {
+        id: "istj",
+        name: "The Logistician",
+        artistic_vibe: "Clean lines, ticking clocks, libraries, steel vaults, architectural symmetry, blueprints, minimalist grid, monochromatic blue/grey.",
+        psychological_triggers: [
+            "Order & Stability",
+            "Proven Methods",
+            "Duty & Responsibility",
+            "Data-Backed Results",
+            "Efficiency without Hype"
+        ],
+        products: [
+            {
+                id: "ironclad-life",
+                title: "How to Build a Life of Absolute Order and Reliability",
+                script: {
+                    headline: "Chaos is the Enemy. Order is the Weapon.",
+                    subheadline: "A system for unconditional reliability and structure.",
+                    hook_image_prompt: "A perfectly organized archive room with infinite depth.",
+                    pain_story: "You hate unpredictability. You hate when people change plans last minute. You feel like the only adult in a room full of children. You want a life that runs like a Swiss watch.",
+                    agitation_bullets: [
+                        "Dealing with other people's mess.",
+                        "Anxiety from lack of structure.",
+                        "Feeling holding the weight of the world."
+                    ],
+                    transition_mechanism: "Systematic Standardization. Turning daily life into a set of unbreakable SOPs (Standard Operating Procedures).",
+                    product_name: "The Integrity Protocol",
+                    product_description: "A complete life management system based on logic and duty.",
+                    features_bullets: [
+                        "The 'Zero-Ambiguity' Calendar.",
+                        "Financial models for 100% security.",
+                        "Household logistics optimization."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Emergency Prep Checklist", description: "Be ready for anything.", value: "$29" }
+                    ],
+                    guarantee_text: "Get organized in 3 days.",
+                    scarcity_text: "Secure your future.",
+                    cta_text: "Establish Order"
+                }
+            },
+            {
+                id: "digital-declutter",
+                title: "How to Organize Your Digital Life into a Perfect Archive",
+                script: {
+                    headline: "Delete the Junk. Archive the Truth.",
+                    subheadline: "For the person who cannot stand a messy desktop.",
+                    hook_image_prompt: "A data stream actively sorting itself into neat boxes.",
+                    pain_story: "You have files everywhere. Duplicate photos, unread emails, chaos. It itches at your brain. You know that if you needed a document from 2014, you'd struggle to find it. That is unacceptable.",
+                    agitation_bullets: [
+                        "Digital hoarding.",
+                        "Loss of critical data.",
+                        "Inefficient searching."
+                    ],
+                    transition_mechanism: "The Librarian Method. A folder taxonomy that never breaks.",
+                    product_name: "The Digital Vault",
+                    product_description: "A folder structure and automation system for lifetime data management.",
+                    features_bullets: [
+                        "The 'Inbox Zero' automation.",
+                        "Password security protocols.",
+                        "The unified naming convention."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Backup SOPs", description: "Never lose a byte.", value: "$19" }
+                    ],
+                    guarantee_text: "Find any file in 3 seconds.",
+                    scarcity_text: "Clean up now.",
+                    cta_text: "Organize Files"
+                }
+            },
+            {
+                id: "risk-averse-wealth",
+                title: "How to Build Wealth without Gambling or 'Hype' Coins",
+                script: {
+                    headline: "Get Rich Slowly. Get Rich Surely.",
+                    subheadline: "Investing for the rational realist.",
+                    hook_image_prompt: "A sturdy bank vault made of gold bricks.",
+                    pain_story: "You see people getting rich on crypto and feel disgust, not envy. You know it's a bubble. You want wealth, but you refuse to gamble. You want a plan that is mathematically guaranteed to work over 20 years.",
+                    agitation_bullets: [
+                        "Fear of inflation.",
+                        "Distrust of 'financial gurus'.",
+                        "Wanting security over luxury."
+                    ],
+                    transition_mechanism: "Compound Consistency. The math of patience.",
+                    product_name: "The Fortress Portfolio",
+                    product_description: "Evidence-based investing strategies that ignore the news.",
+                    features_bullets: [
+                        "Asset allocation for sleep.",
+                        "Tax efficiency optimization.",
+                        "The 'F.I.R.E.' roadmap for safety."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$59",
+                    bonuses: [
+                        { title: "Budgeting Spreadsheets", description: "Track every cent.", value: "$25" }
+                    ],
+                    guarantee_text: "Sleep better at night.",
+                    scarcity_text: "Build the foundation.",
+                    cta_text: "Secure Wealth"
+                }
+            },
+            {
+                id: "mastering-discipline",
+                title: "How to becoming Unstoppable through Habit Stacking",
+                script: {
+                    headline: "Motivation is Fickle. Discipline is Permanent.",
+                    subheadline: "Stop relying on 'feeling like it'.",
+                    hook_image_prompt: "A steel chain where every link is perfect.",
+                    pain_story: "You pride yourself on your work ethic. But even you have days where you slip. You want to reach a level of consistency that looks robotic to others but feels effortless to you.",
+                    agitation_bullets: [
+                        " breaking a streak.",
+                        "Inefficiency gaps.",
+                        "Wanting to be the rock for everyone."
+                    ],
+                    transition_mechanism: "Neuro-Association stacking. Chains of habits that trigger each other.",
+                    product_name: "The Iron Will System",
+                    product_description: "How to program your behavior using cues and rewards.",
+                    features_bullets: [
+                        "The 5AM protocol (optional but recommended).",
+                        "Removing decision fatigue.",
+                        "The 'Never Miss Twice' rule."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Habit Tracker PDF", description: "Visual accountability.", value: "$15" }
+                    ],
+                    guarantee_text: "Build one new habit.",
+                    scarcity_text: "Forge your will.",
+                    cta_text: "Start Discipline"
+                }
+            },
+            {
+                id: "fact-based-memory",
+                title: "How to Never Forget a Fact, Name, or Number Again",
+                script: {
+                    headline: "Your Mind is a Database. Optimize the Query Speed.",
+                    subheadline: "Recall information instantly and accurately.",
+                    hook_image_prompt: "A library card catalog stretching to infinity.",
+                    pain_story: "You hate being wrong. You hate forgetting a detail. In arguments, or at work, you want to be the one who knows the exact figure. Forgetting feels like a loss of competence.",
+                    agitation_bullets: [
+                        "Social awkwardness of names.",
+                        "Losing credibility.",
+                        "Feeling 'slow'."
+                    ],
+                    transition_mechanism: "The Memory Palace. Ancient technique updated for modern data.",
+                    product_name: "The Total Recall Toolkit",
+                    product_description: "Techniques to store and retrieve data like a computer.",
+                    features_bullets: [
+                        "Memorizing lists in order.",
+                        "Face-Name association.",
+                        "Retaining what you read."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Speed Reading Basics", description: "Input data faster.", value: "$20" }
+                    ],
+                    guarantee_text: "Memorize a deck of cards.",
+                    scarcity_text: "Upgrade memory.",
+                    cta_text: "Upgrade RAM"
+                }
+            }
+        ]
+    },
+    ISFJ: {
+        id: "isfj",
+        name: "The Defender",
+        artistic_vibe: "Warm hearth, soft linens, protective shields, gentle light, nursing gardens, peaceful sanctuary, classic elegance.",
+        psychological_triggers: [
+            "Protecting Loved Ones",
+            "Harmony & Stability",
+            "Service & Appreciation",
+            "Practical Care",
+            "Traditional Values"
+        ],
+        products: [
+            {
+                id: "harmonious-home",
+                title: "How to create a Home that Heals Everyone who Enters",
+                script: {
+                    headline: "Your Home is Your Sanctuary. Make it Holy.",
+                    subheadline: "Creating an environment of peace and safety.",
+                    hook_image_prompt: "A cozy living room with a fireplace that emits emotional warmth.",
+                    pain_story: "You absorb the stress of your family. You work hard to make everyone happy, but the chaos of life intrudes. You want your home to be the place where everyone takes a deep breath.",
+                    agitation_bullets: [
+                        "Clutter causing anxiety.",
+                        "Family friction.",
+                        "Not having a safe space."
+                    ],
+                    transition_mechanism: "Sensory Sanctuary Design. Organizing space for emotional regulation.",
+                    product_name: "The Haven Blueprint",
+                    product_description: "Interior design and organizational principles for the ISFJ soul.",
+                    features_bullets: [
+                        "De-cluttering sentimental items (gently).",
+                        "Lighting for mood.",
+                        "Zones for privacy."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Hospitality Checklist", description: "Be the perfect host.", value: "$15" }
+                    ],
+                    guarantee_text: "Feel more at peace.",
+                    scarcity_text: "Create sanctuary.",
+                    cta_text: "Heal Home"
+                }
+            },
+            {
+                id: "caregiver-burnout",
+                title: "How to Care for Others without Destroying Yourself",
+                script: {
+                    headline: "You Can't Pour from an Empty Cup. (Really).",
+                    subheadline: "Self-preservation for the selfless.",
+                    hook_image_prompt: "A pair of hands holding a glowing heart, but the hands are cracking.",
+                    pain_story: "You say 'I'm fine' when you're not. You carry the emotional load of your friends, family, and colleagues. You feel guilty taking a nap. You are heading for a crash.",
+                    agitation_bullets: [
+                        "Resentment.",
+                        "Physical exhaustion.",
+                        "Nobody asking how YOU are."
+                    ],
+                    transition_mechanism: "Sustainable Service. Structuring your giving so it energizes rather than depletes.",
+                    product_name: "The Defender's Recharge",
+                    product_description: "A permission slip and system for self-care.",
+                    features_bullets: [
+                        "The 'Not My Emergency' filter.",
+                        "Scheduling guilt-free rest.",
+                        "Asking for help (the hard part)."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Scripts to Ask for Help", description: "Don't suffer alone.", value: "$19" }
+                    ],
+                    guarantee_text: "Take a break today.",
+                    scarcity_text: "Save yourself.",
+                    cta_text: "Recharge"
+                }
+            },
+            {
+                id: "family-chaos",
+                title: "How to Organize Family Life so Nothing Slips through the Cracks",
+                script: {
+                    headline: "Be the Glue that Holds it Together (Without the stress).",
+                    subheadline: "Project management for the household.",
+                    hook_image_prompt: "A family calendar that turns into a beautiful mural.",
+                    pain_story: "You are the mental load carrier. You remember the birthdays, the appointments, the allergies. If you stopped, it would chaos. But it's too much to keep in your head.",
+                    agitation_bullets: [
+                        "Mental load overload.",
+                        "Nagging frustration.",
+                        "Forgetting one thing and panicking."
+                    ],
+                    transition_mechanism: "The Central Command Center. Externalizing the data so the family shares the load.",
+                    product_name: "The Family OS",
+                    product_description: "Templates and systems to run a household.",
+                    features_bullets: [
+                        "The Shared Calendar system.",
+                        "Chore gamification.",
+                        "Meal planning automation."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Budgeting for Families", description: "stretch every dollar.", value: "$19" }
+                    ],
+                    guarantee_text: "Organize one week.",
+                    scarcity_text: "Get control.",
+                    cta_text: "Organize Family"
+                }
+            },
+            {
+                id: "quiet-reliability",
+                title: "How to get Recognized for your Work without Bragging",
+                script: {
+                    headline: "Works Hard in Silence. Let Success make the Noise.",
+                    subheadline: "Career advancement for the humble.",
+                    hook_image_prompt: "A pillar of stone supporting a massive tranquil temple.",
+                    pain_story: "You do the work. You stay late. You fix the errors. But the loud people get the promotions. You refuse to be arrogant, but you don't want to be invisible.",
+                    agitation_bullets: [
+                        "Being overlooked.",
+                        "Taking credit for your work stolen.",
+                        "Fear of self-promotion."
+                    ],
+                    transition_mechanism: "Documented Value. Let the data speak for you.",
+                    product_name: "The Quiet Achiever's Ladder",
+                    product_description: "How to track and present your wins factually.",
+                    features_bullets: [
+                        "The 'Accomplishment Log'.",
+                        "How to have the Review meeting.",
+                        "Networking through service."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Email Templates for Bosses", description: "Update them subtly.", value: "$20" }
+                    ],
+                    guarantee_text: "Get a compliment at work.",
+                    scarcity_text: "Rise up.",
+                    cta_text: "Rise Quietly"
+                }
+            },
+            {
+                id: "creating-traditions",
+                title: "How to Build Memories that Last Generations",
+                script: {
+                    headline: "You are the Keeper of the Flame.",
+                    subheadline: "Intentional nostalgia and connection.",
+                    hook_image_prompt: "A photo album where the pictures are moving memories.",
+                    pain_story: "Time is moving too fast. Children grow up. Parents age. You want to freeze time. You want to ensure your family stays connected forever.",
+                    agitation_bullets: [
+                        "Fear of drifting apart.",
+                        "Holidays feeling hollow.",
+                        "Losing family history."
+                    ],
+                    transition_mechanism: "Ritual Architecture. Designing moments that stick.",
+                    product_name: "The Memory Maker",
+                    product_description: "Guide to hosting holidays and creating traditions.",
+                    features_bullets: [
+                        "Holiday planning without stress.",
+                        "Documenting family history.",
+                        "The 'Sunday Dinner' revival."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Photo Organization", description: "Sort the digital mess.", value: "$15" }
+                    ],
+                    guarantee_text: "Plan a memory.",
+                    scarcity_text: "Time flies.",
+                    cta_text: "Create Memory"
+                }
+            }
+        ]
+    },
+    ESTJ: {
+        id: "estj",
+        name: "The Executive",
+        artistic_vibe: "High-rise corner office, polished mahogany, gavel, city maps, structured steel, crisp suits, bold typography.",
+        psychological_triggers: [
+            "Hierarchy & Respect",
+            "Operational Efficiency",
+            "Clear Standards",
+            "Leadership & Authority",
+            "Tangible Results"
+        ],
+        products: [
+            {
+                id: "project-management",
+                title: "How to Manage Projects so They Never Go Over Budget or Time",
+                script: {
+                    headline: "On Time. Under Budget. Zero Excuses.",
+                    subheadline: "The Gold Standard of execution.",
+                    hook_image_prompt: "A gantt chart constructing a skyscraper in real time.",
+                    pain_story: "Incompetence drives you mad. You hate messy timelines, vague promises, and people who miss deadlines. You want a machine that outputs results.",
+                    agitation_bullets: [
+                        "Herding cats.",
+                        "Excuses from team members.",
+                        "The chaos of bad planning."
+                    ],
+                    transition_mechanism: "Waterfall Precision. A rigorous step-by-step methodology.",
+                    product_name: "The Executive's Gantt",
+                    product_description: "Templates for hardcore project management.",
+                    features_bullets: [
+                        "Critical Path Analysis.",
+                        "Resource leveling.",
+                        "Holding people accountable."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Meeting Agendas that Work", description: "Cut talk time by 50%.", value: "$29" }
+                    ],
+                    guarantee_text: "Save 10 hours a week.",
+                    scarcity_text: "Get results.",
+                    cta_text: "Manage It"
+                }
+            },
+            {
+                id: "commanding-respect",
+                title: "How to Command Respect in Any Hierarchical Organization",
+                script: {
+                    headline: "Respect is Earned. Here is the Price.",
+                    subheadline: "Climb the ladder with competence and authority.",
+                    hook_image_prompt: "A lion sitting at the head of a boardroom table.",
+                    pain_story: "You see people failing up. You see disorder in the ranks. You know you could run things better. You need the authority to fix it.",
+                    agitation_bullets: [
+                        "Being questioned by subordinates.",
+                        "Weak leadership above you.",
+                        "Politics blocking efficiency."
+                    ],
+                    transition_mechanism: "Competence Signaling. Being so effective they have to promote you.",
+                    product_name: "The Authority Code",
+                    product_description: "Navigating corporate politics with honor and strength.",
+                    features_bullets: [
+                        "Managing Up.",
+                        "Dress and demeanor.",
+                        "delivering bad news."
+                    ],
+                    price_original: "$249",
+                    price_discounted: "$67",
+                    bonuses: [
+                        { title: "Negotiation Scripts", description: "Get the raise.", value: "$39" }
+                    ],
+                    guarantee_text: "Feel more powerful.",
+                    scarcity_text: "Take command.",
+                    cta_text: "Command"
+                }
+            },
+            {
+                id: "scaling-operations",
+                title: "How to Scale Operations from Chaos to Order",
+                script: {
+                    headline: "Process is Freedom.",
+                    subheadline: "Turn ad-hoc chaos into a scalable machine.",
+                    hook_image_prompt: "A factory floor running in perfect synchronization.",
+                    pain_story: "Your business or team is stuck because every decision goes through you. You are the bottleneck. You need to download your brain into a manual.",
+                    agitation_bullets: [
+                        "Repetitive questions.",
+                        "Quality control failures.",
+                        "Growth ceiling."
+                    ],
+                    transition_mechanism: "The SOP Engine. Documenting everything.",
+                    product_name: "The Scalability Playbook",
+                    product_description: "How to write Standard Operating Procedures that people actually read.",
+                    features_bullets: [
+                        "SOP templates.",
+                        "Training automation.",
+                        "Quality Assurance checklists."
+                    ],
+                    price_original: "$299",
+                    price_discounted: "$79",
+                    bonuses: [
+                        { title: "Hiring Checklists", description: "Filter for competence.", value: "$49" }
+                    ],
+                    guarantee_text: "Systemize one process.",
+                    scarcity_text: "Scale up.",
+                    cta_text: "Scale Ops"
+                }
+            },
+            {
+                id: "zero-tolerance",
+                title: "How to Enforce Standards without Being a Tyrant",
+                script: {
+                    headline: "High Standards are Not Optional.",
+                    subheadline: "Creating a culture of excellence.",
+                    hook_image_prompt: "A marble column that is perfectly straight and white.",
+                    pain_story: "You are called 'bossy' or 'intense'. But you just care about quality. You want a team that takes pride in their work. You want to stop fixing other people's mistakes.",
+                    agitation_bullets: [
+                        "Mediocrity acceptance.",
+                        "Frustration with laziness.",
+                        "Being the 'bad guy'."
+                    ],
+                    transition_mechanism: "Radical Candor. Direct feedback delivered with clear expectations.",
+                    product_name: "The Excellence Standard",
+                    product_description: "Management training for high-standards leaders.",
+                    features_bullets: [
+                        "Performance Review scripts.",
+                        "Setting KPIs.",
+                        "Firing with dignity."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$59",
+                    bonuses: [
+                        { title: "Feedback Framework", description: "Correct without crushing.", value: "$29" }
+                    ],
+                    guarantee_text: "Raise the bar.",
+                    scarcity_text: "Standardize.",
+                    cta_text: "Enforce"
+                }
+            },
+            {
+                id: "executive-standard",
+                title: "How to Organize Your Entire Life like a Fortune 500 Company",
+                script: {
+                    headline: "You are the CEO of your Life. Act like it.",
+                    subheadline: "Personal enterprise management.",
+                    hook_image_prompt: "A dashboard showing health, wealth, and relationships as business metrics.",
+                    pain_story: "Your work is organized, but your home is messy? Or your health is slipping? You need to apply your professional skills to your personal domain.",
+                    agitation_bullets: [
+                        "Work-Life imbalance.",
+                        "Inefficient errands.",
+                        "Losing money on late fees."
+                    ],
+                    transition_mechanism: "Enterprise Resource Planning for One.",
+                    product_name: "The CEO Life System",
+                    product_description: "Running your household like a business.",
+                    features_bullets: [
+                        "Outsourcing chores.",
+                        "Quarterly Life Reviews.",
+                        "Strategic Planning for family."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$44",
+                    bonuses: [
+                        { title: "Estate Planning Basics", description: "Secure the legacy.", value: "$29" }
+                    ],
+                    guarantee_text: "Run cleaner.",
+                    scarcity_text: "Take charge.",
+                    cta_text: "Run Life"
+                }
+            }
+        ]
+    },
+    ESFJ: {
+        id: "esfj",
+        name: "The Consul",
+        artistic_vibe: "Dinner parties, classic fashion, polished silver, community centers, spotlights, vibrant florals, red carpet.",
+        psychological_triggers: [
+            "Social Status & Belonging",
+            "Helping Others Practically",
+            "Tradition & Etiquette",
+            "Harmonious Groups",
+            "Being the Host"
+        ],
+        products: [
+            {
+                id: "perfect-host",
+                title: "How to Host Events that Everyone Talks About for Years",
+                script: {
+                    headline: "Be the Heart of Your Community.",
+                    subheadline: "Hosting with grace, style, and ease.",
+                    hook_image_prompt: "A banquet table laden with food and happy guests raising a toast.",
+                    pain_story: "You love people, but hosting is stressful. You worry about the food, the vibe, the conversation. You want to be the person everyone relies on for a good time.",
+                    agitation_bullets: [
+                        "Event anxiety.",
+                        "Fear of empty rooms.",
+                        "Cooking disasters."
+                    ],
+                    transition_mechanism: "The 5-Sense Hospitality. Curating the entire experience.",
+                    product_name: "The Hostess Bible",
+                    product_description: "Checklists and plans for perfect gatherings.",
+                    features_bullets: [
+                        "Menu planning for crowds.",
+                        "Seating chart psychology.",
+                        "Setting the mood."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Conversation Deck", description: "No awkward silences.", value: "$15" }
+                    ],
+                    guarantee_text: "Host a great party.",
+                    scarcity_text: "Gather them.",
+                    cta_text: "Host Now"
+                }
+            },
+            {
+                id: "social-calendar",
+                title: "How to Manage a Popular Social Life without Burning Out",
+                script: {
+                    headline: "Popularity is a Full-Time Job. Automate it.",
+                    subheadline: "Keep your friends close without losing your mind.",
+                    hook_image_prompt: "A spinning rolodex that glows.",
+                    pain_story: "You have so many friends, so many obligations. You don't want to let anyone down. But you are running from event to event, exhausted.",
+                    agitation_bullets: [
+                        "Double booking.",
+                        "Forgetting birthdays.",
+                        "FOMO."
+                    ],
+                    transition_mechanism: "Relationship CRM. Organizing people so you can love them better.",
+                    product_name: "The Socialite's Secretary",
+                    product_description: "System for tracking relationships.",
+                    features_bullets: [
+                        "Birthday automation.",
+                        "Grouping friends for efficiency.",
+                        "The art of the 'Pop-In'."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Gift Giving Guide", description: "Perfect gifts every time.", value: "$19" }
+                    ],
+                    guarantee_text: "Never forget a date.",
+                    scarcity_text: "Get organized.",
+                    cta_text: "Manage Social"
+                }
+            },
+            {
+                id: "helping-boundaries",
+                title: "How to Help Everyone without Feeling Unappreciated",
+                script: {
+                    headline: "Service is Noble. Martyrdom is Not.",
+                    subheadline: "Get the appreciation you deserve.",
+                    hook_image_prompt: "A hand lifting another hand, with mutual light shining.",
+                    pain_story: "You do everything for everyone. You crave a 'thank you'. When you don't get it, you feel resentful. You wonder if people only like you for what you do for them.",
+                    agitation_bullets: [
+                        "Feeling taken for granted.",
+                        "Over-volunteering.",
+                        "Hidden resentment."
+                    ],
+                    transition_mechanism: "Reciprocal Value. Teaching people how to treat you.",
+                    product_name: "The Appreciated Altruist",
+                    product_description: "Setting terms for your generosity.",
+                    features_bullets: [
+                        "Communicating needs.",
+                        "Stopping 'Please' pleasing.",
+                        "Accepting help."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Self-Love Scripts", description: "Validation from within.", value: "$25" }
+                    ],
+                    guarantee_text: "Feel appreciated.",
+                    scarcity_text: "Love yourself.",
+                    cta_text: "Get Love"
+                }
+            },
+            {
+                id: "popularity-dynamics",
+                title: "How to Navigate Social Politics and maintain Status",
+                script: {
+                    headline: "Social Standing Matters. Manage it Wisely.",
+                    subheadline: "Navigating the group chat and the real world.",
+                    hook_image_prompt: "A queen bee surrounded by a harmonious hive.",
+                    pain_story: "You care what people think. That's not vanity; it's social intelligence. You want to maintain harmony in your group and ensure your reputation is pristine.",
+                    agitation_bullets: [
+                        "Gossip handling.",
+                        "Exclusion anxiety.",
+                        "Reputation management."
+                    ],
+                    transition_mechanism: "Diplomatic Grace. Staying above the fray while leading it.",
+                    product_name: "The Social Captain",
+                    product_description: "Advanced social dynamics for leaders.",
+                    features_bullets: [
+                        "Squashing rumors.",
+                        "Bridging friend groups.",
+                        "Digital reputation."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Etiquette 2.0", description: "Modern manners.", value: "$29" }
+                    ],
+                    guarantee_text: "Rise in status.",
+                    scarcity_text: "Lead the group.",
+                    cta_text: "Lead Social"
+                }
+            },
+            {
+                id: "family-politics",
+                title: "How to Manage Family Drama and Keep the Peace",
+                script: {
+                    headline: "Peace in the Home. Peace in the Heart.",
+                    subheadline: "Mediation for the extended family.",
+                    hook_image_prompt: "A knot being untied by gentle hands.",
+                    pain_story: "Holidays are stressful because of In-Laws, siblings, and old feuds. You are the one stuck in the middle trying to make everyone smile.",
+                    agitation_bullets: [
+                        "Walking on eggshells.",
+                        "Dreading reunions.",
+                        "Being the messenger."
+                    ],
+                    transition_mechanism: "Active Mediation. Techniques to de-escalate without taking sides.",
+                    product_name: "The Family Peacekeeper",
+                    product_description: "Conflict resolution for families.",
+                    features_bullets: [
+                        "Stopping fights before they start.",
+                        "Seating chart strategy.",
+                        "The 'Distraction' technique."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$37",
+                    bonuses: [
+                        { title: "Stress Relief Audio", description: "Calm down in the bathroom.", value: "$19" }
+                    ],
+                    guarantee_text: "A peaceful holiday.",
+                    scarcity_text: "Make peace.",
+                    cta_text: "Keep Peace"
+                }
+            }
+        ]
+    },
     // Placeholders for other types can be added here
 };
