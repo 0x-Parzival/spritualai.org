@@ -2032,5 +2032,680 @@ export const productsData: Record<string, MBTIProfile> = {
             }
         ]
     },
-    // Placeholders for other types can be added here
+    ISTP: {
+        id: "istp",
+        name: "The Virtuoso",
+        artistic_vibe: "Mechanic's garage, desert sunset, scattered tools, brushed steel, blueprints on a tablet, racing adrenaline, solitary peaks.",
+        psychological_triggers: [
+            "Mastery of Tools",
+            "Freedom of Action",
+            "Solving Impossible Problems",
+            "Adrenaline & Risk",
+            "Efficiency"
+        ],
+        products: [
+            {
+                id: "troubleshoot-life",
+                title: "How to Fix Anything in Your Life like a Mechanic",
+                script: {
+                    headline: "Your Life is a Machine. Tune It.",
+                    subheadline: "Debug your health, wealth, and relationships using logic.",
+                    hook_image_prompt: "A human body shown as a complex engine schematic.",
+                    pain_story: "You hate emotional drama. You just want things to WORK. Whether it's a broken toaster or a broken relationship, you want to open the hood, find the faulty part, and replace it. But people aren't logic gates.",
+                    agitation_bullets: [
+                        "Emotional irrationality.",
+                        "Inefficient systems.",
+                        "Being told to 'talk about your feelings'."
+                    ],
+                    transition_mechanism: "Root Cause Analysis. Applied engineering for human problems.",
+                    product_name: "The Troubleshooter's Manual",
+                    product_description: "A framework to diagnose and fix life problems without therapy.",
+                    features_bullets: [
+                        "The '5 Whys' for personal issues.",
+                        "Optimizing your biochemical engine.",
+                        "The 'Patch' mindset vs deep code."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$37",
+                    bonuses: [
+                        { title: "DIY Biohacking", description: "Hack your sleep.", value: "$19" }
+                    ],
+                    guarantee_text: "Fix one bug today.",
+                    scarcity_text: "System checks.",
+                    cta_text: "Debug Life"
+                }
+            },
+            {
+                id: "modern-survival",
+                title: "How to Be Ready for Anything without Being a Crazy Prepper",
+                script: {
+                    headline: "The World is Fragile. You are Not.",
+                    subheadline: "Practical preparedness for the rational realist.",
+                    hook_image_prompt: "A tactical backpack filled with high-tech gear.",
+                    pain_story: "You see the supply chains breaking. You see the fragility of the grid. You aren't scared; you just want to be prepared. But you hate the 'tinfoil hat' crowd.",
+                    agitation_bullets: [
+                        "Dependency on the system.",
+                        "Helplessness in blackouts.",
+                        "Wanting to protect your own."
+                    ],
+                    transition_mechanism: "Skill Acquisition. Gear breaks; skills remain.",
+                    product_name: "The Urban Virtuoso",
+                    product_description: "Essential skills for modern survival.",
+                    features_bullets: [
+                        "Digital security.",
+                        "Urban evasion.",
+                        "Basic medical mechanics."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Every Day Carry (EDC) Guide", description: "Optimize your pockets.", value: "$25" }
+                    ],
+                    guarantee_text: "Feel harder to kill.",
+                    scarcity_text: "Gear up.",
+                    cta_text: "Survive"
+                }
+            },
+            {
+                id: "hack-system",
+                title: "How to Find Shortcuts in a World of Bureaucracy",
+                script: {
+                    headline: "Rules are Suggestions. Results are Mandatory.",
+                    subheadline: "Navigation for the pathfinder.",
+                    hook_image_prompt: "A person walking through a wall in a maze.",
+                    pain_story: "You hate red tape. You hate 'process for process's sake'. You know there is a faster way, but people tell you it's 'not allowed'. You want to get to the outcome now.",
+                    agitation_bullets: [
+                        "Waiting in line.",
+                        "Filling out forms.",
+                        "Slow walkers."
+                    ],
+                    transition_mechanism: "Lateral Efficiency. Finding the backdoor.",
+                    product_name: "The Loophole Library",
+                    product_description: "Strategies to bypass bureaucratic friction.",
+                    features_bullets: [
+                        "Social Engineering 101.",
+                        "Automating bureaucracy.",
+                        "The 'As Soon As Possible' framework."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Travel Hacking", description: "Fly better for less.", value: "$19" }
+                    ],
+                    guarantee_text: "Save 5 hours this week.",
+                    scarcity_text: "Hack it.",
+                    cta_text: "Bypass"
+                }
+            },
+            {
+                id: "detached-calm",
+                title: "How to Stay Cool when Everyone Else is Losing their Minds",
+                script: {
+                    headline: "Ice in the Veins. Fire in the Heart.",
+                    subheadline: "Mastering the physiological response to stress.",
+                    hook_image_prompt: "A pilot in a cockpit with alarms blaring, looking perfectly calm.",
+                    pain_story: "You are good in a crisis. But sometimes you are too detached. People think you don't care. Or you bottle it up until you explode. You need a way to process stress physically.",
+                    agitation_bullets: [
+                        "Adrenaline dumps.",
+                        "Emotional numbness.",
+                        "Explosive anger."
+                    ],
+                    transition_mechanism: "Tactical Breathing. Biology overrides psychology.",
+                    product_name: "The Zero-State Protocol",
+                    product_description: "Techniques from special forces and stoicism.",
+                    features_bullets: [
+                        "Box Breathing mastery.",
+                        "The 'Observer' mindset.",
+                        "Decompressing after the rush."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Cold Exposure Guide", description: "Freeze the stress.", value: "$15" }
+                    ],
+                    guarantee_text: "Lower your heart rate.",
+                    scarcity_text: "Stay cool.",
+                    cta_text: "Freeze"
+                }
+            },
+            {
+                id: "mastery-path",
+                title: "How to Get Good at Hands-On Skills Fast",
+                script: {
+                    headline: "Don't Read About It. Do It.",
+                    subheadline: "Accelerated learning for the kinesthetic genius.",
+                    hook_image_prompt: "Hands working on a complex watch mechanism.",
+                    pain_story: "You hate classrooms. You hate theory. You learn by breaking things. Traditional education fails you because it doesn't let you touch the problem.",
+                    agitation_bullets: [
+                        "Boring lectures.",
+                        "Theory without practice.",
+                        "Reading manuals."
+                    ],
+                    transition_mechanism: "Deconstructive Learning. Take it apart to learn how it works.",
+                    product_name: "The Hands-On Hacker",
+                    product_description: "How to learn physical skills (coding, mechanics, wood, etc) rapidly.",
+                    features_bullets: [
+                        "The 'Sandbox' method.",
+                        "Finding mentors who do, not teach.",
+                        "Iterative failure."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$47",
+                    bonuses: [
+                        { title: "Tool selection guide", description: "Buy once, cry once.", value: "$29" }
+                    ],
+                    guarantee_text: "Build something.",
+                    scarcity_text: "Get hands dirty.",
+                    cta_text: "Build It"
+                }
+            }
+        ]
+    },
+    ISFP: {
+        id: "isfp",
+        name: "The Adventurer",
+        artistic_vibe: "Bohemian loft, splattered paint, acoustic guitar, golden hour festivals, wildflower fields, indie aesthetics, sensory texture.",
+        psychological_triggers: [
+            "Aesthetics & Beauty",
+            "Freedom of Expression",
+            "Sensory Experience",
+            "Authenticity",
+            "Living in the Moment"
+        ],
+        products: [
+            {
+                id: "aesthetic-life",
+                title: "How to Curate a Life that Looks and Feels like Art",
+                script: {
+                    headline: "Your Life is Your Masterpiece. Don't leave it Blank.",
+                    subheadline: "Living intentionally through beauty.",
+                    hook_image_prompt: "A room where every object triggers joy and color.",
+                    pain_story: "You are sensitive to your environment. Ugly lights, bad textures, and boring walls drain your soul. You want your outer world to reflect your inner beauty.",
+                    agitation_bullets: [
+                        "Visual clutter.",
+                        "Sensory overload.",
+                        "Feeling bland."
+                    ],
+                    transition_mechanism: "Aesthetic Intentionality. Designing your environment to feed your spirit.",
+                    product_name: "The Curator's Guide",
+                    product_description: "Interior design and lifestyle curation for the ISFP.",
+                    features_bullets: [
+                        "Lighting as therapy.",
+                        "Thrifting treasures.",
+                        "The 'Vibe' check."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Color Theory for Mood", description: "Paint your feelings.", value: "$15" }
+                    ],
+                    guarantee_text: "Beautify one corner.",
+                    scarcity_text: "Make art.",
+                    cta_text: "Curate"
+                }
+            },
+            {
+                id: "monetize-craft",
+                title: "How to Sell Your Art without Feeling like a Sellout",
+                script: {
+                    headline: "Don't Starve. Thrive.",
+                    subheadline: "Marketing for the shy artist.",
+                    hook_image_prompt: "A gallery wall with 'Sold' stickers on everything.",
+                    pain_story: "You make beautiful things. But you hate 'pushing' them. You hope people will just notice. They won't. You need a way to share your gift that feels genuine.",
+                    agitation_bullets: [
+                        "Underpricing work.",
+                        "Hiding from customers.",
+                        "Inventory piling up."
+                    ],
+                    transition_mechanism: "Visual Storytelling. Let the art speak, you just hold the megaphone.",
+                    product_name: "The Quiet Creator's Market",
+                    product_description: "Instagram and Pinterest strategies for visual artists.",
+                    features_bullets: [
+                        "Photography for products.",
+                        "Writing captions that feel real.",
+                        "Pricing based on soul."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$44",
+                    bonuses: [
+                        { title: "Portfolio Review Checklist", description: "Look pro.", value: "$25" }
+                    ],
+                    guarantee_text: "Sell one piece.",
+                    scarcity_text: "Show the world.",
+                    cta_text: "Sell Art"
+                }
+            },
+            {
+                id: "sensory-meditation",
+                title: "How to Find Peace through Your Senses (Not Thinking)",
+                script: {
+                    headline: "Get Out of Your Head. Get Into Your Body.",
+                    subheadline: "Meditation for people who can't sit still.",
+                    hook_image_prompt: "A hand running through tall grass at sunset.",
+                    pain_story: "Standard meditation makes you anxious. 'Clear your mind'? Impossible. You experience the world through touch, taste, sound. Use that.",
+                    agitation_bullets: [
+                        "Monkey mind.",
+                        "Fidgeting.",
+                        "Boredom."
+                    ],
+                    transition_mechanism: "Somatic Immersion. Using sensory input to anchor the mind.",
+                    product_name: "The Sensory Flow State",
+                    product_description: "Mindfulness techniques based on art, nature, and music.",
+                    features_bullets: [
+                        "The 'Sound Bath' method.",
+                        "Tactile grounding.",
+                        "Visual gazing."
+                    ],
+                    price_original: "$79",
+                    price_discounted: "$22",
+                    bonuses: [
+                        { title: "Nature Walk Audio", description: "Guided immersion.", value: "$11" }
+                    ],
+                    guarantee_text: "Feel peace.",
+                    scarcity_text: "Senses awake.",
+                    cta_text: "Feel Now"
+                }
+            },
+            {
+                id: "intuitive-style",
+                title: "How to Dress to Express Your True Self",
+                script: {
+                    headline: "Fashion is Armor. Wear it Well.",
+                    subheadline: "Style as self-expression, not trends.",
+                    hook_image_prompt: "A mannequin with a unique, colorful, mismatched but perfect outfit.",
+                    pain_story: "You hate uniforms. You hate looking like everyone else. But sometimes you struggle to put your unique vibe into a cohesive look. You want to walk into a room and be 'seen'.",
+                    agitation_bullets: [
+                        "Closet full of nothing to wear.",
+                        "Feeling invisible.",
+                        "Impulse shopping."
+                    ],
+                    transition_mechanism: "The Signature Style. Identifying your personal archetypes.",
+                    product_name: "The Aesthetics of You",
+                    product_description: "Developing a personal brand through fashion.",
+                    features_bullets: [
+                        "Thrifting for unicorns.",
+                        "Breaking fashion rules.",
+                        "The 'Comfort vs Style' myth."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Capsule Wardrobe for Rebels", description: "Mix and match.", value: "$19" }
+                    ],
+                    guarantee_text: "Love your look.",
+                    scarcity_text: "Express yourself.",
+                    cta_text: "Style Me"
+                }
+            },
+            {
+                id: "rebellious-self-care",
+                title: "How to Take Care of Yourself without Following Rules",
+                script: {
+                    headline: "Your Body, Your Rules.",
+                    subheadline: "Wellness for the non-conformist.",
+                    hook_image_prompt: "A person doing yoga on a cliff edge at sunrise.",
+                    pain_story: "You hate gyms. You hate diets. The moment someone tells you to do 10 reps, you want to leave. You need a way to move and eat that feels like freedom.",
+                    agitation_bullets: [
+                        "Gym boredom.",
+                        "Diet rebellion.",
+                        "Feeling trapped by routine."
+                    ],
+                    transition_mechanism: "Intuitive Living. Listening to the body's cravings and needs.",
+                    product_name: "The Wild Wellness Guide",
+                    product_description: "Fitness and health through dance, play, and nature.",
+                    features_bullets: [
+                        "Dance as cardio.",
+                        "Eating with the seasons.",
+                        "Rest as rebellion."
+                    ],
+                    price_original: "$89",
+                    price_discounted: "$25",
+                    bonuses: [
+                        { title: "Playlist for Movement", description: "Rhythm is life.", value: "$10" }
+                    ],
+                    guarantee_text: "Move with joy.",
+                    scarcity_text: "Break free.",
+                    cta_text: "Live Wild"
+                }
+            }
+        ]
+    },
+    ESTP: {
+        id: "estp",
+        name: "The Entrepreneur",
+        artistic_vibe: "Stock tickers, fast cars, neon city lights, casino chips, sleek suits, energy drinks, high-contrast action shots.",
+        psychological_triggers: [
+            "Risk & Reward",
+            "Immediate Impact",
+            "Social Dominance",
+            "Living on the Edge",
+            "Closing the Deal"
+        ],
+        products: [
+            {
+                id: "start-business-24h",
+                title: "How to Launch a Business this Weekend with $0",
+                script: {
+                    headline: "Stop Planning. Start Selling.",
+                    subheadline: "From idea to cash in 48 hours.",
+                    hook_image_prompt: "A smartphone displaying a Stripe notification: '$1,000 Payment Received'.",
+                    pain_story: "You have 100 ideas. You see opportunity everywhere. But you get bogged down in 'legal' or 'websites'. You miss the window. You want the rush of the first sale.",
+                    agitation_bullets: [
+                        "Analysis paralysis.",
+                        "Watching slower people succeed.",
+                        "Leaving money on the table."
+                    ],
+                    transition_mechanism: "The Lean Launch. Sell first, build later.",
+                    product_name: "The Weekend Empire",
+                    product_description: "Step-by-step guide to validating and selling instantly.",
+                    features_bullets: [
+                        "Preselling scripts.",
+                        "Landing pages that convert.",
+                        "Getting the first user."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$47",
+                    bonuses: [
+                        { title: "Cold DM Templates", description: "Slide in and sell.", value: "$29" }
+                    ],
+                    guarantee_text: "Make a dollar or refund.",
+                    scarcity_text: "Launch now.",
+                    cta_text: "Launch"
+                }
+            },
+            {
+                id: "high-stakes-negotiation",
+                title: "How to Negotiate Anything like a Hostage Negotiator",
+                script: {
+                    headline: "Everything is Negotiable. If You Have the Guts.",
+                    subheadline: "Get what you want by reading the room.",
+                    hook_image_prompt: "Two hands shaking over a table covered in money.",
+                    pain_story: "You know you are leaving value on the table. You hate paying retail. You hate losing arguments. You want the thrill of the win.",
+                    agitation_bullets: [
+                        "Overpaying.",
+                        "Getting rolled.",
+                        "Feeling weak."
+                    ],
+                    transition_mechanism: "Leverage Dynamics. Identifying what they have to lose.",
+                    product_name: "The Dealmaker's code",
+                    product_description: "Psychological tactics for negotiation.",
+                    features_bullets: [
+                        "The 'Flinch' technique.",
+                        "Silence as a weapon.",
+                        "Anchoring high."
+                    ],
+                    price_original: "$249",
+                    price_discounted: "$69",
+                    bonuses: [
+                        { title: "Salary Negotiation Script", description: "+$10k instantly.", value: "$39" }
+                    ],
+                    guarantee_text: "Win a deal.",
+                    scarcity_text: "Close it.",
+                    cta_text: "Negotiate"
+                }
+            },
+            {
+                id: "magnetic-persuasion",
+                title: "How to Charm Anyone into Doing Anything",
+                script: {
+                    headline: "Charisma is a Cheat Code.",
+                    subheadline: "Unlock doors with a smile and a sentence.",
+                    hook_image_prompt: "A person in a crowd, glowing, with everyone leaning in towards them.",
+                    pain_story: "You are naturally charming, but you want to weaponize it. You want to be able to talk your way into VIP, out of tickets, and into deals.",
+                    agitation_bullets: [
+                        "Getting 'No'.",
+                        "Being ignored.",
+                        "Social friction."
+                    ],
+                    transition_mechanism: "Social Jiu-Jitsu. Using their momentum against them.",
+                    product_name: "The Silver Tongue",
+                    product_description: "Advanced persuasion and social engineering.",
+                    features_bullets: [
+                        "Pattern interrupts.",
+                        "Hypnotic language patterns.",
+                        "Building instant rapport."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$55",
+                    bonuses: [
+                        { title: "Pickup Lines that Work (Business)", description: "Open any door.", value: "$25" }
+                    ],
+                    guarantee_text: "Charm someone today.",
+                    scarcity_text: "Open doors.",
+                    cta_text: "Charm"
+                }
+            },
+            {
+                id: "adrenaline-productivity",
+                title: "How to Get More Done in 2 Hours of Chaos than 2 Weeks of Order",
+                script: {
+                    headline: "Procrastination is Fuel.",
+                    subheadline: "Using the deadline rush to create diamonds.",
+                    hook_image_prompt: "A clock ticking down the final second, an explosion of productivity.",
+                    pain_story: "You can't work without a fire under you. People tell you to plan ahead. Screw that. You work best when the building is burning. Learn to harness the fire.",
+                    agitation_bullets: [
+                        "Boredom lethargy.",
+                        "Guilt about waiting.",
+                        "Last minute panic attacks."
+                    ],
+                    transition_mechanism: "Controlled Crisis. Manufacturing urgency to trigger flow.",
+                    product_name: "The Crunch-Time Protocol",
+                    product_description: "Productivity for adrenaline junkies.",
+                    features_bullets: [
+                        "Setting fake stakes.",
+                        "The 'Sprint' workflow.",
+                        "Post-game recovery."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Focus Playlists (Techno)", description: "High BPM work.", value: "$15" }
+                    ],
+                    guarantee_text: "Finish the impossible.",
+                    scarcity_text: "Go fast.",
+                    cta_text: "Sprint"
+                }
+            },
+            {
+                id: "risk-management",
+                title: "How to Take Big Risks without Losing it All",
+                script: {
+                    headline: "Fortune Favors the Bold. But it Punishes the Stupid.",
+                    subheadline: "Calculated gambling for life and business.",
+                    hook_image_prompt: "A poker player pushing chips 'All In' with a slight smile.",
+                    pain_story: "You love risk. But you've been burned. You want to swing for the fences without striking out. You need a system for evaluating upsides.",
+                    agitation_bullets: [
+                        "Reckless losses.",
+                        "Regret.",
+                        "Being told to 'play safe'."
+                    ],
+                    transition_mechanism: "Asymmetric Betting. Capping the downside, uncapping the upside.",
+                    product_name: "The Gambler's Advantage",
+                    product_description: "Risk assessment frameworks.",
+                    features_bullets: [
+                        "Expected Value calculations.",
+                        "Hedging your bets.",
+                        "Knowing when to fold."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$44",
+                    bonuses: [
+                        { title: "Crisis Management", description: "When it hits the fan.", value: "$29" }
+                    ],
+                    guarantee_text: "Bet smarter.",
+                    scarcity_text: "Roll dice.",
+                    cta_text: "Bet Now"
+                }
+            }
+        ]
+    },
+    ESFP: {
+        id: "esfp",
+        name: "The Entertainer",
+        artistic_vibe: "Spotlights, sequins, confetti, dance floors, vibrant tropical colors, paparazzi flashbulbs, laughter waves.",
+        psychological_triggers: [
+            "Being the Star",
+            "Fun & Excitement",
+            "Spontaneity",
+            "Connecting through Joy",
+            "FOMO"
+        ],
+        products: [
+            {
+                id: "be-the-star",
+                title: "How to Light Up Every Room You Walk Into",
+                script: {
+                    headline: "The World is a Stage. Own It.",
+                    subheadline: "Maximize your natural magnetism.",
+                    hook_image_prompt: "A person stepping onto a dance floor, the crowd parting and cheering.",
+                    pain_story: "You love attention, but you want it to be for the right reasons. You want to be remembered as the person who made everyone feel amazing, not just loud.",
+                    agitation_bullets: [
+                        "Being dismissed as 'too much'.",
+                        "Post-party emptiness.",
+                        "Needing validation."
+                    ],
+                    transition_mechanism: "Radiant Presence. Projecting joy outwards so it reflects back.",
+                    product_name: "The Spotlight Effect",
+                    product_description: "Enhancing your natural star power.",
+                    features_bullets: [
+                        "Entrance/Exit tech.",
+                        "The 'Energy Gift'.",
+                        "Handling hecklers (haters)."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Style for Impact", description: "Dress loud.", value: "$19" }
+                    ],
+                    guarantee_text: "Get a standing ovation.",
+                    scarcity_text: "Showtime.",
+                    cta_text: "Shine"
+                }
+            },
+            {
+                id: "getting-paid-to-party",
+                title: "How to Turn Your Social Life into a Business",
+                script: {
+                    headline: "Stop Partying for Free.",
+                    subheadline: "Monetize your vibe.",
+                    hook_image_prompt: "A VIP pass made of solid gold.",
+                    pain_story: "You are the one bringing the party. Why aren't you getting paid? You organize the fun, you bring the people. It's time to cash in on your gravity.",
+                    agitation_bullets: [
+                        "Being the broke 'fun' friend.",
+                        "Spending money to entertain others.",
+                        "Wasted influence."
+                    ],
+                    transition_mechanism: "The Promoter Model. Getting paid for access and atmosphere.",
+                    product_name: "The Vibe Capitalist",
+                    product_description: "Event promotion and influencing 101.",
+                    features_bullets: [
+                        "Sponsorships for events.",
+                        "Getting into VIP for free.",
+                        "Building a contact list."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Brand Deal Templates", description: "Get paid to post.", value: "$29" }
+                    ],
+                    guarantee_text: "Get a free drink.",
+                    scarcity_text: "List only.",
+                    cta_text: "Cash In"
+                }
+            },
+            {
+                id: "improv-life",
+                title: "How to Never Be Bored or Boring Again",
+                script: {
+                    headline: "Say Yes, And...",
+                    subheadline: "Living life unscripted and fearless.",
+                    hook_image_prompt: "A life raft turning into a luxury yacht instantly.",
+                    pain_story: "You fear boredom like death. You hate scripts. You want to flow through life, handling whatever comes with a laugh. But anxiety sometimes kills the joke.",
+                    agitation_bullets: [
+                        "Awkward pauses.",
+                        "Fear of stillness.",
+                        "Trying too hard."
+                    ],
+                    transition_mechanism: "Improv Mindset. Trusting your future self to handle the moment.",
+                    product_name: "The Improv Life",
+                    product_description: "Using comedy techniques for confidence.",
+                    features_bullets: [
+                        "Thinking on your feet.",
+                        "Turning mistakes into bits.",
+                        "The 'Rule of Cool'."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "The Joke Vault", description: "Emergency laughs.", value: "$15" }
+                    ],
+                    guarantee_text: "Laugh more.",
+                    scarcity_text: "Action.",
+                    cta_text: "Improv"
+                }
+            },
+            {
+                id: "joy-business",
+                title: "How to Bring Fun into the Workplace (and get promoted)",
+                script: {
+                    headline: "Serious Business Needs Serious Fun.",
+                    subheadline: "Becoming the Chief Joy Officer.",
+                    hook_image_prompt: "A gray office cubicle bursting into colorful confetti.",
+                    pain_story: "Work is so... serious. It drains you. You know that happy people work harder, but the bosses are stiff. You want to be successful without becoming a robot.",
+                    agitation_bullets: [
+                        "Corporate depression.",
+                        "Stifling your laughter.",
+                        "Dying inside."
+                    ],
+                    transition_mechanism: "Cultural Alchemy. Transforming morale through energy.",
+                    product_name: "The Morale Booster",
+                    product_description: "Leading through positivity.",
+                    features_bullets: [
+                        "Gamifying KPIs.",
+                        "Team building that doesn't suck.",
+                        "Infectious enthusiasm."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Icebreakers that Work", description: "Actually fun.", value: "$19" }
+                    ],
+                    guarantee_text: "Make work fun.",
+                    scarcity_text: "Smile.",
+                    cta_text: "Bring Joy"
+                }
+            },
+            {
+                id: "spontaneous-living",
+                title: "How to Plan for Spontaneity (Irony Intended)",
+                script: {
+                    headline: "Leave Room for the Magic.",
+                    subheadline: "Structuring your life to say Yes.",
+                    hook_image_prompt: "A calendar with blank spaces that glow gold.",
+                    pain_story: "You hate commitment because it kills options. But having NO plan means you end up doing nothing. You need a structure that creates freedom.",
+                    agitation_bullets: [
+                        "Flaking on plans.",
+                        "Analysis paralysis on Friday night.",
+                        "Wasting weekends."
+                    ],
+                    transition_mechanism: "The Open-Ended Framework. Rules that create space.",
+                    product_name: "The Freedom Archer",
+                    product_description: "Scheduling for freedom seekers.",
+                    features_bullets: [
+                        "The 'Wildcard' Weekend.",
+                        "Money buffer for spontaneity.",
+                        "Saying Yes without regret."
+                    ],
+                    price_original: "$89",
+                    price_discounted: "$25",
+                    bonuses: [
+                        { title: "Last Minute Travel Hacks", description: "Go now.", value: "$15" }
+                    ],
+                    guarantee_text: "Do something wild.",
+                    scarcity_text: "Go.",
+                    cta_text: "Live Free"
+                }
+            }
+        ]
+    }
 };
