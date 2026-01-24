@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ISFP - The Adventurer - Spiritual AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Base Layout */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { 
+      height: 100%; 
+      width: 100%; 
+      overflow-x: hidden;
+      font-family: 'Lato', sans-serif;
+      background: transparent;
+      color: white;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: transparent;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(250, 230, 80, 0.4);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .back-button:hover {
+      background: transparent;
+      transform: translateX(4px);
+    }
+
+    /* Content Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 20px 50px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* MBTI Header */
+    .mbti-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .mbti-title {
+      font-size: 4rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      letter-spacing: 2px;
+    }
+    .mbti-subtitle {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    /* Content Sections */
+    .section {
+      background: transparent;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: white;
+      position: relative;
+      display: inline-block;
+    }
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: transparent;
+      border-radius: 3px;
+    }
+    .section-content {
+      line-height: 1.8;
+      font-size: 1.1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .mbti-title { font-size: 2.5rem; }
+      .mbti-subtitle { font-size: 1.2rem; }
+      .section { padding: 20px; }
+    }
+  </style>
+</head>
+<body data-mbti-type="ISFP">
+  <!-- WebGL Background -->
+  <style>
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    body {
+      background: transparent;
+      position: relative;
+    }
+  </style>
+  <canvas id="webgl-canvas"></canvas>
+  <script type="module" src="webgl-background.js"></script>
+
+  <!-- Back Button -->
+  <a href="../mbti.html" class="back-button">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to MBTI Types
+  </a>
+
+  <div class="container">
+    <header class="mbti-header">
+      <h1 class="mbti-title">ISFP - The Adventurer</h1>
+      <p class="mbti-subtitle">The Adventurer</p>
+    </header>
+
+    <section class="section">
+      <h2 class="section-title">Overview</h2>
+      <div class="section-content">
+        <p>This is a sample overview for the ISFP personality type. ISFPs are known for their unique traits. They often excel in various areas and may struggle with certain challenges.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Strengths</h2>
+      <div class="section-content">
+        <ul>
+          <li>Analytical and strategic thinking</li>
+          <li>Strong problem-solving skills</li>
+          <li>Independent and self-motivated</li>
+          <li>Creative and innovative</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Challenges</h2>
+      <div class="section-content">
+        <ul>
+          <li>Can be overly critical</li>
+          <li>May struggle with emotional expression</li>
+          <li>Can be perfectionistic</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Add any interactive elements here
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add any JavaScript functionality needed
+    });
+  </script>
+</body>
+</html>
