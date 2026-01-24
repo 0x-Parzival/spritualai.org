@@ -680,5 +680,681 @@ export const productsData: Record<string, MBTIProfile> = {
             }
         ]
     },
+    INFJ: {
+        id: "infj",
+        name: "The Advocate",
+        artistic_vibe: "Ethereal, mystical, deep violet, soft glowing light in darkness, ancient ruins, sacred geometry, dreamlike, spiritual solitude.",
+        psychological_triggers: [
+            "Deep Meaning & Purpose",
+            "Harmonizing Humanity",
+            "Hidden Insight",
+            "Protecting the Vulnerable",
+            "Authentic Connection"
+        ],
+        products: [
+            {
+                id: "emotional-shielding",
+                title: "How to Stop Absorbing Everyone Else's Emotions in 24 Hours",
+                script: {
+                    headline: "You Are an Empath, Not a Sponge. Close Your Energetic Borders.",
+                    subheadline: "Stop burning out because you feel the world's pain.",
+                    hook_image_prompt: "A figure meditating inside a glowing translucent forcefield while chaotic colors swirl outside.",
+                    pain_story: "You walk into a room and immediately feel the tension. You leave social gatherings exhausted, not physically, but spiritually. You care so much it hurts, and you often isolate yourself just to survive.",
+                    agitation_bullets: [
+                        "Compassion fatigue.",
+                        "Inability to distinguish your feelings from others.",
+                        "Being the 'therapist' for everyone but yourself."
+                    ],
+                    transition_mechanism: "Psychic Sovereignty. Techniques to observe emotions without ingesting them.",
+                    product_name: "The Empath's Shield",
+                    product_description: "A guided visualization and psychological protocol to build an impenetrable boundary.",
+                    features_bullets: [
+                        "The 'Glass Wall' Technique: See clearly, feel nothing.",
+                        "Energy Clearing Rituals.",
+                        "The 'No' Script: How to decline help without guilt."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Narcissist Repellent", description: "Spot energy vampires instantly.", value: "$29" }
+                    ],
+                    guarantee_text: "Feel lighter in one day or refund.",
+                    scarcity_text: "Protect your energy now.",
+                    cta_text: "Activate Shield"
+                }
+            },
+            {
+                id: "intuitive-counseling",
+                title: "How to Turn Your Insight into a High-Ticket Coaching Business",
+                script: {
+                    headline: "Your Advice Changes Lives. Stop Giving It Away for Free.",
+                    subheadline: "Monetize your intuition.",
+                    hook_image_prompt: "A lantern illuminating a path through a dark forest.",
+                    pain_story: "People naturally come to you for advice. You solve their deepest problems in minutes. Then they leave, succeed, and you are left broke and drained. You realize your 'gift' is a valuable commodity.",
+                    agitation_bullets: [
+                        "Undercharging or working for free.",
+                        "Feeling used.",
+                        "Watching shallow 'coaches' make millions."
+                    ],
+                    transition_mechanism: "Value-Based Framing. Translating 'spiritual guidance' into 'tangible results'.",
+                    product_name: "The Mystic Mentor Blueprint",
+                    product_description: "How to package your deep wisdom into a high-end consulting offer.",
+                    features_bullets: [
+                        "Structuring the 'Transformation': Selling the destination, not the chat.",
+                        "Attracting 'Soul' Clients: Marketing without sleek sales tactics.",
+                        "Pricing Your Wisdom."
+                    ],
+                    price_original: "$499",
+                    price_discounted: "$97",
+                    bonuses: [
+                        { title: "The Intake Form", description: "Filter out low-vibration clients.", value: "$49" }
+                    ],
+                    guarantee_text: "Sign your first client or refund.",
+                    scarcity_text: "Limited guidance.",
+                    cta_text: "Monetize Wisdom"
+                }
+            },
+            {
+                id: "purpose-alignment",
+                title: "How to Find the Career Your Soul Appoved Before You Were Born",
+                script: {
+                    headline: "You Don't Want a Job. You Want a Mission.",
+                    subheadline: "Align your paycheck with your spirit.",
+                    hook_image_prompt: "A golden thread connecting a person's heart to a distant star.",
+                    pain_story: "Corporate life feels like dying. The politics, the meaninglessness, the greed. You can fake it, but everyday a piece of you withers. You need work that feels like prayer.",
+                    agitation_bullets: [
+                        "Sunday scaries.",
+                        "Feeling like an alien in the office.",
+                        "The fear of wasting your potential on spreadsheets."
+                    ],
+                    transition_mechanism: "Dharma Discovery. Finding the intersection of what the world needs and what you represent.",
+                    product_name: "The Soul-Work Compass",
+                    product_description: "A framework to identify careers that allow you to heal the world and get paid.",
+                    features_bullets: [
+                        "The 'Impact' Audit: Assessing potential paths.",
+                        "Transitioning safely from the Matrix.",
+                        "The 'Non-Profit' Trap: Why you need money to do good."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$47",
+                    bonuses: [
+                        { title: "Resignation Letter Template", description: "Leave with grace.", value: "$19" }
+                    ],
+                    guarantee_text: "Find your path or refund.",
+                    scarcity_text: "Mission awaiting.",
+                    cta_text: "Align Now"
+                }
+            },
+            {
+                id: "introvert-influence",
+                title: "How to Change the World from Your Bedroom without Public Speaking",
+                script: {
+                    headline: "Quietly Shake the Earth.",
+                    subheadline: "Influence doesn't require volume. It requires depth.",
+                    hook_image_prompt: "A drop of water hitting a pond and creating ripples that cover the ocean.",
+                    pain_story: "You have a vision for a better world. But the thought of being an influencer, recording TikToks, or shouting commands terrifies you. You think you need to be an extrovert to lead.",
+                    agitation_bullets: [
+                        "Fear of visibility.",
+                        "Draining social battery.",
+                        "Comparing yourself to loud creators."
+                    ],
+                    transition_mechanism: " The Written Word. Writing is the introvert's superpower. It scales infinitely.",
+                    product_name: "The Silent Leader's Manifesto",
+                    product_description: "How to build a movement using essays, books, and art.",
+                    features_bullets: [
+                        "Writing that pierces the soul.",
+                        "Building a 'Cult' of deep followers.",
+                        "Automated Community Management."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "The 'Pen Name' Strategy", description: "Influence anonymously.", value: "$29" }
+                    ],
+                    guarantee_text: "Start your movement.",
+                    scarcity_text: "The world needs you.",
+                    cta_text: "Start Writing"
+                }
+            },
+            {
+                id: "manifesting-reality",
+                title: "How to Manifest Reality using Neuroscience instead of Wishful Thinking",
+                script: {
+                    headline: "Magic is just Science we don't understand yet.",
+                    subheadline: "Bridge the gap between your intuition and material reality.",
+                    hook_image_prompt: "Brain synapses forming a galaxy.",
+                    pain_story: "You believe in the power of the mind, but you're skeptical of 'The Secret'. You want results, not just good vibes. You know you can create your reality, but you lack the manual.",
+                    agitation_bullets: [
+                        "Vision boards that never come true.",
+                        "Feeling 'crazy' for believing in magic.",
+                        "Disconnect between your spiritual richness and material lack."
+                    ],
+                    transition_mechanism: "Neuro-Plasticity Visualization. Rewiring the Reticular Activating System (RAS) to spot opportunities.",
+                    product_name: "The Rational Mystic's Guide",
+                    product_description: "A grounded approach to manifestation using psychology and focus.",
+                    features_bullets: [
+                        "The 'Memory of the Future' Technique.",
+                        "Removing subconscious blocks.",
+                        "Actionable Synchronicities."
+                    ],
+                    price_original: "$222",
+                    price_discounted: "$55",
+                    bonuses: [
+                        { title: "Binaural Beats Collection", description: "Brainwave entrainment.", value: "$33" }
+                    ],
+                    guarantee_text: "See a sign in 24 hours.",
+                    scarcity_text: "Portal open.",
+                    cta_text: "Manifest"
+                }
+            }
+        ]
+    },
+    INFP: {
+        id: "infp",
+        name: "The Mediator",
+        artistic_vibe: "Pastel dreamscapes, cozy cottagecore, Studio Ghibli nature, watercolors, soft clouds, magical realism, floating islands.",
+        psychological_triggers: [
+            "Authenticity & Identity",
+            "Creative Expression",
+            "Emotional Harmony",
+            "Healing the Self",
+            "Idealism"
+        ],
+        products: [
+            {
+                id: "monetize-art",
+                title: "How to Make Money from Your Art without Selling Your Soul",
+                script: {
+                    headline: "Your Sensitivity is Your Superpower. Don't let Capitalism Crush It.",
+                    subheadline: "Thrive as a creator without becoming a marketer.",
+                    hook_image_prompt: "A paintbrush painting a door in the air that opens to a treasure room.",
+                    pain_story: "You want to create, but you hate 'business'. You feel that charging for your art taints it. But the alternative is a soul-sucking day job that leaves you too tired to create. You need a middle way.",
+                    agitation_bullets: [
+                        "Starving artist syndrome.",
+                        "The fear of being 'inauthentic'.",
+                        "Hoarding your work because you fear judgment."
+                    ],
+                    transition_mechanism: "The Patronage Model. Finding the 1,000 True Fans who love you BECAUSE you are authentic.",
+                    product_name: "The Authentic Creator's Handbook",
+                    product_description: "How to build a supportive audience on platforms like Patreon/Substack.",
+                    features_bullets: [
+                        "Selling through Storytelling.",
+                        "Pricing based on Connection, not hours.",
+                        "Protecting your creative heart."
+                    ],
+                    price_original: "$179",
+                    price_discounted: "$44",
+                    bonuses: [
+                        { title: "Dealing with Criticism", description: "Emotional armor for artists.", value: "$25" }
+                    ],
+                    guarantee_text: "Earn your first dollar authentically.",
+                    scarcity_text: "Create freedom.",
+                    cta_text: "Bloom Now"
+                }
+            },
+            {
+                id: "gentle-productivity",
+                title: "How to Get Things Done when you Hate Structure and Discipline",
+                script: {
+                    headline: "Flow like Water. Don't Grind like Stone.",
+                    subheadline: "Productivity for the dreamer.",
+                    hook_image_prompt: "A river flowing effortlessly around rocks to reach the ocean.",
+                    pain_story: "Standard advice like 'eat the frog' or 'time blocking' makes you want to rebel. You work in bursts of passion. Trying to force yourself into a grid kills your spirit.",
+                    agitation_bullets: [
+                        "Guilt over missed deadlines.",
+                        "The 'lazy' label.",
+                        "Starting 50 novels, finishing 0."
+                    ],
+                    transition_mechanism: "Intuitive Action. Following your energy rather than a clock.",
+                    product_name: "The Soft-Discipline System",
+                    product_description: "A forgiving framework that accounts for your emotional fluctuations.",
+                    features_bullets: [
+                        "The 'Minimum Viable Day'.",
+                        "Gamifying chores with fantasy.",
+                        "Forgiving yourself to move forward."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Dream Journaling", description: "Harvesting ideas from sleep.", value: "$15" }
+                    ],
+                    guarantee_text: "Feel productive without stress.",
+                    scarcity_text: "Flow state waiting.",
+                    cta_text: "Flow Now"
+                }
+            },
+            {
+                id: "storytelling-mastery",
+                title: "How to Heal Yourself and Others through the Power of Story",
+                script: {
+                    headline: "Your Pain is a Story waiting to be told.",
+                    subheadline: "Turn your inner world into art that connects.",
+                    hook_image_prompt: "An open book where the words turn into birds flying out.",
+                    pain_story: "You have entire universes inside your head. You feel things so deeply it's overwhelming. If you don't let it out, it turns into anxiety. You need to channel this.",
+                    agitation_bullets: [
+                        "Writer's block caused by perfectionism.",
+                        "Feeling misunderstood.",
+                        "The loneliness of the vivid imagination."
+                    ],
+                    transition_mechanism: "The Hero's Journey (Internal). Mapping your emotions to universal archetypes.",
+                    product_name: "The Inner-World Cartography",
+                    product_description: "A course on writing fiction or memoir as therapy and art.",
+                    features_bullets: [
+                        "Characterizing your demons.",
+                        "Plotting your emotional arc.",
+                        "The discipline of finishing."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Prompt Generator", description: "Never run out of ideas.", value: "$20" }
+                    ],
+                    guarantee_text: "Write your first chapter.",
+                    scarcity_text: "The story ends soon.",
+                    cta_text: "Start Telling"
+                }
+            },
+            {
+                id: "idealism-survival",
+                title: "How to Keep Your Heart Open in a Cynical World",
+                script: {
+                    headline: "The World is Hard. You are Soft. That is your Strength.",
+                    subheadline: "Don't harden your heart. Strengthen your spine.",
+                    hook_image_prompt: "A flower growing out of concrete, glowing with light.",
+                    pain_story: "The cruelty of the news, the coldness of modern life—it crushes you. You find yourself retreating into fantasy to escape. You wonder if you need to 'toughen up' to survive.",
+                    agitation_bullets: [
+                        "World-weariness.",
+                        "Loss of innocence.",
+                        "Despair paralysis."
+                    ],
+                    transition_mechanism: "Radical Hope. Using your idealism as a weapon against despair, not an escape.",
+                    product_name: "The Warrior-Poet's Path",
+                    product_description: "Philosophical and practical tools to engage with the world without losing your light.",
+                    features_bullets: [
+                        "Boundaries for Activists.",
+                        "Curating your reality feed.",
+                        "Small acts of great love."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Meditation for Sensitivity", description: "Calm the storm.", value: "$22" }
+                    ],
+                    guarantee_text: "Find hope again.",
+                    scarcity_text: "Light the dark.",
+                    cta_text: "Stay Soft"
+                }
+            },
+            {
+                id: "creative-flow",
+                title: "How to Access the Muse on Command without Waiting for Inspiration",
+                script: {
+                    headline: "Inspiration is a Guest. You are the Host. Invite her in.",
+                    subheadline: "Rituals to bypass the ego and create pure art.",
+                    hook_image_prompt: "A door in a library opening to a galaxy.",
+                    pain_story: "You wait for the 'spark'. When it's there, you are a god. When it's gone, you are a depressed statue. You feel at the mercy of your creativity.",
+                    agitation_bullets: [
+                        "Creative blocks lasting months.",
+                        "Fear that the magic is gone forever.",
+                        "Starting over constantly."
+                    ],
+                    transition_mechanism: "The Ritual State. Triggering the flow state using sensory anchors.",
+                    product_name: "The Muse Summoning Kit",
+                    product_description: "A toolkit of sounds, prompts, and habits to trigger creativity.",
+                    features_bullets: [
+                        "Sensory anchoring.",
+                        "The 5-minute sketch rule.",
+                        "Bypassing the inner critic."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Lo-Fi Playlists", description: "Curated for dreaming.", value: "$15" }
+                    ],
+                    guarantee_text: "Create something today.",
+                    scarcity_text: "Unlock the flow.",
+                    cta_text: "Summon Muse"
+                }
+            }
+        ]
+    },
+    ENFJ: {
+        id: "enfj",
+        name: "The Protagonist",
+        artistic_vibe: "Warm golden hour, communal fires, stadiums filled with light, intertwined hands, uplifting sunrises, heroic statues.",
+        psychological_triggers: [
+            "Leadership & Influence",
+            "Helping Others Grow",
+            "Community Harmony",
+            "Being Loved/Appreciated",
+            "Social Impact"
+        ],
+        products: [
+            {
+                id: "charismatic-leadership",
+                title: "How to Lead a Movement so Powerful People Follow You into Fire",
+                script: {
+                    headline: "You were Born to Lead. It's time to Accept the Crown.",
+                    subheadline: "Harness your natural charisma to create massive change.",
+                    hook_image_prompt: "A figure on a stage with arms open, golden light connecting them to a crowd.",
+                    pain_story: "You see potential in everyone. You want to guide them, help them, save them. But sometimes you care more about their success than they do. You burn out trying to drag people to the promised land.",
+                    agitation_bullets: [
+                        "Martyr syndrome.",
+                        "Feeling underappreciated.",
+                        "Leading people who don't want to be led."
+                    ],
+                    transition_mechanism: "Transformational Leadership. Inspiring vision rather than managing tasks.",
+                    product_name: "The Protagonist's Playbook",
+                    product_description: "How to articulate a vision so compelling that people volunteer to help you.",
+                    features_bullets: [
+                        "The 'Vision Speech' template.",
+                        "Conflict Resolution as growth.",
+                        "Building your Lieutenant layer."
+                    ],
+                    price_original: "$299",
+                    price_discounted: "$67",
+                    bonuses: [
+                        { title: "Public Speaking confidence", description: "Own the stage.", value: "$47" }
+                    ],
+                    guarantee_text: "Inspire your team.",
+                    scarcity_text: "Take the lead.",
+                    cta_text: "Lead Now"
+                }
+            },
+            {
+                id: "community-building",
+                title: "How to Build a Tribe of Raving Fans who Love You and Each Other",
+                script: {
+                    headline: "Create Belonging in a Lonely World.",
+                    subheadline: "The architecture of cult-like (positive) communities.",
+                    hook_image_prompt: "A network of glowing hearts connecting around a campfire.",
+                    pain_story: "You love bringing people together. But hosting events, managing dramas, and keeping the energy up is exhausting. You want a community that sustains itself.",
+                    agitation_bullets: [
+                        "Being the only energy source.",
+                        "Drama management.",
+                        "Engagement drop-off."
+                    ],
+                    transition_mechanism: "Ritual Design. Embedding culture into the fabric of the group.",
+                    product_name: "The Tribe Builder's Kit",
+                    product_description: "Templates for community events, values, and moderation.",
+                    features_bullets: [
+                        "The 'Welcoming' Ritual.",
+                        "Shared Language creation.",
+                        "Identifying Core Members."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Discord/Slack Setup", description: "Tech for connection.", value: "$29" }
+                    ],
+                    guarantee_text: "Launch your tribe.",
+                    scarcity_text: "Connect them.",
+                    cta_text: "Build Tribe"
+                }
+            },
+            {
+                id: "saying-no",
+                title: "How to Set Boundaries without Feeling Like a Bad Person",
+                script: {
+                    headline: "You Can't Pour from an Empty Cup. Stop Lights Yourself on Fire to Keep Others Warm.",
+                    subheadline: "Boundaries are an act of love, not rejection.",
+                    hook_image_prompt: "A beautiful golden gate that is closed, protecting a garden.",
+                    pain_story: "You say yes to everything using your free time, your emotional energy, your money. You resent people for taking advantage, but you let them. You fear that if you say no, they won't love you.",
+                    agitation_bullets: [
+                        "Resentment building up.",
+                        "Passive-aggressive outbursts.",
+                        "Physical exhaustion."
+                    ],
+                    transition_mechanism: "The Benevolent No. Framing rejection as a higher 'Yes' to your mission.",
+                    product_name: "The Boundary Bootcamp",
+                    product_description: "Scripts and mindsets to protect your energy.",
+                    features_bullets: [
+                        "Scripts for turning down friends.",
+                        "Protecting your 'Me Time'.",
+                        "Overcoming the 'Selfish' guilt."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$37",
+                    bonuses: [
+                        { title: "Self-Care Rituals", description: "Refill the cup.", value: "$27" }
+                    ],
+                    guarantee_text: "Say no once today.",
+                    scarcity_text: "Protect yourself.",
+                    cta_text: "Set Boundaries"
+                }
+            },
+            {
+                id: "eq-mastery",
+                title: "How to Read People Like a Book and Influence Them Positively",
+                script: {
+                    headline: "Empathy is X-Ray Vision. Use it.",
+                    subheadline: "Deepen relationships and navigate social dynamics.",
+                    hook_image_prompt: "Two faces looking at each other with a stream of light connecting their foreheads.",
+                    pain_story: "You intuitively know what people feel, but sometimes you project or misinterpret. Or you get overwhelmed by the data. You want to sharpen this sense.",
+                    agitation_bullets: [
+                        "Miscommunication.",
+                        "Taking things personally.",
+                        "Social anxiety spikes."
+                    ],
+                    transition_mechanism: "Active Empathy. Asking the right questions to confirm intuition.",
+                    product_name: "The Connection Catalyst",
+                    product_description: "Tools for deep rapport and emotional intelligence.",
+                    features_bullets: [
+                        "Deep Listening techniques.",
+                        "Mirroring and Matching.",
+                        "Resolving conflict before it starts."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$39",
+                    bonuses: [
+                        { title: "Body Language Decoder", description: "Read the unsaid.", value: "$29" }
+                    ],
+                    guarantee_text: "Connect deeper.",
+                    scarcity_text: "Master emotion.",
+                    cta_text: "Master EQ"
+                }
+            },
+            {
+                id: "public-speaking",
+                title: "How to Speak so People are Mesmerized by Your Message",
+                script: {
+                    headline: "Your Voice is Your Sword. Sharpen It.",
+                    subheadline: "Captivate any audience, from 1 to 1,000.",
+                    hook_image_prompt: "Microphone glowing on a stage.",
+                    pain_story: "You have the passion, but maybe you ramble, or you get nervous. You want to impact the world, and you know communication is the key.",
+                    agitation_bullets: [
+                        "Um's and Ah's.",
+                        "Losing your train of thought.",
+                        "Boring the audience."
+                    ],
+                    transition_mechanism: "Story-Selling. Structuring information as emotional narrative.",
+                    product_name: "The Charisma Codes",
+                    product_description: "Rhetoric and delivery training for the Protagonist.",
+                    features_bullets: [
+                        "Vocal variety.",
+                        "The 'Pause' of power.",
+                        "Story structures that work."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$55",
+                    bonuses: [
+                        { title: "Toastmasters Hacks", description: "Fast track.", value: "$19" }
+                    ],
+                    guarantee_text: "Speak with power.",
+                    scarcity_text: "Take the mic.",
+                    cta_text: "Speak Up"
+                }
+            }
+        ]
+    },
+    ENFP: {
+        id: "enfp",
+        name: "The Campaigner",
+        artistic_vibe: "Carnival lights, fireworks, messy paint studios, vibrant splashes, balloons, festivals, galaxy swirls, pop-art.",
+        psychological_triggers: [
+            "Freedom & Exploration",
+            "Connecting People",
+            "Starting New Adventures",
+            "Authentic Self-Expression",
+            "Fear of Missing Out"
+        ],
+        products: [
+            {
+                id: "finish-what-you-start",
+                title: "How to Actually Finish Projects without getting Bored to Death",
+                script: {
+                    headline: "You are a Starter. Become a Finisher.",
+                    subheadline: "The curse of the Campaigner: 1,000 ideas, 0 done.",
+                    hook_image_prompt: "A puzzle being completed, the final piece glowing.",
+                    pain_story: "The beginning is intoxicating. The middle is a slog. The end never comes. You have brilliance collecting dust because the dopamine wore off.",
+                    agitation_bullets: [
+                        "Wasted potential.",
+                        "People not trusting your commitments.",
+                        "Self-doubt about your capability.",
+                    ],
+                    transition_mechanism: "The 'Sprint' Method. Short bursts of completion before the boredom sets in.",
+                    product_name: "The Closer's Framework",
+                    product_description: "Strategy to push projects over the line using novelty.",
+                    features_bullets: [
+                        "Accountability partnerships.",
+                        "Defining 'Done' (it's lower than you think).",
+                        "Outsourcing the boring parts."
+                    ],
+                    price_original: "$149",
+                    price_discounted: "$37",
+                    bonuses: [
+                        { title: "Project Graveyard Resurrection", description: "Salvage old ideas.", value: "$22" }
+                    ],
+                    guarantee_text: "Finish one thing this week.",
+                    scarcity_text: "Close the loop.",
+                    cta_text: "Finish It"
+                }
+            },
+            {
+                id: "social-connector",
+                title: "How to become the Most Connected Person in Your City",
+                script: {
+                    headline: "Your Net Worth is Your Network. You are a Billionaire.",
+                    subheadline: "Leverage your natural likeability.",
+                    hook_image_prompt: "A constellation of stars connecting to form a face.",
+                    pain_story: "You know everyone, but it's shallow. Or you forget to follow up. You are the life of the party but you aren't building equity in your relationships.",
+                    agitation_bullets: [
+                        "Losing touch with cool people.",
+                        "Being 'fun' but not 'valuable'.",
+                        "Forgetfulness."
+                    ],
+                    transition_mechanism: "Systematic Serendipity. A CRM for your social life that feels fun.",
+                    product_name: "The Super-Connector Protocol",
+                    product_description: "Managing relationships without becoming a robot.",
+                    features_bullets: [
+                        "The 'Host' Strategy: throw parties, don't attend them.",
+                        "Introduction Etiquette.",
+                        "Adding value instantly."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Party Planning Checklist", description: "Epic events made easy.", value: "$29" }
+                    ],
+                    guarantee_text: "Make a power connection.",
+                    scarcity_text: "Network expands.",
+                    cta_text: "Connect"
+                }
+            },
+            {
+                id: "viral-storytelling",
+                title: "How to Tell Stories that Go Viral and capture Hearts",
+                script: {
+                    headline: "You Have a Voice. Make it Echo.",
+                    subheadline: "Turn your random thoughts into compelling content.",
+                    hook_image_prompt: "A megaphone shooting out colorful birds.",
+                    pain_story: "You talk a lot, but sometimes you lose people. You have 10 tangents. You want to articulate your vision clearly.",
+                    agitation_bullets: [
+                        "Rampling.",
+                        "Low engagement.",
+                        "Being dismissed as 'just excitement'."
+                    ],
+                    transition_mechanism: "The Narrative Arc. Structure your chaos into a beginning, middle, and end.",
+                    product_name: "The Viral Storyteller",
+                    product_description: "Content creation guide for ENFPs.",
+                    features_bullets: [
+                        "Hooking attention instantly.",
+                        "Vulnerability as strength.",
+                        "Structuring the 'Rant'."
+                    ],
+                    price_original: "$129",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Content Calendar for Chaotic Minds", description: "Flexible consistency.", value: "$19" }
+                    ],
+                    guarantee_text: "Write a viral post.",
+                    scarcity_text: "Go live.",
+                    cta_text: "Tell Story"
+                }
+            },
+            {
+                id: "joyful-productivity",
+                title: "How to Work Hard without losing your Spark",
+                script: {
+                    headline: "Work Should be Play. If it's not, You're Doing it Wrong.",
+                    subheadline: "Redefining hustle for the free spirit.",
+                    hook_image_prompt: "A desk covered in toys and colorful tools.",
+                    pain_story: "Corporate grids kill you. Routine kills you. You think you hate work, but you just hate boredom. When you are lit up, you work harder than anyone.",
+                    agitation_bullets: [
+                        "Burnout from boredom.",
+                        "Depression from gray cubicles.",
+                        "Resisting the 'grind'."
+                    ],
+                    transition_mechanism: "Play-Based Work. Gamification of the output.",
+                    product_name: "The Joy-Economy Blueprint",
+                    product_description: "Building a career that feels like a game.",
+                    features_bullets: [
+                        "Skill-stacking for fun.",
+                        "The 'Adventure' mindset.",
+                        "Finding 'Play' in data entry."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$27",
+                    bonuses: [
+                        { title: "Office Decor for the Soul", description: "Vibe matters.", value: "$15" }
+                    ],
+                    guarantee_text: "Have fun working.",
+                    scarcity_text: "Play ball.",
+                    cta_text: "Play Now"
+                }
+            },
+            {
+                id: "finding-tribe",
+                title: "How to Find the People who actually Get You",
+                script: {
+                    headline: "Stop Explaining Yourself to Muggles.",
+                    subheadline: "Find your magical creatures.",
+                    hook_image_prompt: "A group of colorful avatars meeting in a digital forest.",
+                    pain_story: "You have many friends, but few who understand your depth. You feel like a unicorn in a stable of horses. You are lonely in a crowd.",
+                    agitation_bullets: [
+                        "Shallow friendships.",
+                        "Hiding your weirdness.",
+                        "Feeling 'too much'."
+                    ],
+                    transition_mechanism: "Signal Broadcasting. Being so authentically weird you attract your tribe.",
+                    product_name: "The Weirdo Magnet",
+                    product_description: "How to signal your true self to attract true friends.",
+                    features_bullets: [
+                        "Vulnerability loops.",
+                        "Where to look for intuitive types.",
+                        "Filtering out judgers."
+                    ],
+                    price_original: "$111",
+                    price_discounted: "$33",
+                    bonuses: [
+                        { title: "Conversation Starters for Deep Talk", description: "Skip small talk.", value: "$11" }
+                    ],
+                    guarantee_text: "Find a friend.",
+                    scarcity_text: "Tribe waiting.",
+                    cta_text: "Find Them"
+                }
+            }
+        ]
+    },
     // Placeholders for other types can be added here
 };
