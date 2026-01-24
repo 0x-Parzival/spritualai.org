@@ -140,17 +140,7 @@ export default function Home() {
                     <div className="title">
                         <h1>SpritualAI.org</h1>
                         <h1>SpritualAI.org</h1>
-                        <h2 style={{
-                            color: "#00bcd4",
-                            textAlign: "center",
-                            margin: "10px 0 0",
-                            fontSize: "24px",
-                            textTransform: "uppercase",
-                            fontWeight: 300,
-                            letterSpacing: "2px",
-                            width: "100%",
-                            textShadow: "0 0 10px rgba(0, 188, 212, 0.8)"
-                        }}>
+                        <h2 className="subtitle-text">
                             YOUR FIRST STEP TOWARDS TRANSFORMATION
                         </h2>
                     </div>
@@ -188,30 +178,8 @@ export default function Home() {
             </div>
 
             {/* 🪷 Lotus God Trigger */}
-            <div style={{
-                position: 'fixed',
-                bottom: '20px',
-                right: '20px',
-                zIndex: 100
-            }}>
-                <a
-                    href="/lotus-god"
-                    style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontFamily: "'Orbitron', sans-serif",
-                        fontSize: '14px',
-                        cursor: 'pointer',
-                        textTransform: 'uppercase',
-                        letterSpacing: '2px',
-                        textShadow: '0 0 5px rgba(255, 255, 255, 0.5)',
-                        padding: '10px',
-                        textDecoration: 'none'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}
-                >
+            <div className="lotus-trigger-container">
+                <a href="/lotus-god" className="lotus-trigger-link">
                     click to see lotus god
                 </a>
             </div>
