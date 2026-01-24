@@ -65,8 +65,21 @@ class SpiritualBackground {
         const colors = new Float32Array(PARTICLE_COUNT * 3);
         const sizes = new Float32Array(PARTICLE_COUNT);
 
-        const color1 = new THREE.Color(0x9154ff); // Purple
-        const color2 = new THREE.Color(0x4fd1c5); // Teal
+        // Detect Theme Color
+        const bodyClass = document.body.className;
+        let colorA = new THREE.Color(0x9154ff); // Default/Purple
+        let colorB = new THREE.Color(0xbd00ff);
+
+        if (bodyClass.includes('theme-green')) {
+            colorA = new THREE.Color(0x00e68c);
+            colorB = new THREE.Color(0x00ffaa);
+        } else if (bodyClass.includes('theme-blue')) {
+            colorA = new THREE.Color(0x00bcff);
+            colorB = new THREE.Color(0x0060ff);
+        } else if (bodyClass.includes('theme-yellow')) {
+            colorA = new THREE.Color(0xffce00);
+            colorB = new THREE.Color(0xff8c00);
+        }
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             // Position
@@ -75,7 +88,7 @@ class SpiritualBackground {
             positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
 
             // Color
-            const mixedColor = color1.clone().lerp(color2, Math.random());
+            const mixedColor = colorA.clone().lerp(colorB, Math.random());
             colors[i * 3] = mixedColor.r;
             colors[i * 3 + 1] = mixedColor.g;
             colors[i * 3 + 2] = mixedColor.b;
