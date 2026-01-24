@@ -2,6 +2,9 @@
   "name": "spiritual-ai-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,7 +14,7 @@
   "dependencies": {
     "@types/three": "^0.182.0",
     "gsap": "^3.14.2",
-    "next": "16.0.3",
+    "next": "^16.1.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "three": "^0.182.0"
@@ -22,6 +25,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.9.18",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
     "tailwindcss": "^4",
