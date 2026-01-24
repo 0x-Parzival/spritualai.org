@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
@@ -55,10 +56,25 @@
         }
 
         @keyframes float-particle {
-            0%, 100% { transform: translate(0, 0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translate(100px, -100vh); opacity: 0; }
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(100px, -100vh);
+                opacity: 0;
+            }
         }
 
         /* Container */
@@ -98,8 +114,15 @@
         }
 
         @keyframes glow-pulse {
-            0%, 100% { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4)); }
-            50% { filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8)); }
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8));
+            }
         }
 
         .hero p {
@@ -108,6 +131,44 @@
             margin: 0 auto 50px;
             color: #b0b0b0;
             line-height: 1.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-character-intp {
+            position: absolute;
+            bottom: 0px;
+            right: 5%;
+            height: 85vh;
+            max-height: 800px;
+            width: auto;
+            object-fit: contain;
+            z-index: 1;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 50px rgba(59, 130, 246, 0.3));
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .hero-character-intp {
+                right: -10%;
+                opacity: 0.6;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-character-intp {
+                right: 50%;
+                transform: translateX(50%);
+                opacity: 0.2;
+                height: 60vh;
+            }
         }
 
         /* Glass Button */
@@ -164,7 +225,7 @@
             transform: translateX(-50%);
             width: 80%;
             height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(59, 130, 246, 0.05) 2px, transparent 2px),
                 linear-gradient(90deg, rgba(59, 130, 246, 0.05) 2px, transparent 2px);
             background-size: 30px 30px;
@@ -230,7 +291,7 @@
         .product-card:hover {
             transform: translateY(-8px) scale(1.02);
             border-color: var(--card-color);
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.5),
                 0 0 40px var(--card-shadow),
                 inset 0 0 30px var(--card-shadow-inset);
@@ -482,8 +543,15 @@
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+            }
         }
 
         .final-cta-subtext {
@@ -556,6 +624,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Animated Background -->
     <div class="grid-background"></div>
@@ -566,14 +635,18 @@
         <!-- Hero Section -->
         <section class="hero">
             <h1>INTP SOLUTIONS — Tools for the Mind That Thinks Beyond the World</h1>
-            <p>Precision-engineered transformation modules built exclusively for INTPs who want to upgrade their mind, accelerate action, and unlock their true potential.</p>
-            <a href="#products" class="glass-button">Access the Modules</a>
+            <p>Precision-engineered transformation modules built exclusively for INTPs who want to upgrade their mind,
+                accelerate action, and unlock their true potential.</p>
+            <a href="#products" class="glass-button" style="position: relative; z-index: 2;">Access the Modules</a>
+            <img src="../HOVER/INTP.png" alt="INTP Character" class="hero-character-intp">
         </section>
 
         <!-- Identity Trigger Section -->
         <section class="identity-section fade-in">
             <h2>Built for a Rare Mind</h2>
-            <p>INTPs aren't normal thinkers. They are system-builders, future engineers, philosophers, and logic-driven creators. These four modules are engineered specifically for the INTP cognitive architecture — not generic self-help.</p>
+            <p>INTPs aren't normal thinkers. They are system-builders, future engineers, philosophers, and logic-driven
+                creators. These four modules are engineered specifically for the INTP cognitive architecture — not
+                generic self-help.</p>
         </section>
 
         <!-- Products Section -->
@@ -742,7 +815,7 @@
         function createParticles() {
             const container = document.getElementById('particles');
             const particleCount = 30;
-            
+
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
@@ -757,7 +830,7 @@
         // Scroll animations
         function handleScrollAnimations() {
             const elements = document.querySelectorAll('.fade-in');
-            
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -776,7 +849,7 @@
         function handleParallax() {
             const gridBg = document.querySelector('.grid-background');
             const scrolled = window.pageYOffset;
-            
+
             if (gridBg) {
                 gridBg.style.transform = `translateY(${scrolled * 0.3}px)`;
             }
@@ -811,10 +884,11 @@
             hero.addEventListener('mousemove', (e) => {
                 const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
                 const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-                
+
                 hero.querySelector('h1').style.transform = `translate(${moveX}px, ${moveY}px)`;
             });
         }
     </script>
 </body>
+
 </html>

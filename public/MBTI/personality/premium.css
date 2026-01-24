@@ -231,6 +231,7 @@ canvas#webgl-canvas {
         grid-template-columns: 1fr;
     }
 }
+
 /* --- Product Cards --- */
 
 .products-section {
@@ -331,7 +332,8 @@ canvas#webgl-canvas {
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 25px;
     line-height: 1.6;
-    flex-grow: 1; /* Pushes CTA to bottom */
+    flex-grow: 1;
+    /* Pushes CTA to bottom */
 }
 
 .product-cta {
@@ -363,4 +365,57 @@ canvas#webgl-canvas {
     .products-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* --- Hero Visual --- */
+.mbti-hero-visual {
+    width: 100%;
+    height: 300px;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--glass-border);
+    position: relative;
+}
+
+.mbti-hero-visual img.hero-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.mbti-hero-visual:hover img.hero-bg {
+    transform: scale(1.05);
+}
+
+.hero-character {
+    position: absolute;
+    bottom: -10px;
+    /* Slight offset to anchor it */
+    right: 5%;
+    height: 110%;
+    /* Allow it to break out slightly if possible, or just fill nicely */
+    width: auto;
+    object-fit: contain;
+    z-index: 10;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.mbti-hero-visual:hover .hero-character {
+    transform: scale(1.05) translateY(-5px);
+    filter: drop-shadow(0 15px 40px rgba(var(--accent-glow), 0.4));
+}
+
+.mbti-hero-visual::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(5, 5, 5, 0.8) 100%);
 }
