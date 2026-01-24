@@ -839,11 +839,7 @@
 
       // Redirect to the corresponding page after a short delay
       setTimeout(() => {
-        if (mbti.toLowerCase() === 'intp') {
-          window.location.href = 'PRODUCTS/intp.html';
-        } else {
-          window.location.href = `personality/${mbti.toLowerCase()}.html`;
-        }
+        window.location.href = `personality/${mbti.toLowerCase()}.html`;
       }, 300);
     }
 
