@@ -330,6 +330,43 @@ void main() {
 }`
 };
 
+interface Connection {
+    node: Node;
+    strength: number;
+}
+
+class Node {
+    position: THREE.Vector3;
+    connections: Connection[];
+    level: number;
+    type: number;
+    size: number;
+    distanceFromRoot: number;
+
+    constructor(position: THREE.Vector3, level: number = 0, type: number = 0) {
+        this.position = position;
+        this.connections = [];
+        this.level = level;
+        this.type = type;
+        this.size = type === 0 ? THREE.MathUtils.randFloat(0.8, 1.4) : THREE.MathUtils.randFloat(0.5, 1.0);
+        this.distanceFromRoot = 0;
+    }
+    addConnection(node: Node, strength: number = 1.0) {
+        // Simple object reference check, could be optimized
+        if (!this.isConnectedTo(node)) {
+            this.connections.push({ node, strength });
+            node.connections.push({ node: this, strength });
+        }
+    }
+    isConnectedTo(node: Node) {
+        return this.connections.some(conn => conn.node === node);
+    }
+}
+
+interface NeuralNetwork {
+    nodes: Node[];
+    rootNode: Node;
+}
 
 // ----------------- COMPONENT ----------------- //
 
@@ -480,40 +517,18 @@ export default function LotusGod() {
             // ... add more if needed
         ];
 
-        // Network Logic
-        class Node {
-            constructor(position, level = 0, type = 0) {
-                this.position = position;
-                this.connections = [];
-                this.level = level;
-                this.type = type;
-                this.size = type === 0 ? THREE.MathUtils.randFloat(0.8, 1.4) : THREE.MathUtils.randFloat(0.5, 1.0);
-                this.distanceFromRoot = 0;
-            }
-            addConnection(node, strength = 1.0) {
-                // Simple object reference check, could be optimized
-                if (!this.isConnectedTo(node)) {
-                    this.connections.push({ node, strength });
-                    node.connections.push({ node: this, strength });
-                }
-            }
-            isConnectedTo(node) {
-                return this.connections.some(conn => conn.node === node);
-            }
-        }
+        let neuralNetwork: NeuralNetwork | null = null;
+        let nodesMesh: THREE.Points | null = null;
+        let connectionsMesh: THREE.LineSegments | null = null;
 
-        let neuralNetwork = null;
-        let nodesMesh = null;
-        let connectionsMesh = null;
-
-        function generateLotusBloom() {
-            let nodes = [];
+        function generateLotusBloom(): NeuralNetwork {
+            let nodes: Node[] = [];
             // Lower root to center the flower better
             let rootNode = new Node(new THREE.Vector3(0, -6, 0), 0, 0);
             rootNode.size = 2.0;
             nodes.push(rootNode);
 
-            const createPetalStrand = (tipX, tipY, ctrlX, ctrlY, type) => {
+            const createPetalStrand = (tipX: number, tipY: number, ctrlX: number, ctrlY: number, type: number) => {
                 const layers = 10;
                 let prev = rootNode;
 
@@ -584,16 +599,16 @@ export default function LotusGod() {
             return { nodes, rootNode };
         }
 
-        function createNetworkVisualization(formationIndex, densityFactor = 1.0) {
+        function createNetworkVisualization(formationIndex: number, densityFactor = 1.0) {
             if (nodesMesh) {
                 scene.remove(nodesMesh);
                 nodesMesh.geometry.dispose();
-                nodesMesh.material.dispose();
+                (nodesMesh.material as THREE.Material).dispose();
             }
             if (connectionsMesh) {
                 scene.remove(connectionsMesh);
                 connectionsMesh.geometry.dispose();
-                connectionsMesh.material.dispose();
+                (connectionsMesh.material as THREE.Material).dispose();
             }
 
             neuralNetwork = generateLotusBloom();
@@ -601,11 +616,11 @@ export default function LotusGod() {
             if (!neuralNetwork || neuralNetwork.nodes.length === 0) return;
 
             const nodesGeometry = new THREE.BufferGeometry();
-            const nodePositions = [];
-            const nodeTypes = [];
-            const nodeSizes = [];
-            const nodeColors = [];
-            const distancesFromRoot = [];
+            const nodePositions: number[] = [];
+            const nodeTypes: number[] = [];
+            const nodeSizes: number[] = [];
+            const nodeColors: number[] = [];
+            const distancesFromRoot: number[] = [];
 
             const palette = colorPalettes[0];
             const greenColor = new THREE.Color(0x4caf50); // Nice green for leaves
@@ -653,12 +668,12 @@ export default function LotusGod() {
 
             // Connections
             const connectionsGeometry = new THREE.BufferGeometry();
-            const connectionColors = [];
-            const connectionStrengths = [];
-            const connectionPositions = [];
-            const startPoints = [];
-            const endPoints = [];
-            const pathIndices = [];
+            const connectionColors: number[] = [];
+            const connectionStrengths: number[] = [];
+            const connectionPositions: number[] = [];
+            const startPoints: number[] = [];
+            const endPoints: number[] = [];
+            const pathIndices: number[] = [];
 
             const processedConnections = new Set();
             let pathIndex = 0;
@@ -667,6 +682,9 @@ export default function LotusGod() {
                 node.connections.forEach(connection => {
                     const connectedNode = connection.node;
                     // Skip leaf-to-petal connections if we want cleaner separation? No, connect them.
+
+                    // Check if neuralNetwork is not null before using it
+                    if (!neuralNetwork) return;
 
                     const connectedIndex = neuralNetwork.nodes.indexOf(connectedNode);
                     if (connectedIndex === -1) return;
@@ -741,7 +759,7 @@ export default function LotusGod() {
         const interactionPoint = new THREE.Vector3();
         let lastPulseIndex = 0;
 
-        function triggerPulse(clientX, clientY) {
+        function triggerPulse(clientX: number, clientY: number) {
             pointer.x = (clientX / window.innerWidth) * 2 - 1;
             pointer.y = -(clientY / window.innerHeight) * 2 + 1;
 
@@ -753,10 +771,14 @@ export default function LotusGod() {
                 const time = clock.getElapsedTime();
                 if (nodesMesh && connectionsMesh) {
                     lastPulseIndex = (lastPulseIndex + 1) % 3;
-                    nodesMesh.material.uniforms.uPulsePositions.value[lastPulseIndex].copy(interactionPoint);
-                    nodesMesh.material.uniforms.uPulseTimes.value[lastPulseIndex] = time;
-                    connectionsMesh.material.uniforms.uPulsePositions.value[lastPulseIndex].copy(interactionPoint);
-                    connectionsMesh.material.uniforms.uPulseTimes.value[lastPulseIndex] = time;
+                    // Type assertion or check needed if Material doesn't have uniforms (it does for ShaderMaterial)
+                    const nodeMat = nodesMesh.material as THREE.ShaderMaterial;
+                    const connMat = connectionsMesh.material as THREE.ShaderMaterial;
+
+                    nodeMat.uniforms.uPulsePositions.value[lastPulseIndex].copy(interactionPoint);
+                    nodeMat.uniforms.uPulseTimes.value[lastPulseIndex] = time;
+                    connMat.uniforms.uPulsePositions.value[lastPulseIndex].copy(interactionPoint);
+                    connMat.uniforms.uPulseTimes.value[lastPulseIndex] = time;
                 }
             }
         }
@@ -775,13 +797,15 @@ export default function LotusGod() {
                 bloomTime = Math.min(bloomTime, 1.0);
 
                 if (nodesMesh) {
-                    nodesMesh.material.uniforms.uTime.value = t;
-                    nodesMesh.material.uniforms.uBloom.value = bloomTime;
+                    const mat = nodesMesh.material as THREE.ShaderMaterial;
+                    mat.uniforms.uTime.value = t;
+                    mat.uniforms.uBloom.value = bloomTime;
                     nodesMesh.rotation.y = Math.sin(t * 0.04) * 0.05;
                 }
                 if (connectionsMesh) {
-                    connectionsMesh.material.uniforms.uTime.value = t;
-                    connectionsMesh.material.uniforms.uBloom.value = bloomTime;
+                    const mat = connectionsMesh.material as THREE.ShaderMaterial;
+                    mat.uniforms.uTime.value = t;
+                    mat.uniforms.uBloom.value = bloomTime;
                     connectionsMesh.rotation.y = Math.sin(t * 0.04) * 0.05;
                 }
 
@@ -793,7 +817,7 @@ export default function LotusGod() {
             }
 
             starField.rotation.y += 0.0002;
-            starField.material.uniforms.uTime.value = t;
+            (starField.material as THREE.ShaderMaterial).uniforms.uTime.value = t;
 
             controls.update();
             composer.render();
@@ -823,11 +847,11 @@ export default function LotusGod() {
             // Cleanup
             if (nodesMesh) {
                 nodesMesh.geometry.dispose();
-                nodesMesh.material.dispose();
+                (nodesMesh.material as THREE.Material).dispose();
             }
             if (connectionsMesh) {
                 connectionsMesh.geometry.dispose();
-                connectionsMesh.material.dispose();
+                (connectionsMesh.material as THREE.Material).dispose();
             }
             renderer.dispose();
         }
