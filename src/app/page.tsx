@@ -3,6 +3,32 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import "./landing.css";
+import "./mobile.css";
+
+const NeonButton = () => (
+    <a
+        href="/creator"
+        className="neon-button"
+        data-text="Know the Creator"
+    >
+        <span>K</span>
+        <span>n</span>
+        <span>o</span>
+        <span>w</span>
+        <span> </span>
+        <span>t</span>
+        <span>h</span>
+        <span>e</span>
+        <span> </span>
+        <span>C</span>
+        <span>r</span>
+        <span>e</span>
+        <span>a</span>
+        <span>t</span>
+        <span>o</span>
+        <span>r</span>
+    </a>
+);
 
 export default function Home() {
     const [showLotus, setShowLotus] = useState(false);
@@ -119,7 +145,11 @@ export default function Home() {
     }, []);
 
     return (
-        <>
+        <div className="mobile-container">
+            <div className="creator-section">
+                <img src="/images/moon.png" alt="Moon" className="moon-img" />
+                <NeonButton />
+            </div>
             {/* 🕉️ Shiva Background */}
             <div className="shiva-background"></div>
 
@@ -138,18 +168,25 @@ export default function Home() {
             <div className="container">
                 <div className="neon">
                     <div className="title">
-                        <h1>SpritualAI.org</h1>
-                        <h1>SpritualAI.org</h1>
-                        <h2 className="subtitle-text">
-                            YOUR FIRST STEP TOWARDS TRANSFORMATION
-                        </h2>
+                        <h1>Spritiual AI</h1>
+                        <h1>Spritiual AI</h1>
+                        <div className="subtitle-lotus-container">
+                            <h2 className="subtitle-text">
+                                YOUR FIRST STEP TOWARDS TRANSFORMATION
+                            </h2>
+                            <div className="lotus-trigger-container">
+                                <a href="/lotus-god" className="lotus-trigger-link">
+                                    click to see lotus god
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* 🔮 MBTI Question Section */}
+            {/* 🔮 Personality Question Section */}
             <div className="mbti-container">
-                <h2 className="matrix-text">DO YOU KNOW YOUR MBTI TYPE?</h2>
+                <h2 className="matrix-text">DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
 
                 <div className="button-group">
                     <a href="/MBTI/mbti.html" className="neon-btn" data-text="YES">YES</a>
@@ -177,12 +214,7 @@ export default function Home() {
                 </main>
             </div>
 
-            {/* 🪷 Lotus God Trigger */}
-            <div className="lotus-trigger-container">
-                <a href="/lotus-god" className="lotus-trigger-link">
-                    click to see lotus god
-                </a>
-            </div>
-        </>
+            {/* 🪷 Lotus God Trigger - Moved to subtitle container */}
+        </div>
     );
 }

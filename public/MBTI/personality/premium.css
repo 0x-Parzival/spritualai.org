@@ -98,9 +98,12 @@ canvas#webgl-canvas {
 
 /* Header */
 .mbti-header {
-    text-align: center;
-    margin-bottom: 70px;
     position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 40px 0;
+    margin: 0 auto 40px;
+    max-width: 90%;
 }
 
 .mbti-title {
@@ -187,6 +190,12 @@ canvas#webgl-canvas {
     font-size: 1.15rem;
     line-height: 1.8;
     color: var(--text-muted);
+    position: relative;
+    z-index: 2;
+    background: var(--glass-bg);
+    padding: 30px;
+    border-radius: 16px;
+    margin-top: 20px;
 }
 
 .section-content p {
@@ -368,37 +377,137 @@ canvas#webgl-canvas {
 }
 
 /* --- Hero Visual --- */
-
-
-
-
-
-
-
-
-.mbti-hero-visual:hover 
-
-
-/* --- Hero Visual (Updated) --- */
 .mbti-hero-visual {
-    width: 100%;
-    height: 400px; /* Increased height */
-    margin-bottom: 60px;
-    position: relative;
-    z-index: 10;
+    width: calc(100% - 40px); /* Match content width with padding */
+    max-width: 1100px; /* Match container max-width */
+    margin: 0 auto; /* Center the hero */
+    position: absolute;
+    top: 60px; /* Increased top spacing */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    pointer-events: none;
+    border-radius: 24px;
+    overflow: visible; /* Allow child elements to overflow */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .hero-bg-container {
     width: 100%;
     height: 100%;
-    border-radius: 24px;
-    overflow: hidden;
+    position: relative;
+}
+
+.hero-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+/* Header container */
+.container {
+    position: relative;
+    z-index: 1;
+    padding-top: 260px; /* Increased space at the top for better visibility */
+    padding-bottom: 40px; /* Add some bottom padding for better spacing */
+}
+
+/* Header positioning */
+.mbti-header {
     position: absolute;
-    top: 0;
+    top: 60px; /* Match hero visual top position */
     left: 0;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    z-index: 0;
+    right: 0;
+    width: 100%;
+    height: 200px; /* Match hero visual height */
+    max-width: 1100px; /* Match container max-width */
+    margin: 0 auto;
+    z-index: 3; /* Ensure text stays above the image */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    pointer-events: none;
+}
+
+/* Adjust hero height based on content */
+.mbti-hero-visual {
+    height: 200px; /* Slightly increased height */
+    margin-top: 0;
+}
+
+/* Adjust for longer personality type names */
+.mbti-header .mbti-title.long {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+/* Adjust for shorter personality type names */
+.mbti-header .mbti-title.short {
+    font-size: clamp(3.5rem, 10vw, 6rem);
+}
+
+.mbti-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 6rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin: 0 0 10px 0;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+    position: relative;
+    z-index: 3;
+    padding: 0 20px;
+}
+
+.mbti-subtitle {
+    font-size: 1.4rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    position: relative;
+    z-index: 3;
+    opacity: 0.95;
+    margin: 0;
+    padding: 0 20px;
+}
+
+/* First section adjustments */
+.section:first-of-type {
+    padding-top: 40px; /* Reduced padding since we have space from hero */
+    position: relative;
+    z-index: 2;
+    background: var(--glass-bg);
+    border-radius: 24px;
+    margin-top: 20px; /* Add space between hero and content */
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    max-width: 1100px; /* Match container width */
+    margin-left: auto;
+    margin-right: auto;
+    width: calc(100% - 40px); /* Match hero visual width */
+}
+
+/* Hero character image */
+.hero-character {
+    position: absolute;
+    right: 5%;
+    bottom: -80px; /* Extend further down */
+    height: 150%; /* Increase height to allow more overflow */
+    max-height: 450px;
+    z-index: 10; /* Ensure it's above the content */
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.4));
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+/* On hover, slightly lift the character */
+.hero-character:hover {
+    transform: translateY(-10px);
 }
 
 .mbti-hero-visual img.hero-bg {
@@ -415,13 +524,14 @@ canvas#webgl-canvas {
 .hero-character {
     position: absolute;
     bottom: -30px;
-    right: 0%; 
-    height: 140%; /* Very large to pop out */
+    right: 0%;
+    height: 140%;
+    /* Very large to pop out */
     max-height: 600px;
     width: auto;
     object-fit: contain;
     z-index: 20;
-    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
 }
@@ -438,6 +548,6 @@ canvas#webgl-canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, transparent 0%, rgba(5,5,5,0.8) 100%);
+    background: linear-gradient(to bottom, transparent 0%, rgba(5, 5, 5, 0.8) 100%);
     pointer-events: none;
 }

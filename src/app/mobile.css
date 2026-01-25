@@ -1,0 +1,194 @@
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+
+    /* Base layout */
+    body,
+    html {
+        overflow-x: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Container adjustments */
+    .container {
+        order: 2;
+        margin: 60px auto 0;
+        /* Increased top margin for space below button */
+        width: 90%;
+        max-width: 500px;
+        padding: 0 10px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Title and Subtitle */
+    .title h1 {
+        font-size: clamp(28px, 13vw, 120px) !important;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        letter-spacing: 0px !important;
+        padding: 0 10px;
+    }
+
+    .subtitle-text {
+        font-size: clamp(9px, 3.2vw, 18px) !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.5px !important;
+        width: 100%;
+        display: block;
+    }
+
+    /* Creator Section (Mobile) */
+    .creator-section {
+        position: fixed;
+        top: 15px;
+        /* Reverted top spacing */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: row;
+        /* Moon on the right */
+        align-items: center;
+        gap: 12px;
+        /* Reverted gap */
+        width: max-content;
+    }
+
+    .moon-img {
+        width: 30px;
+        /* Reduced moon size to match smaller button */
+        height: auto;
+        order: 2;
+        /* Move moon to the right of the button */
+    }
+
+    /* Adjust neon button style for mobile */
+    .neon-button {
+        position: static;
+        transform: scale(0.8);
+        /* Reverted to match desktop original scale */
+        margin: 0;
+        white-space: nowrap;
+    }
+
+
+    /* Subtitle and lotus trigger container */
+    .subtitle-lotus-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 10px;
+        width: 100%;
+        max-width: 95%;
+        margin: 0 auto;
+    }
+
+
+    /* Personality section */
+    .mbti-container {
+        margin: 1.5rem auto 0 !important;
+        padding: 0 15px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .matrix-text {
+        font-size: 2.2rem !important;
+        white-space: normal !important;
+        max-width: 90vw !important;
+        line-height: 1.2 !important;
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    .matrix-text::before,
+    .matrix-text::after {
+        white-space: normal !important;
+    }
+
+    .button-group {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Ocean effect */
+    .ocean-main {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100vh;
+        min-height: -webkit-fill-available;
+        overflow: hidden;
+        z-index: -1;
+    }
+
+    .ocean {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) rotateX(80deg) rotateZ(0deg);
+        width: 300%;
+        height: 300%;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0a0a2a 0%, #1a1a4a 100%);
+        background-attachment: fixed;
+    }
+
+    /* Lotus trigger */
+    .lotus-trigger-container {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+    }
+
+    .lotus-trigger-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .lotus-trigger-link:hover {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Lotus/Flower container */
+    .flower-container {
+        position: relative;
+        margin: 20px auto 30px;
+        width: 100%;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 5;
+    }
+
+    .flower-container main {
+        --lotus-scale: 0.6;
+        position: absolute;
+        bottom: 2%;
+        left: 50%;
+        transform: translateX(-50%) scale(var(--lotus-scale)) !important;
+        margin-top: 0;
+    }
+}
