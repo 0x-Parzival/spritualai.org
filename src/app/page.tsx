@@ -168,8 +168,8 @@ export default function Home() {
             <div className="container">
                 <div className="neon">
                     <div className="title">
-                        <h1>Spritiual AI</h1>
-                        <h1>Spritiual AI</h1>
+                        <h1>Spiritual AI</h1>
+                        <h1>Spiritual AI</h1>
                         <div className="subtitle-lotus-container">
                             <h2 className="subtitle-text">
                                 YOUR FIRST STEP TOWARDS TRANSFORMATION
