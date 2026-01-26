@@ -33,10 +33,10 @@ const QuizLanding = () => {
             className="neon-wave-container mb-2 sm:mb-4"
           >
             <div className="neon-wave-title">
-              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
+              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-[120px] font-black">
                 SPIRITUAL AI
               </h1>
-              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
+              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-[120px] font-black">
                 SPIRITUAL AI
               </h1>
             </div>
@@ -45,7 +45,7 @@ const QuizLanding = () => {
 
           {/* Subtitle */}
           <motion.p
-            className="font-exo text-base sm:text-lg md:text-xl text-foreground/80 mb-4 sm:mb-6 px-4"
+            className="font-exo text-base sm:text-lg md:text-xl lg:text-3xl xl:text-4xl text-foreground/80 mb-4 sm:mb-6 px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
@@ -66,7 +66,7 @@ const QuizLanding = () => {
               "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"].map((type, i) => (
                 <span
                   key={type}
-                  className="text-[10px] sm:text-xs font-orbitron text-muted-foreground/60 px-1.5 py-0.5 sm:px-2 sm:py-1 border border-border/30 rounded"
+                  className="text-[10px] sm:text-xs lg:text-xl xl:text-2xl font-orbitron text-muted-foreground/60 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-4 lg:py-2 border border-border/30 rounded"
                 >
                   {type}
                 </span>
@@ -82,7 +82,7 @@ const QuizLanding = () => {
             <NeonButton
               variant="primary"
               onClick={() => navigate("/quiz/1")}
-              className="text-base sm:text-lg px-8 py-4 sm:px-12 sm:py-5"
+              className="text-base sm:text-lg lg:text-4xl px-8 py-4 sm:px-12 sm:py-5 lg:px-24 lg:py-8"
             >
               Start Quiz
             </NeonButton>

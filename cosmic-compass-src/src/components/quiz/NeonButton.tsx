@@ -9,12 +9,12 @@ interface NeonButtonProps {
   disabled?: boolean;
 }
 
-const NeonButton = ({ 
-  children, 
-  onClick, 
-  variant = "primary", 
+const NeonButton = ({
+  children,
+  onClick,
+  variant = "primary",
   className,
-  disabled = false 
+  disabled = false
 }: NeonButtonProps) => {
   const getVariantClasses = () => {
     switch (variant) {
@@ -36,7 +36,7 @@ const NeonButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "relative px-6 py-3 sm:px-8 sm:py-4 font-orbitron font-bold text-sm sm:text-base uppercase tracking-wider",
+        "relative px-6 py-3 sm:px-8 sm:py-4 lg:px-12 lg:py-6 font-orbitron font-bold text-sm sm:text-base lg:text-3xl uppercase tracking-wider",
         "border-2 rounded-lg transition-all duration-300",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         getVariantClasses(),
@@ -64,7 +64,7 @@ const NeonButton = ({
           ease: "easeInOut",
         }}
       />
-      
+
       <span className="relative z-10">{children}</span>
     </motion.button>
   );

@@ -39,7 +39,7 @@ const QuizQuestion4 = ({ onAnswer, getMBTIType }: QuizQuestion4Props) => {
 
       <div className="relative h-full w-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
         <SciFiBackground variant="question4" />
-        
+
         <motion.div
           className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-full justify-center"
           initial={{ opacity: 0 }}
@@ -67,10 +67,10 @@ const QuizQuestion4 = ({ onAnswer, getMBTIType }: QuizQuestion4Props) => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <span className="font-orbitron text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">
+            <span className="font-orbitron text-xs sm:text-sm lg:text-2xl xl:text-3xl text-muted-foreground uppercase tracking-widest text-glow-purple">
               Question 4 of 4
             </span>
-            <h1 className="font-orbitron text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground mt-2">
+            <h1 className="font-orbitron text-lg sm:text-xl md:text-2xl lg:text-5xl xl:text-6xl font-black text-foreground mt-2 sm:mt-6">
               How do you approach{" "}
               <span className="text-primary text-glow-purple">life</span>?
             </h1>

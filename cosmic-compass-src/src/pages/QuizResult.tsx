@@ -155,14 +155,14 @@ const QuizResult = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="relative z-10"
             >
-              <span className="font-orbitron text-xs sm:text-sm text-foreground/60 uppercase tracking-[0.3em] font-medium">
+              <span className="font-orbitron text-xs sm:text-sm lg:text-2xl xl:text-3xl text-foreground/60 uppercase tracking-[0.3em] font-medium">
                 Your Personality Type Is
               </span>
             </motion.div>
 
             {/* MBTI Type - Large Display with enhanced glow */}
             <motion.h1
-              className="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black my-4 sm:my-6 relative z-10"
+              className="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-[12rem] xl:text-[15rem] font-black my-4 sm:my-6 relative z-10"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{
@@ -176,9 +176,9 @@ const QuizResult = () => {
                 <motion.span
                   key={i}
                   className={`inline-block drop-shadow-[0_0_30px_currentColor] ${i === 0 ? "text-neon-cyan" :
-                      i === 1 ? "text-secondary" :
-                        i === 2 ? "text-accent" :
-                          "text-primary"
+                    i === 1 ? "text-secondary" :
+                      i === 2 ? "text-accent" :
+                        "text-primary"
                     }`}
                   style={{
                     textShadow: i === 0 ? '0 0 20px hsl(180 100% 50%), 0 0 40px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.3)' :
@@ -210,10 +210,10 @@ const QuizResult = () => {
               transition={{ duration: 0.8, delay: 1.6 }}
               className="relative z-10"
             >
-              <h2 className="font-orbitron text-lg sm:text-xl md:text-2xl text-primary mb-2 tracking-wide drop-shadow-[0_0_10px_hsl(280_100%_60%_/_0.5)]">
+              <h2 className="font-orbitron text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl text-primary mb-2 tracking-wide drop-shadow-[0_0_10px_hsl(280_100%_60%_/_0.5)]">
                 {description.title}
               </h2>
-              <p className="font-exo text-xs sm:text-sm md:text-base text-foreground/70 max-w-md mx-auto px-2 leading-relaxed">
+              <p className="font-exo text-xs sm:text-sm md:text-base lg:text-2xl xl:text-3xl text-foreground/70 max-w-md lg:max-w-2xl mx-auto px-2 leading-relaxed">
                 {description.subtitle}
               </p>
             </motion.div>
