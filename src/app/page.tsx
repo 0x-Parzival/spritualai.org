@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import Image from "next/image";
 import "./landing.css";
 import "./mobile.css";
 
@@ -9,16 +10,20 @@ const NeonButton = () => (
     <a
         href="/creator"
         className="neon-button"
-        data-text="Know the Creator"
+        data-text="Connect with Creator"
     >
-        <span>K</span>
-        <span>n</span>
+        <span>C</span>
         <span>o</span>
-        <span>w</span>
+        <span>n</span>
+        <span>n</span>
+        <span>e</span>
+        <span>c</span>
+        <span>t</span>
         <span> </span>
+        <span>w</span>
+        <span>i</span>
         <span>t</span>
         <span>h</span>
-        <span>e</span>
         <span> </span>
         <span>C</span>
         <span>r</span>
@@ -146,12 +151,40 @@ export default function Home() {
 
     return (
         <div className="mobile-container">
+            {/* 🌌 Main Background Optimized */}
+            <div className="main-background">
+                <Image
+                    src="/images/shiva_universe_realistic.png"
+                    alt="Space Background"
+                    fill
+                    priority
+                    quality={85}
+                    style={{ objectFit: 'cover' }}
+                />
+            </div>
+
             <div className="creator-section">
-                <img src="/images/moon.png" alt="Moon" className="moon-img" />
+                <Image
+                    src="/images/moon.png"
+                    alt="Moon"
+                    className="moon-img"
+                    width={120}
+                    height={120}
+                    priority
+                    quality={90}
+                />
                 <NeonButton />
             </div>
-            {/* 🕉️ Shiva Background */}
-            <div className="shiva-background"></div>
+            {/* 🕉️ Shiva Background Optimized */}
+            <div className="shiva-background">
+                <Image
+                    src="/images/shiva_bg.png"
+                    alt="Shiva Background"
+                    fill
+                    quality={60}
+                    style={{ objectFit: 'cover' }}
+                />
+            </div>
 
             {/* 🌌 Starry Background */}
             <div id="stars2" ref={stars2Ref}></div>
@@ -168,17 +201,21 @@ export default function Home() {
             <div className="container">
                 <div className="neon">
                     <div className="title">
+                        <Image
+                            src="/images/logo.png"
+                            alt="Spiritual AI Logo"
+                            width={150}
+                            height={150}
+                            className="main-logo"
+                            priority
+                            style={{ marginBottom: '20px', filter: 'drop-shadow(0 0 20px rgba(0, 188, 255, 0.8))' }}
+                        />
                         <h1>Spiritual AI</h1>
                         <h1>Spiritual AI</h1>
                         <div className="subtitle-lotus-container">
                             <h2 className="subtitle-text">
                                 YOUR FIRST STEP TOWARDS TRANSFORMATION
                             </h2>
-                            <div className="lotus-trigger-container">
-                                <a href="/lotus-god" className="lotus-trigger-link">
-                                    click to see lotus god
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -186,35 +223,40 @@ export default function Home() {
 
             {/* 🔮 Personality Question Section */}
             <div className="mbti-container">
-                <h2 className="matrix-text">DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
+                <h2 className="matrix-text" style={{ whiteSpace: 'nowrap' }}>DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
 
                 <div className="button-group">
                     <a href="/MBTI/mbti.html" className="neon-btn" data-text="YES">YES</a>
-                    <a href="/MBTI/test.html" className="neon-btn" data-text="NO">NO</a>
+                    <a href="/cosmic-compass/" className="neon-btn" data-text="NO">NO</a>
                 </div>
             </div>
 
-            {/* 🌸 Blooming Flower */}
-            <div className="flower-container">
-                <main>
-                    <div className="corolla">
-                        <div className="segmL"></div>
-                        <div className="segmR"></div>
-                        <div className="segmR"></div>
-                        <div className="segmR"></div>
-                        <div className="segmR"></div>
-                        <div className="segmL"></div>
-                        <div className="segmL"></div>
-                    </div>
-                    <div className="rings">
-                        <div className="ring"></div>
-                        <div className="ring"></div>
-                        <div className="ring"></div>
-                    </div>
-                </main>
+            {/* 🌸 Blooming Flower with Lotus God Trigger */}
+            <div className="lotus-bottom-container">
+                <div className="flower-container">
+                    <main>
+                        <div className="corolla">
+                            <div className="segmL"></div>
+                            <div className="segmR"></div>
+                            <div className="segmR"></div>
+                            <div className="segmR"></div>
+                            <div className="segmR"></div>
+                            <div className="segmL"></div>
+                            <div className="segmL"></div>
+                        </div>
+                        <div className="rings">
+                            <div className="ring"></div>
+                            <div className="ring"></div>
+                            <div className="ring"></div>
+                        </div>
+                    </main>
+                </div>
+                <div className="lotus-trigger-bottom">
+                    <a href="/lotus-god" className="lotus-trigger-link">
+                        click to see lotus god
+                    </a>
+                </div>
             </div>
-
-            {/* 🪷 Lotus God Trigger - Moved to subtitle container */}
         </div>
     );
 }

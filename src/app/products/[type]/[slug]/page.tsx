@@ -1,27 +1,25 @@
-import { notFound } from "next/navigation";
+'use client';
+
+import React from "react";
+import { notFound, useParams } from "next/navigation";
 import { productsData } from "../../../../data/products";
+import { mbtiThemes } from "../../../../data/themes";
 import { Product } from "../../../../data/types";
 import "../../product.css";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import VantaBackground from "../../../../components/VantaBackground";
 
-// Correctly define props for Next.js 16/15 dynamic routes
-type Props = {
-    params: Promise<{
-        type: string;
-        slug: string;
-    }>;
-};
+export default function ProductPage() {
+    const params = useParams();
+    const type = params.type as string;
+    const slug = params.slug as string;
 
-export default async function ProductPage(props: Props) {
-    // Await params in newer Next.js versions
-    const params = await props.params;
-    const { type, slug } = params;
-
-    // Case-insensitive lookup
     const mbtiType = type.toUpperCase();
     const profile = productsData[mbtiType];
+    const theme = mbtiThemes[mbtiType];
 
-    if (!profile) {
+    if (!profile || !theme) {
         notFound();
     }
 
@@ -33,65 +31,159 @@ export default async function ProductPage(props: Props) {
 
     const { script } = product;
 
+    // Animation Variants
+    const fadeIn = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: "easeOut" }
+    };
+
+    const stagger = {
+        animate: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
     return (
-        <div className="product-page">
+        <div
+            className={`product-page layout-${theme.layoutType.toLowerCase()}`}
+            style={{
+                '--primary': theme.colors.primary,
+                '--secondary': theme.colors.secondary,
+                '--bg-color': theme.colors.background,
+                '--text-color': theme.colors.text,
+                '--accent': theme.colors.accent,
+                '--card-bg': theme.colors.cardBg,
+                '--muted': theme.colors.muted,
+                '--font-heading': theme.fonts.heading,
+                '--font-body': theme.fonts.body,
+            } as React.CSSProperties}
+        >
+            <VantaBackground color1={0x000000} color2={theme.vantaColor} />
+
             {/* Nav / Breadcrumb */}
-            <nav style={{ padding: '20px', fontSize: '0.9rem', color: '#666' }}>
-                <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>Home</Link> &gt; <span>{profile.name} ({mbtiType})</span> &gt; <span style={{ color: '#fff' }}>Product</span>
+            <nav style={{ padding: '20px', fontSize: '0.9rem', color: 'var(--muted)', display: 'flex', gap: '10px' }}>
+                <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Home</Link>
+                <span>/</span>
+                <span style={{ color: 'var(--text-color)' }}>{profile.name} ({mbtiType})</span>
             </nav>
 
             <main className="sales-container">
-                {/* 1. Hook */}
-                <section className="hook-section">
-                    <h1 className="sales-heading" style={{ fontSize: '2.5rem' }}>{script.headline}</h1>
-                    <h2 className="sales-subheading">{script.subheadline}</h2>
-                    <div className="hook-image">
-                        <p>[ AI VISUALIZATION: {script.hook_image_prompt} ]</p>
+                {/* 1. Hook Section */}
+                <motion.section
+                    className="hook-section"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <span style={{
+                        color: 'var(--secondary)',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold',
+                        letterSpacing: '2px',
+                        display: 'block',
+                        marginBottom: '10px'
+                    }}>
+                        {mbtiType} EXCLUSIVE
+                    </span>
+                    <h1 className="sales-heading" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}>
+                        {script.headline}
+                    </h1>
+                    <h2 className="sales-subheading">
+                        {script.subheadline}
+                    </h2>
+                    <div className="hook-image glass-panel">
+                        <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
+                            <p>[ {script.hook_image_prompt} ]</p>
+                        </div>
                     </div>
-                </section>
+                </motion.section>
 
-                {/* 2. Pain */}
-                <section className="pain-section">
-                    <h3 className="pain-title">The Real Problem</h3>
-                    <p style={{ fontSize: '1.2rem', color: '#ffb3c6' }}>{script.pain_story}</p>
+                {/* 2. Pain Section */}
+                <motion.section
+                    className="pain-section"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <h3 className="sales-heading" style={{ fontSize: '1.8rem', color: 'var(--text-color)' }}>The Internal Bottleneck</h3>
+                    <p style={{ fontSize: '1.3rem', color: 'var(--secondary)', fontWeight: '500' }}>
+                        {script.pain_story}
+                    </p>
 
-                    <div style={{ margin: '40px 0' }}>
-                        <p>Does this sound familiar?</p>
-                        <ul className="agitation-list">
-                            {script.agitation_bullets.map((bullet: string, i: number) => (
-                                <li key={i}>{bullet}</li>
-                            ))}
-                        </ul>
+                    <motion.ul className="agitation-list" variants={stagger}>
+                        {script.agitation_bullets.map((bullet: string, i: number) => (
+                            <motion.li key={i} variants={fadeIn}>
+                                {bullet}
+                            </motion.li>
+                        ))}
+                    </motion.ul>
+                </motion.section>
+
+                {/* 3. Transition Mechanism */}
+                <motion.section
+                    className="transition-section glass-panel"
+                    style={{ padding: '40px', textAlign: 'center' }}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <p style={{ margin: 0, opacity: 0.6 }}>THE PARADIGM SHIFT</p>
+                    <div style={{
+                        fontSize: '2rem',
+                        fontWeight: '800',
+                        color: 'var(--primary)',
+                        marginTop: '10px',
+                        textTransform: theme.layoutType === 'NT' ? 'uppercase' : 'none'
+                    }}>
+                        {script.transition_mechanism}
                     </div>
-                </section>
+                </motion.section>
 
-                {/* 3. Transition */}
-                <section className="transition-section">
-                    <p>It's not your fault. You were just using the wrong operating system.</p>
-                    <p>Introducing the new mechanism:</p>
-                    <span className="mechanism-highlight">{script.transition_mechanism}</span>
-                </section>
-
-                {/* 4. Solution */}
-                <section className="solution-section">
-                    <div className="product-title-card">
-                        <p style={{ color: '#00fff9', letterSpacing: '2px', fontSize: '0.9rem' }}>PRESENTING</p>
-                        <h2 className="sales-heading" style={{ fontSize: '3rem', margin: '10px 0' }}>{script.product_name}</h2>
-                        <p>{script.product_description}</p>
+                {/* 4. Solution Section */}
+                <motion.section
+                    className="solution-section"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <div className="product-title-card floating-card">
+                        <h2 className="sales-heading" style={{ fontSize: '3rem' }}>{script.product_name}</h2>
+                        <p style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+                            {script.product_description}
+                        </p>
                     </div>
 
                     <div className="feature-grid">
                         {script.features_bullets.map((feature: string, i: number) => (
-                            <div key={i} className="feature-item">
-                                <p>{feature}</p>
-                            </div>
+                            <motion.div
+                                key={i}
+                                className="feature-item glass-panel"
+                                whileHover={{ scale: 1.05, y: -5, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+                                transition={{ type: "spring", stiffness: 300 }}
+                            >
+                                <p style={{ margin: 0 }}>{feature}</p>
+                            </motion.div>
                         ))}
                     </div>
-                </section>
+                </motion.section>
 
-                {/* 5. Offer */}
-                <section className="offer-section">
-                    <h3>Get Immediate Access</h3>
+                {/* 5. Offer Section */}
+                <motion.section
+                    className="offer-section glass-panel"
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    variants={fadeIn}
+                >
+                    <h3 className="sales-heading" style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>GET IMMEDIATE ACCESS</h3>
+
                     <div className="price-container">
                         <span className="price-original">{script.price_original}</span>
                         <span className="price-discounted">{script.price_discounted}</span>
@@ -101,8 +193,8 @@ export default async function ProductPage(props: Props) {
                         {script.bonuses.map((bonus: any, i: number) => (
                             <div key={i} className="bonus-item">
                                 <div>
-                                    <strong style={{ color: '#fff', display: 'block' }}>BONUS: {bonus.title}</strong>
-                                    <span style={{ fontSize: '0.9rem', color: '#ccc' }}>{bonus.description}</span>
+                                    <strong style={{ color: 'var(--text-color)', display: 'block' }}>BONUS: {bonus.title}</strong>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>{bonus.description}</span>
                                 </div>
                                 <span className="bonus-value">{bonus.value} Value</span>
                             </div>
@@ -110,19 +202,21 @@ export default async function ProductPage(props: Props) {
                     </div>
 
                     <div className="guarantee-box">
-                        <strong>🛡️ LOGICAL GUARANTEE:</strong> {script.guarantee_text}
+                        <strong style={{ color: 'var(--primary)' }}>🛡️ THE {mbtiType} PROMISE:</strong> {script.guarantee_text}
                     </div>
 
-                    <p className="scarcity">{script.scarcity_text}</p>
+                    <p className="scarcity" style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>
+                        {script.scarcity_text}
+                    </p>
 
-                    <button className="cta-button">
-                        {script.cta_text}
-                    </button>
+                    <Link href="#" className="cta-button" style={{ marginTop: '20px' }}>
+                        {theme.ctaLabel}
+                    </Link>
 
-                    <div style={{ marginTop: '20px', fontSize: '0.8rem', opacity: 0.6 }}>
-                        Secure Payment • Instant Digital Download
+                    <div style={{ marginTop: '30px', fontSize: '0.8rem', opacity: 0.5 }}>
+                        Secure Payment • Instant Digital Delivery • Lifetime Access
                     </div>
-                </section>
+                </motion.section>
             </main>
         </div>
     );

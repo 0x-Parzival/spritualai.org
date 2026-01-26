@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { productsData } from "../../../data/products";
 import Link from "next/link";
 import "../product.css";
+import VantaBackground from "../../../components/VantaBackground";
 
 type Props = {
     params: Promise<{
@@ -20,24 +21,40 @@ export default async function ProductHubPage(props: Props) {
         notFound();
     }
 
+    const { theme } = profile;
+
     return (
-        <div className="product-page" style={{ paddingBottom: '80px' }}>
-            <nav style={{ padding: '20px', fontSize: '0.9rem', color: '#666' }}>
-                <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>Home</Link> &gt; <span style={{ color: '#fff' }}>{profile.name} ({mbtiType})</span>
+        <div className={`product-page layout-${theme.layoutType.toLowerCase()}`} style={{
+            paddingBottom: '80px',
+            '--primary': theme.colors.primary,
+            '--secondary': theme.colors.secondary,
+            '--bg-color': theme.colors.background,
+            '--text-color': theme.colors.text,
+            '--accent': theme.colors.accent,
+            '--card-bg': theme.colors.cardBg,
+            '--muted': theme.colors.muted,
+            '--font-heading': theme.fonts.heading,
+            '--font-body': theme.fonts.body,
+        } as React.CSSProperties}>
+
+            <VantaBackground color1={0x000000} color2={theme.vantaColor} />
+
+            <nav style={{ padding: '20px', fontSize: '0.9rem', color: 'var(--muted)' }}>
+                <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Home</Link> &gt; <span style={{ color: 'var(--text-color)' }}>{profile.name} ({mbtiType})</span>
             </nav>
 
             <main className="sales-container">
                 <header style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <h1 className="sales-heading" style={{ fontSize: '3.5rem', marginBottom: '10px' }}>{profile.name}</h1>
-                    <p style={{ color: '#00bcd4', fontSize: '1.2rem', letterSpacing: '2px' }}>{mbtiType} PROTOCOL</p>
-                    <div style={{
-                        margin: '30px auto',
-                        padding: '20px',
-                        borderLeft: '4px solid #00bcd4',
-                        background: 'rgba(255,255,255,0.03)',
-                        textAlign: 'left',
+                    <p style={{ color: 'var(--secondary)', fontSize: '1.2rem', letterSpacing: '2px', fontWeight: 'bold' }}>{mbtiType} PROTOCOL</p>
+                    <div className="glass-panel" style={{
+                        marginTop: '30px',
+                        padding: '30px',
+                        textAlign: 'center',
                         fontStyle: 'italic',
-                        color: '#ccc'
+                        color: 'var(--text-color)',
+                        opacity: 0.9,
+                        borderLeft: `4px solid var(--primary)`
                     }}>
                         "{profile.artistic_vibe}"
                     </div>
@@ -49,37 +66,26 @@ export default async function ProductHubPage(props: Props) {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '30px' }}>
                     {profile.products.map((product) => (
-                        <div key={product.id} style={{
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '10px',
+                        <div key={product.id} className="glass-panel floating-card" style={{
                             padding: '30px',
-                            background: 'linear-gradient(to right, rgba(0,0,0,0.5), rgba(20,20,30,0.5))',
-                            transition: 'transform 0.2s',
+                            transition: 'all 0.3s ease',
                             position: 'relative',
                             overflow: 'hidden'
                         }}>
                             <h3 style={{
-                                color: '#fff',
+                                color: 'var(--primary)',
                                 marginBottom: '10px',
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '1.4rem'
+                                fontSize: '1.8rem'
                             }}>
                                 {product.title}
                             </h3>
-                            <p style={{ fontSize: '0.95rem', color: '#aaa', marginBottom: '20px' }}>
+                            <p style={{ fontSize: '1.1rem', color: 'var(--text-color)', opacity: 0.8, marginBottom: '25px', lineHeight: '1.6' }}>
                                 {product.script.subheadline}
                             </p>
-                            <Link href={`/products/${type.toLowerCase()}/${product.id}`} style={{
-                                display: 'inline-block',
-                                color: '#00fff9',
-                                textDecoration: 'none',
-                                border: '1px solid #00fff9',
-                                padding: '10px 20px',
-                                borderRadius: '4px',
-                                fontSize: '0.9rem',
-                                textTransform: 'uppercase',
-                                fontWeight: 'bold',
-                                letterSpacing: '1px'
+                            <Link href={`/products/${type.toLowerCase()}/${product.id}`} className="cta-button" style={{
+                                fontSize: '1rem',
+                                padding: '12px 30px'
                             }}>
                                 Access Protocol &rarr;
                             </Link>

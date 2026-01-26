@@ -861,6 +861,11 @@ export default function LotusGod() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: '#000', zIndex: 9999 }}>
             <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
 
+            {/* Logo in top right */}
+            <div style={{ position: 'absolute', top: '20px', right: '140px', zIndex: 1000, pointerEvents: 'none' }}>
+                <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '60px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
+            </div>
+
             <div style={{
                 position: 'absolute',
                 top: 20,

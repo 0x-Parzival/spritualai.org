@@ -35,11 +35,32 @@ export interface ProductScript {
     cta_text: string;
 }
 
+export interface MBTITheme {
+    colors: {
+        primary: string;
+        secondary: string;
+        background: string;
+        text: string;
+        accent: string;
+        cardBg: string;
+        muted: string;
+    };
+    fonts: {
+        heading: string;
+        body: string;
+    };
+    layoutType: 'NT' | 'NF' | 'SJ' | 'SP';
+    vantaColor: number;
+    ctaStyle: string;
+    ctaLabel: string;
+}
+
 export interface MBTIProfile {
     id: string; // e.g., "intp"
     name: string; // e.g., "The Logician"
     artistic_vibe: string; // Description of their visual preference
     psychological_triggers: string[]; // What makes them buy
+    theme: MBTITheme;
     products: Product[];
 }
 
