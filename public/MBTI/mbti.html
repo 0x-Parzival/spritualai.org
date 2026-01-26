@@ -160,6 +160,63 @@
       }
     }
 
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(15, 15, 25, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      margin-top: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-height: 350px;
+      overflow-y: auto;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 229, 255, 0.3) transparent;
+    }
+
+    .search-results::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .search-results::-webkit-scrollbar-thumb {
+      background: rgba(0, 229, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    .search-item {
+      padding: 15px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+
+    .search-item:hover {
+      background: rgba(0, 229, 255, 0.1);
+    }
+
+    .search-item .product-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #00e5ff;
+    }
+
+    .search-item .product-type {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
     /* ---------- Centered UI wrapper ---------- */
     .ui {
       position: relative;
@@ -579,7 +636,8 @@
       <circle cx="11" cy="11" r="8"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
     </svg>
-    <input type="text" placeholder="search digital product" aria-label="Search digital products">
+    <input type="text" id="productSearch" placeholder="search digital product" aria-label="Search digital products">
+    <div id="searchDropdown" class="search-results"></div>
   </div>
 
   <!-- UI overlay -->
@@ -1109,6 +1167,92 @@
           btn.click();
         }
       });
+    });
+
+    // --- Search Dropdown Logic ---
+    const allProducts = [
+      { id: 'mastery', type: 'intp', name: 'Focus Mastery' },
+      { id: 'social-life', type: 'intp', name: 'Social Dynamics Hack' },
+      { id: 'second-brain', type: 'intp', name: 'Learning Protocol' },
+      { id: 'theory-everything', type: 'intp', name: 'Life Purpose Blueprint' },
+      { id: 'debug-existence', type: 'intp', name: 'Income Automation' },
+      { id: 'empire-of-one', type: 'entj', name: 'Empire of One' },
+      { id: 'execute-12-months', type: 'entj', name: '12 Month Execution' },
+      { id: 'outmaneuver-competitor', type: 'entj', name: 'Grand Strategy' },
+      { id: 'command-room', type: 'entj', name: 'Executive Presence' },
+      { id: 'vision-survives', type: 'entj', name: 'Dynasty Architecture' },
+      { id: 'systemize-life', type: 'intj', name: 'LifeOS Architecture' },
+      { id: 'think-ahead', type: 'intj', name: 'Strategic Mindware' },
+      { id: 'rapid-competence', type: 'intj', name: 'Skill Acquisition' },
+      { id: 'win-arguments', type: 'intj', name: 'Rational Rhetoric' },
+      { id: 'global-business', type: 'intj', name: 'Dark Room Protocol' },
+      { id: 'idea-generator', type: 'entp', name: 'Genesis Engine' },
+      { id: 'persuasion', type: 'entp', name: 'Belief Engineering' },
+      { id: 'thrive-chaos', type: 'entp', name: 'Chaos Protocol' },
+      { id: 'speed-learning', type: 'entp', name: 'Speedrunner Codex' },
+      { id: 'infinite-career', type: 'entp', name: 'Polymath Playbook' },
+      { id: 'burnout-shield', type: 'infj', name: 'Guardian Protocol' },
+      { id: 'counselor', type: 'infj', name: 'Insight Coaching' },
+      { id: 'sacred-calling', type: 'infj', name: 'Soul-preneur Blueprint' },
+      { id: 'chameleon', type: 'infj', name: 'Identity Anchor' },
+      { id: 'intuition', type: 'infj', name: 'Third Eye Toolkit' },
+      { id: 'dream-to-reality', type: 'infp', name: 'Artisan Monetization' },
+      { id: 'healers-journey', type: 'infp', name: 'Kintsugi Method' },
+      { id: 'introvert-power', type: 'infp', name: 'Storyteller Power' },
+      { id: 'meaning', type: 'infp', name: 'Soul Compass' },
+      { id: 'resilience', type: 'infp', name: 'Teflon Soul' },
+      { id: 'burden-of-potential', type: 'enfj', name: 'Sovereignty Protocol' },
+      { id: 'harmony-trap', type: 'enfj', name: 'Conflict Alchemist' },
+      { id: 'cult-of-personality', type: 'enfj', name: 'Legacy Weaver' },
+      { id: 'mirror-effect', type: 'enfj', name: 'Identity Reclamation' },
+      { id: 'art-of-receiving', type: 'enfj', name: 'Reciprocity Reset' },
+      { id: 'fomo-cure', type: 'enfp', name: 'Essentialist Knife' },
+      { id: 'golden-idea', type: 'enfp', name: 'Chaos Pilot' },
+      { id: 'sad-clown', type: 'enfp', name: 'Tragic Comedy' },
+      { id: 'vampire-slayer', type: 'enfp', name: 'Slayer\'s Guide' },
+      { id: 'magical-adult', type: 'enfp', name: 'Adulting Guide' },
+      { id: 'change-protocol', type: 'istj', name: 'Future-Proof Framework' },
+      { id: 'atlas-complex', type: 'istj', name: 'Architect\'s Exit' },
+      { id: 'emotional-audit', type: 'istj', name: 'Logic of Feeling' },
+      { id: 'social-algorithm', type: 'istj', name: 'Network Interface' },
+      { id: 'anti-perfectionism', type: 'istj', name: 'Imperfect Executor' },
+      { id: 'disease-to-please', type: 'isfj', name: 'Fortress of Kindness' },
+      { id: 'invisible-contract', type: 'isfj', name: 'Art of The Ask' },
+    ];
+
+    const searchInput = document.getElementById('productSearch');
+    const dropdown = document.getElementById('searchDropdown');
+
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      if (!term) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      const matches = allProducts.filter(p =>
+        p.name.toLowerCase().includes(term) ||
+        p.type.toLowerCase().includes(term)
+      );
+
+      if (matches.length > 0) {
+        dropdown.innerHTML = matches.map(p => `
+          <a href="/products/${p.type}/${p.id}" class="search-item">
+            <span class="product-name">${p.name}</span>
+            <span class="product-type">${p.type} Optimized</span>
+          </a>
+        `).join('');
+        dropdown.style.display = 'flex';
+      } else {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
     });
   </script>
 </body>
