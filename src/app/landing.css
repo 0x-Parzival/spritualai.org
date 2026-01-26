@@ -281,6 +281,15 @@ main.ocean-main {
   text-align: center;
   /* Reduced spacing above and below the title */
   padding-bottom: 7.5vh;
+  /* Lift heavily above backgrounds (-2, 0, 1) */
+  z-index: 50;
+  pointer-events: none;
+  /* Let clicks pass through container area, re-enable on interactive children if needed */
+}
+
+/* Re-enable pointer events for the logo and title text if they have interactions (usually they don't, but good practice) */
+.neon {
+  pointer-events: auto;
 }
 
 .neon {
@@ -353,7 +362,13 @@ main.ocean-main {
   gap: clamp(20px, 5vh, 40px);
   width: fit-content;
   max-width: 90vw;
+  gap: clamp(20px, 5vh, 40px);
+  width: fit-content;
+  max-width: 90vw;
   padding: 7.5vh 0;
+  z-index: 60;
+  /* Higher than title */
+  pointer-events: auto;
 }
 
 /* Sci-Fi Text Styles */
@@ -366,6 +381,8 @@ main.ocean-main {
   letter-spacing: 6px;
   position: relative;
   text-align: center;
+  z-index: 1;
+  /* Establish stacking context so negative children stay relative to this, not body */
 
   /* Sci-Fi Glow */
   text-shadow:

@@ -42,6 +42,7 @@ export interface MBTITheme {
         background: string;
         text: string;
         accent: string;
+
         cardBg: string;
         muted: string;
     };
@@ -53,6 +54,8 @@ export interface MBTITheme {
     vantaColor: number;
     ctaStyle: string;
     ctaLabel: string;
+    vantaEffect: 'net' | 'fog' | 'waves' | 'clouds' | 'clouds2' | 'globe' | 'halo' | 'rings' | 'ripple' | 'topology' | 'dots' | 'birds' | 'cells';
+    vantaConfig: Record<string, any>;
 }
 
 export interface MBTIProfile {

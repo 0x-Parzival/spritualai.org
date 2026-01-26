@@ -210,8 +210,10 @@ export default function Home() {
                             priority
                             style={{ marginBottom: '20px', filter: 'drop-shadow(0 0 20px rgba(0, 188, 255, 0.8))' }}
                         />
-                        <h1>Spiritual AI</h1>
-                        <h1>Spiritual AI</h1>
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <h1>Spiritual AI</h1>
+                            <h1>Spiritual AI</h1>
+                        </div>
                         <div className="subtitle-lotus-container">
                             <h2 className="subtitle-text">
                                 YOUR FIRST STEP TOWARDS TRANSFORMATION

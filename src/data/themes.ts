@@ -17,6 +17,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NT',
         vantaColor: 0x7b2ff7,
+        vantaEffect: 'net',
+        vantaConfig: { color: 0x00BFFF, backgroundColor: 0x050505, maxDistance: 22.00, spacing: 16.00 },
         ctaStyle: 'sharp',
         ctaLabel: 'Access System'
     },
@@ -36,6 +38,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NT',
         vantaColor: 0x7b2ff7,
+        vantaEffect: 'net',
+        vantaConfig: { color: 0x7b2ff7, backgroundColor: 0x0f0f12, maxDistance: 24.00, spacing: 17.00 },
         ctaStyle: 'minimal',
         ctaLabel: 'Explore'
     },
@@ -55,6 +59,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NT',
         vantaColor: 0x7b2ff7,
+        vantaEffect: 'net',
+        vantaConfig: { color: 0xe63946, backgroundColor: 0x000000, maxDistance: 20.00, spacing: 15.00, showDots: false },
         ctaStyle: 'bold',
         ctaLabel: 'Execute'
     },
@@ -74,6 +80,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NT',
         vantaColor: 0x7b2ff7,
+        vantaEffect: 'net',
+        vantaConfig: { color: 0xff9f1c, backgroundColor: 0x011627, points: 12.00, maxDistance: 23.00, spacing: 18.00 },
         ctaStyle: 'playful',
         ctaLabel: 'Try This'
     },
@@ -93,6 +101,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NF',
         vantaColor: 0x15803d,
+        vantaEffect: 'fog',
+        vantaConfig: { highlightColor: 0x8e94f2, midtoneColor: 0xbbd0ff, lowlightColor: 0x121212, baseColor: 0x000000, blurFactor: 0.6 },
         ctaStyle: 'elegant',
         ctaLabel: 'Begin Your Journey'
     },
@@ -112,6 +122,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NF',
         vantaColor: 0x15803d,
+        vantaEffect: 'fog',
+        vantaConfig: { highlightColor: 0xe8a598, midtoneColor: 0x9b6154, lowlightColor: 0x1f1d1b, baseColor: 0x111111, blurFactor: 0.9 },
         ctaStyle: 'gentle',
         ctaLabel: 'Explore Gently'
     },
@@ -131,6 +143,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NF',
         vantaColor: 0x15803d,
+        vantaEffect: 'clouds',
+        vantaConfig: { skyColor: 0x4361ee, cloudColor: 0x4cc9f0, cloudShadowColor: 0x1c2333, sunColor: 0xffd166, sunGlareColor: 0xfffacd, sunlightColor: 0xffffff, speed: 1.2 },
         ctaStyle: 'warm',
         ctaLabel: 'Join Us'
     },
@@ -150,6 +164,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'NF',
         vantaColor: 0x15803d,
+        vantaEffect: 'clouds',
+        vantaConfig: { skyColor: 0xff006e, cloudColor: 0xfb5607, cloudShadowColor: 0x330033, sunColor: 0xffbe0b, sunGlareColor: 0xfffacd, sunlightColor: 0xffffff, speed: 1.5 },
         ctaStyle: 'joyful',
         ctaLabel: 'Start Something New'
     },
@@ -169,6 +185,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SJ',
         vantaColor: 0x0077b6,
+        vantaEffect: 'waves',
+        vantaConfig: { color: 0x1d3557, shininess: 35.00, waveHeight: 20.00, waveSpeed: 0.75, zoom: 0.65 },
         ctaStyle: 'secure',
         ctaLabel: 'Proceed Securely'
     },
@@ -188,6 +206,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SJ',
         vantaColor: 0x0077b6,
+        vantaEffect: 'waves',
+        vantaConfig: { color: 0x0077b6, shininess: 40.00, waveHeight: 15.00, waveSpeed: 0.8, zoom: 0.8 },
         ctaStyle: 'familiar',
         ctaLabel: 'Take the Next Step'
     },
@@ -207,6 +227,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SJ',
         vantaColor: 0x0077b6,
+        vantaEffect: 'waves',
+        vantaConfig: { color: 0x03045e, shininess: 50.00, waveHeight: 25.00, waveSpeed: 1.0, zoom: 1.0 },
         ctaStyle: 'business',
         ctaLabel: 'Buy Now'
     },
@@ -226,6 +248,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SJ',
         vantaColor: 0x0077b6,
+        vantaEffect: 'waves',
+        vantaConfig: { color: 0xfb8500, shininess: 30.00, waveHeight: 20.00, waveSpeed: 1.1, zoom: 0.9 },
         ctaStyle: 'friendly',
         ctaLabel: 'Recommended'
     },
@@ -245,6 +269,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SP',
         vantaColor: 0xf5cb5c,
+        vantaEffect: 'rings',
+        vantaConfig: { color: 0xf5cb5c, backgroundColor: 0x000000, backgroundAlpha: 1.0 },
         ctaStyle: 'utilitarian',
         ctaLabel: 'Get Tool'
     },
@@ -264,6 +290,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SP',
         vantaColor: 0xf5cb5c,
+        vantaEffect: 'rings',
+        vantaConfig: { color: 0xcdb4db, backgroundColor: 0x121212 },
         ctaStyle: 'aesthetic',
         ctaLabel: 'Experience This'
     },
@@ -283,6 +311,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SP',
         vantaColor: 0xf5cb5c,
+        vantaEffect: 'globe',
+        vantaConfig: { color: 0xe63946, color2: 0x1d3557, size: 1.5, backgroundColor: 0x000000 },
         ctaStyle: 'punchy',
         ctaLabel: 'Get It Now'
     },
@@ -302,6 +332,8 @@ export const mbtiThemes: Record<string, MBTITheme> = {
         },
         layoutType: 'SP',
         vantaColor: 0xf5cb5c,
+        vantaEffect: 'globe',
+        vantaConfig: { color: 0xff006e, color2: 0x8338ec, size: 1.2, backgroundColor: 0xffffff },
         ctaStyle: 'lively',
         ctaLabel: 'Jump In'
     }

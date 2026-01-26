@@ -61,7 +61,7 @@ export default function ProductPage() {
                 '--font-body': theme.fonts.body,
             } as React.CSSProperties}
         >
-            <VantaBackground color1={0x000000} color2={theme.vantaColor} />
+            <VantaBackground effectName={theme.vantaEffect} config={theme.vantaConfig} />
 
             {/* Nav / Breadcrumb */}
             <nav style={{ padding: '20px', fontSize: '0.9rem', color: 'var(--muted)', display: 'flex', gap: '10px' }}>

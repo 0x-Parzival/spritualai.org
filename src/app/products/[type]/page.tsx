@@ -37,7 +37,7 @@ export default async function ProductHubPage(props: Props) {
             '--font-body': theme.fonts.body,
         } as React.CSSProperties}>
 
-            <VantaBackground color1={0x000000} color2={theme.vantaColor} />
+            <VantaBackground effectName={theme.vantaEffect} config={theme.vantaConfig} />
 
             <nav style={{ padding: '20px', fontSize: '0.9rem', color: 'var(--muted)' }}>
                 <Link href="/" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Home</Link> &gt; <span style={{ color: 'var(--text-color)' }}>{profile.name} ({mbtiType})</span>
