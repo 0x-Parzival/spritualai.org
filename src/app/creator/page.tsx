@@ -611,31 +611,45 @@ const CreatorPage = () => {
             {/* Bottom Icon Bar */}
             <section className={styles.section}>
                 <div className={styles.iconContainer}>
-                    <div className={`${styles.iconBox} ${styles.aboutIcon}`} onClick={() => togglePopup('about')} title="About Me">
-                        <i className="fa-regular fa-address-card"></i> 👤
+                    <div className={styles.iconWrapper} onClick={() => togglePopup('about')}>
+                        <div className={`${styles.iconBox} ${styles.aboutIcon}`} title="About Me">
+                            <i className="fa-regular fa-address-card"></i> 👤
+                            <span className={styles.tooltipText}>About Me</span>
+                        </div>
                         <span className={styles.buttonLabel}>WHO AM I?</span>
-                        <span className={styles.tooltipText}>About Me</span>
                     </div>
-                    <div className={`${styles.iconBox} ${styles.projectsIcon}`} onClick={() => togglePopup('projects')} title="Projects">
-                        <i className="fa-solid fa-laptop-code"></i> 💻
+
+                    <div className={styles.iconWrapper} onClick={() => togglePopup('projects')}>
+                        <div className={`${styles.iconBox} ${styles.projectsIcon}`} title="Projects">
+                            <i className="fa-solid fa-laptop-code"></i> 💻
+                            <span className={styles.tooltipText}>Projects</span>
+                        </div>
                         <span className={styles.buttonLabel}>CREATIONS</span>
-                        <span className={styles.tooltipText}>Projects</span>
                     </div>
-                    <div className={`${styles.iconBox} ${styles.testimonialIcon}`} onClick={() => togglePopup('testimonial')} title="Story">
-                        <i className="fa-solid fa-users-rectangle"></i> 📜
+
+                    <div className={styles.iconWrapper} onClick={() => togglePopup('testimonial')}>
+                        <div className={`${styles.iconBox} ${styles.testimonialIcon}`} title="Story">
+                            <i className="fa-solid fa-users-rectangle"></i> 📜
+                            <span className={styles.tooltipText}>Story</span>
+                        </div>
                         <span className={styles.buttonLabel}>JOURNEY</span>
-                        <span className={styles.tooltipText}>Story</span>
                     </div>
-                    <div className={`${styles.iconBox} ${styles.contactIcon}`} onClick={() => togglePopup('contact')} title="Contact">
-                        <i className="fa-solid fa-envelope"></i> 📧
+
+                    <div className={styles.iconWrapper} onClick={() => togglePopup('contact')}>
+                        <div className={`${styles.iconBox} ${styles.contactIcon}`} title="Contact">
+                            <i className="fa-solid fa-envelope"></i> 📧
+                            <span className={styles.tooltipText}>Contact</span>
+                        </div>
                         <span className={styles.buttonLabel}>CONNECT</span>
-                        <span className={styles.tooltipText}>Contact</span>
                     </div>
+
                     <Link href="/resume" target="_blank" className={styles.resumeLinkWrapper}>
-                        <div className={`${styles.iconBox} ${styles.resumeIcon}`} title="Resume">
-                            📄
+                        <div className={styles.iconWrapper}>
+                            <div className={`${styles.iconBox} ${styles.resumeIcon}`} title="Resume">
+                                📄
+                                <span className={styles.tooltipText}>Resume</span>
+                            </div>
                             <span className={styles.buttonLabel}>DOSSIER</span>
-                            <span className={styles.tooltipText}>Resume</span>
                         </div>
                     </Link>
                 </div>
