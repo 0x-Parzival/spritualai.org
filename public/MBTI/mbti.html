@@ -207,7 +207,8 @@
     .search-item .product-name {
       font-weight: 700;
       font-size: 0.95rem;
-      color: #00e5ff;
+      color: #00bcd4;
+      /* Default fallback */
     }
 
     .search-item .product-type {
@@ -1235,13 +1236,23 @@
         p.type.toLowerCase().includes(term)
       );
 
+      const typeColors = {
+        intj: '#b45eff', intp: '#b45eff', entj: '#b45eff', entp: '#b45eff',
+        infj: '#00bcff', infp: '#00bcff', enfj: '#00bcff', enfp: '#00bcff',
+        istj: '#00e68c', isfj: '#00e68c', estj: '#00e68c', esfj: '#00e68c',
+        istp: '#fae650', isfp: '#fae650', estp: '#fae650', esfp: '#fae650'
+      };
+
       if (matches.length > 0) {
-        dropdown.innerHTML = matches.map(p => `
-          <a href="/products/${p.type}/${p.id}" class="search-item">
-            <span class="product-name">${p.name}</span>
-            <span class="product-type">${p.type} Optimized</span>
-          </a>
-        `).join('');
+        dropdown.innerHTML = matches.map(p => {
+          const color = typeColors[p.type.toLowerCase()] || '#00bcd4';
+          return `
+            <a href="/products/${p.type}/${p.id}" class="search-item">
+              <span class="product-name" style="color: ${color};">${p.name}</span>
+              <span class="product-type">${p.type} Optimized</span>
+            </a>
+          `;
+        }).join('');
         dropdown.style.display = 'flex';
       } else {
         dropdown.style.display = 'none';
