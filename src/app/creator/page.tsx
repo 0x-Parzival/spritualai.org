@@ -674,7 +674,7 @@ const CreatorPage = () => {
                                         <img src="/creator_assets/me.jpeg" alt="Keshav Baliyan" />
                                     </div>
                                     <div className={styles.aboutContent}>
-                                        <h1 style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '4px' }}>OPERATOR: 0xPARZIVAL</h1>
+                                        <h1 style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '4px' }}>OPERATOR: Keshav Baliyan (0xPARZIVAL)</h1>
                                         <p style={{ fontFamily: 'Orbitron, monospace', color: '#00e5ff', fontSize: '0.9rem', marginBottom: '15px' }}>
                                             <strong>SYSTEM IDENTITY:</strong> Code Architect of Consciousness<br />
                                             <strong>MISSION:</strong> Integrating Artificial Intelligence with Vedic Systems<br />
