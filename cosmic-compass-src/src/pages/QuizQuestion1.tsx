@@ -31,6 +31,21 @@ const QuizQuestion1 = ({ onAnswer }: QuizQuestion1Props) => {
       <div className="relative h-full w-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
         <SciFiBackground variant="question1" />
 
+        {/* Back Button */}
+        <motion.button
+          onClick={() => navigate(-1)}
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 text-foreground/70 hover:text-neon-cyan transition-colors font-orbitron text-sm sm:text-base lg:text-3xl font-bold"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6 lg:w-10 lg:h-10">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span className="uppercase tracking-widest">Back</span>
+        </motion.button>
+
         <motion.div
           className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-full justify-center"
           initial={{ opacity: 0 }}
@@ -46,7 +61,7 @@ const QuizQuestion1 = ({ onAnswer }: QuizQuestion1Props) => {
             {[1, 2, 3, 4].map((step) => (
               <div
                 key={step}
-                className={`w-8 sm:w-12 h-1 rounded-full ${step === 1 ? "bg-neon-cyan" : "bg-muted"
+                className={`w-8 sm:w-12 lg:w-32 h-1 lg:h-3 rounded-full ${step === 1 ? "bg-neon-cyan" : "bg-muted"
                   }`}
               />
             ))}
