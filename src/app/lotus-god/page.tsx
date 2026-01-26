@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -371,6 +372,7 @@ interface NeuralNetwork {
 // ----------------- COMPONENT ----------------- //
 
 export default function LotusGod() {
+    const router = useRouter();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [clickCount, setClickCount] = useState(0);
     const [copied, setCopied] = useState(false);
@@ -918,8 +920,8 @@ export default function LotusGod() {
                             setCopied(true);
                             setTimeout(() => {
                                 setCopied(false);
-                                window.location.href = '/';
-                            }, 2000);
+                                router.push('/');
+                            }, 1500);
                         }}
                         style={{
                             padding: '12px 30px',
@@ -978,6 +980,6 @@ export default function LotusGod() {
             }}>
                 BACK HOME
             </a>
-        </div >
+        </div>
     );
 }
