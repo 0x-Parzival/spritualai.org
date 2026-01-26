@@ -912,6 +912,7 @@ export default function LotusGod() {
                         You have unlocked the sacred discount!<br />
                         Use code <strong style={{ color: '#fff' }}>"KESHAV"</strong> to claim <strong style={{ color: '#fff' }}>33% off</strong> on all products.
                     </p>
+                    <button
                         onClick={() => {
                             navigator.clipboard.writeText("KESHAV");
                             setCopied(true);
@@ -940,10 +941,9 @@ export default function LotusGod() {
                         *Valid on all spiritual artifacts and guides
                     </div>
                 </div>
-    )
-}
+            )}
 
-{/* Logo in top right */ }
+            {/* Logo in top right */}
             <div style={{ position: 'absolute', top: '22px', right: '140px', zIndex: 1000, pointerEvents: 'none' }}>
                 <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '50px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
             </div>
