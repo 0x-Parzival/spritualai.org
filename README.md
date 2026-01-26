@@ -1,3 +1,28 @@
+# Spiritual AI Website
+
+## Project Setup (Node ≥ 20.9.0)
+
+1. **Install nvm** (Node Version Manager) if you don't have it:
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+   # Then restart your terminal or run `source ~/.bashrc`
+   ```
+2. **Install the required Node version** (reads the `.nvmrc` file):
+   ```bash
+   cd /home/parzival/spritualai.org
+   nvm install   # installs 20.9.0 as specified in .nvmrc
+   nvm use       # switches to 20.9.0 for this session
+   ```
+   *Tip:* Add `nvm use` to your shell's `cd` hook so the correct version is automatically selected when you `cd` into the project.
+3. **Install dependencies and start the development server**:
+   ```bash
+   npm install
+   npm run dev
+   ```
+   The `preinstall` script in `package.json` will abort if an older Node version is used, providing a clear error message.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -31,6 +56,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

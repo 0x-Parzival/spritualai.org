@@ -58,25 +58,85 @@
 /* Planet-like Icons */
 .iconBox {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 60px;
-    height: 60px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
     color: #fff;
-    font-size: 1.5rem;
-    padding: 5px;
+    font-size: 1.4rem;
+    padding: 8px;
     cursor: pointer;
     transition: all 0.4s;
     box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
+    gap: 4px;
+}
+
+.buttonLabel {
+    display: block;
+    font-size: 0.65rem;
+    font-family: "Orbitron", sans-serif;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0, 229, 255, 1), 0 0 4px rgba(0, 0, 0, 1);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 800;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.resumeLinkWrapper {
+    text-decoration: none;
+    color: inherit;
 }
 
 .iconBox:hover {
     transform: translateY(-10px) scale(1.1);
     box-shadow: inset -5px -5px 20px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 255, 255, 0.6);
+}
+
+.tooltipText {
+    visibility: hidden;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.tooltipText::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+}
+
+.iconBox:hover .tooltipText {
+    visibility: visible;
+    opacity: 1;
 }
 
 .iconBox i {
@@ -348,6 +408,14 @@
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: transform 0.3s;
+}
+
+.projectCard img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
 .projectCard:hover {

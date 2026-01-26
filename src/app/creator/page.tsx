@@ -613,19 +613,29 @@ const CreatorPage = () => {
                 <div className={styles.iconContainer}>
                     <div className={`${styles.iconBox} ${styles.aboutIcon}`} onClick={() => togglePopup('about')} title="About Me">
                         <i className="fa-regular fa-address-card"></i> 👤
+                        <span className={styles.buttonLabel}>WHO AM I?</span>
+                        <span className={styles.tooltipText}>About Me</span>
                     </div>
                     <div className={`${styles.iconBox} ${styles.projectsIcon}`} onClick={() => togglePopup('projects')} title="Projects">
                         <i className="fa-solid fa-laptop-code"></i> 💻
+                        <span className={styles.buttonLabel}>CREATIONS</span>
+                        <span className={styles.tooltipText}>Projects</span>
                     </div>
                     <div className={`${styles.iconBox} ${styles.testimonialIcon}`} onClick={() => togglePopup('testimonial')} title="Story">
                         <i className="fa-solid fa-users-rectangle"></i> 📜
+                        <span className={styles.buttonLabel}>JOURNEY</span>
+                        <span className={styles.tooltipText}>Story</span>
                     </div>
                     <div className={`${styles.iconBox} ${styles.contactIcon}`} onClick={() => togglePopup('contact')} title="Contact">
                         <i className="fa-solid fa-envelope"></i> 📧
+                        <span className={styles.buttonLabel}>CONNECT</span>
+                        <span className={styles.tooltipText}>Contact</span>
                     </div>
-                    <Link href="/resume" target="_blank">
+                    <Link href="/resume" target="_blank" className={styles.resumeLinkWrapper}>
                         <div className={`${styles.iconBox} ${styles.resumeIcon}`} title="Resume">
                             📄
+                            <span className={styles.buttonLabel}>DOSSIER</span>
+                            <span className={styles.tooltipText}>Resume</span>
                         </div>
                     </Link>
                 </div>
@@ -770,13 +780,15 @@ const CreatorPage = () => {
                                         <div className={styles.projectDesc}>
                                             An AI Operating System designed for the Satya Yuga. Conscious computing.
                                         </div>
+                                        <a href="https://github.com/0x-Parzival/kalki1" target="_blank" className={styles.projectLink}>GitHub</a>
                                     </div>
                                     <div className={styles.projectCard}>
-                                        <img src="/creator_assets/aech.png" alt="AECH" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
-                                        <div className={styles.projectTitle}>AECH</div>
+                                        <img src="/creator_assets/cyber_ai.png" alt="Cyber AI" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
+                                        <div className={styles.projectTitle}>Cyber AI</div>
                                         <div className={styles.projectDesc}>
-                                            The Eternal Vault. Blockchain based layout for digital equity.
+                                            The Cyber Sentinel Suite. Next-gen cybersecurity solutions.
                                         </div>
+                                        <a href="https://cyber-sentinel-suite.vercel.app/" target="_blank" className={styles.projectLink}>Visit App</a>
                                     </div>
                                 </div>
                             </div>
@@ -834,7 +846,8 @@ const CreatorPage = () => {
                                     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '20px', fontSize: '2rem' }}>
                                         <a href="https://in.linkedin.com/in/keshav-baliyan-749188245" target="_blank" title="LinkedIn">🔗</a>
                                         <a href="https://github.com/0x-Parzival" target="_blank" title="GitHub">🐙</a>
-                                        <a href="https://www.instagram.com/gesture_ai/" target="_blank" title="Instagram">📸</a>
+                                        <a href="https://www.instagram.com/heyyy_keshav/" target="_blank" title="Instagram">📸</a>
+                                        <a href="https://wa.me/7457852306" target="_blank" title="WhatsApp">💬</a>
                                     </div>
                                 </div>
                             </div>
@@ -842,7 +855,7 @@ const CreatorPage = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 };
 

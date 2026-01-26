@@ -70,13 +70,26 @@
         /* Move moon to the right of the button */
     }
 
-    /* Adjust neon button style for mobile */
+    /* Adjust neon button style for mobile (Connect with Creator) */
     .neon-button {
         position: static;
-        transform: scale(0.8);
-        /* Reverted to match desktop original scale */
+        transform: scale(0.9);
         margin: 0;
         white-space: nowrap;
+        border: 2px solid #ff0000 !important;
+        /* Force distinct border */
+        background: rgba(0, 0, 0, 0.6);
+        padding: 5px 10px;
+    }
+
+    /* YES/NO Buttons */
+    .neon-btn {
+        border: 2px solid #ff003c !important;
+        /* Explicit border for mobile */
+        padding: 12px 30px;
+        background: rgba(0, 0, 0, 0.5);
+        /* Readable background */
+        margin: 10px;
     }
 
 
@@ -84,7 +97,6 @@
     .subtitle-lotus-container {
         display: flex;
         flex-direction: column;
-        /* Vertically stack on mobile to prevent horizontal squeeze */
         justify-content: center;
         align-items: center;
         gap: 15px;
@@ -119,9 +131,11 @@
     .button-group {
         flex-direction: row;
         justify-content: center;
-        gap: 1rem;
+        gap: 1.5rem;
+        /* Increased gap */
         margin-top: 1.5rem;
         flex-wrap: wrap;
+        width: 100%;
     }
 
     /* Ocean effect */
@@ -162,21 +176,27 @@
         color: #00bcd4;
         text-decoration: none;
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.75rem;
+        font-size: 0.85rem;
+        /* Slightly larger */
         text-transform: uppercase;
         letter-spacing: 2px;
         transition: all 0.3s ease;
         white-space: nowrap;
-        border: 1px solid rgba(0, 188, 212, 0.3);
-        padding: 5px 12px;
+        border: 2px solid rgba(0, 188, 212, 0.6);
+        /* Clearer border */
+        padding: 8px 16px;
+        /* Larger hit area */
         border-radius: 20px;
-        background: rgba(0, 188, 212, 0.05);
+        background: rgba(0, 18, 50, 0.8);
+        /* Darker bg for contrast */
+        box-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
     }
 
     .lotus-trigger-link:hover {
         color: #fff;
-        background: rgba(0, 188, 212, 0.2);
-        box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+        background: rgba(0, 188, 212, 0.3);
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.6);
+        border-color: #00bcd4;
     }
 
     /* Lotus/Flower container */

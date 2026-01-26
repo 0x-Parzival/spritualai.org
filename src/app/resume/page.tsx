@@ -22,7 +22,7 @@ const ResumePage = () => {
                         Product-oriented AI Developer | Creative Technologist | Gesture-Based Interfaces
                     </div>
                     <div className={styles.contactInfo}>
-                        <a href="mailto:contact@spritualai.org">contact@spritualai.org</a> |
+                        <a href="mailto:admin@spiritualai.store">admin@spiritualai.store</a> |
                         <a href="https://in.linkedin.com/in/keshav-baliyan-749188245">LinkedIn</a> |
                         <a href="https://github.com/0x-Parzival">GitHub</a> |
                         <a href="https://spritualai.org">Portfolio</a>

@@ -11,11 +11,35 @@
   gap: 15px;
 }
 
-.moon-img {
+.contact-section {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.moon-img,
+.logo-img {
   width: 120px;
   height: auto;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
   animation: moonPulse 4s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.moon-img:hover,
+.logo-img:hover {
+  filter: drop-shadow(0 0 20px #00fff9);
+  border-color: #00fff9;
+  box-shadow: 0 0 15px rgba(0, 255, 249, 0.5);
+  transform: scale(1.15);
+  cursor: pointer;
 }
 
 @keyframes moonPulse {
@@ -94,7 +118,13 @@
   max-width: 100vw;
   padding: 0 20px;
   z-index: 100;
-  pointer-events: none;
+  pointer-events: auto;
+}
+
+.lotus-link-wrapper {
+  text-decoration: none;
+  cursor: pointer;
+  display: contents;
 }
 
 .lotus-trigger-bottom {
@@ -125,6 +155,15 @@
   color: #fff;
   text-shadow: 0 0 5px #fff, 0 0 10px #ff0000;
   transform: scale(1.05);
+}
+
+.contact-link.instagram:hover .icon {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #fff;
+}
+
+.contact-link.instagram:hover .label {
+  color: #e1306c;
 }
 
 /* ---------------- GLOBAL RESET ---------------- */
@@ -857,4 +896,144 @@ main.ocean-main {
     /* Center on very small screens? Or keep right but smaller */
     width: max-content;
   }
+}
+
+/* ---------------- CONTACT SIDEBAR (Win11 Glass) ---------------- */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1001;
+  /* Behind sidebar, above everything else */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.contact-sidebar-panel {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  /* Hidden via offset */
+  width: 350px;
+  height: 100%;
+  background: rgba(20, 20, 25, 0.6);
+  /* Darker tone for readability */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 1002;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* MacOS/Win11 slide feel */
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-sidebar-panel.active {
+  right: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+}
+
+.sidebar-header h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #ff003c;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.contact-link .icon {
+  font-size: 1.8rem;
+}
+
+.contact-link .details {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-link .label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.contact-link .value {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Specific Colors for hover states or borders if desired */
+.contact-link.whatsapp:hover {
+  border-color: #25D366;
+  box-shadow: 0 0 15px rgba(37, 211, 102, 0.2);
+}
+
+.contact-link.email:hover {
+  border-color: #EA4335;
+  box-shadow: 0 0 15px rgba(234, 67, 53, 0.2);
+}
+
+.contact-link.discord:hover {
+  border-color: #5865F2;
+  box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
 }

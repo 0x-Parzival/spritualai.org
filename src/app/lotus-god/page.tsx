@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -372,6 +372,9 @@ interface NeuralNetwork {
 
 export default function LotusGod() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [clickCount, setClickCount] = useState(0);
+    const [copied, setCopied] = useState(false);
+
     const configRef = useRef({
         paused: false,
         activePaletteIndex: 0,
@@ -837,7 +840,10 @@ export default function LotusGod() {
 
         // Interaction
         const onClick = (e: MouseEvent) => {
-            if (!configRef.current.paused) triggerPulse(e.clientX, e.clientY);
+            if (!configRef.current.paused) {
+                triggerPulse(e.clientX, e.clientY);
+                setClickCount(prev => Math.min(prev + 1, 33));
+            }
         };
         window.addEventListener('click', onClick);
 
@@ -861,9 +867,82 @@ export default function LotusGod() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: '#000', zIndex: 9999 }}>
             <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
 
+            {/* Point Counter HUD */}
+            <div style={{
+                position: 'absolute',
+                top: '100px',
+                left: '20px',
+                zIndex: 1000,
+                color: '#fff',
+                fontFamily: 'Orbitron, sans-serif',
+                fontSize: '1.2rem',
+                textShadow: '0 0 10px rgba(0, 229, 255, 0.8)',
+                background: 'rgba(0,0,0,0.4)',
+                padding: '10px 20px',
+                borderRadius: '15px',
+                border: '1px solid rgba(0, 229, 255, 0.3)',
+                backdropFilter: 'blur(5px)',
+                pointerEvents: 'none'
+            }}>
+                POINTS: <span style={{ color: '#00e5ff' }}>{clickCount}</span> / 33
+            </div>
+
+            {/* Reward Notification */}
+            {clickCount >= 33 && (
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 2000,
+                    textAlign: 'center',
+                    background: 'rgba(0, 0, 0, 0.85)',
+                    padding: '30px 40px',
+                    borderRadius: '20px',
+                    border: '2px solid #00e5ff',
+                    boxShadow: '0 0 30px rgba(0, 229, 255, 0.5)',
+                    backdropFilter: 'blur(15px)',
+                    maxWidth: '90%',
+                    width: '500px'
+                }}>
+                    <h2 style={{ color: '#fff', fontFamily: 'Orbitron, sans-serif', marginBottom: '20px', fontSize: '1.5rem', letterSpacing: '2px' }}>
+                        ✨ SPIRITUAL AWAKENING ✨
+                    </h2>
+                    <p style={{ color: '#00e5ff', fontSize: '1.1rem', marginBottom: '25px', lineHeight: '1.6' }}>
+                        You have unlocked the sacred discount!<br />
+                        Use code <strong style={{ color: '#fff' }}>"KESHAV"</strong> to claim <strong style={{ color: '#fff' }}>33% off</strong> on all products.
+                    </p>
+                    <button
+                        onClick={() => {
+                            navigator.clipboard.writeText("KESHAV");
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }}
+                        style={{
+                            padding: '12px 30px',
+                            background: copied ? '#4caf50' : 'linear-gradient(45deg, #00e5ff, #0072ff)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '30px',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            transition: 'all 0.3s',
+                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+                        }}
+                    >
+                        {copied ? '✅ COPIED!' : 'COPY REFERRAL CODE'}
+                    </button>
+                    <div style={{ marginTop: '15px', color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>
+                        *Valid on all spiritual artifacts and guides
+                    </div>
+                </div>
+            )}
+
             {/* Logo in top right */}
-            <div style={{ position: 'absolute', top: '20px', right: '140px', zIndex: 1000, pointerEvents: 'none' }}>
-                <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '60px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
+            <div style={{ position: 'absolute', top: '22px', right: '140px', zIndex: 1000, pointerEvents: 'none' }}>
+                <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '50px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
             </div>
 
             <div style={{
@@ -871,11 +950,11 @@ export default function LotusGod() {
                 top: 20,
                 left: 20,
                 color: 'rgba(255,255,255,0.7)',
-                fontFamily: 'sans-serif',
+                fontFamily: 'Orbitron, sans-serif',
                 pointerEvents: 'none'
             }}>
-                <h1>Lotus God</h1>
-                <p>Click to send energy pulses.</p>
+                <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '2px' }}>Lotus God</h1>
+                <p style={{ margin: '5px 0 0', fontSize: '0.8rem', opacity: 0.8 }}>TAP THE SCREEN TO SEND ENERGY PULSES</p>
             </div>
 
             <a href="/" style={{
@@ -884,13 +963,17 @@ export default function LotusGod() {
                 right: 20,
                 color: 'white',
                 textDecoration: 'none',
-                padding: '10px 20px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                borderRadius: '20px',
+                padding: '10px 25px',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '30px',
                 backdropFilter: 'blur(10px)',
-                fontFamily: 'sans-serif'
+                fontFamily: 'Orbitron, sans-serif',
+                fontSize: '0.8rem',
+                letterSpacing: '1px',
+                background: 'rgba(255,255,255,0.05)',
+                transition: 'all 0.3s'
             }}>
-                Back Home
+                BACK HOME
             </a>
         </div>
     );

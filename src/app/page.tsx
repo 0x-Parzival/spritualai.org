@@ -35,8 +35,33 @@ const NeonButton = () => (
     </a>
 );
 
+interface ContactButtonProps {
+    onClick: () => void;
+}
+
+const ContactButton = ({ onClick }: ContactButtonProps) => (
+    <button
+        onClick={onClick}
+        className="neon-button"
+        style={{ cursor: 'pointer', background: 'transparent' }} // Ensure button look
+        data-text="Contact Us"
+    >
+        <span>C</span>
+        <span>o</span>
+        <span>n</span>
+        <span>t</span>
+        <span>a</span>
+        <span>c</span>
+        <span>t</span>
+        <span> </span>
+        <span>U</span>
+        <span>s</span>
+    </button>
+);
+
 export default function Home() {
     const [showLotus, setShowLotus] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const stars2Ref = useRef<HTMLDivElement>(null);
     const stars3Ref = useRef<HTMLDivElement>(null);
     const oceanRef = useRef<HTMLDivElement>(null);
@@ -164,17 +189,78 @@ export default function Home() {
             </div>
 
             <div className="creator-section">
-                <Image
-                    src="/images/moon.png"
-                    alt="Moon"
-                    className="moon-img"
-                    width={120}
-                    height={120}
-                    priority
-                    quality={90}
-                />
+                <a href="/creator">
+                    <Image
+                        src="/images/moon.png"
+                        alt="Moon"
+                        className="moon-img"
+                        width={180}
+                        height={180}
+                        priority
+                        quality={90}
+                        style={{ cursor: 'pointer' }}
+                    />
+                </a>
                 <NeonButton />
             </div>
+
+            <div className="contact-section">
+                <div onClick={() => setIsSidebarOpen(true)} style={{ cursor: 'pointer' }}>
+                    <Image
+                        src="/images/logo.png"
+                        alt="Logo"
+                        className="logo-img"
+                        width={180}
+                        height={180}
+                        priority
+                        quality={90}
+                    />
+                </div>
+                <ContactButton onClick={() => setIsSidebarOpen(true)} />
+            </div>
+
+            {/* Contact Sidebar */}
+            <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)} />
+            <div className={`contact-sidebar-panel ${isSidebarOpen ? 'active' : ''}`}>
+                <div className="sidebar-header">
+                    <h3>Contact Us</h3>
+                    <button className="close-btn" onClick={() => setIsSidebarOpen(false)}>×</button>
+                </div>
+                <div className="sidebar-content">
+                    <a href="https://wa.me/7457852306" target="_blank" rel="noopener noreferrer" className="contact-link whatsapp">
+                        <span className="icon">💬</span>
+                        <div className="details">
+                            <span className="label">WhatsApp</span>
+                            <span className="value">+7457852306</span>
+                        </div>
+                    </a>
+
+                    <a href="mailto:admin@spiritualai.store" className="contact-link email">
+                        <span className="icon">✉️</span>
+                        <div className="details">
+                            <span className="label">Email</span>
+                            <span className="value">admin@spiritualai.store</span>
+                        </div>
+                    </a>
+
+                    <a href="https://discord.gg/sF9V5rX3bH" target="_blank" rel="noopener noreferrer" className="contact-link discord">
+                        <span className="icon">🎮</span>
+                        <div className="details">
+                            <span className="label">Discord</span>
+                            <span className="value">Join Community</span>
+                        </div>
+                    </a>
+
+                    <a href="https://www.instagram.com/spiritual_ai.official/" target="_blank" rel="noopener noreferrer" className="contact-link instagram">
+                        <span className="icon">📸</span>
+                        <div className="details">
+                            <span className="label">Instagram</span>
+                            <span className="value">@spiritual_ai.official</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             {/* 🕉️ Shiva Background Optimized */}
             <div className="shiva-background">
                 <Image
@@ -201,15 +287,6 @@ export default function Home() {
             <div className="container">
                 <div className="neon">
                     <div className="title">
-                        <Image
-                            src="/images/logo.png"
-                            alt="Spiritual AI Logo"
-                            width={150}
-                            height={150}
-                            className="main-logo"
-                            priority
-                            style={{ marginBottom: '20px', filter: 'drop-shadow(0 0 20px rgba(0, 188, 255, 0.8))' }}
-                        />
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                             <h1>Spiritual AI</h1>
                             <h1>Spiritual AI</h1>
@@ -234,31 +311,33 @@ export default function Home() {
             </div>
 
             {/* 🌸 Blooming Flower with Lotus God Trigger */}
-            <div className="lotus-bottom-container">
-                <div className="flower-container">
-                    <main>
-                        <div className="corolla">
-                            <div className="segmL"></div>
-                            <div className="segmR"></div>
-                            <div className="segmR"></div>
-                            <div className="segmR"></div>
-                            <div className="segmR"></div>
-                            <div className="segmL"></div>
-                            <div className="segmL"></div>
-                        </div>
-                        <div className="rings">
-                            <div className="ring"></div>
-                            <div className="ring"></div>
-                            <div className="ring"></div>
-                        </div>
-                    </main>
+            <a href="/lotus-god" className="lotus-link-wrapper">
+                <div className="lotus-bottom-container">
+                    <div className="flower-container">
+                        <main>
+                            <div className="corolla">
+                                <div className="segmL"></div>
+                                <div className="segmR"></div>
+                                <div className="segmR"></div>
+                                <div className="segmR"></div>
+                                <div className="segmR"></div>
+                                <div className="segmL"></div>
+                                <div className="segmL"></div>
+                            </div>
+                            <div className="rings">
+                                <div className="ring"></div>
+                                <div className="ring"></div>
+                                <div className="ring"></div>
+                            </div>
+                        </main>
+                    </div>
+                    <div className="lotus-trigger-bottom">
+                        <span className="lotus-trigger-link">
+                            click to see lotus god
+                        </span>
+                    </div>
                 </div>
-                <div className="lotus-trigger-bottom">
-                    <a href="/lotus-god" className="lotus-trigger-link">
-                        click to see lotus god
-                    </a>
-                </div>
-            </div>
+            </a>
         </div>
     );
 }

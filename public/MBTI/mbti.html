@@ -112,18 +112,31 @@
       z-index: 1001;
       /* Increased z-index to be above the back button */
       width: 100%;
-      min-height: 100vh;
+      height: 100vh;
+      /* Fixed height */
+      overflow: hidden;
+      /* Prevent scroll */
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      /* Changed from center to flex-start */
-      padding-top: 4rem;
-      /* Added more top padding */
-      padding-bottom: 2rem;
+      justify-content: center;
+      /* Center vertically */
+      padding-top: 0;
+      padding-bottom: 0;
       padding-left: 1rem;
       padding-right: 1rem;
       pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .ui {
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        justify-content: flex-start;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+      }
     }
 
     /* ---------- Neon Title ---------- */
@@ -135,7 +148,8 @@
       align-items: center;
       justify-content: center;
       font-family: 'Orbitron', sans-serif;
-      margin: 1in 0 24px 0;
+      margin: 20px 0 20px 0;
+      /* Reduced margins to prevent overflow */
       pointer-events: auto;
       text-shadow: 0 0 10px rgba(0, 188, 255, 0.7);
       line-height: 1;
@@ -146,6 +160,12 @@
 
     .title h1 {
       font-size: clamp(22px, 4.5vw, 64px);
+
+      /* Double size for desktop */
+      @media (min-width: 1024px) {
+        font-size: 5rem;
+      }
+
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -900,7 +920,7 @@
 
       // Redirect to the corresponding page after a short delay
       setTimeout(() => {
-        window.location.href = `/products/${mbti.toLowerCase()}`;
+        window.location.href = `personality/${mbti.toLowerCase()}.html`;
       }, 300);
     }
 
