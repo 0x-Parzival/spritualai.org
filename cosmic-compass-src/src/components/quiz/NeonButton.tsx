@@ -36,7 +36,7 @@ const NeonButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "relative px-6 py-3 sm:px-8 sm:py-4 lg:px-16 lg:py-8 font-orbitron font-bold text-sm sm:text-base lg:text-5xl uppercase tracking-wider",
+        "relative px-6 py-3 sm:px-8 sm:py-4 font-orbitron font-bold text-sm sm:text-base uppercase tracking-wider",
         "border-2 rounded-lg transition-all duration-300",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         getVariantClasses(),

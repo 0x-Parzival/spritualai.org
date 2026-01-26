@@ -772,38 +772,38 @@ const CreatorPage = () => {
                                 </div>
 
                                 <div className={styles.projectsGrid}>
-                                    <div className={styles.projectCard}>
+                                    <a href="https://spritualai.org" target="_blank" className={styles.projectCard}>
                                         <img src="/creator_assets/spiritualai.png" alt="Spiritual AI" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
                                         <div className={styles.projectTitle}>Spiritual AI</div>
                                         <div className={styles.projectDesc}>
                                             A platform bridging spirituality and artificial intelligence. Digital products for the soul.
                                         </div>
-                                        <a href="https://spritualai.org" target="_blank" className={styles.projectLink}>Visit Site</a>
-                                    </div>
-                                    <div className={styles.projectCard}>
+                                        <span className={styles.projectLink}>Visit Site</span>
+                                    </a>
+                                    <a href="https://www.instagram.com/gesture_ai/" target="_blank" className={styles.projectCard}>
                                         <img src="/creator_assets/gesture.png" alt="Gesture AI" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
                                         <div className={styles.projectTitle}>Gesture AI</div>
                                         <div className={styles.projectDesc}>
                                             Controlling digital environments with hand gestures. Featured at IITD Startup Expo.
                                         </div>
-                                        <a href="https://www.instagram.com/gesture_ai/" target="_blank" className={styles.projectLink}>Instagram</a>
-                                    </div>
-                                    <div className={styles.projectCard}>
+                                        <span className={styles.projectLink}>Instagram</span>
+                                    </a>
+                                    <a href="https://github.com/0x-Parzival/kalki1" target="_blank" className={styles.projectCard}>
                                         <img src="/creator_assets/kalkios.png" alt="KalkiOS" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
                                         <div className={styles.projectTitle}>KalkiOS</div>
                                         <div className={styles.projectDesc}>
                                             An AI Operating System designed for the Satya Yuga. Conscious computing.
                                         </div>
-                                        <a href="https://github.com/0x-Parzival/kalki1" target="_blank" className={styles.projectLink}>GitHub</a>
-                                    </div>
-                                    <div className={styles.projectCard}>
+                                        <span className={styles.projectLink}>GitHub</span>
+                                    </a>
+                                    <a href="https://cyber-sentinel-suite.vercel.app/" target="_blank" className={styles.projectCard}>
                                         <img src="/creator_assets/cyber_ai.png" alt="Cyber AI" style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
                                         <div className={styles.projectTitle}>Cyber AI</div>
                                         <div className={styles.projectDesc}>
                                             The Cyber Sentinel Suite. Next-gen cybersecurity solutions.
                                         </div>
-                                        <a href="https://cyber-sentinel-suite.vercel.app/" target="_blank" className={styles.projectLink}>Visit App</a>
-                                    </div>
+                                        <span className={styles.projectLink}>Visit App</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
