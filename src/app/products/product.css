@@ -86,6 +86,34 @@ section {
     border-radius: 0px;
 }
 
+.terminal-log {
+    background: #000;
+    border: 1px solid var(--primary);
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 255, 249, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.terminal-header {
+    background: var(--primary);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    margin: -20px -20px 20px -20px;
+    font-weight: bold;
+}
+
+.blueprint-grid {
+    background-image:
+        linear-gradient(rgba(0, 255, 249, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 249, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    border: 1px solid rgba(0, 255, 249, 0.1);
+}
+
 .layout-nt .cta-button {
     border-radius: 0px;
     letter-spacing: 2px;
@@ -93,7 +121,22 @@ section {
 
 /* NF Group: Values + Meaning (Breathable, Artistic, Story) */
 .layout-nf .sales-container {
-    max-width: 850px;
+    max-width: 800px;
+    text-align: center;
+}
+
+.centered-story {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.centered-story li {
+    padding-left: 0 !important;
+}
+
+.centered-story li::before {
+    display: none;
 }
 
 .layout-nf .sales-heading {
@@ -146,6 +189,13 @@ section {
 .layout-sp .feature-item {
     border-radius: 0px;
     transform: skew(-2deg);
+    border: 2px solid var(--primary);
+    background: transparent;
+}
+
+.sp-card {
+    border-left: 8px solid var(--primary) !important;
+    background: linear-gradient(90deg, rgba(0, 255, 249, 0.1), transparent) !important;
 }
 
 .layout-sp .cta-button {
@@ -173,6 +223,36 @@ section {
 }
 
 /* Hooks & Visuals */
+.hook-placeholder-nt {
+    background-image:
+        radial-gradient(circle at 50% 50%, rgba(0, 255, 249, 0.1) 0%, transparent 70%),
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+}
+
+.hook-placeholder-nf {
+    background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+    filter: blur(40px);
+    opacity: 0.3;
+}
+
+.hook-placeholder-sj {
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.02),
+        rgba(255, 255, 255, 0.02) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+}
+
+.hook-placeholder-sp {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    opacity: 0.2;
+    transform: scale(1.2) rotate(5deg);
+}
+
 .hook-image {
     width: 100%;
     min-height: 250px;
@@ -243,6 +323,17 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 8px;
+}
+
+.roi-message {
+    background: rgba(0, 255, 249, 0.1);
+    color: var(--primary);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 1px solid var(--primary);
+    margin-bottom: 16px;
 }
 
 .price-original {
