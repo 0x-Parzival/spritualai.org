@@ -58,7 +58,7 @@ export default function ProductPage() {
 
     return (
         <div
-            className={`product-page layout-${theme.layoutType.toLowerCase()}`}
+            className={`product-page layout-${theme?.layoutType?.toLowerCase() || 'default'}`}
             style={{
                 '--primary': theme.colors.primary,
                 '--secondary': theme.colors.secondary,
@@ -105,7 +105,7 @@ export default function ProductPage() {
                     <h2 className="sales-subheading" style={{ opacity: 0.8, fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: '300' }}>
                         {script.headline}
                     </h2>
-                    <div className={`hook-image glass-panel hook-placeholder-${theme.layoutType.toLowerCase()}`} style={{ overflow: 'hidden', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className={`hook-image glass-panel hook-placeholder-${theme?.layoutType?.toLowerCase() || 'default'}`} style={{ overflow: 'hidden', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {script.image_url ? (
                             <img
                                 src={script.image_url}
@@ -133,7 +133,7 @@ export default function ProductPage() {
                         {script.pain_story}
                     </p>
 
-                    {theme.layoutType === 'NT' ? (
+                    {theme?.layoutType === 'NT' ? (
                         <div className="terminal-log">
                             <div className="terminal-header">STATUS: CRITICAL FAILURE DETECTED</div>
                             <motion.ul className="agitation-list" variants={stagger}>
@@ -145,7 +145,7 @@ export default function ProductPage() {
                             </motion.ul>
                         </div>
                     ) : (
-                        <motion.ul className={`agitation-list ${theme.layoutType === 'NF' ? 'centered-story' : ''}`} variants={stagger}>
+                        <motion.ul className={`agitation-list ${theme?.layoutType === 'NF' ? 'centered-story' : ''}`} variants={stagger}>
                             {script.agitation_bullets.map((bullet: string, i: number) => (
                                 <motion.li key={i} variants={fadeIn}>
                                     {bullet}
@@ -157,7 +157,7 @@ export default function ProductPage() {
 
                 {/* 3. Transition Mechanism */}
                 <motion.section
-                    className={`transition-section glass-panel layout-${theme.layoutType.toLowerCase()}`}
+                    className="transition-section glass-panel"
                     style={{ padding: '40px', textAlign: 'center' }}
                     initial="initial"
                     whileInView={{
@@ -175,8 +175,8 @@ export default function ProductPage() {
                         fontWeight: '900',
                         color: 'var(--primary)',
                         marginTop: '15px',
-                        textTransform: theme.layoutType === 'NT' ? 'uppercase' : 'none',
-                        textShadow: theme.layoutType === 'SP' ? '3px 3px 0px var(--secondary)' : 'none'
+                        textTransform: theme?.layoutType === 'NT' ? 'uppercase' : 'none',
+                        textShadow: theme?.layoutType === 'SP' ? '3px 3px 0px var(--secondary)' : 'none'
                     }}>
                         {script.transition_mechanism}
                     </div>
@@ -197,11 +197,11 @@ export default function ProductPage() {
                         </p>
                     </div>
 
-                    <div className={`feature-grid ${theme.layoutType === 'NT' ? 'blueprint-grid' : ''}`}>
+                    <div className={`feature-grid ${theme?.layoutType === 'NT' ? 'blueprint-grid' : ''}`}>
                         {script.features_bullets.map((feature: string, i: number) => (
                             <motion.div
                                 key={i}
-                                className={`feature-item glass-panel ${theme.layoutType === 'SP' ? 'sp-card' : ''}`}
+                                className={`feature-item glass-panel ${theme?.layoutType === 'SP' ? 'sp-card' : ''}`}
                                 whileHover={{ scale: 1.05, y: -5, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
                                 transition={{ type: "spring", stiffness: 300 }}
                             >
@@ -222,7 +222,7 @@ export default function ProductPage() {
                     <h3 className="sales-heading" style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>GET IMMEDIATE ACCESS</h3>
 
                     <div className="price-container">
-                        {theme.layoutType === 'SJ' && (
+                        {theme?.layoutType === 'SJ' && (
                             <div className="roi-message">
                                 ✓ PROVEN RESULTS • DATA-BACKED ROI • SECURE INVESTMENT
                             </div>
