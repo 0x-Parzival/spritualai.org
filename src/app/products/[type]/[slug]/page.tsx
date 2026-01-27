@@ -105,7 +105,7 @@ export default function ProductPage() {
                     <h2 className="sales-subheading" style={{ opacity: 0.8, fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: '300' }}>
                         {script.headline}
                     </h2>
-                    <div className="hook-image glass-panel" style={{ overflow: 'hidden', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className={`hook-image glass-panel hook-placeholder-${theme.layoutType.toLowerCase()}`} style={{ overflow: 'hidden', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {script.image_url ? (
                             <img
                                 src={script.image_url}
@@ -114,7 +114,7 @@ export default function ProductPage() {
                             />
                         ) : (
                             <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
-                                <p>[ {script.hook_image_prompt} ]</p>
+                                <p style={{ fontStyle: 'italic', letterSpacing: '1px' }}>[ {script.hook_image_prompt} ]</p>
                             </div>
                         )}
                     </div>
@@ -133,31 +133,50 @@ export default function ProductPage() {
                         {script.pain_story}
                     </p>
 
-                    <motion.ul className="agitation-list" variants={stagger}>
-                        {script.agitation_bullets.map((bullet: string, i: number) => (
-                            <motion.li key={i} variants={fadeIn}>
-                                {bullet}
-                            </motion.li>
-                        ))}
-                    </motion.ul>
+                    {theme.layoutType === 'NT' ? (
+                        <div className="terminal-log">
+                            <div className="terminal-header">STATUS: CRITICAL FAILURE DETECTED</div>
+                            <motion.ul className="agitation-list" variants={stagger}>
+                                {script.agitation_bullets.map((bullet: string, i: number) => (
+                                    <motion.li key={i} variants={fadeIn} style={{ fontFamily: 'monospace' }}>
+                                        <span style={{ color: 'var(--primary)' }}>[ERROR]</span> {bullet}
+                                    </motion.li>
+                                ))}
+                            </motion.ul>
+                        </div>
+                    ) : (
+                        <motion.ul className={`agitation-list ${theme.layoutType === 'NF' ? 'centered-story' : ''}`} variants={stagger}>
+                            {script.agitation_bullets.map((bullet: string, i: number) => (
+                                <motion.li key={i} variants={fadeIn}>
+                                    {bullet}
+                                </motion.li>
+                            ))}
+                        </motion.ul>
+                    )}
                 </motion.section>
 
                 {/* 3. Transition Mechanism */}
                 <motion.section
-                    className="transition-section glass-panel"
+                    className={`transition-section glass-panel layout-${theme.layoutType.toLowerCase()}`}
                     style={{ padding: '40px', textAlign: 'center' }}
                     initial="initial"
-                    whileInView="animate"
+                    whileInView={{
+                        opacity: 1,
+                        y: 0,
+                        scale: [0.98, 1.02, 1],
+                        transition: { duration: 0.8 }
+                    }}
                     viewport={{ once: true }}
                     variants={fadeIn}
                 >
-                    <p style={{ margin: 0, opacity: 0.6 }}>THE PARADIGM SHIFT</p>
+                    <p style={{ margin: 0, opacity: 0.6, letterSpacing: '3px' }}>THE PARADIGM SHIFT</p>
                     <div style={{
-                        fontSize: '2rem',
-                        fontWeight: '800',
+                        fontSize: '2.5rem',
+                        fontWeight: '900',
                         color: 'var(--primary)',
-                        marginTop: '10px',
-                        textTransform: theme.layoutType === 'NT' ? 'uppercase' : 'none'
+                        marginTop: '15px',
+                        textTransform: theme.layoutType === 'NT' ? 'uppercase' : 'none',
+                        textShadow: theme.layoutType === 'SP' ? '3px 3px 0px var(--secondary)' : 'none'
                     }}>
                         {script.transition_mechanism}
                     </div>
@@ -178,11 +197,11 @@ export default function ProductPage() {
                         </p>
                     </div>
 
-                    <div className="feature-grid">
+                    <div className={`feature-grid ${theme.layoutType === 'NT' ? 'blueprint-grid' : ''}`}>
                         {script.features_bullets.map((feature: string, i: number) => (
                             <motion.div
                                 key={i}
-                                className="feature-item glass-panel"
+                                className={`feature-item glass-panel ${theme.layoutType === 'SP' ? 'sp-card' : ''}`}
                                 whileHover={{ scale: 1.05, y: -5, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
                                 transition={{ type: "spring", stiffness: 300 }}
                             >
@@ -203,6 +222,11 @@ export default function ProductPage() {
                     <h3 className="sales-heading" style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>GET IMMEDIATE ACCESS</h3>
 
                     <div className="price-container">
+                        {theme.layoutType === 'SJ' && (
+                            <div className="roi-message">
+                                ✓ PROVEN RESULTS • DATA-BACKED ROI • SECURE INVESTMENT
+                            </div>
+                        )}
                         <span className="price-original">{script.price_original}</span>
                         <span className="price-discounted">{script.price_discounted}</span>
                     </div>
@@ -237,17 +261,17 @@ export default function ProductPage() {
                             border: 'none',
                             width: '100%',
                             padding: '20px',
-                            fontSize: '1.2rem',
+                            fontSize: '1.4rem',
                             fontWeight: 'bold',
                             cursor: 'pointer',
                             textTransform: 'uppercase',
                             letterSpacing: '2px',
                             borderRadius: '50px',
-                            boxShadow: '0 0 20px var(--primary)',
+                            boxShadow: '0 0 25px var(--primary)',
                             transition: 'all 0.3s'
                         }}
                     >
-                        {theme.ctaLabel}
+                        {script.cta_text}
                     </button>
 
                     <div style={{ marginTop: '30px', fontSize: '0.8rem', opacity: 0.5 }}>
