@@ -183,8 +183,8 @@ export default function CheckoutModal({ isOpen, onClose, productTitle, productPr
                                     <h3 style={{ fontSize: '1.8rem', marginBottom: '10px', color: '#00bcd4' }}>Order Confirmed!</h3>
                                     <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
                                         Thank you, {formData.name}.<br />
-                                        We have received your request for <strong>{productTitle}</strong>.<br />
-                                        Our team will verify the payment and grant access shortly.
+                                        Your digital product will be delivered to your email <strong>{formData.email}</strong> and WhatsApp number <strong>{formData.phone}</strong> soon.<br />
+                                        <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>Our team is verifying your payment now.</span>
                                     </p>
                                 </div>
                             ) : (
