@@ -57,7 +57,7 @@ export default function VantaBackground({ effectName, config }: VantaBackgroundP
 
                 // Dynamically import THREE
                 const THREE_MOD = await import('three');
-                const three = THREE_MOD.default || THREE_MOD;
+                const three = (THREE_MOD as any).default || THREE_MOD;
 
                 const vanta = VantaModule.default || VantaModule;
 
