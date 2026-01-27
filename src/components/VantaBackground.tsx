@@ -56,14 +56,14 @@ export default function VantaBackground({ effectName, config }: VantaBackgroundP
                 }
 
                 // Dynamically import THREE
-                const THREE_MOD = await import('three');
+                const THREE_MOD = await import('three') as any;
                 const three = THREE_MOD.default || THREE_MOD;
 
-                const vanta = VantaModule.default || VantaModule;
+                const vanta = (VantaModule as any).default || VantaModule;
 
                 // Handle different export structures (some might export on .default, others direct, others on .effectName)
                 // We try a few common patterns or fallback to the module itself if it's a function
-                const effectFn = typeof vanta === 'function' ? vanta : (vanta[effectName] || vanta.default || vanta);
+                const effectFn = typeof vanta === 'function' ? vanta : (vanta[effectName] || (vanta as any).default || vanta);
 
                 if (vantaRef.current && typeof effectFn === 'function') {
                     effect = effectFn({

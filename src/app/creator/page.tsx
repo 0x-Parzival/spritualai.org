@@ -423,9 +423,9 @@ const CreatorPage = () => {
                 const easedProgress = easeInOutCubic(pulseProgress);
 
                 orbitRings.children.forEach((ring: any) => {
-                    if (ring.material.uniforms) ring.material.uniforms.uExplode.value = easedProgress;
+                    if ((ring.material as any).uniforms) (ring.material as any).uniforms.uExplode.value = easedProgress;
                 });
-                coreSphere.material.uniforms.uExplode.value = easedProgress;
+                (coreSphere.material as any).uniforms.uExplode.value = easedProgress;
 
                 if (progress >= 1.0) {
                     isExplosionActive = false;
@@ -436,14 +436,14 @@ const CreatorPage = () => {
             }
 
             if (coreSphere && coreSphere.material) {
-                coreSphere.material.uniforms.time.value = elapsedTime;
-                coreSphere.material.uniforms.uMouse.value.copy(mouse);
+                (coreSphere.material as any).uniforms.time.value = elapsedTime;
+                (coreSphere.material as any).uniforms.uMouse.value.copy(mouse);
             }
 
             if (orbitRings) {
                 orbitRings.children.forEach((ring: any, index: number) => {
-                    ring.material.uniforms.time.value = elapsedTime;
-                    ring.material.uniforms.uMouse.value.copy(mouse);
+                    (ring.material as any).uniforms.time.value = elapsedTime;
+                    (ring.material as any).uniforms.uMouse.value.copy(mouse);
 
                     const speed = 0.0005 * (index + 1);
                     ring.rotation.z += speed;
@@ -453,7 +453,7 @@ const CreatorPage = () => {
                 });
             }
 
-            if (starfield) starfield.material.uniforms.time.value = elapsedTime;
+            if (starfield) (starfield.material as any).uniforms.time.value = elapsedTime;
 
             if (mainGroup) mainGroup.rotation.y += 0.0005;
 
