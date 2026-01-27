@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "cosmic-compass-src/**",
+    "node_modules/**",
+    "public/**",
   ]),
 ]);
 
