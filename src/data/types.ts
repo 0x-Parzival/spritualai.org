@@ -9,6 +9,7 @@ export interface ProductScript {
     headline: string; // "How to {solution} without {pain} in {time}"
     subheadline: string;
     hook_image_prompt: string; // For generating the artistic vibe later
+    image_url?: string; // Generated image path
 
     // 2. Pain & Agitation
     pain_story: string; // The "Real cause of the problem"

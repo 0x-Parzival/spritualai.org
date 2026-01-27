@@ -1,0 +1,281 @@
+/* Base Layout */
+.mobileWrapper {
+    display: block;
+    width: 100vw;
+    height: 100dvh;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+}
+
+.bgLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.stars {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: transparent;
+    z-index: 2;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    /* Increased significantly for scale 1.1 text */
+    background: rgba(8, 8, 16, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+    padding-top: 5px;
+}
+
+.subtitle {
+    font-family: sans-serif;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: -5px;
+    text-shadow: 0 0 5px black;
+}
+
+/* Main Content */
+.mainContent {
+    position: absolute;
+    top: 120px;
+    bottom: 80px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Center vertically */
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.mbtiContainer {
+    text-align: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.mbtiQuestion {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: #e0f7ff;
+    text-shadow: 0 0 10px cyan;
+    line-height: 1.3;
+    margin-bottom: 20px;
+}
+
+.btnGroup {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.neonActionBtn {
+    padding: 10px 30px;
+    border: 2px solid #ff003c;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-shadow: 0 0 5px red;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 15px rgba(255, 0, 60, 0.3);
+    border-radius: 4px;
+}
+
+/* Lotus Area */
+.lotusWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    flex-shrink: 1;
+    /* Allow shrinking if needed */
+}
+
+.lotusLink {
+    color: #00bcd4;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    border: 1px solid rgba(0, 188, 212, 0.5);
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: rgba(0, 10, 30, 0.8);
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Bottom Nav */
+.bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: rgba(8, 8, 25, 0.9);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-top: 1px solid rgba(255, 0, 60, 0.3);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    gap: 5px;
+}
+
+.navItem span {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.iconBox {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    transition: transform 0.2s;
+}
+
+.navItem:active .iconBox {
+    transform: scale(0.9);
+}
+
+/* Sidebar */
+.sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    z-index: 2000;
+    pointer-events: none;
+    transition: background 0.3s;
+}
+
+.sidebarOverlay.active {
+    background: rgba(0, 0, 0, 0.8);
+    pointer-events: auto;
+}
+
+.sidebarPanel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 85%;
+    max-width: 300px;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.95);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.panelActive {
+    transform: translateX(0);
+}
+
+.sidebarHeader {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebarHeader h3 {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    color: #fff;
+}
+
+.sidebarHeader button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.sidebarLinks {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contactLink {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    color: #fff;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.contactLink:active {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.contactLink span {
+    font-size: 1.5rem;
+}
+
+.contactLink div {
+    display: flex;
+    flex-direction: column;
+}
+
+.contactLink strong {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+.contactLink small {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}

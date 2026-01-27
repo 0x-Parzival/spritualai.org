@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import { useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import { productsData } from "../../../../data/products";
 import { mbtiThemes } from "../../../../data/themes";
@@ -9,11 +10,13 @@ import "../../product.css";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import VantaBackground from "../../../../components/VantaBackground";
+import CheckoutModal from "../../../../components/CheckoutModal";
 
 export default function ProductPage() {
     const params = useParams();
     const type = params.type as string;
     const slug = params.slug as string;
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
     const mbtiType = type.toUpperCase();
     const profile = productsData[mbtiType];
@@ -28,6 +31,13 @@ export default function ProductPage() {
     if (!product) {
         notFound();
     }
+
+    // Set page title
+    React.useEffect(() => {
+        if (product && product.script) {
+            document.title = `${product.script.product_name} | Spiritual AI`;
+        }
+    }, [product]);
 
     const { script } = product;
 
@@ -89,16 +99,24 @@ export default function ProductPage() {
                     }}>
                         {mbtiType} EXCLUSIVE
                     </span>
-                    <h1 className="sales-heading" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}>
-                        {script.headline}
+                    <h1 className="sales-heading" style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', marginBottom: '0.5rem' }}>
+                        {product.title}
                     </h1>
-                    <h2 className="sales-subheading">
-                        {script.subheadline}
+                    <h2 className="sales-subheading" style={{ opacity: 0.8, fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: '300' }}>
+                        {script.headline}
                     </h2>
-                    <div className="hook-image glass-panel">
-                        <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
-                            <p>[ {script.hook_image_prompt} ]</p>
-                        </div>
+                    <div className="hook-image glass-panel" style={{ overflow: 'hidden', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {script.image_url ? (
+                            <img
+                                src={script.image_url}
+                                alt={product.title}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                        ) : (
+                            <div style={{ padding: '40px', textAlign: 'center', opacity: 0.5 }}>
+                                <p>[ {script.hook_image_prompt} ]</p>
+                            </div>
+                        )}
                     </div>
                 </motion.section>
 
@@ -209,15 +227,43 @@ export default function ProductPage() {
                         {script.scarcity_text}
                     </p>
 
-                    <Link href="#" className="cta-button" style={{ marginTop: '20px' }}>
+                    <button
+                        onClick={() => setIsCheckoutOpen(true)}
+                        className="cta-button"
+                        style={{
+                            marginTop: '20px',
+                            background: 'var(--primary)',
+                            color: 'black',
+                            border: 'none',
+                            width: '100%',
+                            padding: '20px',
+                            fontSize: '1.2rem',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            letterSpacing: '2px',
+                            borderRadius: '50px',
+                            boxShadow: '0 0 20px var(--primary)',
+                            transition: 'all 0.3s'
+                        }}
+                    >
                         {theme.ctaLabel}
-                    </Link>
+                    </button>
 
                     <div style={{ marginTop: '30px', fontSize: '0.8rem', opacity: 0.5 }}>
                         Secure Payment • Instant Digital Delivery • Lifetime Access
                     </div>
                 </motion.section>
             </main>
+
+            <CheckoutModal
+                isOpen={isCheckoutOpen}
+                onClose={() => setIsCheckoutOpen(false)}
+                productTitle={script.product_name}
+                productPrice={script.price_discounted}
+                productId={slug}
+                productType={mbtiType}
+            />
         </div>
     );
 }

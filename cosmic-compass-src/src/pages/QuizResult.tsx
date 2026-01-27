@@ -126,6 +126,21 @@ const QuizResult = () => {
 
       <div className="relative h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
         <SciFiBackground variant="result" />
+
+        {/* Back Button */}
+        <motion.button
+          onClick={() => window.location.href = "/"}
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 text-foreground/70 hover:text-neon-cyan transition-colors font-orbitron text-sm sm:text-base lg:text-3xl font-bold"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6 lg:w-10 lg:h-10">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span className="uppercase tracking-widest">Back to menu</span>
+        </motion.button>
         <FirecrackerAnimation
           isActive={showFirecrackers}
           onComplete={() => setAnimationComplete(true)}
@@ -155,14 +170,14 @@ const QuizResult = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="relative z-10"
             >
-              <span className="font-orbitron text-xs sm:text-sm text-foreground/60 uppercase tracking-[0.3em] font-medium">
+              <span className="font-orbitron text-xs sm:text-sm lg:text-base xl:text-lg text-foreground/60 uppercase tracking-[0.3em] font-medium">
                 Your Personality Type Is
               </span>
             </motion.div>
 
             {/* MBTI Type - Large Display with enhanced glow */}
             <motion.h1
-              className="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black my-4 sm:my-6 relative z-10"
+              className="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black my-4 sm:my-6 relative z-10"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{
@@ -210,15 +225,15 @@ const QuizResult = () => {
               transition={{ duration: 0.8, delay: 1.6 }}
               className="relative z-10"
             >
-              <h2 className="font-orbitron text-lg sm:text-xl md:text-2xl text-primary mb-2 tracking-wide drop-shadow-[0_0_10px_hsl(280_100%_60%_/_0.5)]">
+              <h2 className="font-orbitron text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-primary mb-2 tracking-wide drop-shadow-[0_0_10px_hsl(280_100%_60%_/_0.5)]">
                 {description.title}
               </h2>
-              <p className="font-exo text-xs sm:text-sm md:text-base text-foreground/70 max-w-md mx-auto px-2 leading-relaxed">
+              <p className="font-exo text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-foreground/70 max-w-md lg:max-w-lg mx-auto px-2 leading-relaxed">
                 {description.subtitle}
               </p>
             </motion.div>
 
-            {/* Know More button */}
+            {/* Retake button */}
             <motion.div
               className="mt-5 sm:mt-6 relative z-10"
               initial={{ opacity: 0, y: 20 }}
@@ -227,9 +242,7 @@ const QuizResult = () => {
             >
               <NeonButton
                 variant="secondary"
-                onClick={() => {
-                  window.location.href = `/MBTI/personality/${mbtiType.toLowerCase()}.html`;
-                }}
+                onClick={() => window.location.href = `/MBTI/personality/${mbtiType.toLowerCase()}.html`}
                 className="backdrop-blur-sm bg-white/5 border-white/30 hover:bg-white/10"
               >
                 Know More

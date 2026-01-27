@@ -9,12 +9,12 @@ interface NeonButtonProps {
   disabled?: boolean;
 }
 
-const NeonButton = ({
-  children,
-  onClick,
-  variant = "primary",
+const NeonButton = ({ 
+  children, 
+  onClick, 
+  variant = "primary", 
   className,
-  disabled = false
+  disabled = false 
 }: NeonButtonProps) => {
   const getVariantClasses = () => {
     switch (variant) {
@@ -64,7 +64,7 @@ const NeonButton = ({
           ease: "easeInOut",
         }}
       />
-
+      
       <span className="relative z-10">{children}</span>
     </motion.button>
   );

@@ -180,7 +180,8 @@ body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
+  /* Lock scroll on desktop/global */
   background: black;
   font-family: 'Lato', sans-serif;
   color: white;
@@ -343,7 +344,7 @@ main.ocean-main {
 }
 
 .title h1 {
-  font-size: clamp(30px, 11.5vw, 90px);
+  font-size: clamp(30px, 11.5vw, 70px);
   font-weight: bolder;
   text-transform: uppercase;
   letter-spacing: clamp(1px, 1vw, 3px);
@@ -1036,4 +1037,9 @@ main.ocean-main {
 .contact-link.discord:hover {
   border-color: #5865F2;
   box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
+}
+
+/* Hide Mobile App Layout on Desktop */
+.mobile-layout {
+  display: none;
 }

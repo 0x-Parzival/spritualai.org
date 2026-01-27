@@ -20,6 +20,15 @@ const nextConfig: NextConfig = {
         source: "/cosmic-compass",
         destination: "/cosmic-compass/index.html",
       },
+      // 2. Rewrite for MBTI index
+      {
+        source: "/MBTI",
+        destination: "/MBTI/index.html",
+      },
+      {
+        source: "/MBTI/",
+        destination: "/MBTI/index.html",
+      },
       {
         source: "/cosmic-compass/",
         destination: "/cosmic-compass/index.html",

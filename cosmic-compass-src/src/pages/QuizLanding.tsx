@@ -16,11 +16,11 @@ const QuizLanding = () => {
         <link rel="canonical" href="/quiz" />
       </Helmet>
 
-      <div className="relative h-full w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+      <div className="relative h-[100dvh] w-full flex flex-col items-center justify-between p-4 sm:justify-center sm:h-full sm:p-6 overflow-hidden">
         <SciFiBackground variant="landing" />
 
         <motion.div
-          className="relative z-10 text-center max-w-2xl mx-auto"
+          className="relative z-10 text-center max-w-2xl mx-auto flex flex-col h-full justify-around sm:justify-center sm:block"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
@@ -30,22 +30,25 @@ const QuizLanding = () => {
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="neon-wave-container mb-2 sm:mb-4"
+            className="flex flex-col items-center gap-2 mb-4 sm:mb-12 mt-8 sm:mt-0"
           >
-            <div className="neon-wave-title">
-              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
-                SPIRITUAL AI
-              </h1>
-              <h1 className="font-orbitron text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
-                SPIRITUAL AI
-              </h1>
+            <div className="neon-wave-container transform scale-75 sm:scale-100">
+              <div className="neon-wave-title text-center">
+                <h1 className="font-orbitron text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black">
+                  <span className="block text-primary">SPIRITUAL</span>
+                  <span className="block text-secondary mt-1 sm:mt-2">AI</span>
+                </h1>
+                <h1 className="font-orbitron text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black" aria-hidden="true">
+                  <span className="block text-primary">SPIRITUAL</span>
+                  <span className="block text-secondary mt-1 sm:mt-2">AI</span>
+                </h1>
+              </div>
             </div>
           </motion.div>
-          <div className="h-[2px] w-32 sm:w-48 mx-auto bg-gradient-to-r from-transparent via-primary to-transparent mb-4 sm:mb-8" />
 
           {/* Subtitle */}
           <motion.p
-            className="font-exo text-base sm:text-lg md:text-xl text-foreground/80 mb-4 sm:mb-6 px-4"
+            className="font-exo text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-foreground/80 mb-4 sm:mb-12 px-4 leading-tight"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
@@ -55,34 +58,53 @@ const QuizLanding = () => {
             to know your personality type
           </motion.p>
 
-          {/* MBTI Types Preview */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6 sm:mb-8 px-2"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-          >
-            {["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP",
-              "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"].map((type, i) => (
+          <div className="flex flex-col gap-2 sm:gap-0">
+            {/* MBTI Types Preview - Row 1 */}
+            <motion.div
+              className="grid grid-cols-4 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-4 mb-2 sm:mb-4 px-2"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              {["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP"].map((type) => (
                 <span
                   key={type}
-                  className="text-[10px] sm:text-xs font-orbitron text-muted-foreground/60 px-1.5 py-0.5 sm:px-2 sm:py-1 border border-border/30 rounded"
+                  className="text-xs sm:text-base lg:text-lg xl:text-xl font-orbitron text-muted-foreground/60 px-1 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 border border-border/30 rounded"
                 >
                   {type}
                 </span>
               ))}
-          </motion.div>
+            </motion.div>
+
+            {/* MBTI Types Preview - Row 2 */}
+            <motion.div
+              className="grid grid-cols-4 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-2"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+            >
+              {["ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"].map((type) => (
+                <span
+                  key={type}
+                  className="text-xs sm:text-base lg:text-lg xl:text-xl font-orbitron text-muted-foreground/60 px-1 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 border border-border/30 rounded"
+                >
+                  {type}
+                </span>
+              ))}
+            </motion.div>
+          </div>
 
           {/* Start Button */}
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.9 }}
+            className="mb-8 sm:mb-0"
           >
             <NeonButton
               variant="primary"
               onClick={() => navigate("/quiz/1")}
-              className="text-base sm:text-lg px-8 py-4 sm:px-12 sm:py-5"
+              className="text-lg sm:text-2xl lg:text-3xl px-10 py-5 sm:px-16 sm:py-8 w-full sm:w-auto"
             >
               Start Quiz
             </NeonButton>

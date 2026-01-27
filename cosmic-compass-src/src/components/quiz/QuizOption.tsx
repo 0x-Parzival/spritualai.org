@@ -46,13 +46,13 @@ const QuizOption = ({
       <div className="relative z-10">
         <h3
           className={cn(
-            "font-orbitron font-bold text-base sm:text-lg md:text-xl mb-2",
+            "font-orbitron font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-2",
             isLeft ? "text-neon-cyan" : "text-neon-magenta"
           )}
         >
           {title}
         </h3>
-        <p className="text-foreground/80 text-xs sm:text-sm leading-relaxed line-clamp-4 sm:line-clamp-none">
+        <p className="text-foreground/80 text-xs sm:text-sm lg:text-base xl:text-lg leading-relaxed sm:line-clamp-none">
           {description}
         </p>
       </div>

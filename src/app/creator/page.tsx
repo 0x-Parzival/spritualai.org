@@ -570,30 +570,14 @@ const CreatorPage = () => {
             <div ref={canvasRef} className={styles.canvasContainer}></div>
 
             {/* Back Button */}
-            <Link href="/" style={{
-                position: 'absolute',
-                top: '20px',
-                left: '20px',
-                zIndex: 50,
-                color: 'white',
-                textDecoration: 'none',
-                background: 'rgba(0,0,0,0.5)',
-                padding: '10px 20px',
-                borderRadius: '30px',
-                backdropFilter: 'blur(5px)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '0.9rem',
-                fontFamily: 'Orbitron, sans-serif'
-            }}>
+            {/* Back Button */}
+            <Link href="/" className={styles.backLink}>
                 ⬅ Back to Home
             </Link>
 
             {/* Site Logo */}
-            <div style={{ position: 'absolute', top: '22px', right: '20px', zIndex: 1000, pointerEvents: 'none' }}>
-                <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '50px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
+            <div className={styles.logoContainer}>
+                <img src="/images/logo.png" alt="Spiritual AI Logo" className={styles.logoImg} />
             </div>
 
             {/* Cosmic Controls */}
