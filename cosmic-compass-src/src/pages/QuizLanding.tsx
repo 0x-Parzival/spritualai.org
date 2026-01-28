@@ -18,7 +18,7 @@ const QuizLanding = () => {
 
       <div className="relative h-full w-full flex items-center justify-center p-4 sm:p-6 overflow-hidden">
         <SciFiBackground variant="landing" />
-        
+
         <motion.div
           className="relative z-10 text-center max-w-2xl mx-auto"
           initial={{ opacity: 0 }}
@@ -57,15 +57,15 @@ const QuizLanding = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.7 }}
           >
-            {["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP", 
+            {["ISTJ", "ISFJ", "INFJ", "INTJ", "ISTP", "ISFP", "INFP", "INTP",
               "ESTP", "ESFP", "ENFP", "ENTP", "ESTJ", "ESFJ", "ENFJ", "ENTJ"].map((type, i) => (
-              <span
-                key={type}
-                className="text-[10px] sm:text-xs lg:text-sm xl:text-base font-orbitron text-muted-foreground/60 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-3 lg:py-1.5 border border-border/30 rounded"
-              >
-                {type}
-              </span>
-            ))}
+                <span
+                  key={type}
+                  className="text-[10px] sm:text-xs lg:text-sm xl:text-base font-orbitron text-muted-foreground/60 px-1.5 py-0.5 sm:px-2 sm:py-1 lg:px-3 lg:py-1.5 border border-border/30 rounded"
+                >
+                  {type}
+                </span>
+              ))}
           </motion.div>
 
           {/* Start Button */}

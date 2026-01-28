@@ -177,15 +177,30 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: hidden;
-  /* Lock scroll on desktop/global */
+  overflow-y: auto;
+  /* Restore scroll to allow access to all content */
   background: black;
   font-family: 'Lato', sans-serif;
   color: white;
-  /* Ensure default text color is white for dark theme */
+  scrollbar-width: thin;
+  scrollbar-color: #00bcd4 rgba(0, 0, 0, 0.5);
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #00bcd4;
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 /* ---------------- STAR OCEAN BACKGROUND ---------------- */

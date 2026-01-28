@@ -42,7 +42,7 @@
     --neon-purple: 280 100% 60%;
     --neon-blue: 220 100% 60%;
     --glow-cyan: 0 0% 0% / 0;
-    
+
     --gradient-sci-fi: linear-gradient(135deg, hsl(280 100% 60%) 0%, hsl(320 100% 60%) 50%, hsl(180 100% 50%) 100%);
 
     --sidebar-background: 240 15% 8%;
@@ -83,7 +83,9 @@
     @apply border-border;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     @apply h-full overflow-hidden;
   }
 
@@ -96,7 +98,7 @@
   .font-orbitron {
     font-family: 'Orbitron', monospace;
   }
-  
+
   .font-exo {
     font-family: 'Exo 2', sans-serif;
   }
@@ -126,7 +128,7 @@
   }
 
   .bg-grid-pattern {
-    background-image: 
+    background-image:
       linear-gradient(hsl(280 100% 60% / 0.1) 1px, transparent 1px),
       linear-gradient(90deg, hsl(280 100% 60% / 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
