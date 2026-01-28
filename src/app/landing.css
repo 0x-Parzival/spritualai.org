@@ -177,30 +177,25 @@
 
 html,
 body {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
-  /* Restore scroll to allow access to all content */
+  overflow-y: hidden;
+  /* Lock scroll globally */
   background: black;
   font-family: 'Lato', sans-serif;
   color: white;
-  scrollbar-width: thin;
-  scrollbar-color: #00bcd4 rgba(0, 0, 0, 0.5);
 }
 
-body::-webkit-scrollbar {
-  width: 8px;
-}
+/* Allow scrolling on mobile devices where content might be taller than viewport */
+@media (max-width: 768px) {
 
-body::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-body::-webkit-scrollbar-thumb {
-  background: #00bcd4;
-  border-radius: 10px;
-  border: 2px solid rgba(0, 0, 0, 0.5);
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-y: auto;
+  }
 }
 
 /* ---------------- STAR OCEAN BACKGROUND ---------------- */
@@ -451,6 +446,8 @@ main.ocean-main {
   background-clip: unset;
 
   animation: glitch-skew 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite both;
+  white-space: nowrap;
+  /* Enforce single line */
 }
 
 .matrix-text::before,
