@@ -408,13 +408,16 @@ main.ocean-main {
   align-items: center;
   justify-content: center;
   position: relative;
-  margin: 5vh auto;
+  margin: 10vh auto;
+  /* Slightly more space */
   gap: clamp(20px, 5vh, 40px);
-  width: fit-content;
-  max-width: 90vw;
+  width: 100%;
+  /* Fill width for better centering */
+  max-width: 900px;
   padding: 5vh 0;
   z-index: 60;
   pointer-events: auto;
+  text-align: center;
 }
 
 /* Sci-Fi Text Styles */
@@ -585,15 +588,13 @@ main.ocean-main {
 
 .button-group {
   display: flex;
-  gap: 30px;
-  /* Align to the right side of the container */
-  align-self: flex-end;
-  margin-top: 20px;
-  /* Removed arbitrary margin-right to ensure it aligns with text end */
+  gap: clamp(20px, 5vw, 60px);
+  justify-content: center;
+  /* Center the buttons */
+  align-items: center;
+  margin-top: 30px;
   width: 100%;
-  justify-content: flex-end;
-  max-width: 90vw;
-  /* Match text max-width */
+  max-width: 100%;
 }
 
 .neon-btn {
