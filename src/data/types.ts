@@ -13,7 +13,7 @@ export interface ProductScript {
 
     // 2. Pain & Agitation
     pain_story: string; // The "Real cause of the problem"
-    agitation_bullets: string[]; // "Damaging mechanism" steps
+    agitation_bullets: (string | { title: string; analysis: string })[]; // "Damaging mechanism" steps
 
     // 3. Hope & Transition
     transition_mechanism: string; // The "New Mechanism" or "The Shift"
@@ -51,12 +51,12 @@ export interface MBTITheme {
         heading: string;
         body: string;
     };
-    layoutType: 'NT' | 'NF' | 'SJ' | 'SP';
+    layoutType: 'NT' | 'NF' | 'SJ' | 'SP' | 'INTJ_STRATEGIC' | 'INTP_CURIOSITY' | 'ENTJ_COMMAND' | 'ENTP_DYNAMIC' | 'ENTJ_IMPERIAL' | 'INFJ_ADVOCATE' | 'INFP_MEDIATOR';
     vantaColor: number;
-    ctaStyle: string;
+    vantaEffect: 'net' | 'fog' | 'clouds' | 'waves' | 'rings' | 'globe';
+    vantaConfig: any;
+    ctaStyle: 'sharp' | 'minimal' | 'bold' | 'playful' | 'elegant' | 'gentle' | 'warm' | 'joyful' | 'secure' | 'familiar' | 'business' | 'friendly' | 'utilitarian' | 'aesthetic' | 'punchy' | 'lively' | 'ghost';
     ctaLabel: string;
-    vantaEffect: 'net' | 'fog' | 'waves' | 'clouds' | 'clouds2' | 'globe' | 'halo' | 'rings' | 'ripple' | 'topology' | 'dots' | 'birds' | 'cells';
-    vantaConfig: Record<string, any>;
 }
 
 export interface MBTIProfile {

@@ -1,4 +1,5 @@
 /* Digital Product Page Styles - Tailored for MBTI Psychology */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Orbitron:wght@400;500;700;900&display=swap');
 
 /* Base Variables - These will be overridden by inline styles from the React component */
 :root {
@@ -315,14 +316,313 @@ section {
     opacity: 0.7;
 }
 
+/* INTJ Strategic System Interface (The Architect) */
+.layout-intj-strategic {
+    background-color: #0B0F14;
+    color: #E0E0E0;
+    font-family: 'Inter', sans-serif;
+}
+
+.layout-intj-strategic .sales-heading {
+    color: #4FD1C5;
+    /* Cyan */
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-family: 'IBM Plex Sans', sans-serif;
+    text-transform: none;
+}
+
+.layout-intj-strategic .sales-subheading {
+    border-left: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: #4FD1C5;
+    background: rgba(79, 209, 197, 0.05);
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(79, 209, 197, 0.2);
+}
+
+.layout-intj-strategic .cta-button {
+    background: transparent;
+    border: 1px solid #4FD1C5;
+    /* Cyan Border */
+    color: #4FD1C5;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.layout-intj-strategic .cta-button:hover {
+    background: rgba(79, 209, 197, 0.1);
+    box-shadow: 0 0 15px rgba(79, 209, 197, 0.3);
+    border-color: #4FD1C5;
+    transform: translateY(-2px);
+    color: #fff;
+    text-shadow: 0 0 8px rgba(79, 209, 197, 0.8);
+}
+
+.layout-intj-strategic .glass-panel {
+    background: #121821;
+    /* Slightly lighter dark slate */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    /* Sharper corners */
+    box-shadow: none;
+}
+
+.layout-intj-strategic .feature-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    background: #121821;
+    border-left: 2px solid #4FD1C5;
+    border-radius: 0;
+    padding: 20px;
+}
+
+.layout-intj-strategic .agitation-list li {
+    background: transparent;
+    padding-left: 30px;
+}
+
+.layout-intj-strategic .agitation-list li::before {
+    content: "■";
+    /* Square bullet */
+    color: #4FD1C5;
+    font-size: 0.8em;
+    top: 20px;
+    left: 0;
+}
+
+.intj-code-block {
+    font-family: 'JetBrains Mono', monospace;
+    background: #080a0c;
+    border: 1px solid rgba(79, 209, 197, 0.3);
+    padding: 20px;
+    border-radius: 6px;
+    color: #a0aec0;
+    font-size: 0.9rem;
+    position: relative;
+    box-shadow: 0 0 20px rgba(79, 209, 197, 0.05);
+}
+
+.intj-code-block::before {
+    content: "LOGIC_CORE";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: #0B0F14;
+    padding: 0 8px;
+    color: #4FD1C5;
+    font-size: 0.7rem;
+    border: 1px solid rgba(79, 209, 197, 0.3);
+}
+
+.intj-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
 @media (min-width: 768px) {
-    .feature-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .intj-hero-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+}
+
+.intj-visual-anchor {
+    position: relative;
+    border: 1px solid rgba(79, 209, 197, 0.2);
+    padding: 10px;
+    background: rgba(79, 209, 197, 0.02);
+}
+
+.intj-visual-anchor img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(20%) contrast(110%);
+}
+
+.intj-visual-anchor::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    background: linear-gradient(180deg, transparent 0%, rgba(79, 209, 197, 0.05) 100%);
+    pointer-events: none;
+}
+
+.intj-paradigm-shift {
+    border-top: 1px solid #4FD1C5;
+    border-bottom: 1px solid #4FD1C5;
+    background: #0d1116;
+    padding: 60px 0;
+    margin: 80px 0;
+    text-align: center;
+}
+
+.intj-promise {
+    font-family: 'JetBrains Mono', monospace;
+    color: #4FD1C5;
+    border: 1px dashed rgba(79, 209, 197, 0.4);
+    padding: 24px;
+    background: rgba(79, 209, 197, 0.02);
+    margin-top: 40px;
+}
+
+/* --- ENTJ COMMAND INTERFACE --- */
+.layout-entj-command {
+    background-color: #0C0F14;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+}
+
+.layout-entj-command ::selection {
+    background: #C1121F;
+    color: #fff;
+}
+
+/* Typography */
+.layout-entj-command .sales-heading {
+    font-family: 'SF Pro Display', 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    color: #fff;
+}
+
+.layout-entj-command .sales-subheading {
+    border-left: 2px solid #C1121F;
+    padding-left: 20px;
+    color: #E2E8F0;
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+
+/* Grid System */
+.entj-grid-module {
+    border: 1px solid #141923;
+    background: #0E1116;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: border-color 0.2s ease;
+}
+
+.entj-grid-module:hover {
+    border-color: #C1121F;
+}
+
+.entj-metric-badge {
+    align-self: flex-end;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #C1121F;
+    border: 1px solid #C1121F;
+    padding: 4px 8px;
+    margin-top: auto;
+    text-transform: uppercase;
+}
+
+/* Animations: "Activation" not "Motion" */
+@keyframes signalPropagate {
+    0% {
+        width: 0;
+        opacity: 1;
     }
 
-    .price-container {
-        flex-direction: row;
-        justify-content: center;
-        gap: 32px;
+    100% {
+        width: 100%;
+        opacity: 0;
+    }
+}
+
+.entj-signal-line {
+    height: 1px;
+    background: #C1121F;
+    width: 0;
+    animation: signalPropagate 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Binary Guarantee */
+.entj-guarantee {
+    border: 1px solid #C1121F;
+    background: rgba(193, 18, 31, 0.05);
+    font-family: 'JetBrains Mono', monospace;
+    padding: 30px;
+    color: #E2E8F0;
+    position: relative;
+}
+
+.entj-guarantee::before {
+    content: '🛡️ EFFICIENCY_THEOREM';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #0C0F14;
+    padding: 0 10px;
+    color: #C1121F;
+    font-size: 0.8rem;
+}
+
+/* CTA - Deployment Style */
+.layout-entj-command .cta-button {
+    background: #C1121F;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 0;
+    border: none;
+    padding: 20px 40px;
+    width: 100%;
+    max-width: 400px;
+    transition: background 0.1s;
+    cursor: pointer;
+}
+
+.layout-entj-command .cta-button:hover {
+    background: #A10E1A;
+    transform: none;
+    /* No bounce */
+}
+
+.entj-scroll-signal {
+    border-left: 1px solid #C1121F;
+    height: 60px;
+    width: 1px;
+    margin: 40px auto;
+    position: relative;
+    opacity: 0.7;
+}
+
+.entj-scroll-signal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20%;
+    background: #fff;
+    animation: signalDrop 2s infinite;
+}
+
+@keyframes signalDrop {
+    0% {
+        top: 0;
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
     }
 }

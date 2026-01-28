@@ -3,108 +3,108 @@ import { MBTITheme } from "./types";
 export const mbtiThemes: Record<string, MBTITheme> = {
     INTJ: {
         colors: {
-            primary: "#00BFFF",
-            secondary: "#444444",
-            background: "#050505",
-            text: "#cfcfcf",
-            accent: "#00BFFF",
-            cardBg: "#0a0a0a",
-            muted: "#555"
+            primary: "#4FD1C5",
+            secondary: "#121821",
+            background: "#0B0F14",
+            text: "#E0E0E0",
+            accent: "#4FD1C5",
+            cardBg: "#121821",
+            muted: "#6b7280"
         },
         fonts: {
             heading: '"Inter", "IBM Plex Sans", sans-serif',
-            body: '"IBM Plex Sans", sans-serif'
+            body: '"Inter", "IBM Plex Sans", sans-serif'
         },
-        layoutType: 'NT',
-        vantaColor: 0x7b2ff7,
+        layoutType: 'INTJ_STRATEGIC',
+        vantaColor: 0x4FD1C5,
         vantaEffect: 'net',
-        vantaConfig: { color: 0x00BFFF, backgroundColor: 0x050505, maxDistance: 22.00, spacing: 16.00 },
-        ctaStyle: 'sharp',
-        ctaLabel: 'Access System'
+        vantaConfig: { color: 0x4FD1C5, backgroundColor: 0x0B0F14, maxDistance: 22.00, spacing: 18.00, points: 10.00 },
+        ctaStyle: 'ghost',
+        ctaLabel: 'INITIALIZE SYSTEM'
     },
     INTP: {
         colors: {
-            primary: "#7b2ff7",
-            secondary: "#6c757d",
-            background: "#0f0f12",
-            text: "#e0e0e0",
-            accent: "#9d50bb",
-            cardBg: "#16161a",
-            muted: "#888"
+            primary: "#7C7CFF", // Soft electric violet
+            secondary: "#10172A", // Soft midnight blue panels
+            background: "#0A0E1A", // Deep indigo-black
+            text: "#E0E0E0",
+            accent: "#A5A5FF", // Secondary glow
+            cardBg: "#10172A",
+            muted: "#64748b"
         },
         fonts: {
             heading: '"JetBrains Mono", monospace',
             body: '"Inter", sans-serif'
         },
-        layoutType: 'NT',
-        vantaColor: 0x7b2ff7,
-        vantaEffect: 'net',
-        vantaConfig: { color: 0x7b2ff7, backgroundColor: 0x0f0f12, maxDistance: 24.00, spacing: 17.00 },
+        layoutType: 'INTP_CURIOSITY',
+        vantaColor: 0x7C7CFF,
+        vantaEffect: 'net', // Will rely more on CSS particles
+        vantaConfig: { color: 0x7C7CFF, backgroundColor: 0x0A0E1A, maxDistance: 20.00, spacing: 16.00, points: 12.00 },
         ctaStyle: 'minimal',
-        ctaLabel: 'Explore'
+        ctaLabel: '→ Explore Further'
     },
     ENTJ: {
         colors: {
-            primary: "#e63946",
-            secondary: "#d4af37",
-            background: "#000000",
+            primary: "#6D28D9", // Imperial Purple
+            secondary: "#121520", // Dark Slate
+            background: "#0B0D12", // Obsidian Black
             text: "#ffffff",
-            accent: "#d4af37",
-            cardBg: "#0a0a0a",
-            muted: "#666"
+            accent: "#6D28D9",
+            cardBg: "#121520",
+            muted: "#6b7280"
         },
         fonts: {
-            heading: '"Playfair Display", serif',
-            body: '"Inter", sans-serif'
+            heading: '"Inter", "SF Pro Display", sans-serif',
+            body: '"Inter", "SF Pro Text", sans-serif'
         },
-        layoutType: 'NT',
-        vantaColor: 0x7b2ff7,
+        layoutType: 'ENTJ_IMPERIAL',
+        vantaColor: 0x6D28D9,
         vantaEffect: 'net',
-        vantaConfig: { color: 0xe63946, backgroundColor: 0x000000, maxDistance: 20.00, spacing: 15.00, showDots: false },
+        vantaConfig: { color: 0x6D28D9, backgroundColor: 0x0B0D12, maxDistance: 0.1, spacing: 100.00, points: 0 }, // Effectively minimal/static
         ctaStyle: 'bold',
-        ctaLabel: 'Execute'
+        ctaLabel: 'DEPLOY PROTOCOL'
     },
     ENTP: {
         colors: {
-            primary: "#ff9f1c",
-            secondary: "#2ec4b6",
-            background: "#011627",
-            text: "#fdfffc",
-            accent: "#e71d36",
-            cardBg: "rgba(253, 255, 252, 0.05)",
-            muted: "#aaa"
+            primary: "#3DF5FF", // Electric cyan
+            secondary: "#FF4ECD", // Neon magenta
+            background: "#0B1020", // Deep cosmic navy
+            text: "#FFFFFF",
+            accent: "#3DF5FF",
+            cardBg: "#131A33", // Midnight purple for sections
+            muted: "#94a3b8"
         },
         fonts: {
-            heading: '"Outfit", sans-serif',
-            body: '"Outfit", sans-serif'
+            heading: '"Space Grotesk", sans-serif',
+            body: '"Inter", sans-serif'
         },
-        layoutType: 'NT',
-        vantaColor: 0x7b2ff7,
+        layoutType: 'ENTP_DYNAMIC',
+        vantaColor: 0x3DF5FF,
         vantaEffect: 'net',
-        vantaConfig: { color: 0xff9f1c, backgroundColor: 0x011627, points: 12.00, maxDistance: 23.00, spacing: 18.00 },
+        vantaConfig: { color: 0x3DF5FF, backgroundColor: 0x0B1020, points: 14.00, maxDistance: 22.00, spacing: 16.00 },
         ctaStyle: 'playful',
-        ctaLabel: 'Try This'
+        ctaLabel: 'Unlock Cheat Code'
     },
     INFJ: {
         colors: {
-            primary: "#8e94f2",
-            secondary: "#bbd0ff",
-            background: "#121212",
-            text: "#e2e2e2",
+            primary: "#8e94f2", // Soft Lavender
+            secondary: "#BBD0FF", // Misty Blue
+            background: "#F4F6F0", // Sage/Warm Gray/Paper
+            text: "#4A4E5A", // Soft Slate
             accent: "#c77dff",
-            cardBg: "rgba(255, 255, 255, 0.03)",
-            muted: "#777"
+            cardBg: "#ffffff",
+            muted: "#7d8597"
         },
         fonts: {
             heading: '"Lora", serif',
-            body: '"Inter", sans-serif'
+            body: '"Nunito", "Mulish", sans-serif'
         },
-        layoutType: 'NF',
-        vantaColor: 0x15803d,
+        layoutType: 'INFJ_ADVOCATE',
+        vantaColor: 0x8e94f2,
         vantaEffect: 'fog',
-        vantaConfig: { highlightColor: 0x8e94f2, midtoneColor: 0xbbd0ff, lowlightColor: 0x121212, baseColor: 0x000000, blurFactor: 0.6 },
-        ctaStyle: 'elegant',
-        ctaLabel: 'Begin Your Journey'
+        vantaConfig: { highlightColor: 0x8e94f2, midtoneColor: 0xbbd0ff, lowlightColor: 0xF4F6F0, baseColor: 0xffffff, blurFactor: 0.9, speed: 0.5 },
+        ctaStyle: 'gentle',
+        ctaLabel: 'Begin quietly'
     },
     INFP: {
         colors: {
@@ -120,12 +120,12 @@ export const mbtiThemes: Record<string, MBTITheme> = {
             heading: '"Quicksand", sans-serif',
             body: '"Quicksand", sans-serif'
         },
-        layoutType: 'NF',
+        layoutType: 'INFP_MEDIATOR',
         vantaColor: 0x15803d,
         vantaEffect: 'fog',
         vantaConfig: { highlightColor: 0xe8a598, midtoneColor: 0x9b6154, lowlightColor: 0x1f1d1b, baseColor: 0x111111, blurFactor: 0.9 },
         ctaStyle: 'gentle',
-        ctaLabel: 'Explore Gently'
+        ctaLabel: 'Explore softly'
     },
     ENFJ: {
         colors: {
@@ -289,51 +289,9 @@ export const mbtiThemes: Record<string, MBTITheme> = {
             body: '"Montserrat", sans-serif'
         },
         layoutType: 'SP',
-        vantaColor: 0xf5cb5c,
-        vantaEffect: 'rings',
-        vantaConfig: { color: 0xcdb4db, backgroundColor: 0x121212 },
-        ctaStyle: 'aesthetic',
-        ctaLabel: 'Experience This'
-    },
-    ESTP: {
-        colors: {
-            primary: "#e63946",
-            secondary: "#1d3557",
-            background: "#000000",
-            text: "#ffffff",
-            accent: "#f1faee",
-            cardBg: "#111111",
-            muted: "#999"
-        },
-        fonts: {
-            heading: '"Antonio", sans-serif',
-            body: '"Inter", sans-serif'
-        },
-        layoutType: 'SP',
-        vantaColor: 0xf5cb5c,
+        vantaColor: 0xff006e,
         vantaEffect: 'globe',
-        vantaConfig: { color: 0xe63946, color2: 0x1d3557, size: 1.5, backgroundColor: 0x000000 },
-        ctaStyle: 'punchy',
-        ctaLabel: 'Get It Now'
-    },
-    ESFP: {
-        colors: {
-            primary: "#ff006e",
-            secondary: "#8338ec",
-            background: "#ffffff",
-            text: "#3a0ca3",
-            accent: "#ffbe0b",
-            cardBg: "#ff006e10",
-            muted: "#444"
-        },
-        fonts: {
-            heading: '"Fredoka", sans-serif',
-            body: '"Lexend", sans-serif'
-        },
-        layoutType: 'SP',
-        vantaColor: 0xf5cb5c,
-        vantaEffect: 'globe',
-        vantaConfig: { color: 0xff006e, color2: 0x8338ec, size: 1.2, backgroundColor: 0xffffff },
+        vantaConfig: { color: 0xff006e, color2: 0x8338ec, size: 1.2, backgroundColor: 0x121212 },
         ctaStyle: 'lively',
         ctaLabel: 'Jump In'
     }

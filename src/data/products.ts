@@ -2,178 +2,7 @@ import { MBTIProfile } from "./types";
 import { mbtiThemes } from "./themes";
 
 export const productsData: Record<string, MBTIProfile> = {
-    INTP: {
-        id: "intp",
-        theme: mbtiThemes.INTP,
-        name: "The Logician",
-        artistic_vibe: "Abstract, fractals, sacred geometry, neon-noir, cyberpunk, blueprints, deep space, neural networks. They love seeing the 'code' behind reality.",
-        psychological_triggers: [
-            "Intellectual Autonomy",
-            "Efficiency & Competence",
-            "Avoiding Social/Bureaucratic drudgery",
-            "Understanding the 'System'",
-            "Novelty & Innovation"
-        ],
-        products: [
-            {
-                id: "mastery",
-                title: "How to Master Focus without Rigid Schedules in 7 Days",
-                script: {
-                    headline: "YOU DON'T UNDERSTAND IT. YOU JUST MEMORIZED THE NAME.",
-                    subheadline: "YOU DON'T UNDERSTAND IT. YOU JUST MEMORIZED THE NAME.",
-                    hook_image_prompt: "A glowing neural network arranging itself into a perfect crystal structure in a void.",
-                    pain_story: "When you use big words, nobody challenges you. It feels safe. But true genius is simple. You are struggling because you learn \"top-down\" (memorization) instead of \"bottom-up\" (derivation). You need to stop adding layers and start stripping them away.",
-                    agitation_bullets: [
-                        "Analysis Paralysis: Spending more time researching the perfect tool than doing the work.",
-                        "The Start-Stop Cycle: Burst of manic energy followed by weeks of guilt-ridden inactivity.",
-                        "Intellectual Boredom: Abandoning projects the moment the 'puzzle' is solved, leaving money on the table."
-                    ],
-                    transition_mechanism: "YOU ARE AN INTELLECTUAL SNOB.",
-                    product_name: "THE FIRST PRINCIPLES ENGINE",
-                    product_description: "An AI-powered workspace that adapts to YOUR brain. It doesn't force a schedule; it curates your 'Next Logical Step' based on your current dopamine levels.",
-                    features_bullets: [
-                        "The \"5-Year-Old\" Test: A rigorous test to expose lazy thinking.",
-                        "The Analogy Generator: Map abstract concepts to physical objects.",
-                        "The Gap Analysis: Highlight exactly what you don't know."
-                    ],
-                    price_original: "$99",
-                    price_discounted: "$29",
-                    bonuses: [
-                        { title: "The 'Rabbit Hole' Blocker", description: "Browser extension that allows research but stops infinite scroll.", value: "$29" },
-                        { title: "INTP Sleep Hacking Guide", description: "How to turn off the analysis engine at night.", value: "$19" }
-                    ],
-                    guarantee_text: "THE \"AHA!\"  If you don't feel that click of \"Oh, I finally *get* it\" within 20 minutes, we refund you.",
-                    scarcity_text: "Beta access limited to the first 100 Logicians.",
-                    cta_text: "START DECONSTRUCTION"
-                }
-            },
-            {
-                id: "social-life",
-                title: "How to Hack Social Dynamics without Faking Etiquette in 2 Weeks",
-                script: {
-                    headline: "YOU AREN'T \"ANTI-SOCIAL\". YOU ARE INTOLERANT OF INEFFICIENCY.",
-                    subheadline: "YOU AREN'T \"ANTI-SOCIAL\". YOU ARE INTOLERANT OF INEFFICIENCY.",
-                    hook_image_prompt: "A digital HUD overlay on a crowd of people showing social connection lines and probability stats.",
-                    pain_story: "You think \"socializing\" means being the loud party animal. That is a lie. That is Performance. When you fake it, it triggers the \"Uncanny Valley\" effect. To build a social life, you don't need to change. You need to target better users.",
-                    agitation_bullets: [
-                        "The 'Awkward Silence' spiral where you overanalyze every micro-expression.",
-                        "Being seen as 'arrogant' or 'aloof' when you're actually just deep in thought.",
-                        "Losing opportunities to less competent people who are just 'better at talking'."
-                    ],
-                    transition_mechanism: "YOU ARE JUDGMENTAL.",
-                    product_name: "THE SOCIAL ALGORITHM",
-                    product_description: "A framework that deconstructs social interactions into logical flowcharts. No emotion required—just pure pattern matching.",
-                    features_bullets: [
-                        "Small Talk Decompiler: Understand the evolutionary protocol so you don't hate it.",
-                        "The \"Topic Bridge\": Steer from \"Weather\" to \"Philosophy\" in 3 moves.",
-                        "The Battery Saver: How to leave a party gracefully."
-                    ],
-                    price_original: "$199",
-                    price_discounted: "$59",
-                    bonuses: [
-                        { title: "The Introvert's Energy Shield", description: "Techniques to socialize for hours without draining your battery.", value: "$47" },
-                        { title: "Email Scripts for Geniuses", description: "Templates to sound warm without typing emojis.", value: "$27" }
-                    ],
-                    guarantee_text: "THE TRIBE  If you don't have one deep conversation in 14 days, we refund you.",
-                    scarcity_text: "Pattern set expiring soon.",
-                    cta_text: "OPEN CONNECTION"
-                }
-            },
-            {
-                id: "second-brain",
-                title: "How to Learn Any Skill without Boring Repetition in 48 Hours",
-                script: {
-                    headline: "YOUR BRAIN IS FOR PROCESSING. NOT STORAGE.",
-                    subheadline: "YOUR BRAIN IS FOR PROCESSING. NOT STORAGE.",
-                    hook_image_prompt: "A human silhouette with data streams entering the mind, creating a glowing galaxy inside.",
-                    pain_story: "You treat information like a dragon treats gold: You sit on it. But information that isn't connected is dead weight. You are terrified that if you close a tab, you will lose that knowledge forever. You need a system that allows you to Capture, Organize, and Forget.",
-                    agitation_bullets: [
-                        "The 'Jack of All Trades' curse: Good at everything, master of nothing.",
-                        "Frustration with slow instructors who explain things you grasped in 5 seconds.",
-                        "Giving up right before the breakthrough because the novelty wore off."
-                    ],
-                    transition_mechanism: "PASSIVE CONSUMPTION.",
-                    product_name: "THE ARCHIVE PROTOCOL",
-                    product_description: "An AI tool that strips away the fluff and gives you the raw logic gates of any skill. Learn the 20% that gives 80% of results.",
-                    features_bullets: [
-                        "Capture Workflow: Save any thought in 2 clicks.",
-                        "Tagging Ontology: A universal system that scales to 10k notes.",
-                        "Serendipity Engine: Randomized review to spark creativity."
-                    ],
-                    price_original: "$199",
-                    price_discounted: "$49",
-                    bonuses: [
-                        { title: "Speed Reading for Code", description: "Consume technical documentation in minutes.", value: "$39" }
-                    ],
-                    guarantee_text: "THE RECALL  If you can't find information within 10 seconds, we refund you.",
-                    scarcity_text: "Algorithm update pending.",
-                    cta_text: "BUILD THE ARCHIVE"
-                }
-            },
-            {
-                id: "theory-everything",
-                title: "How to Find Your Life Purpose without Woo-Woo Nonsense in 60 Minutes",
-                script: {
-                    headline: "THE THEORY OF EVERYTHING.",
-                    subheadline: "THE THEORY OF EVERYTHING.",
-                    hook_image_prompt: "A man standing at the edge of a digital cliff looking at a sunrise made of geometric shapes.",
-                    pain_story: "Your brain is a Divergence Engine. It generates endless possibilities. But to leave a legacy, you need Convergence. You need to take your 50 fragments and forge them into a Sword. The structure must be imposed on the chaos.",
-                    agitation_bullets: [
-                        "The endless 'Why Bother?' loop.",
-                        "Feeling intellectually superior but existentially empty.",
-                        "Watching less smart people succeed because they have 'faith' you can't replicate."
-                    ],
-                    transition_mechanism: "THE FEAR OF FINISHING.",
-                    product_name: "THE MAGNUM OPUS BLUEPRINT",
-                    product_description: "A guided AI framework to construct a personal philosophy that is logically consistent and emotionally resonant.",
-                    features_bullets: [
-                        "The \"Through-Line\" Workshop: Find the invisible thread that connects everything you love.",
-                        "The \"Ship It\" Protocol: Release \"Version 1.0\" to escape analysis paralysis.",
-                        "The Legacy Map: Plan the work that will outlive you."
-                    ],
-                    price_original: "$299",
-                    price_discounted: "$99",
-                    bonuses: [
-                        { title: "Nihilism Antidote Audio", description: "Logical arguments to get out of bed.", value: "$25" }
-                    ],
-                    guarantee_text: "THE LEGACY  If this doesn't help you outline your Great Work in 30 days, we refund you.",
-                    scarcity_text: "Limited workshop slots.",
-                    cta_text: "BUILD THE CATHEDRAL"
-                }
-            },
-            {
-                id: "debug-existence",
-                title: "How to Automate Your Income without Marketing Sleaze in 30 Days",
-                script: {
-                    headline: "YOUR LIFE ISN'T BROKEN. IT'S JUST POORLY CODED.",
-                    subheadline: "YOUR LIFE ISN'T BROKEN. IT'S JUST POORLY CODED.",
-                    hook_image_prompt: "A complex clockwork machine made of gold and light, generating coins in a dark room.",
-                    pain_story: "You have a bug in your decisional logic: while (data &lt; 100%) wait(); Since you will never have 100% of the data, you never execute. You just compile. You spend years theorizing about the perfect life while your actual life gathers dust. You aren't lazy. You are just compiled, but not deployed.",
-                    agitation_bullets: [
-                        "Draining your soul in a 9-5 just to pay rent.",
-                        "Trying dropshipping/crypto and realizing it's all hype.",
-                        "The fear that you'll never be free to just THINK."
-                    ],
-                    transition_mechanism: "HARDWARE INCOMPATIBILITY.",
-                    product_name: "THE EXISTENCE PATCH 1.0",
-                    product_description: "A complete guide to building 'No-Code' SaaS and digital assets that sell themselves via search intent, not social hype.",
-                    features_bullets: [
-                        "Logic Gate Decision Tree: Force a decision in 5 minutes via flowchart.",
-                        "The \"Empathy\" API: Scripts for handling emotional humans.",
-                        "The Routine Daemon: Automate hygiene/food to stay in your head."
-                    ],
-                    price_original: "$128",
-                    price_discounted: "$32",
-                    bonuses: [
-                        { title: "The Introvert's Marketing Plan", description: "How to get traffic without posting a selfie.", value: "$59" }
-                    ],
-                    guarantee_text: "THE LOGIC  If you find a logical inconsistency in our framework, we refund you double.",
-                    scarcity_text: "System capacity filling up.",
-                    cta_text: "DEPLOY TO PRODUCTION"
-                }
-            }
-        ]
-    },
+
     ENTJ: {
         id: "entj",
         theme: mbtiThemes.ENTJ,
@@ -191,32 +20,33 @@ export const productsData: Record<string, MBTIProfile> = {
                 id: "empire-of-one",
                 title: "How to Build an Empire of One without Hiring Idiots in 30 Days",
                 script: {
-                    headline: "THE EMPIRE OF ONE",
-                    subheadline: "// Gold for ENTJ How to Build a Scalable Enterprise without Hiring Idiots.",
-                    hook_image_prompt: "A lone figure on a throne made of server racks overlooking a digital city.",
-                    pain_story: "Here is the uncomfortable truth: The problem isn't that you can't find good people. The problem is that you are trying to solve a logic problem with a biological solution.",
+                    headline: "How to Build an Empire of One without Hiring Idiots in 30 Days",
+                    subheadline: "Eliminate human bottlenecks. Execute at machine-level precision.",
+                    hook_image_prompt: "City nodes activating sequentially with thin purple signal lines propagating outward.",
+                    image_url: "/images/products/entj_city_lights_1769602935676.png",
+                    pain_story: "This Is Not a People Problem. It Is a Systems Problem. You are attempting to solve a logic problem with a biological solution. Humans are optimized for emotion. You require execution.",
                     agitation_bullets: [
-                        "Humans are designed for empathy. You need efficiency.",
-                        "Humans have variable output. You need constant uptime.",
-                        "You are trying to force imperfect beings to act like perfect algorithms."
+                        "Humans optimize for empathy. You require efficiency.",
+                        "Humans produce variable output. You require constant uptime.",
+                        "Humans negotiate execution. You require deterministic behavior."
                     ],
-                    transition_mechanism: "SHIFT FROM \"BUSINESS OWNER\" TO \"EMPIRE ARCHITECT\"",
+                    transition_mechanism: "SHIFT FROM OPERATOR TO EMPIRE ARCHITECT",
                     product_name: "THE EMPIRE OF ONE PROTOCOL",
-                    product_description: "A complete tech stack for the ruthless executor. Automate 90% of your business logic so you only make high-level decisions.",
+                    product_description: "A complete execution stack for leaders who encode authority instead of delegating it.",
                     features_bullets: [
-                        "SALES AUTOPILOT: Pre-built workflows for Sales & Ops that replace 3 full-time employees.",
-                        "COMMAND CENTER: No-Code Dashboard (Notion/Airtable) for God-Mode visibility.",
-                        "AI CHIEF OF STAFF: LLM configurations for complex decision trees and strategy."
+                        "SALES AUTOPILOT: Pre-built Sales & Ops workflows. Automated follow-ups. Revenue without supervision. | 24/7 Execution",
+                        "COMMAND CENTER: God-mode visibility. No-code dashboard (Notion / Airtable). Real-time operational metrics. | One Screen. Total Control.",
+                        "AI CHIEF OF STAFF: decision compression. LLM-powered strategy trees. One decision reused infinitely. | Decide Once. Execute Forever."
                     ],
                     price_original: "$497",
                     price_discounted: "$97",
                     bonuses: [
-                        { title: "Fire Your Agency Guide", description: "How to bring marketing in-house with AI.", value: "$97" },
-                        { title: "Ironclad Legal Templates", description: "Contracts that protect your throne.", value: "$197" }
+                        { title: "Fire Your Agency Guide", description: "Eliminate dependency.", value: "$97" },
+                        { title: "Ironclad Legal Templates", description: "Protect leverage. Reduce exposure.", value: "$197" }
                     ],
-                    guarantee_text: "THE EFFICIENCY THEOREM  If you do not save at least 20 hours of manual labor per week within 30 days, we refund you. Binary outcome. No feelings.",
-                    scarcity_text: "Price increases as we add more agents.",
-                    cta_text: "DEPLOY THE STACK"
+                    guarantee_text: "THE EFFICIENCY THEOREM  If you do not save at least 20 hours of manual labor per week within 30 days — You are refunded. Binary outcome. No feelings.",
+                    scarcity_text: "Price increases as additional agents are deployed.",
+                    cta_text: "DEPLOY THE PROTOCOL"
                 }
             },
             {
@@ -226,6 +56,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "EXECUTE 12 MONTHS IN 12 WEEKS",
                     subheadline: "A Project Management Framework that treats Business like Warfare.",
                     hook_image_prompt: "A war room map with targets being eliminated in rapid succession.",
+                    image_url: "/images/products/entj_command_center_1769602905026.png",
                     pain_story: "Burnout doesn't come from intensity. It comes from friction. When you slow down, your brain starves. You start overthinking. You invent problems just to solve them. You feel exhausted not because you are doing too much, but because your results are lagging behind your vision.",
                     agitation_bullets: [
                         "Death by meetings.",
@@ -257,6 +88,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "GRAND STRATEGY",
                     subheadline: "How to Outmaneuver Any Competitor Without Lowering Your Prices.",
                     hook_image_prompt: "A chessboard where the pieces are skyscrapers and brands.",
+                    image_url: "/images/products/entj_chess_skyscrapers_1769602974508.png",
                     pain_story: "When a prospect chooses a competitor over you, it's not because of the price tag. It's because your competitor occupies a more valuable territory in their mind. You have focused so much on \"product quality\" (a commodity) that you forgot Grand Strategy. You are playing checkers—reacting to the market—while the true titans are playing 4D Chess.",
                     agitation_bullets: [
                         "Pricing wars that race to the bottom.",
@@ -288,6 +120,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "COMMAND THE ROOM.",
                     subheadline: "Without saying a word. In 3 seconds.",
                     hook_image_prompt: "A silhouette in a boardroom casting a shadow that commands attention.",
+                    image_url: "/images/products/entj_executive.png",
                     pain_story: "You have spent years sharpening your mind, but you have neglected your Signal. Humans are biological machines. Before you speak a single word, the \"Lizard Brain\" of everyone in the room has already categorized you: Leader or Follower. Threat or Prey.",
                     agitation_bullets: [
                         "Being interrupted.",
@@ -319,6 +152,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "THE DYNASTY ARCHITECTURE",
                     subheadline: "How to Ensure Your Vision Survives Without You.",
                     hook_image_prompt: "A statue made of light networks being built by automated drones.",
+                    image_url: "/images/products/entj_vision_network.png",
                     pain_story: "Your values are in your head, not in the code. You expect \"Common Sense\" in a world where it doesn't exist. You haven't programmed them to think like you. You need to stop looking for \"Mini-Mes\" and start building a Source Code for Behavior.",
                     agitation_bullets: [
                         "The 'Bus Factor' of 1.",
@@ -364,7 +198,8 @@ export const productsData: Record<string, MBTIProfile> = {
                 script: {
                     headline: "Systemize Your Existence.",
                     subheadline: "A comprehensive Notion & AI template to manage your goals, habits, and knowledge.",
-                    hook_image_prompt: "A vitruvian man overlaid with glowing circuit schematics.",
+                    hook_image_prompt: "A vitruvian man silhouette overlaid with glowing thin cyan circuit schematics and sacred geometry, dark background, minimal",
+                    image_url: "/images/products/intj_systemize.png",
                     pain_story: "Every uncaptured thought, every vague \"to-do,\" and every unorganized bookmark is taking up processing power in your brain. You are exhausted not because you are working hard, but because you are constantly holding the state of your entire life in your working memory. You are trying to be the CEO and the Hard Drive at the same time. It is inefficient.",
                     agitation_bullets: [
                         "Dealing with repetitive, low-value tasks.",
@@ -375,17 +210,17 @@ export const productsData: Record<string, MBTIProfile> = {
                     product_name: "THE LifeOS ARCHITECTURE",
                     product_description: "A comprehensive Notion & AI template that manages your goals, habits, and knowledge. A dashboard for your existence.",
                     features_bullets: [
-                        "import CommandDashboard from './Core'; // A single screen for health, health, wealth, and priorities.",
-                        "import SecondBrain from './Knowledge'; // Capture pipeline -&gt; Permanent Notes."
+                        "import CommandDashboard from './Core'; // A single screen for health, wealth, and priorities.",
+                        "import SecondBrain from './Knowledge'; // Capture pipeline -> Permanent Notes."
                     ],
                     price_original: "$199",
                     price_discounted: "$49",
                     bonuses: [
                         { title: "Meal Prep Algorithms", description: "Nutrition solved mathematically.", value: "$19" }
                     ],
-                    guarantee_text: "if (clarity &lt; current_levels) return refund();",
+                    guarantee_text: "if (clarity < current_levels) return refund();",
                     scarcity_text: "Version 2.0 launch price.",
-                    cta_text: "&gt; INITIALIZE SYSTEM_"
+                    cta_text: "> INITIALIZE SYSTEM_"
                 }
             },
             {
@@ -394,7 +229,8 @@ export const productsData: Record<string, MBTIProfile> = {
                 script: {
                     headline: "FORECAST THE FUTURE.",
                     subheadline: "\"You aren't anxious. You are just simulating unoptimized realities.\"",
-                    hook_image_prompt: "A hand moving a single piece on a 3D glass chessboard that ripples into the future.",
+                    hook_image_prompt: "A 3D glass chessboard floating in a dark void, a hand moving a single piece that ripples into the future, cyan glow",
+                    image_url: "/images/products/intj_chess.png",
                     pain_story: "You are trying to calculate the future using raw instinct. That is like trying to do calculus in your head. It works, but it burns a lot of glucose. The problem isn't that you think too much. It's that you don't have a Framework to contain your thoughts.",
                     agitation_bullets: [
                         "Watching others walk into traps you saw miles away.",
@@ -414,7 +250,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     bonuses: [
                         { title: "Risk Mitigation Checklists", description: "Bulletproof your plans.", value: "$29" }
                     ],
-                    guarantee_text: "THE PREDICTION  Use one model on a current problem. If clarity is not instantaneous, we refund you.",
+                    guarantee_text: "THE PREDICTION - Use one model on a current problem. If clarity is not instantaneous, we refund you.",
                     scarcity_text: "Limited strategic intake.",
                     cta_text: "ACCESS MODELS"
                 }
@@ -424,8 +260,9 @@ export const productsData: Record<string, MBTIProfile> = {
                 title: "How to Achieve Top 1% Competence in Any Field in 6 Months",
                 script: {
                     headline: "TOP 1% COMPETENCE IN 6 MONTHS.",
-                    subheadline: "TOP 1% COMPETENCE IN 6 MONTHS.",
-                    hook_image_prompt: "A fractal pattern zooming in infinitely, revealing more complexity and order.",
+                    subheadline: "Structure your environment for Theta State focus.",
+                    hook_image_prompt: "A complex fractal pattern zooming infinitely into a glowing core, dark obsidian and cyan palette",
+                    image_url: "/images/products/intj_fractal.png",
                     pain_story: "Most people learn by \"osmosis\"—hoping it sticks. This is inefficient. The INTJ mind craves Structure. You need to deconstruct the skill into its atomic components and ruthlessly drill them in isolation. You aren't struggling because the subject is hard. You are struggling because your method is soft.",
                     agitation_bullets: [
                         "Being taught by people who know less than you.",
@@ -445,7 +282,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     bonuses: [
                         { title: "Imposter Syndrome Killer", description: "Use logic to defeat insecurity.", value: "$25" }
                     ],
-                    guarantee_text: "THE PROFICIENCY  Follow the roadmap for 30 days. If you cannot demonstrate a measurable leap in competence, we refund you.",
+                    guarantee_text: "THE PROFICIENCY - If you cannot demonstrate a measurable leap in competence in 30 days, we refund you.",
                     scarcity_text: "Protocol active.",
                     cta_text: "START THE PROTOCOL"
                 }
@@ -456,7 +293,8 @@ export const productsData: Record<string, MBTIProfile> = {
                 script: {
                     headline: "WIN WITH PURE LOGIC.",
                     subheadline: "How to dismantle irrationality without raising your voice.",
-                    hook_image_prompt: "A laser beam cutting through fog, revealing the path.",
+                    hook_image_prompt: "A precise laser beam cutting through thick fog, revealing a clear geometric path, minimal dark aesthetic",
+                    image_url: "/images/products/intj_laser.png",
                     pain_story: "You operate on Logic Level 10. Most people operate on Emotion Level 10. When you present data to an emotional person, it doesn't persuade them—it insults them. You are losing because your delivery system is incompatible with their hardware.",
                     agitation_bullets: [
                         "Losing debates to charismatic idiots.",
@@ -476,7 +314,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     bonuses: [
                         { title: "Handling Emotional Outbursts", description: "A field guide for the rational.", value: "$19" }
                     ],
-                    guarantee_text: "THE CLARITY  If this toolkit doesn't help you de-escalate and win a conflict within 30 days, we refund you.",
+                    guarantee_text: "THE CLARITY - If this toolkit doesn't help you de-escalate and win a conflict within 30 days, we refund you.",
                     scarcity_text: "Knowledge is power.",
                     cta_text: "ARM YOUR MIND"
                 }
@@ -487,7 +325,8 @@ export const productsData: Record<string, MBTIProfile> = {
                 script: {
                     headline: "RUN A GLOBAL BUSINESS FROM A DARK ROOM.",
                     subheadline: "Without employees. Without meetings. 100% Async.",
-                    hook_image_prompt: "A single person controlling a global network of lights from a tablet.",
+                    hook_image_prompt: "A silhouette of a person controlling a global network of lights from a single tablet in a dark room, cyber aesthetics",
+                    image_url: "/images/products/intj_network.png",
                     pain_story: "You are exhausted because you have built a business that relies on your presence rather than your code. You are trading your limited social battery for dollars. This is a bad trade.",
                     agitation_bullets: [
                         "HR issues.",
@@ -507,7 +346,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     bonuses: [
                         { title: "The Anti-Social Social Media Plan", description: "Growth without personality.", value: "$49" }
                     ],
-                    guarantee_text: "THE FREEDOM  If this course requires you to hire a single employee or take a single phone call, we refund you.",
+                    guarantee_text: "THE FREEDOM - If this course requires you to hire a single employee or take a single phone call, we refund you.",
                     scarcity_text: "Blueprints limited.",
                     cta_text: "GO DARK"
                 }
@@ -534,6 +373,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "MILLION DOLLAR IDEAS ON DEMAND.",
                     subheadline: "Writer's block is just a lack of chaos.",
                     hook_image_prompt: "A lightbulb exploding into a thousand butterflies made of neon light.",
+                    image_url: "/images/products/entp_idea_generator.png",
                     pain_story: "Your brain is a nuclear reactor, but you aren't feeding it fuel. Your best ideas come when you smash two unrelated concepts together. When you stare at a blank page, you are trying to create ex nihilo. That is boring. And your brain shuts down when it is bored.",
                     agitation_bullets: [
                         "The graveyard of unfinished projects.",
@@ -565,6 +405,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "REALITY IS NEGOTIABLE.",
                     subheadline: "How to Persuade Anyone of Anything. Even if you don't believe it.",
                     hook_image_prompt: "A warped reality mirror showing what the person wants to see.",
+                    image_url: "/images/products/entp_persuasion.png",
                     pain_story: "You are losing debates because you are trying to win on the merits of the data. But humans are not rational agents. They are emotional belief-engines. Stop acting like a Professor. Start acting like a Prophet.",
                     agitation_bullets: [
                         "Accidentally offending people with 'logic'.",
@@ -596,6 +437,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "CHAOS IS A LADDER.",
                     subheadline: "How to Thrive in Uncertainty When Everyone Else is Panicking.",
                     hook_image_prompt: "A surfer riding a tidal wave of digital static and debris with a smile.",
+                    image_url: "/images/products/entp_chaos.png",
                     pain_story: "You have spent your whole life being told to \"be stable.\" That works in a linear world. We are now in an exponential, chaotic world. Your \"scattered\" brain—which constantly scans for new options—is actually the perfect evolutionary adaptation. The world has finally caught up to your madness.",
                     agitation_bullets: [
                         "Feeling trapped by safety.",
@@ -622,33 +464,34 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "speed-learning",
-                title: "How to Bypass 10 Years of Career Laddering in 6 Months",
+                title: "How to Bypass 10 Years of Career Laddering in 6 months",
                 script: {
-                    headline: "LEARN EVERYTHING FASTER BY BREAKING THE RULES.",
-                    subheadline: "LEARN EVERYTHING FASTER BY BREAKING THE RULES.",
-                    hook_image_prompt: "A person walking through a wall in a maze, leaving others behind.",
-                    pain_story: "Manuals are for people who are afraid to break things. You learn by taking the machine apart. You don't need to read the textbook. You need to break the machine 50 times and Google the error messages. Your brain is a Reverse-Engineering Engine.",
+                    headline: "Learn faster by breaking the rules — not by waiting your turn.",
+                    subheadline: "You don't need discipline. You need optionality.",
+                    hook_image_prompt: "A confused businessman standing in the center of a maze, walls shifting.",
+                    image_url: "/images/products/entp_speed_learning.png",
+                    pain_story: "You don't learn by memorizing rules. You learn by taking the machine apart, breaking it fifty times, and Googling the error messages. Your brain isn't a filing cabinet. It's a reverse-engineering engine.",
                     agitation_bullets: [
-                        "Waiting your turn.",
-                        "Respecting authority that hasn't earned it.",
-                        "The slow crawl of meritocracy."
+                        "Wait your turn",
+                        "Respect authority that hasn't earned it",
+                        "Trust the slow crawl of 'meritocracy'"
                     ],
-                    transition_mechanism: "YOU ARE LAZY.",
+                    transition_mechanism: "YOU ARE IMPATIENT WITH INEFFICIENCY.",
                     product_name: "THE SPEEDRUNNER'S CODEX",
-                    product_description: "Unconventional strategies for rapid advancement.",
+                    product_description: "Unconventional strategies for collapsing learning curves and skipping invisible queues.",
                     features_bullets: [
-                        "Deconstruction Heuristic: Break skills into atomic parts.",
-                        "Social Engineering Script: Get experts to teach you for free.",
-                        "Immersion Hack: Passive learning environment setup."
+                        "Deconstruction Heuristic: Breaks any skill into atomic, learnable parts.",
+                        "Social Engineering Script: Gets experts to teach you for free — without feeling used.",
+                        "Immersion Hack: Turns your environment into a passive learning engine."
                     ],
                     price_original: "$150",
                     price_discounted: "$33",
                     bonuses: [
-                        { title: "Resume Hacking", description: "Beat the ATS.", value: "$29" }
+                        { title: "Resume Hacking", description: "Beat the ATS. Get past the bots.", value: "$29" }
                     ],
-                    guarantee_text: "THE SHORTCUT  If it feels like work, you get a refund. It should feel like cheating.",
+                    guarantee_text: "THE SHORTCUT PROMISE  If this feels like work, you get a refund. It should feel like cheating.",
                     scarcity_text: "Exploit patching soon.",
-                    cta_text: "UNLOCK CHEAT CODE"
+                    cta_text: "SHOW ME THE SHORTCUTS"
                 }
             },
             {
@@ -657,7 +500,8 @@ export const productsData: Record<string, MBTIProfile> = {
                 script: {
                     headline: "THE INFINITE CAREER.",
                     subheadline: "How to Be Everything by Committing to Nothing.",
-                    hook_image_prompt: "A Swiss Army knife where every tool is made of gold.",
+                    hook_image_prompt: "A Swiss Army knife where every tool is glowing gold and holographic.",
+                    image_url: "/images/products/entp_polymath.png",
                     pain_story: "Your power doesn't come from knowing 100% of one thing. It comes from knowing 20% of 10 things and connecting them. In a world of AI specialization, the Generalist is the one who connects the dots.",
                     agitation_bullets: [
                         "The 'Niche' trap.",
@@ -701,155 +545,160 @@ export const productsData: Record<string, MBTIProfile> = {
                 id: "burnout-shield",
                 title: "How to Stop Absorbing Everyone Else's Emotions in 24 Hours",
                 script: {
-                    headline: "YOU CANNOT POUR FROM AN EMPTY CUP.",
-                    subheadline: "YOU CANNOT POUR FROM AN EMPTY CUP.",
+                    headline: "You cannot pour from an empty cup.",
+                    subheadline: "A gentle system for energetic self-protection.",
                     hook_image_prompt: "A figure meditating inside a glowing translucent forcefield while chaotic colors swirl outside.",
-                    pain_story: "Your empathy is not a \"soft skill.\" It is a sensory input. And right now, your input gain is cranked to 11. You think being a \"Good Person\" means saying Yes. It doesn't. Being a Good Person means staying alive long enough to make a difference.",
+                    image_url: "/images/products/infj_shield.png",
+                    pain_story: "Your empathy is not a weakness. It is a sensory input system. And right now, that system has no filter. You feel everything. Shifts in tone. Unspoken tension. Emotional undercurrents others ignore. You learned that being a good person meant saying yes. But goodness without boundaries becomes self-erasure.",
                     agitation_bullets: [
-                        "Compassion fatigue.",
-                        "Inability to distinguish your feelings from others.",
-                        "Being the 'therapist' for everyone but yourself."
+                        "Compassion fatigue caring until you are numb.",
+                        "Emotional bleed through losing track of what is yours.",
+                        "Silent self abandonment holding space for everyone except yourself."
                     ],
-                    transition_mechanism: "THE SAVIOR COMPLEX.",
-                    product_name: "THE GUARDIAN PROTOCOL",
-                    product_description: "A guided visualization and psychological protocol to build an impenetrable boundary.",
+                    transition_mechanism: "You are not here to save everyone. You are here to protect what you carry.",
+                    product_name: "The Guardian Protocol",
+                    product_description: "A guided visualization and psychological protocol designed to help you build a quiet, impenetrable boundary without shutting down your heart.",
                     features_bullets: [
-                        "The \"Door Slam\" Alternative: Set boundaries before you explode.",
-                        "The Energy Audit: Track which humans drain you.",
-                        "The Vampire Guide: Identify and neutralize Narcissists."
+                        "The Door Slam Alternative Set boundaries before resentment builds.",
+                        "The Energy Audit Notice who nourishes you and who quietly drains you.",
+                        "The Vampire Guide Identify emotionally exploitative personalities and disengage without confrontation."
                     ],
                     price_original: "$150",
                     price_discounted: "$44",
                     bonuses: [
-                        { title: "Narcissist Repellent", description: "Spot energy vampires instantly.", value: "$29" }
+                        { title: "Narcissist Repellent", description: "A pattern recognition guide to spot emotional predators early.", value: "$29" }
                     ],
-                    guarantee_text: "THE PEACE  If you don't feel 50% lighter in 14 days, we refund you. You deserve peace.",
-                    scarcity_text: "Protect your energy now.",
-                    cta_text: "SHIELD UP"
+                    guarantee_text: "THE PEACE PROMISE  If you dont feel at least 50% lighter within 14 days, you can request a refund. No explanations required. You deserve peace.",
+                    scarcity_text: "Protecting your energy is not selfish.",
+                    cta_text: "Begin quietly"
                 }
             },
             {
                 id: "counselor",
                 title: "How to Turn Your Insight into a High-Ticket Coaching Business",
                 script: {
-                    headline: "YOU ARE NOT A REHABILITATION CENTER.",
-                    subheadline: "YOU ARE NOT A REHABILITATION CENTER.",
+                    headline: "You are not a rehabilitation center.",
+                    subheadline: "Package your deep wisdom into a practice that honors you.",
                     hook_image_prompt: "A lantern illuminating a path through a dark forest.",
-                    pain_story: "Why do you choose partners who need you? Because if they need you, they can't leave you. Being the \"Healer\" gives you power. It keeps you superior. You attract broken people because your ego needs a job.",
+                    image_url: "/images/products/infj_lantern.png",
+                    pain_story: "Why do you choose partners or clients who need you deeply? Because if they need you, they cannot leave you. But this dynamic leaves you drained. You provide profound healing and received only crumbs in return. You attract broken souls because your empathy needs a job.",
                     agitation_bullets: [
-                        "Undercharging or working for free.",
-                        "Feeling used.",
-                        "Watching shallow 'coaches' make millions."
+                        "Undercharging or giving your wisdom away for free.",
+                        "Feeling used after deep emotional labor.",
+                        "Watching shallow creators succeed while you hesitate."
                     ],
-                    transition_mechanism: "YOU ARE BORED BY PEACE.",
-                    product_name: "THE RECIPROCITY CODE",
-                    product_description: "How to package your deep wisdom into a high-end consulting offer.",
+                    transition_mechanism: "You hold the lantern. You do not have to carry them.",
+                    product_name: "The Reciprocity Code",
+                    product_description: "A framework to structure your insight so it is valued, respected, and compensated.",
                     features_bullets: [
-                        "The \"Fixer\" Detox: Stop offering unsolicited advice.",
-                        "The Narcissist Radar: Spot \"Love Bombing\" instantly.",
-                        "The Potential Funeral: Mourn the partner that doesn't exist."
+                        "The Fixer Detox Stop offering unsolicited advice to those who will not take it.",
+                        "The Boundary Intake Filter out clients or partners who just want to be saved.",
+                        "The Mirror Principle Learn to receive as deeply as you give."
                     ],
                     price_original: "$129",
                     price_discounted: "$39",
                     bonuses: [
-                        { title: "The Intake Form", description: "Filter out low-vibration clients.", value: "$49" }
+                        { title: "The Intake Invitation", description: "A gentle way to qualify people before you commit energy.", value: "$49" }
                     ],
-                    guarantee_text: "THE MATCH  If you don't feel a shift in who you attract in 30 days, refund.",
-                    scarcity_text: "Limited guidance.",
-                    cta_text: "CLOSE THE CLINIC"
+                    guarantee_text: "THE BALANCE  If you dont feel a shift in your relationships within 30 days, we return your investment. Trust your intuition.",
+                    scarcity_text: "Your wisdom is valuable.",
+                    cta_text: "Explore when ready"
                 }
             },
             {
                 id: "sacred-calling",
-                title: "How to Find the Career Your Soul Appoved Before You Were Born",
+                title: "How to Find the Career Your Soul Approved Before You Were Born",
                 script: {
-                    headline: "THE SACRED CALLING.",
-                    subheadline: "THE SACRED CALLING.",
+                    headline: "The work you were meant to do.",
+                    subheadline: "Align your daily life with your quietest truths.",
                     hook_image_prompt: "A golden thread connecting a person's heart to a distant star.",
-                    pain_story: "Deep down, you think Money is Evil. You equate poverty with purity. But a poor healer can only help those within walking distance. A wealthy healer can change the world. Money is not evil. It is an amplifier.",
+                    image_url: "/images/products/entj_vision_network.png",
+                    pain_story: "Deep down, you may fear that money corrupts. You equate poverty with purity. But a healer with resources can change the world in ways a struggling one cannot. Money is not evil. It is simply an amplifier of who you already are.",
                     agitation_bullets: [
-                        "Sunday scaries.",
-                        "Feeling like an alien in the office.",
-                        "The fear of wasting your potential on spreadsheets."
+                        "The Sunday dread of returning to a meaningless role.",
+                        "Feeling like an alien in corporate environments.",
+                        "The fear of wasting your potential on things that do not matter."
                     ],
-                    transition_mechanism: "YOU JUDGE SUCCESS.",
-                    product_name: "THE SOUL-PRENEUR BLUEPRINT",
-                    product_description: "A framework to identify careers that allow you to heal the world and get paid.",
+                    transition_mechanism: "Your sensitivity is your compass. Not your distraction.",
+                    product_name: "The Soul Blueprint",
+                    product_description: "A gentle framework to identify work that allows you to heal the world and sustain yourself.",
                     features_bullets: [
-                        "The Ikigai Compass: Intersection of \"What you love\" and \"What pays.\"",
-                        "Non-Sleazy Sales: Offer your services as a gift, not a transaction.",
-                        "Pricing Therapy: Charge what you are worth without vomiting."
+                        "The Ikigai Compass Find the intersection of what you love and what sustains you.",
+                        "Ethical Exchange Offer your gifts as an invitation not a transaction.",
+                        "Pricing Therapy Charge what you are worth without guilt."
                     ],
-                    price_original: "$333",
-                    price_discounted: "$111",
+                    price_original: "$133",
+                    price_discounted: "$44",
                     bonuses: [
-                        { title: "Resignation Letter Template", description: "Leave with grace.", value: "$19" }
+                        { title: "The Graceful Exit", description: "How to transition from your current role without burning bridges.", value: "$19" }
                     ],
-                    guarantee_text: "THE KARMA  If you feel gross or out of alignment, full refund. We only want clean money.",
-                    scarcity_text: "Mission awaiting.",
-                    cta_text: "CLAIM YOUR ABUNDANCE"
+                    guarantee_text: "THE ALIGNMENT  If you feel gross or out of alignment, full refund. We want you to feel right about this.",
+                    scarcity_text: "Your mission is waiting.",
+                    cta_text: "See if this resonates"
                 }
             },
             {
                 id: "chameleon",
                 title: "How to Change the World from Your Bedroom without Public Speaking",
                 script: {
-                    headline: "YOU ARE EVERYONE, EXCEPT YOURSELF.",
-                    subheadline: "YOU ARE EVERYONE, EXCEPT YOURSELF.",
+                    headline: "You are everyone, except yourself.",
+                    subheadline: "Build a movement without losing your privacy.",
                     hook_image_prompt: "A drop of water hitting a pond and creating ripples that cover the ocean.",
-                    pain_story: "You think: \"If I disagree, they won't like me.\" So you shrink. You blend. You have become a mirror that reflects everyone else's light but generates none of its own.",
+                    image_url: "/images/products/intj_fractal.png",
+                    pain_story: "You think If I disagree they wont like me. So you shrink. You blend. You have become a mirror that reflects everyone else's light but generates none of its own. It is time to stop hiding behind the harmony.",
                     agitation_bullets: [
-                        "Fear of visibility.",
-                        "Draining social battery.",
-                        "Comparing yourself to loud creators."
+                        "A constant fear of being truly seen.",
+                        "Social battery draining faster than ever.",
+                        "Comparing your quiet depth to their loud noise."
                     ],
-                    transition_mechanism: "YOU ARE MANIPULATIVE.",
-                    product_name: "THE IDENTITY ANCHOR",
-                    product_description: "How to build a movement using essays, books, and art.",
+                    transition_mechanism: "You do not need to be loud to be heard.",
+                    product_name: "The Identity Anchor",
+                    product_description: "How to share your truth through writing and art without sacrificing your peace.",
                     features_bullets: [
-                        "The Mask Inventory: Identify the 5 characters you play and why.",
-                        "The \"Disappointment\" Drill: Disappoint people on purpose. Survive it.",
-                        "The Values Compass: Separate your beliefs from your parents'."
+                        "The Mask Inventory Identify the characters you play to keep others comfortable.",
+                        "The Disappointment Drill Disappoint people on purpose and survive it.",
+                        "The Values Compass Separate your true beliefs from what you were taught."
                     ],
                     price_original: "$199",
                     price_discounted: "$60",
                     bonuses: [
-                        { title: "The 'Pen Name' Strategy", description: "Influence anonymously.", value: "$29" }
+                        { title: "The Pen Name Strategy", description: "How to influence the world while remaining anonymous.", value: "$29" }
                     ],
-                    guarantee_text: "THE AUTHENTICITY  If you don't feel a stronger sense of Self in 30 days, refund.",
-                    scarcity_text: "The world needs you.",
-                    cta_text: "FIND YOURSELF"
+                    guarantee_text: "THE AUTHENTICITY  If you dont feel a stronger sense of Self in 30 days, we refund you.",
+                    scarcity_text: "The world needs your true voice.",
+                    cta_text: "Find yourself"
                 }
             },
             {
                 id: "intuition",
                 title: "How to Manifest Reality using Neuroscience instead of Wishful Thinking",
                 script: {
-                    headline: "YOU KNEW IT WAS GOING TO HAPPEN.",
-                    subheadline: "YOU KNEW IT WAS GOING TO HAPPEN.",
+                    headline: "You knew it was going to happen.",
+                    subheadline: "Validating your intuition with grounded neuroscience.",
                     hook_image_prompt: "Brain synapses forming a galaxy.",
-                    pain_story: "Most people live in the Present. They only believe what they can touch. You see Patterns. When you try to explain a Pattern to a \"Fact\" person, you sound insane. You have suppressed your superpower because you didn't have the data.",
+                    image_url: "/images/products/intp_neural.png",
+                    pain_story: "Most people live in the physical world. They only believe what they can touch. You see Patterns. When you try to explain a hunch to a logic person you sound irrational. You have suppressed your superpower because you didnt have the data to back it up.",
                     agitation_bullets: [
-                        "Vision boards that never come true.",
-                        "Feeling 'crazy' for believing in magic.",
-                        "Disconnect between your spiritual richness and material lack."
+                        "Vision boards that feel like wishful thinking.",
+                        "Feeling isolated in your spiritual perspective.",
+                        "The disconnect between your inner richness and outer reality."
                     ],
-                    transition_mechanism: "YOU WANT THE CRASH.",
-                    product_name: "THE THIRD EYE TOOLKIT",
-                    product_description: "A grounded approach to manifestation using psychology and focus.",
+                    transition_mechanism: "You are not crazy. You are just seeing more data than they are.",
+                    product_name: "The Third Eye Toolkit",
+                    product_description: "A grounded approach to intuition using psychology and focus.",
                     features_bullets: [
-                        "The Translation Matrix: Explain a \"hunch\" without sounding crazy.",
-                        "Anxiety vs Intuition: A somatic checklist to know the difference.",
-                        "The Decision Engine: Make choices when Data says Left but Soul says Right."
+                        "The Translation Matrix Explain a hunch without sounding ungrounded.",
+                        "Anxiety vs Intuition A somatic checklist to know the difference.",
+                        "The Decision Engine Make choices when logic says Left but soul says Right."
                     ],
                     price_original: "$222",
                     price_discounted: "$77",
                     bonuses: [
-                        { title: "Binaural Beats Collection", description: "Brainwave entrainment.", value: "$33" }
+                        { title: "Binaural Beats Collection", description: "Audio tracks for deep focus and meditation.", value: "$33" }
                     ],
-                    guarantee_text: "THE \"I KNEW IT\"  Use the Anxiety vs. Intuition test. If it doesn't give you 100% clarity, we refund you.",
-                    scarcity_text: "Portal open.",
-                    cta_text: "OPEN YOUR EYES"
+                    guarantee_text: "THE CLARITY  Use the Anxiety vs Intuition test. If it doesnt give you clarity, we refund you.",
+                    scarcity_text: "Trust your knowing.",
+                    cta_text: "Open your eyes"
                 }
             }
         ]
@@ -871,124 +720,128 @@ export const productsData: Record<string, MBTIProfile> = {
                 id: "dream-to-reality",
                 title: "How to Make Money from Your Art without Selling Your Soul",
                 script: {
-                    headline: "THE WORLD DOESN'T NEED YOUR DREAMS. IT NEEDS YOUR ART.",
-                    subheadline: "THE WORLD DOESN'T NEED YOUR DREAMS. IT NEEDS YOUR ART.",
+                    headline: "You don't need to become more. You just need space to be yourself.",
+                    subheadline: "A gentle framework for people who feel deeply and want to live honestly.",
                     hook_image_prompt: "A paintbrush painting a door in the air that opens to a treasure room.",
-                    pain_story: "In your mind, the idea is a 10/10. When you write it, it drops to a 4/10. This breaks your heart. So you stop. You are addicted to the feeling of creativity, but allergic to the labor of it.",
+                    image_url: "/images/products/infp_art.png",
+                    pain_story: "You have always felt a little different. You care deeply—sometimes more than is convenient. You want your life to feel true, not just successful. But the world keeps asking you to harden, optimize, and perform. Something in you refuses.",
                     agitation_bullets: [
-                        "Starving artist syndrome.",
-                        "The fear of being 'inauthentic'.",
-                        "Hoarding your work because you fear judgment."
+                        "Feeling breathless from the hustle.",
+                        "Worrying that 'selling' means losing yourself.",
+                        "Hoarding your work because it feels safer inside."
                     ],
-                    transition_mechanism: "YOU ARE SELFISH.",
-                    product_name: "THE DREAM-WEAVER'S LOOM",
-                    product_description: "How to build a supportive audience on platforms like Patreon/Substack.",
+                    transition_mechanism: "This is not a system to fix you. It is a quiet space to hear yourself.",
+                    product_name: "The Dream-Weaver's Loom",
+                    product_description: "How to build a supportive audience on platforms like Patreon/Substack without pressure.",
                     features_bullets: [
-                        "\"Shitty First Draft\" Ritual: Lower your standards to start.",
-                        "The Gentle Deadline: Promises to yourself, not orders.",
-                        "The Muse Trap: Capture fleeting ideas instantly."
+                        "Inner Clarity Helps you untangle emotions without suppressing them.",
+                        "Value Alignment Supports decisions that feel ethically and emotionally right.",
+                        "Gentle Momentum Encourages movement without pressure or shame."
                     ],
                     price_original: "$111",
                     price_discounted: "$33",
                     bonuses: [
-                        { title: "Dealing with Criticism", description: "Emotional armor for artists.", value: "$25" }
+                        { title: "Dealing with Criticism", description: "Emotional armor for your art.", value: "$25" }
                     ],
-                    guarantee_text: "THE FLOW  If this feels like \"Hustle\" or stress, we refund you. It must feel like magic.",
-                    scarcity_text: "Create freedom.",
-                    cta_text: "START WEAVING"
+                    guarantee_text: "THE PROMISE  If this doesn't feel supportive or grounding, you can request a refund. No explanations needed. Trust your intuition.",
+                    scarcity_text: "Priced to be accessible.",
+                    cta_text: "Explore softly"
                 }
             },
             {
                 id: "healers-journey",
                 title: "How to Get Things Done when you Hate Structure and Discipline",
                 script: {
-                    headline: "YOUR PAIN WAS NOT AN ACCIDENT. IT WAS TRAINING.",
-                    subheadline: "YOUR PAIN WAS NOT AN ACCIDENT. IT WAS TRAINING.",
+                    headline: "Flow like Water. Don't Grind like Stone.",
+                    subheadline: "Your pain was not an accident. It was training.",
                     hook_image_prompt: "A river flowing effortlessly around rocks to reach the ocean.",
-                    pain_story: "You are sitting on your pain, ashamed of it. But your pain is the medicine someone else needs. If you survived the maze, you have the map. By hiding your scars, you are withholding the map from the lost.",
+                    image_url: "/images/products/infp_flow.png",
+                    pain_story: "You aren't lazy. You are cynical about things that don't matter. When you care, you are unstoppable. But standard advice tries to force you into a grid. You need a flow, not a cage.",
                     agitation_bullets: [
-                        "Guilt over missed deadlines.",
-                        "The 'lazy' label.",
-                        "Starting 50 novels, finishing 0."
+                        "Guilt over 'wasted' days.",
+                        "Starting many things, finishing few.",
+                        "Waiting for the perfect mood that rarely comes."
                     ],
-                    transition_mechanism: "ADDICTED TO SADNESS.",
-                    product_name: "THE KINTSUGI METHOD",
+                    transition_mechanism: "You don't need discipline. You need alignment.",
+                    product_name: "The Kintsugi Method",
                     product_description: "A forgiving framework that accounts for your emotional fluctuations.",
                     features_bullets: [
-                        "The \"Scar Inventory\": Map your trauma to your superpowers.",
-                        "The Storyteller's Voice: Share pain without \"Trauma Dumping.\"",
-                        "The Healer's Business: Get paid to help people survive what you did."
+                        "The 'Scar Inventory' Map your trauma to your superpowers.",
+                        "The Storyteller's Voice Share pain without oversharing.",
+                        "The Healer's Business Get paid to help people survive what you did."
                     ],
                     price_original: "$250",
                     price_discounted: "$88",
                     bonuses: [
                         { title: "Dream Journaling", description: "Harvesting ideas from sleep.", value: "$15" }
                     ],
-                    guarantee_text: "THE WHOLENESS  If you don't feel a shift from \"Broken\" to \"Beautiful\", full refund.",
-                    scarcity_text: "Flow state waiting.",
-                    cta_text: "MEND WITH GOLD"
+                    guarantee_text: "THE WHOLENESS  If you don't feel a shift from 'Broken' to 'Beautiful', full refund. We want you to feel whole.",
+                    scarcity_text: "There is no rush.",
+                    cta_text: "Explore softly"
                 }
             },
             {
                 id: "introvert-power",
                 title: "How to Heal Yourself and Others through the Power of Story",
                 script: {
-                    headline: "YOU AREN'T SHY. YOU ARE SELECTIVE.",
-                    subheadline: "YOU AREN'T SHY. YOU ARE SELECTIVE.",
+                    headline: "Your sensitivity is a radio for truth.",
+                    subheadline: "You aren't shy. You are selective.",
                     hook_image_prompt: "An open book where the words turn into birds flying out.",
-                    pain_story: "Your attention is Gold. Small talk is Plastic. Every time you force yourself to care about the weather, you are making a bad trade. You leave parties drained because you were ripped off. You gave away your soul and got nothing in return.",
+                    image_url: "/images/products/infp_book.png",
+                    pain_story: "Your attention is gold. Small talk is plastic. You leave parties drained because you gave away your soul and got nothing in return. You crave depth, but the world offers surface.",
                     agitation_bullets: [
                         "Writer's block caused by perfectionism.",
-                        "Feeling misunderstood.",
-                        "The loneliness of the vivid imagination."
+                        "Feeling misunderstood even when you speak.",
+                        "The loneliness of a vivid imagination."
                     ],
-                    transition_mechanism: "YOU ARE A SNOB.",
-                    product_name: "THE CAT IN THE DOG PARK",
+                    transition_mechanism: "Turn your inner world into a bridge.",
+                    product_name: "The Cat in the Dog Park",
                     product_description: "A course on writing fiction or memoir as therapy and art.",
                     features_bullets: [
-                        "The \"Question\" Bank: 10 questions to cut through small talk instantly.",
-                        "The \"Irish Exit\" Guide: How to leave gracefully at 0% battery.",
-                        "Listener's Charisma: Use silence to make people love you."
+                        "The 'Question' Bank Cut through small talk instantly.",
+                        "The 'Irish Exit' Guide Leave gracefully when your battery is low.",
+                        "Listener's Charisma Use silence to make people feel seen."
                     ],
                     price_original: "$99",
                     price_discounted: "$29",
                     bonuses: [
-                        { title: "Prompt Generator", description: "Never run out of ideas.", value: "$20" }
+                        { title: "Quiet Confidence", description: "Presence without noise.", value: "$20" }
                     ],
-                    guarantee_text: "THE BATTERY  If you don't feel 50% more social energy, full refund.",
-                    scarcity_text: "The story ends soon.",
-                    cta_text: "UNLEASH QUIET POWER"
+                    guarantee_text: "THE CONNECTION  If you don't feel more understood in 30 days, we refund you. No questions asked.",
+                    scarcity_text: "Your story matters.",
+                    cta_text: "Explore softly"
                 }
             },
             {
-                id: "meaning",
+                id: "idealism-survival",
                 title: "How to Keep Your Heart Open in a Cynical World",
                 script: {
-                    headline: "YOU ARE HOMESICK FOR A PLACE THAT DOESN'T EXIST.",
-                    subheadline: "YOU ARE HOMESICK FOR A PLACE THAT DOESN'T EXIST.",
-                    hook_image_prompt: "A flower growing out of concrete, glowing with light.",
-                    pain_story: "You think \"Purpose\" will arrive in a dream. So you wait. You drift. But the Universe doesn't hand out purposes. It hands out Raw Materials. Meaning is not found. It is built.",
+                    headline: "The World is Hard. You are Soft. That is your Strength.",
+                    subheadline: "Don't harden your heart. Strengthen your spine.",
+                    hook_image_prompt: "A glowing heart protected by a transparent, soft bubble in a gray city.",
+                    image_url: "/images/products/infp_heart.png",
+                    pain_story: "You feel the weight of the world. Every headline, every cruelty, every injustice lands on your skin. You want to help, but sometimes you just want to hide. You don't have to choose between caring and surviving.",
                     agitation_bullets: [
-                        "World-weariness.",
-                        "Loss of innocence.",
-                        "Despair paralysis."
+                        "Doomscrolling until you are paralyzed.",
+                        "Feeling guilty for your privilege.",
+                        "Burning out from empathy."
                     ],
-                    transition_mechanism: "YOU JUDGE \"NORMAL\" PEOPLE.",
-                    product_name: "THE SOUL COMPASS",
+                    transition_mechanism: "Protect your light so you can share it.",
+                    product_name: "The Idealist's Shield",
                     product_description: "Philosophical and practical tools to engage with the world without losing your light.",
                     features_bullets: [
-                        "The \"Anti-Career\" Guide: Find work that pays but doesn't kill your soul.",
-                        "Sacred Rituals: Turn morning coffee into a religious experience.",
-                        "The Tribe Signal: How to find other aliens."
+                        "Media Filters Strategies to stay informed without being poisoned.",
+                        "Micro-Activism Changing the world in your immediate circle.",
+                        "The Hope Anchor Rituals to find beauty in the chaos."
                     ],
                     price_original: "$199",
                     price_discounted: "$55",
                     bonuses: [
-                        { title: "Meditation for Sensitivity", description: "Calm the storm.", value: "$22" }
+                        { title: "Metta Meditation", description: "Loving-kindness audio.", value: "$19" }
                     ],
-                    guarantee_text: "THE DEPTH  If life doesn't feel 20% more meaningful in 2 weeks, refund.",
-                    scarcity_text: "Light the dark.",
-                    cta_text: "ACTIVATE COMPASS"
+                    guarantee_text: "THE HOPE  If this doesn't restore your faith in 30 days, full refund.",
+                    scarcity_text: "Stay soft.",
+                    cta_text: "Explore softly"
                 }
             },
             {
@@ -2381,6 +2234,182 @@ export const productsData: Record<string, MBTIProfile> = {
                     guarantee_text: "SELF  Find your core in 30 days or refund.",
                     scarcity_text: "Break free.",
                     cta_text: "FACE YOURSELF"
+                }
+            }
+        ]
+    },
+    INTP: {
+        id: "intp",
+        theme: mbtiThemes.INTP,
+        name: "The Logician",
+        artistic_vibe: "Deep indigo void, floating geometric nodes, soft electric violet glow, drifting particles, neural networks forming crystals, quiet curiosity, unresolved puzzles.",
+        psychological_triggers: [
+            "Intellectual Curiosity",
+            "First Principles Thinking",
+            "Conceptual Clarity",
+            "Autonomy & Exploration",
+            "Unique Insight"
+        ],
+        products: [
+            {
+                id: "mastery",
+                title: "How to Master Focus without Rigid Schedules in 7 Days",
+                script: {
+                    headline: "How to Enter Deep Flow on Command Without Creating Soul-Sucking Spreadsheets or waking up at 5AM",
+                    subheadline: "For the mind that never stops running: A non-linear system for extreme productivity.",
+                    hook_image_prompt: "A neural network slowly rearranging itself into a clean geometric crystal, deep indigo background",
+                    image_url: "/images/products/intp_neural.png",
+                    pain_story: "You aren't unfocused. You are thinking in someone else's structure. Top-down systems assume compliance. Your brain assumes curiosity.",
+                    agitation_bullets: [
+                        { title: "Analysis Paralysis", analysis: "You see infinite branches of possibility. To choose one is to kill the others. This fear of closing doors keeps you stuck in the hallway, never entering a room." },
+                        { title: "The Start–Stop Loop", analysis: "You love the 'Idea Phase' (10/10 dopamine). You hate the 'Execution Phase' (0/10 dopamine). You have a graveyard of half-finished projects that haunt you." },
+                        { title: "Puzzle Completion Drop-off", analysis: "Once you SOLVE the problem in your head, the physical manifestation feels redundant. You lose interest because the intellectual challenge is gone." }
+                    ],
+                    transition_mechanism: "YOU ARE UNDER-ENGAGED.",
+                    product_name: "THE FOCUS MASTERY SYSTEM",
+                    product_description: "An AI-powered workspace that adapts to YOUR brain. It doesn't force a schedule; it curates your 'Next Logical Step' based on your current dopamine levels.",
+                    features_bullets: [
+                        "The '5-Year-Old' Test: If it can't be explained simply, it isn't understood.",
+                        "Analogy Generator: Abstract ideas mapped to physical intuition.",
+                        "Gap Analysis: Shows the *missing* link, not the obvious one."
+                    ],
+                    price_original: "$99",
+                    price_discounted: "$29",
+                    bonuses: [
+                        { title: "Rabbit Hole Blocker", description: "Prevent infinite regression.", value: "$19" },
+                        { title: "INTP Sleep Hacking", description: "Turn off the background process.", value: "$29" }
+                    ],
+                    guarantee_text: "🛡️ If you don't experience a genuine \"Aha\" within 20 minutes — we refund you.",
+                    scarcity_text: "Beta access limited. Not for scarcity — for signal integrity.",
+                    cta_text: "Initialize System"
+                }
+            },
+            {
+                id: "social-life",
+                title: "How to Hack Social Dynamics without Faking Etiquette in 2 Weeks",
+                script: {
+                    headline: "How to Network Like a Power Broker Without 'Small Talk' or Fake Smiles",
+                    subheadline: "Treat human interaction like a system to be optimized, not a performance to be endured.",
+                    hook_image_prompt: "Glowing blue digital brain with intricate circuit patterns",
+                    image_url: "/images/products/intp_brain.png",
+                    pain_story: "You see connections others miss, but articulating them feels like trying to explain a color. You are overwhelmed by the noise because you haven't tuned your filter.",
+                    agitation_bullets: [
+                        { title: "Explanation Fatigue", analysis: "You constantly simplify your thoughts for others, losing fidelity in the process. This creates a feedback loop where you stop trying to explain complex ideas, leading to intellectual isolation." },
+                        { title: "Insight Isolation", analysis: "You see the solution clearly, but because you can't sell it emotionally, it gets ignored. You watch the slow-motion car crash you predicted, powerless to stop it." },
+                        { title: "Information Overload", analysis: "Your brain doesn't have a spam filter. You process the hum of the fridge with the same priority as a conversation. This leads to rapid battery drain in social settings." }
+                    ],
+                    transition_mechanism: "YOUR FILTER IS NOISY.",
+                    product_name: "THE SOCIAL CODE",
+                    product_description: "A framework that deconstructs social interactions into logical flowcharts. No emotion required—just pure pattern matching.",
+                    features_bullets: [
+                        "Signal Extraction: Identify the 1% of data that matters.",
+                        "The Isomorphism Engine: Apply solutions from biology to code.",
+                        "Recursive Learning: Learn how to learn."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$59",
+                    bonuses: [
+                        { title: "Universal Models", description: "Mental models that work everywhere.", value: "$29" }
+                    ],
+                    guarantee_text: "If the noise doesn't quiet down, you get your money back.",
+                    scarcity_text: "Signal tuning active.",
+                    cta_text: "Download The Social Code"
+                }
+            },
+            {
+                id: "second-brain",
+                title: "How to Learn Any Skill without Boring Repetition in 48 Hours",
+                script: {
+                    headline: "Upload Skills to Your Brain Like Neo. No 10,000 Hours. Just Pure Data Compression.",
+                    subheadline: "For the INTP who wants to know EVERYTHING but hates the grind.",
+                    hook_image_prompt: "Abstract art visualizing complex ideas, hunter storm style",
+                    image_url: "/images/products/intp_abstract.png",
+                    pain_story: "You have brilliant ideas that die in your head because 'finishing' feels boring. The execution phase kills the discovery phase.",
+                    agitation_bullets: [
+                        "The Graveyard of Started Projects",
+                        "Perfectionism as Procrastination",
+                        "Execution Borne"
+                    ],
+                    transition_mechanism: "YOU NEED A PLAYGROUND.",
+                    product_name: "SKILL UPLOAD PROTOCOL",
+                    product_description: "An AI tool that strips away the fluff and gives you the raw logic gates of any skill. Learn the 20% that gives 80% of results.",
+                    features_bullets: [
+                        "The Sandbox Mode: Create without consequence.",
+                        "Modular Building: Assemble finished projects from small experiments.",
+                        "The 'Good Enough' Algorithm: Mathematically define when to stop."
+                    ],
+                    price_original: "$199",
+                    price_discounted: "$49",
+                    bonuses: [
+                        { title: "Flow State Triggers", description: "Hack your biology for focus.", value: "$25" }
+                    ],
+                    guarantee_text: "If you don't ship something, refund.",
+                    scarcity_text: "Open sandbox.",
+                    cta_text: "Start Upload"
+                }
+            },
+            {
+                id: "theory-everything",
+                title: "How to Find Your Life Purpose without Woo-Woo Nonsense in 60 Minutes",
+                script: {
+                    headline: "Solve the 'Meaning of Life' Equation. No Crystals, No Chanting, Just Logic.",
+                    subheadline: "Turn your existential dread into a grand unified theory of your life.",
+                    hook_image_prompt: "A single glowing equation floating in a void",
+                    image_url: "/images/products/intp_abstract.png",
+                    pain_story: "You search for meaning but find only contradictions. Typical self-help feels shallow and illogical.",
+                    agitation_bullets: [
+                        "Existential Nihilism",
+                        "Analysis Loop",
+                        "Lack of Direction"
+                    ],
+                    transition_mechanism: "MEANING IS CONSTRUCTED.",
+                    product_name: "THE PURPOSE CONSTRUCTOR",
+                    product_description: "A guided AI framework to construct a personal philosophy that is logically consistent and emotionally resonant.",
+                    features_bullets: [
+                        "Axiom Definition: Define your base truths.",
+                        "Logic Chain: Derive values from facts.",
+                        "Purpose Statement: A clear, testable mission."
+                    ],
+                    price_original: "$299",
+                    price_discounted: "$99",
+                    bonuses: [
+                        { title: "Nihilism Antidote", description: "Logic for hope.", value: "$29" }
+                    ],
+                    guarantee_text: "Find clarity or refund.",
+                    scarcity_text: "Construct meaning.",
+                    cta_text: "Construct Meaning"
+                }
+            },
+            {
+                id: "debug-existence",
+                title: "How to Automate Your Income without Marketing Sleaze in 30 Days",
+                script: {
+                    headline: "Build a Money Machine That Runs on Logic, Not Charisma.",
+                    subheadline: "Stop trading time for money. Start building assets that exist independently of your labor.",
+                    hook_image_prompt: "A complex machine running smoothly without human intervention",
+                    image_url: "/images/products/intp_neural.png",
+                    pain_story: "You hate selling. You hate convincing people. You just want to build cool things and have them work.",
+                    agitation_bullets: [
+                        "Sales Anxiety",
+                        "Marketing Fatigue",
+                        "Income Inconsistency"
+                    ],
+                    transition_mechanism: "AUTOMATION IS FREEDOM.",
+                    product_name: "THE PASSIVE INCOME ENGINE",
+                    product_description: "A complete guide to building 'No-Code' SaaS and digital assets that sell themselves via search intent, not social hype.",
+                    features_bullets: [
+                        "Search Intent SEO: Capture existing demand.",
+                        "No-Code Automation: Build without dev teams.",
+                        "Content Systems: Create once, sell forever."
+                    ],
+                    price_original: "$128",
+                    price_discounted: "$32",
+                    bonuses: [
+                        { title: "SEO Checklist", description: "Rank without hacks.", value: "$19" }
+                    ],
+                    guarantee_text: "Build an asset or refund.",
+                    scarcity_text: "Start building.",
+                    cta_text: "Build The Machine"
                 }
             }
         ]

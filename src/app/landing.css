@@ -813,6 +813,13 @@ main.ocean-main {
   z-index: 100;
 }
 
+/* Move MBTI section up by 1 inch (96px) on desktop */
+@media (min-width: 768px) {
+  .mbti-container {
+    transform: translateY(-96px);
+  }
+}
+
 .lotus-trigger-link {
   background: transparent;
   border: none;

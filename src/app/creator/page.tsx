@@ -612,11 +612,11 @@ const CreatorPage = () => {
                     </div>
 
                     <div className={styles.iconWrapper} onClick={() => togglePopup('testimonial')}>
-                        <div className={`${styles.iconBox} ${styles.testimonialIcon}`} title="Story">
+                        <div className={`${styles.iconBox} ${styles.testimonialIcon}`} title="Highlights">
                             <i className="fa-solid fa-users-rectangle"></i> 📜
-                            <span className={styles.tooltipText}>Story</span>
+                            <span className={styles.tooltipText}>Highlights</span>
                         </div>
-                        <span className={styles.buttonLabel}>JOURNEY</span>
+                        <span className={styles.buttonLabel}>HIGHLIGHTS</span>
                     </div>
 
                     <div className={styles.iconWrapper} onClick={() => togglePopup('contact')}>
@@ -803,7 +803,7 @@ const CreatorPage = () => {
                                     <button className={`${styles.circleBtn} ${styles.yellow}`} onClick={() => setMaximized(false)}></button>
                                     <button className={`${styles.circleBtn} ${styles.green}`} onClick={() => setMaximized(!maximized)}></button>
                                 </div>
-                                <span style={{ marginLeft: '10px' }}>Journey & Vibes</span>
+                                <span style={{ marginLeft: '10px' }}>Highlights & Vibes</span>
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.aboutContent}>
