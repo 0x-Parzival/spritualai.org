@@ -312,11 +312,11 @@ export default function Home() {
 
                 {/* 🔮 Personality Question Section */}
                 <div className="mbti-container">
-                    <h2 className="matrix-text" style={{ whiteSpace: 'nowrap' }}>DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
+                    <h2 className="matrix-text">DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
 
                     <div className="button-group">
                         <a href="/MBTI" className="neon-btn" data-text="YES" target="_self">YES</a>
-                        <a href="/cosmic-compass/index.html" className="neon-btn" data-text="NO">NO</a>
+                        <a href="/cosmic-compass/" className="neon-btn" data-text="NO">NO</a>
                     </div>
                 </div>
 
