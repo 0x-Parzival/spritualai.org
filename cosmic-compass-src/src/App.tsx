@@ -54,22 +54,16 @@ const App = () => {
     return null;
   }, [answers]);
 
-  /* Determine basename dynamically */
-  const getBasename = () => {
-    const path = window.location.pathname;
-    if (path.startsWith("/MBTI")) return "/MBTI";
-    return "/cosmic-compass";
-  };
-
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter basename={getBasename()}>
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<QuizLanding />} />
+              <Route path="/" element={<Navigate to="/quiz" replace />} />
+              <Route path="/quiz" element={<QuizLanding />} />
               <Route path="/quiz/1" element={<QuizQuestion1 onAnswer={setEI} />} />
               <Route path="/quiz/2" element={<QuizQuestion2 onAnswer={setSN} />} />
               <Route path="/quiz/3" element={<QuizQuestion3 onAnswer={setTF} />} />

@@ -126,26 +126,11 @@ const QuizResult = () => {
 
       <div className="relative h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
         <SciFiBackground variant="result" />
-
-        {/* Back Button */}
-        <motion.button
-          onClick={() => window.location.href = "/"}
-          className="absolute top-6 left-6 z-50 flex items-center gap-2 text-foreground/70 hover:text-neon-cyan transition-colors font-orbitron text-sm sm:text-base lg:text-3xl font-bold"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6 lg:w-10 lg:h-10">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span className="uppercase tracking-widest">Back to menu</span>
-        </motion.button>
-        <FirecrackerAnimation
-          isActive={showFirecrackers}
-          onComplete={() => setAnimationComplete(true)}
+        <FirecrackerAnimation 
+          isActive={showFirecrackers} 
+          onComplete={() => setAnimationComplete(true)} 
         />
-
+        
         {/* Glass card container */}
         <motion.div
           className="relative z-10 text-center max-w-3xl mx-auto"
@@ -157,12 +142,12 @@ const QuizResult = () => {
           <div className="relative p-6 sm:p-10 md:p-12 rounded-3xl backdrop-blur-xl bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.1)]">
             {/* Inner glow effect */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
-
+            
             {/* Shine effect */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
               <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-white/20 to-transparent rotate-12 opacity-50" />
             </div>
-
+            
             {/* Result announcement */}
             <motion.div
               initial={{ y: -50, opacity: 0 }}
@@ -180,8 +165,8 @@ const QuizResult = () => {
               className="font-orbitron text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black my-4 sm:my-6 relative z-10"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{
-                duration: 0.8,
+              transition={{ 
+                duration: 0.8, 
                 delay: 1,
                 type: "spring",
                 stiffness: 200
@@ -190,16 +175,17 @@ const QuizResult = () => {
               {mbtiType.split("").map((letter, i) => (
                 <motion.span
                   key={i}
-                  className={`inline-block drop-shadow-[0_0_30px_currentColor] ${i === 0 ? "text-neon-cyan" :
+                  className={`inline-block drop-shadow-[0_0_30px_currentColor] ${
+                    i === 0 ? "text-neon-cyan" :
                     i === 1 ? "text-secondary" :
-                      i === 2 ? "text-accent" :
-                        "text-primary"
-                    }`}
+                    i === 2 ? "text-accent" :
+                    "text-primary"
+                  }`}
                   style={{
                     textShadow: i === 0 ? '0 0 20px hsl(180 100% 50%), 0 0 40px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.3)' :
-                      i === 1 ? '0 0 20px hsl(180 100% 50%), 0 0 40px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.3)' :
-                        i === 2 ? '0 0 20px hsl(320 100% 60%), 0 0 40px hsl(320 100% 60% / 0.5), 0 0 60px hsl(320 100% 60% / 0.3)' :
-                          '0 0 20px hsl(280 100% 60%), 0 0 40px hsl(280 100% 60% / 0.5), 0 0 60px hsl(280 100% 60% / 0.3)'
+                               i === 1 ? '0 0 20px hsl(180 100% 50%), 0 0 40px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.3)' :
+                               i === 2 ? '0 0 20px hsl(320 100% 60%), 0 0 40px hsl(320 100% 60% / 0.5), 0 0 60px hsl(320 100% 60% / 0.3)' :
+                               '0 0 20px hsl(280 100% 60%), 0 0 40px hsl(280 100% 60% / 0.5), 0 0 60px hsl(280 100% 60% / 0.3)'
                   }}
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -211,7 +197,7 @@ const QuizResult = () => {
             </motion.h1>
 
             {/* Separator line with gradient */}
-            <motion.div
+            <motion.div 
               className="w-24 sm:w-32 h-[2px] mx-auto mb-4 bg-gradient-to-r from-transparent via-primary to-transparent"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
@@ -242,10 +228,10 @@ const QuizResult = () => {
             >
               <NeonButton
                 variant="secondary"
-                onClick={() => window.location.href = `/MBTI/personality/${mbtiType.toLowerCase()}.html`}
+                onClick={() => navigate("/quiz")}
                 className="backdrop-blur-sm bg-white/5 border-white/30 hover:bg-white/10"
               >
-                Know More
+                Retake Quiz
               </NeonButton>
             </motion.div>
           </div>
@@ -253,29 +239,29 @@ const QuizResult = () => {
           {/* Floating decorative orbs */}
           <motion.div
             className="absolute -top-6 -left-6 sm:-top-10 sm:-left-10 w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-primary/30 to-transparent backdrop-blur-sm border border-white/10"
-            animate={{
+            animate={{ 
               rotate: 360,
               scale: [1, 1.1, 1]
             }}
-            transition={{
+            transition={{ 
               rotate: { duration: 20, repeat: Infinity, ease: "linear" },
               scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
             }}
           />
           <motion.div
             className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tl from-secondary/20 to-transparent backdrop-blur-sm border border-white/10"
-            animate={{
+            animate={{ 
               rotate: -360,
               scale: [1, 1.15, 1]
             }}
-            transition={{
+            transition={{ 
               rotate: { duration: 25, repeat: Infinity, ease: "linear" },
               scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }}
           />
           <motion.div
             className="absolute top-1/2 -right-8 sm:-right-12 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-l from-accent/25 to-transparent backdrop-blur-sm border border-white/10"
-            animate={{
+            animate={{ 
               y: [-10, 10, -10],
               opacity: [0.5, 1, 0.5]
             }}

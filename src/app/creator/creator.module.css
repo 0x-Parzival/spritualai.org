@@ -325,6 +325,13 @@
     margin-bottom: 1rem;
 }
 
+.aboutTitle {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 4px;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+
 .imgFrame {
     overflow: hidden;
     width: 100%;
@@ -586,11 +593,19 @@
     }
 
     .themeSelector {
-        bottom: 90px;
-        /* Move up on mobile to avoid overlapping planet icons */
+        top: 100px;
+        bottom: auto;
+        /* Move to top on mobile to avoid overlapping planet icons */
         left: 50%;
         transform: translateX(-50%);
         width: max-content;
+    }
+
+    .section {
+        padding-bottom: 80px;
+        /* Increased to lift buttons upwards */
+        height: auto;
+        min-height: 100vh;
     }
 
     .iconContainer {
@@ -598,6 +613,7 @@
         padding: 8px 10px;
         width: 95%;
         justify-content: space-around;
+        margin-bottom: 20px;
     }
 
     .iconBox {
@@ -613,11 +629,56 @@
     .popupContainer {
         width: 95%;
         padding: 0;
-        max-height: 85vh;
+        max-height: 90vh;
+        /* Increased to allow more content */
+    }
+
+    .popupHeader {
+        padding: 12px 15px;
+        font-size: 1rem;
     }
 
     .popupBody {
-        padding: 20px;
+        padding: 15px;
+        /* Even less padding for more content space */
+    }
+
+    .aboutContent h1 {
+        font-size: 1.5rem !important;
+        /* Force smaller title on mobile */
+        margin-bottom: 15px;
+        letter-spacing: 2px;
+    }
+
+    .aboutContent p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .timeline {
+        padding-left: 15px;
+    }
+
+    .timelineItem::before {
+        left: -21px;
+    }
+
+    .timelineContent {
+        font-size: 0.9rem;
+    }
+
+    .skillTags {
+        gap: 8px;
+    }
+
+    .skillTag {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
+    .projectsGrid {
+        grid-template-columns: 1fr;
+        padding: 5px;
     }
 }
 

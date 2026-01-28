@@ -313,6 +313,7 @@ canvas#webgl-canvas {
     height: 100%;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .product-card::before {

@@ -314,17 +314,13 @@ main.ocean-main {
 /* ---------------- NEON TITLE ---------------- */
 .container {
   max-width: 900px;
-  margin: 7.5vh auto 0;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 10vh 20px 5vh;
   position: relative;
-  z-index: 4;
-  text-align: center;
-  /* Reduced spacing above and below the title */
-  padding-bottom: 7.5vh;
-  /* Lift heavily above backgrounds (-2, 0, 1) */
   z-index: 50;
+  text-align: center;
+  min-height: 40vh;
   pointer-events: none;
-  /* Let clicks pass through container area, re-enable on interactive children if needed */
 }
 
 /* Re-enable pointer events for the logo and title text if they have interactions (usually they don't, but good practice) */
@@ -397,32 +393,31 @@ main.ocean-main {
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 10;
-  margin: 0 auto;
+  margin: 5vh auto;
   gap: clamp(20px, 5vh, 40px);
   width: fit-content;
   max-width: 90vw;
-  gap: clamp(20px, 5vh, 40px);
-  width: fit-content;
-  max-width: 90vw;
-  padding: 7.5vh 0;
+  padding: 5vh 0;
   z-index: 60;
-  /* Higher than title */
   pointer-events: auto;
 }
 
 /* Sci-Fi Text Styles */
 .matrix-text {
   font-family: var(--font-orbitron), 'Courier New', Courier, monospace;
-  font-size: 4.5rem;
+  font-size: clamp(1.5rem, 8vw, 4.5rem);
   font-weight: 900;
   color: #e0f7ff;
   text-transform: uppercase;
-  letter-spacing: 6px;
+  letter-spacing: clamp(2px, 1vw, 6px);
   position: relative;
   text-align: center;
   z-index: 1;
-  /* Establish stacking context so negative children stay relative to this, not body */
+  width: 100%;
+  max-width: 90vw;
+  line-height: 1.2;
+  word-wrap: break-word;
+  white-space: normal;
 
   /* Sci-Fi Glow */
   text-shadow:

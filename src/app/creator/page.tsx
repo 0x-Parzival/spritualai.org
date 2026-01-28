@@ -425,7 +425,7 @@ const CreatorPage = () => {
                 orbitRings.children.forEach((ring: any) => {
                     if (ring.material.uniforms) ring.material.uniforms.uExplode.value = easedProgress;
                 });
-                coreSphere.material.uniforms.uExplode.value = easedProgress;
+                (coreSphere.material as any).uniforms.uExplode.value = easedProgress;
 
                 if (progress >= 1.0) {
                     isExplosionActive = false;
@@ -436,8 +436,8 @@ const CreatorPage = () => {
             }
 
             if (coreSphere && coreSphere.material) {
-                coreSphere.material.uniforms.time.value = elapsedTime;
-                coreSphere.material.uniforms.uMouse.value.copy(mouse);
+                (coreSphere.material as any).uniforms.time.value = elapsedTime;
+                (coreSphere.material as any).uniforms.uMouse.value.copy(mouse);
             }
 
             if (orbitRings) {
@@ -453,7 +453,7 @@ const CreatorPage = () => {
                 });
             }
 
-            if (starfield) starfield.material.uniforms.time.value = elapsedTime;
+            if (starfield) (starfield.material as any).uniforms.time.value = elapsedTime;
 
             if (mainGroup) mainGroup.rotation.y += 0.0005;
 
@@ -658,8 +658,8 @@ const CreatorPage = () => {
                                         <img src="/creator_assets/me.jpeg" alt="Keshav Baliyan" />
                                     </div>
                                     <div className={styles.aboutContent}>
-                                        <h1 style={{ fontFamily: 'Orbitron, sans-serif', letterSpacing: '4px' }}>OPERATOR: Keshav Baliyan (0xPARZIVAL)</h1>
-                                        <p style={{ fontFamily: 'Orbitron, monospace', color: '#00e5ff', fontSize: '0.9rem', marginBottom: '15px' }}>
+                                        <h1 className={styles.aboutTitle}>OPERATOR: Keshav Baliyan (0xPARZIVAL)</h1>
+                                        <p style={{ fontFamily: 'Orbitron, monospace', color: '#00e5ff', fontSize: '0.8rem', marginBottom: '15px' }}>
                                             <strong>SYSTEM IDENTITY:</strong> Code Architect of Consciousness<br />
                                             <strong>MISSION:</strong> Integrating Artificial Intelligence with Vedic Systems<br />
                                             <strong>ORIGIN:</strong> Sector 2014 [Abacus Logic Initialization]
