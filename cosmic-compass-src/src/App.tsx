@@ -60,7 +60,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename="/cosmic-compass">
             <Routes>
               <Route path="/" element={<Navigate to="/quiz" replace />} />
               <Route path="/quiz" element={<QuizLanding />} />

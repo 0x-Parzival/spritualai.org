@@ -30,7 +30,18 @@ const QuizQuestion1 = ({ onAnswer }: QuizQuestion1Props) => {
 
       <div className="relative h-full w-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
         <SciFiBackground variant="question1" />
-        
+
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          onClick={() => navigate("/quiz")}
+          className="absolute top-4 left-4 z-50 text-white/70 hover:text-white flex items-center gap-2 font-orbitron text-sm tracking-wider transition-colors"
+        >
+          <span>←</span> Back
+        </motion.button>
+
         <motion.div
           className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-full justify-center"
           initial={{ opacity: 0 }}
@@ -46,9 +57,8 @@ const QuizQuestion1 = ({ onAnswer }: QuizQuestion1Props) => {
             {[1, 2, 3, 4].map((step) => (
               <div
                 key={step}
-                className={`w-8 sm:w-12 h-1 rounded-full ${
-                  step === 1 ? "bg-neon-cyan" : "bg-muted"
-                }`}
+                className={`w-8 sm:w-12 h-1 rounded-full ${step === 1 ? "bg-neon-cyan" : "bg-muted"
+                  }`}
               />
             ))}
           </motion.div>

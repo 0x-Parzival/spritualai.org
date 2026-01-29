@@ -18,6 +18,7 @@ export const productsData: Record<string, MBTIProfile> = {
         products: [
             {
                 id: "empire-of-one",
+                semantic_slug: "entj-empire-of-one-spiritual-ai",
                 title: "How to Build an Empire of One without Hiring Idiots in 30 Days",
                 script: {
                     headline: "How to Build an Empire of One without Hiring Idiots in 30 Days",
@@ -51,6 +52,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "execute-12-months",
+                semantic_slug: "entj-execute-12-months-spiritual-ai",
                 title: "How to Execute 12 Months of Work in 12 Weeks without Burnout",
                 script: {
                     headline: "EXECUTE 12 MONTHS IN 12 WEEKS",
@@ -83,6 +85,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "outmaneuver-competitor",
+                semantic_slug: "entj-outmaneuver-competitor-spiritual-ai",
                 title: "How to Outmaneuver Any Competitor without Lowering Your Prices",
                 script: {
                     headline: "GRAND STRATEGY",
@@ -115,6 +118,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "command-room",
+                semantic_slug: "entj-command-room-spiritual-ai",
                 title: "How to Command Any Room without saying a Word in 3 Seconds",
                 script: {
                     headline: "COMMAND THE ROOM.",
@@ -147,6 +151,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "vision-survives",
+                semantic_slug: "entj-vision-survives-spiritual-ai",
                 title: "How to Ensure Your Vision Survives without Micro-Managing in Perpetuity",
                 script: {
                     headline: "THE DYNASTY ARCHITECTURE",
@@ -194,6 +199,7 @@ export const productsData: Record<string, MBTIProfile> = {
         products: [
             {
                 id: "systemize-life",
+                semantic_slug: "intj-systemize-life-spiritual-ai",
                 title: "How to Systemize Your Entire Life without Losing Your Soul in 3 Days",
                 script: {
                     headline: "Systemize Your Existence.",
@@ -225,6 +231,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "think-ahead",
+                semantic_slug: "intj-think-ahead-spiritual-ai",
                 title: "How to Think 10 Steps Ahead of Everyone Else without Stress",
                 script: {
                     headline: "FORECAST THE FUTURE.",
@@ -257,6 +264,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "rapid-competence",
+                semantic_slug: "intj-rapid-competence-spiritual-ai",
                 title: "How to Achieve Top 1% Competence in Any Field in 6 Months",
                 script: {
                     headline: "TOP 1% COMPETENCE IN 6 MONTHS.",
@@ -289,6 +297,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "win-arguments",
+                semantic_slug: "intj-win-arguments-spiritual-ai",
                 title: "How to Win Every Argument with Pure Logic without Raising Your Voice",
                 script: {
                     headline: "WIN WITH PURE LOGIC.",
@@ -321,6 +330,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "global-business",
+                semantic_slug: "intj-global-business-spiritual-ai",
                 title: "How to run a Global Business from a Dark Room without Employees",
                 script: {
                     headline: "RUN A GLOBAL BUSINESS FROM A DARK ROOM.",
@@ -368,6 +378,7 @@ export const productsData: Record<string, MBTIProfile> = {
         products: [
             {
                 id: "idea-generator",
+                semantic_slug: "entp-idea-generator-spiritual-ai",
                 title: "How to Generate Million-Dollar Ideas on Demand without Writer's Block",
                 script: {
                     headline: "MILLION DOLLAR IDEAS ON DEMAND.",
@@ -400,6 +411,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "persuasion",
+                semantic_slug: "entp-persuasion-spiritual-ai",
                 title: "How to Persuade Anyone of Anything (Even if You Don't Believe it)",
                 script: {
                     headline: "REALITY IS NEGOTIABLE.",
@@ -432,6 +444,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "thrive-chaos",
+                semantic_slug: "entp-thrive-chaos-spiritual-ai",
                 title: "How to Thrive in Uncertainty when Everyone Else is Panicking",
                 script: {
                     headline: "CHAOS IS A LADDER.",
@@ -464,6 +477,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "speed-learning",
+                semantic_slug: "entp-speed-learning-spiritual-ai",
                 title: "How to Bypass 10 Years of Career Laddering in 6 months",
                 script: {
                     headline: "Learn faster by breaking the rules — not by waiting your turn.",
@@ -496,6 +510,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "infinite-career",
+                semantic_slug: "entp-infinite-career-spiritual-ai",
                 title: "How to Turn Your 17 Different Hobbies into One Income Stream",
                 script: {
                     headline: "THE INFINITE CAREER.",
@@ -718,6 +733,7 @@ export const productsData: Record<string, MBTIProfile> = {
         products: [
             {
                 id: "dream-to-reality",
+                semantic_slug: "infp-dream-to-reality-spiritual-ai",
                 title: "How to Make Money from Your Art without Selling Your Soul",
                 script: {
                     headline: "You don't need to become more. You just need space to be yourself.",
@@ -750,6 +766,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "healers-journey",
+                semantic_slug: "infp-healers-journey-spiritual-ai",
                 title: "How to Get Things Done when you Hate Structure and Discipline",
                 script: {
                     headline: "Flow like Water. Don't Grind like Stone.",
@@ -782,6 +799,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "introvert-power",
+                semantic_slug: "infp-introvert-power-spiritual-ai",
                 title: "How to Heal Yourself and Others through the Power of Story",
                 script: {
                     headline: "Your sensitivity is a radio for truth.",
@@ -851,6 +869,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU BLEED WHEN PEOPLE LOOK AT YOU WRONG.",
                     subheadline: "YOU BLEED WHEN PEOPLE LOOK AT YOU WRONG.",
                     hook_image_prompt: "A door in a library opening to a galaxy.",
+                    image_url: "/images/products/infp_shield.png",
                     pain_story: "When someone criticizes you, you hand them the pen and let them rewrite your self-worth. You confuse their Opinion with Truth. Because you aren't sure who you are, you let the world decide for you.",
                     agitation_bullets: [
                         "Creative blocks lasting months.",
@@ -2253,6 +2272,7 @@ export const productsData: Record<string, MBTIProfile> = {
         products: [
             {
                 id: "mastery",
+                semantic_slug: "intp-mastery-spiritual-ai",
                 title: "How to Master Focus without Rigid Schedules in 7 Days",
                 script: {
                     headline: "How to Enter Deep Flow on Command Without Creating Soul-Sucking Spreadsheets or waking up at 5AM",
@@ -2286,6 +2306,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "social-life",
+                semantic_slug: "intp-social-life-spiritual-ai",
                 title: "How to Hack Social Dynamics without Faking Etiquette in 2 Weeks",
                 script: {
                     headline: "How to Network Like a Power Broker Without 'Small Talk' or Fake Smiles",
@@ -2318,6 +2339,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "second-brain",
+                semantic_slug: "intp-second-brain-spiritual-ai",
                 title: "How to Learn Any Skill without Boring Repetition in 48 Hours",
                 script: {
                     headline: "Upload Skills to Your Brain Like Neo. No 10,000 Hours. Just Pure Data Compression.",
@@ -2350,6 +2372,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "theory-everything",
+                semantic_slug: "intp-theory-everything-spiritual-ai",
                 title: "How to Find Your Life Purpose without Woo-Woo Nonsense in 60 Minutes",
                 script: {
                     headline: "Solve the 'Meaning of Life' Equation. No Crystals, No Chanting, Just Logic.",
@@ -2382,6 +2405,7 @@ export const productsData: Record<string, MBTIProfile> = {
             },
             {
                 id: "debug-existence",
+                semantic_slug: "intp-debug-existence-spiritual-ai",
                 title: "How to Automate Your Income without Marketing Sleaze in 30 Days",
                 script: {
                     headline: "Build a Money Machine That Runs on Logic, Not Charisma.",

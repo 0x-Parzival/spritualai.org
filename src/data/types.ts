@@ -70,6 +70,7 @@ export interface MBTIProfile {
 
 export interface Product {
     id: string; // slug
+    semantic_slug?: string; // e.g. intj-life-architecture-spiritual-ai
     title: string;
     script: ProductScript;
 }

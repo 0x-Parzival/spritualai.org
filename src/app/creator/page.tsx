@@ -5,6 +5,7 @@ import styles from './creator.module.css';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Script from 'next/script';
 
 // Helper for loading textures safely
 const loadTexture = (url: string) => {
@@ -498,68 +499,68 @@ const CreatorPage = () => {
     const timelineEvents = [
         {
             date: "Childhood - 2014",
-            title: "The Beginning: A Mind Wired for Patterns",
-            desc: "Long before code, design, or AI entered my life, I was drawn to patterns. Numbers, rhythm, structure — understanding how things work came naturally. At age X, I won a State-Level Abacus Competition, proving not speed, but mental clarity. I also joined a world-record dance event at Khalsa College — my first taste of collective energy.",
+            title: "Kid with a Calculator Brain",
+            desc: "Long before I wrote code, I was obsessed with patterns. At age X, I won a State Level Abacus Competition because evidently, I liked being a human calculator. I also joined a world record dance event at Khalsa College, proving that even nerds have rhythm.",
             images: ["/images/portfolio/abacus certificate.jpeg", "/images/portfolio/abacus award winning.jpeg", "/images/portfolio/star kalakar.jpeg"]
         },
         {
             date: "2020 - 2021",
-            title: "Awakening Through the Internet",
-            desc: "While the world slowed down, I accelerated inward and online. I earned my first formal digital certification — Google Digital Garage. In 2021, I began working as a graphic designer, turning abstract thoughts into visuals. This was also the year I read my first non-academic book — a small act that quietly changed everything.",
+            title: "The Internet Woke Me Up",
+            desc: "While the world was locked down, I went online. I got my first Google certification and started doing graphic design because making things look cool is a superpower. This is also when I read my first non academic book. Yes, I actually started reading for fun.",
             images: ["/images/portfolio/can.jpeg", "/images/portfolio/first printed card.jpeg", "/images/portfolio/reading book became habit.jpeg", "/images/portfolio/book summaries.jpeg"],
             link: "https://www.instagram.com/booklyn01/"
         },
         {
             date: "2021 - 2022",
-            title: "Discipline Meets Depth",
-            desc: "Curiosity pushed me into cybersecurity — understanding trust, vulnerability, and responsibility. Soon after, I collaborated unofficially with IIT Delhi students to build a Formula-1 car project. In 2022, I earned my first income through cybersecurity, paid in crypto — proof that skill converts into value.",
+            title: "Cybersecurity & Fast Cars",
+            desc: "I dive into cybersecurity to learn trust and vulnerability, basically hacker school but ethical. Later, I helped IIT Delhi students build a Formula 1 car. And I earned my first income in crypto, which felt incredibly futuristic.",
             images: ["/images/portfolio/f1 car iitd.jpeg", "/images/portfolio/finsihed f1 car iitd.jpeg", "/images/portfolio/81$ first income cyber security.jpeg"]
         },
         {
             date: "2022 - 2023",
-            title: "Creative Expansion Era",
-            desc: "This phase was about trying things before knowing where they lead. I designed my own logo, business cards, shoes, a WordPress website, a YouTube web series (Sigma Pi), and learned chess, sketching, and beatboxing. Not for mastery — but for range.",
+            title: "Trying Literally Everything",
+            desc: "I entered my experimental phase. Designed shoes? Checked. Made a web series? Checked. Learned chess, sketching, and beatboxing? Triple check. I was a jack of all trades and having a blast doing it.",
             images: ["/images/portfolio/logo kb.jpeg", "/images/portfolio/shoe design.jpeg", "/images/portfolio/first website keshav bruh.jpeg", "/images/portfolio/my drawings.jpeg", "/images/portfolio/progress in chess.jpeg"]
         },
         {
             date: "2023",
-            title: "The Body as a System",
-            desc: "I realized intelligence without energy collapses. So I turned inward — toward the body. Discipline replaced motivation. Consistency replaced extremes.",
+            title: "Upgrading the Hardware",
+            desc: "I realized my brain needed a better vessel, so I focused on my body. Less motivation, more discipline. I turned into a gym person and actually liked it.",
             images: ["/images/portfolio/started focusing on body.jpeg", "/images/portfolio/body at janam astami.jpeg", "/images/portfolio/motor skaates.jpeg"]
         },
         {
             date: "Era of Rhythm",
-            title: "Sound, Breath & Presence",
-            desc: "Music became meditation. Breath became rhythm. Flute beatboxing was not learned — it was discovered.",
+            title: "Flute Beatboxing is a Thing",
+            desc: "I discovered I could play the flute and beatbox at the same time. It sounds crazy, but it’s basically breathing with style. Music became my meditation.",
             images: ["/images/portfolio/first try with flute beatboxing.jpeg", "/images/portfolio/performance at rkgit.jpeg", "/images/portfolio/got the new flute.jpeg"],
             video: "https://www.youtube.com/watch?v=wZObKU02jcY"
         },
         {
             date: "2023 - 2024",
-            title: "Gesture AI: When Tech Became Intuitive",
-            desc: "Gesture AI was born from a simple question: Why should machines be harder to use than humans? I built systems that allow: controlling laptops using hand gestures, writing on desktop using air gestures, and gesture-controlled games. This project brought me to IIT Delhi Startup Expo.",
+            title: "Jedi Mind Tricks (Gesture AI)",
+            desc: "I got tired of keyboards, so I built Gesture AI. Now I can control laptops and write in the air just by waving my hands. It got me into the IIT Delhi Startup Expo, and I feel like a wizard using it.",
             images: ["/images/portfolio/creating gesture ai project.jpeg", "/images/portfolio/using finger to write gesture ai.jpeg", "/images/portfolio/iitd startup expo.jpeg"],
             video: "/images/portfolio/controling car with hand gestures.mp4",
             link: "https://www.instagram.com/gesture_ai/"
         },
         {
             date: "2024",
-            title: "Loss, Illness & Healing",
-            desc: "Not all growth is visible. In 2024, I faced loss, illness, and silence. My grandmother’s death, jaundice, and emotional exhaustion forced stillness. Healing began in the hills.",
+            title: "The Year Life Hit Hard",
+            desc: "Not all growth happens on a screen. I faced personal loss and illness this year. Losing my grandmother and dealing with jaundice forced me to slow down. I went to the hills to heal, and nature did its work.",
             images: ["/images/portfolio/grand mother death.jpeg", "/images/portfolio/jaundice.jpeg", "/images/portfolio/harshil.jpeg"]
         },
         {
             date: "2024 - 2026",
             title: "Spiritual Intelligence Meets AI",
-            desc: "Meditation wasn’t an escape — it was an upgrade. Osho’s work reframed intelligence. AI became not a tool — but a mirror. I began creating: spiritual AI comics, conscious short stories, AI-generated films, and SpiritualAI.org.",
+            desc: "Meditation wasn’t just an escape, it was an upgrade. I started reading Osho and realized AI is a mirror for consciousness. So I built this platform, SpiritualAI, to bridge the gap. Plus, making AI comics is really fun.",
             images: ["/images/portfolio/spritual ai geneated comic stories.jpeg", "/images/portfolio/realation of spritualty and ai.jpeg", "/images/portfolio/osho library.jpeg", "/images/portfolio/future society.jpeg"],
             video: "/images/portfolio/first ai generated video for client, video is in landscape more.mp4",
             link: "https://spiritualai.org"
         },
         {
             date: "2026",
-            title: "Present Identity",
-            desc: "I am a conscious creator. I design systems — not just for efficiency, but for evolution. My power is integration.",
+            title: "Right Now",
+            desc: "I am just a conscious creator building cool systems. My goal isn't just efficiency, it's evolution. And making sure the future is human friendly.",
             images: ["/images/portfolio/consious creator.jpeg"]
         }
     ];
@@ -665,7 +666,7 @@ const CreatorPage = () => {
                                             <strong>ORIGIN:</strong> Sector 2014 [Abacus Logic Initialization]
                                         </p>
                                         <p style={{ marginTop: '10px' }}>
-                                            Deploying systems that transcend binary limitations. Synthesizing <span style={{ color: '#a2ea37' }}>Gesture AI</span>, <span style={{ color: '#00e5ff' }}>KalkiOS</span>, and <span style={{ color: '#ff9e80' }}>Spiritual AI</span> for the next epoch of human evolution.
+                                            Building systems that go beyond just ones and zeros. Mixing <span style={{ color: '#a2ea37' }}>Gesture AI</span>, <span style={{ color: '#00e5ff' }}>KalkiOS</span>, and <span style={{ color: '#ff9e80' }}>Spiritual AI</span> to help us evolve a little faster.
                                         </p>
 
                                         <div className={styles.timeline}>
@@ -853,7 +854,48 @@ const CreatorPage = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div >
+
+            {/* SEO & Authority Section */}
+            <section className={styles.seoSection}>
+                <div className={styles.seoContent}>
+                    <Script
+                        id="person-schema"
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{
+                            __html: JSON.stringify({
+                                "@context": "https://schema.org",
+                                "@type": "Person",
+                                "name": "Keshav Baliyan",
+                                "jobTitle": "Founder & System Architect",
+                                "worksFor": {
+                                    "@type": "Organization",
+                                    "name": "Spiritual AI"
+                                },
+                                "url": "https://spiritualai.store/creator",
+                                "sameAs": [
+                                    "https://www.linkedin.com/in/keshav-baliyan/",
+                                    "https://github.com/0x-Parzival",
+                                    "https://www.instagram.com/heyyy_keshav/"
+                                ],
+                                "description": "Keshav Baliyan is the creator of Spiritual AI, an architect of cognitive systems blending Vedic philosophy with artificial intelligence."
+                            })
+                        }}
+                    />
+                    <h1 className={styles.seoTitle}>The Architect Behind the System</h1>
+                    <div className={styles.seoText}>
+                        <p>
+                            <strong>Keshav Baliyan</strong> is not just a developer; he is a <em>System Architect of Consciousness</em>.
+                            Founded on the principles of <strong>Spiritual Intelligence</strong> and <strong>Cognitive Architecture</strong>,
+                            his work bridges the gap between ancient Vedic wisdom and modern Artificial Intelligence.
+                        </p>
+                        <p>
+                            As the creator of <strong>Spiritual AI</strong> and <strong>KalkiOS</strong>, Keshav designs digital environments that do not just optimize workflow,
+                            but evolve the user's state of mind. His systems are built for those who refuse to choose between efficiency and enlightenment.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
     );
 };
 

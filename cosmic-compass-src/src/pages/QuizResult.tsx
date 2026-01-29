@@ -115,6 +115,15 @@ const QuizResult = () => {
 
   const seo = getSEOMeta();
 
+  useEffect(() => {
+    if (animationComplete) {
+      const redirectTimer = setTimeout(() => {
+        window.location.href = `/MBTI/personality/${mbtiType.toLowerCase()}.html`;
+      }, 3000);
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [animationComplete, mbtiType]);
+
   return (
     <>
       <Helmet>
@@ -176,9 +185,9 @@ const QuizResult = () => {
                 <motion.span
                   key={i}
                   className={`inline-block drop-shadow-[0_0_30px_currentColor] ${i === 0 ? "text-neon-cyan" :
-                      i === 1 ? "text-secondary" :
-                        i === 2 ? "text-accent" :
-                          "text-primary"
+                    i === 1 ? "text-secondary" :
+                      i === 2 ? "text-accent" :
+                        "text-primary"
                     }`}
                   style={{
                     textShadow: i === 0 ? '0 0 20px hsl(180 100% 50%), 0 0 40px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.3)' :
@@ -218,7 +227,7 @@ const QuizResult = () => {
               </p>
             </motion.div>
 
-            {/* Retake button */}
+            {/* Continue button */}
             <motion.div
               className="mt-5 sm:mt-6 relative z-10"
               initial={{ opacity: 0, y: 20 }}
@@ -226,11 +235,11 @@ const QuizResult = () => {
               transition={{ duration: 0.5 }}
             >
               <NeonButton
-                variant="secondary"
-                onClick={() => navigate("/quiz")}
+                variant="primary"
+                onClick={() => window.location.href = `/MBTI/personality/${mbtiType.toLowerCase()}.html`}
                 className="backdrop-blur-sm bg-white/5 border-white/30 hover:bg-white/10"
               >
-                Retake Quiz
+                Continue
               </NeonButton>
             </motion.div>
           </div>

@@ -10,7 +10,8 @@ import "../../product.css";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import VantaBackground from "../../../../components/VantaBackground";
-import CheckoutModal from "../../../../components/CheckoutModal";
+import CheckoutModal from "../../../../components/Payment/CheckoutModal";
+import PriceDisplay from "../../../../components/Currency/PriceDisplay";
 
 export default function ProductPage() {
     const params = useParams();
@@ -141,8 +142,12 @@ export default function ProductPage() {
                     <section className="offer-section" style={{ background: 'transparent', padding: '0', marginTop: '100px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <div className="price-container" style={{ marginTop: '30px' }}>
-                                <span className="price-original" style={{ color: '#4b5563', fontSize: '1.5rem' }}>{script.price_original}</span>
-                                <span className="price-discounted" style={{ color: '#fff', fontSize: '3rem', fontFamily: 'IBM Plex Sans' }}>{script.price_discounted}</span>
+                                <span className="price-original" style={{ color: '#4b5563', fontSize: '1.5rem', textDecoration: 'line-through' }}>
+                                    <PriceDisplay amountUSD={script.price_original} />
+                                </span>
+                                <span className="price-discounted" style={{ color: '#fff', fontSize: '3rem', fontFamily: 'IBM Plex Sans', marginLeft: '10px' }}>
+                                    <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                                </span>
                             </div>
 
                             <button
@@ -180,8 +185,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -194,174 +199,217 @@ export default function ProductPage() {
         const { script } = product;
         return (
             <div className="product-page layout-infp" style={{
-                background: '#1F1D1B',
-                color: '#F5EBE0',
-                fontFamily: '"Quicksand", sans-serif',
+                background: '#FAF9F6', // Off-white/Paper
+                color: '#5D5D5D', // Soft Charcoal
+                fontFamily: '"Nunito", "Quicksand", sans-serif',
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
                 {/* Back Button */}
-                <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
+                <div style={{ position: 'absolute', top: '30px', left: '30px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        color: '#D5BDAF', textDecoration: 'none',
-                        background: 'rgba(255, 255, 255, 0.05)', padding: '5px 16px',
-                        borderRadius: '20px', fontSize: '0.9rem',
-                        transition: 'all 0.3s ease'
+                        color: '#8E8E8E', textDecoration: 'none',
+                        fontSize: '0.9rem', letterSpacing: '0.5px',
+                        transition: 'color 0.3s ease'
                     }}>
-                        <span>←</span>
-                        <span>return home</span>
+                        <span style={{ fontSize: '1.2rem' }}>←</span>
+                        <span>Back</span>
                     </Link>
                 </div>
 
-                <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px' }}>
+                <div style={{ maxWidth: '750px', margin: '0 auto', padding: '0 25px' }}>
 
-                    {/* Header */}
-                    <header style={{ paddingTop: '100px', textAlign: 'center', marginBottom: '60px' }}>
-                        <div style={{ fontSize: '0.9rem', letterSpacing: '2px', color: '#9B6154', marginBottom: '20px' }}>/ The Mediator</div>
+                    {/* Header / Nav */}
+                    <nav style={{ padding: '30px 0', textAlign: 'center', fontSize: '0.8rem', letterSpacing: '1px', color: '#B0B0B0', textTransform: 'uppercase' }}>
+                        Home / The Mediator (INFP)
+                    </nav>
 
-                        {/* PRODUCT TITLE AS H1 (User Request) */}
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1 }}
-                            style={{
-                                fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
-                                lineHeight: '1.3',
-                                marginBottom: '20px',
-                                color: '#E8A598',
-                                fontWeight: '400'
-                            }}
-                        >
-                            {product.title}
-                        </motion.h1>
-
-                        {/* Poetic Headline as Subtitle */}
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5, duration: 1 }}
-                            style={{ fontSize: '1.3rem', color: '#D5BDAF', fontStyle: 'italic', maxWidth: '600px', margin: '0 auto' }}
-                        >
-                            {script.headline}
-                        </motion.p>
-                    </header>
-
-                    {/* Soft Images Carousel / Grid */}
-                    <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '40px', scrollbarWidth: 'none', maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
-                        {[product.script.image_url, "https://png.pngtree.com/thumb_back/fw800/background/20250930/pngtree-solitary-figure-on-misty-lake-dock-image_19745613.webp"].map((src, i) => (
-                            src ? (
-                                <motion.img
-                                    key={i}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.2 * i, duration: 1.5 }}
-                                    src={src}
-                                    className="infp-soft-img"
-                                    alt="Mood"
-                                    style={{
-                                        height: '300px',
-                                        borderRadius: '160px 140px 150px 140px / 150px 140px 150px 160px', // Organic blob shape
-                                        objectFit: 'cover',
-                                        opacity: 0.8,
-                                        flexShrink: 0
-                                    }}
-                                />
-                            ) : null
-                        ))}
+                    <div style={{ textAlign: 'center', marginBottom: '80px', fontSize: '0.75rem', letterSpacing: '2px', color: '#A5A5A5' }}>
+                        INFP EXCLUSIVE
                     </div>
 
+                    {/* HERO SECTION */}
+                    <header style={{ textAlign: 'center', marginBottom: '100px' }}>
+                        {/* H1: Product Title (as requested) */}
+                        <h1 style={{
+                            fontSize: 'clamp(2rem, 4vw, 3rem)',
+                            fontWeight: '300',
+                            color: '#4A4A4A',
+                            lineHeight: '1.2',
+                            marginBottom: '30px',
+                            fontFamily: '"Lora", serif' // Poetic serif
+                        }}>
+                            {product.title}
+                        </h1>
 
-                    {/* Emotional Recognition */}
-                    <section style={{ margin: '80px 0', textAlign: 'left', borderLeft: '2px solid #9B6154', paddingLeft: '30px' }}>
-                        <h3 style={{ fontSize: '1.8rem', color: '#E8A598', marginBottom: '30px' }}>You’ve always felt a little different.</h3>
-                        <div style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#D5BDAF' }}>
-                            <p style={{ marginBottom: '20px' }}>{script.pain_story}</p>
+                        {/* Vibe Quote */}
+                        <div style={{
+                            fontSize: '1.4rem',
+                            color: '#7A7A7A',
+                            marginBottom: '20px',
+                            fontStyle: 'italic',
+                            lineHeight: '1.6'
+                        }}>
+                            "You don’t need to become more.<br />
+                            You need space to be yourself."
+                        </div>
 
-                            <div style={{ marginTop: '30px' }}>
-                                {script.agitation_bullets.map((bullet: string | { title: string }, i: number) => (
-                                    <div key={i} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{ color: '#9B6154' }}>~</span> {typeof bullet === 'string' ? bullet : bullet.title}
-                                    </div>
-                                ))}
+                        {/* Subheadline */}
+                        <p style={{
+                            fontSize: '1rem',
+                            color: '#9CA3AF',
+                            maxWidth: '450px',
+                            margin: '0 auto'
+                        }}>
+                            A gentle framework for people who feel deeply and want to live honestly.
+                        </p>
+
+                        {/* Soft Hero Image */}
+                        <div style={{ marginTop: '50px', position: 'relative', overflow: 'hidden', borderRadius: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
+                            {product.script.image_url ? (
+                                <img src={product.script.image_url} alt="Calm Visual" style={{ width: '100%', display: 'block', opacity: 0.9 }} />
+                            ) : (
+                                <div style={{ height: '300px', background: 'linear-gradient(to bottom, #F3F0E7, #EAE5D9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B0B0B0' }}>
+                                    <span style={{ fontStyle: 'italic' }}>[ Calm Visual: {script.hook_image_prompt} ]</span>
+                                </div>
+                            )}
+                        </div>
+                    </header>
+
+                    {/* SECTION 2: EMOTIONAL MIRROR */}
+                    <section style={{ marginBottom: '100px' }}>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: '400', color: '#4A4A4A', marginBottom: '30px', fontFamily: '"Lora", serif' }}>
+                            You’ve always felt a little different.
+                        </h2>
+
+                        <div style={{ fontSize: '1.1rem', lineHeight: '1.9', color: '#5D5D5D' }}>
+                            <p style={{ marginBottom: '20px' }}>You feel things deeply — sometimes more than you’d like. You care about meaning when others chase outcomes. You want your life to feel <em>true</em>, not just successful.</p>
+                            <p style={{ marginBottom: '20px' }}>The world keeps asking you to harden, optimize, and perform. Something in you refuses.</p>
+
+                            {/* Product Specific Pain - Gently Woven In */}
+                            <div style={{ marginTop: '40px', paddingLeft: '20px', borderLeft: '3px solid #EAE5D9' }}>
+                                <p style={{ fontStyle: 'italic', marginBottom: '15px', color: '#7A7A7A' }}>Specifically regarding this:</p>
+                                <p>{script.pain_story}</p>
                             </div>
                         </div>
                     </section>
 
+                    {/* SECTION 3: WHAT THIS IS */}
+                    <section style={{ marginBottom: '100px', background: '#F9F7F2', padding: '50px', borderRadius: '12px' }}>
+                        <h2 style={{ fontSize: '1.6rem', fontWeight: '400', color: '#4A4A4A', marginBottom: '20px', textAlign: 'center', fontFamily: '"Lora", serif' }}>
+                            This is not a system to fix you.
+                        </h2>
+                        <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center', fontSize: '1.1rem', lineHeight: '1.8', color: '#7A7A7A' }}>
+                            <p style={{ marginBottom: '20px' }}>It’s a quiet space designed to help you:</p>
+                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                                <li style={{ marginBottom: '10px' }}>– hear yourself more clearly</li>
+                                <li style={{ marginBottom: '10px' }}>– act without betraying your values</li>
+                                <li>– move forward without losing your softness</li>
+                            </ul>
 
-                    {/* Anti-Pitch */}
-                    <section style={{ textAlign: 'center', margin: '100px 0' }}>
-                        <h2 style={{ fontSize: '1.5rem', color: '#F5EBE0', marginBottom: '20px' }}>This is not a system to fix you.</h2>
-                        <p style={{ fontSize: '1.2rem', color: '#9B6154', fontStyle: 'italic' }}>
-                            {script.transition_mechanism}
-                        </p>
-                    </section>
-
-
-                    {/* Soft Pillars */}
-                    <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px', marginBottom: '100px' }}>
-                        {script.features_bullets.map((feature, i) => {
-                            const [title, desc] = feature.split(' '); // Splitting by first space to get bold title (approx) or use colon if preserved
-                            // Actually product data has "Title Description" format roughly.
-                            // Let's just render it simply.
-
-                            return (
-                                <div key={i} style={{ textAlign: 'center' }}>
-                                    <div style={{ fontSize: '1.5rem', marginBottom: '10px', color: '#E8A598' }}>{['🌱', '🌊', '🕊'][i] || '✨'}</div>
-                                    <div style={{ fontSize: '1.1rem', color: '#F5EBE0', marginBottom: '10px' }}>{feature}</div>
-                                </div>
-                            )
-                        })}
-                    </section>
-
-
-                    {/* Permission & CTA */}
-                    <section style={{ textAlign: 'center', marginBottom: '120px' }}>
-                        <p style={{ marginBottom: '30px', color: '#D5BDAF' }}>There is no rush. You can explore when it feels right.</p>
-
-                        <div className="infp-pricing" style={{ marginBottom: '30px' }}>
-                            <span style={{ textDecoration: 'line-through', color: '#9B6154', marginRight: '15px' }}>{script.price_original}</span>
-                            <span style={{ fontSize: '2rem', color: '#E8A598' }}>{script.price_discounted}</span>
+                            <p style={{ fontSize: '1rem', marginTop: '30px', fontStyle: 'italic', color: '#977A6C' }}>{script.transition_mechanism}</p>
                         </div>
+                    </section>
+
+                    {/* SECTION 4: HOW IT SUPPORTS YOU (Soft Pillars) */}
+                    <section style={{ marginBottom: '120px' }}>
+                        <h3 style={{ textAlign: 'center', marginBottom: '60px', fontSize: '1.4rem', color: '#B0B0B0', fontWeight: '300', letterSpacing: '1px' }}>HOW IT SUPPORTS YOU</h3>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '60px' }}>
+                            {script.features_bullets.map((feature, i) => (
+                                <div key={i} style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '1.5rem', marginBottom: '15px' }}>{['🌱', '🌊', '🕊'][i] || '✨'}</div>
+                                    <h4 style={{ fontSize: '1.2rem', color: '#4A4A4A', marginBottom: '10px', fontFamily: '"Lora", serif' }}>
+                                        {['Inner Clarity', 'Value Alignment', 'Gentle Momentum'][i] || 'Gentle Growth'}
+                                    </h4>
+                                    <p style={{ color: '#7A7A7A', fontSize: '1rem', lineHeight: '1.6', maxWidth: '400px', margin: '0 auto' }}>
+                                        {feature}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* SECTION 5: PERMISSION & SAFETY */}
+                    <section style={{ marginBottom: '100px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '40px' }}>
+                        <div style={{ padding: '30px', background: '#FDFCF9', borderRadius: '8px' }}>
+                            <h4 style={{ color: '#6B8E7B', marginBottom: '20px', fontSize: '1.1rem' }}>This may be for you if:</h4>
+                            <ul style={{ listStyle: 'none', padding: 0, color: '#7A7A7A', lineHeight: '1.7' }}>
+                                <li style={{ marginBottom: '10px' }}>• you value authenticity over speed</li>
+                                <li style={{ marginBottom: '10px' }}>• you want to stay kind without disappearing</li>
+                                <li>• you’re tired of pretending motivation works for you</li>
+                            </ul>
+                        </div>
+                        <div style={{ padding: '30px', background: '#FDFCF9', borderRadius: '8px' }}>
+                            <h4 style={{ color: '#9B6154', marginBottom: '20px', fontSize: '1.1rem' }}>It may not be for you if:</h4>
+                            <ul style={{ listStyle: 'none', padding: 0, color: '#7A7A7A', lineHeight: '1.7' }}>
+                                <li style={{ marginBottom: '10px' }}>• you want aggressive pushing</li>
+                                <li style={{ marginBottom: '10px' }}>• you prefer rigid rules</li>
+                                <li>• you enjoy being optimized</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    {/* CTA SECTION */}
+                    <section style={{ textAlign: 'center', marginBottom: '120px' }}>
+                        <p style={{ fontSize: '1.1rem', color: '#7A7A7A', marginBottom: '40px' }}>
+                            There’s no rush.<br />Explore when it feels right.
+                        </p>
 
                         <button
                             onClick={() => setIsCheckoutOpen(true)}
+                            className="infp-cta-button"
                             style={{
                                 background: 'transparent',
-                                border: '1px solid #E8A598',
-                                color: '#E8A598',
-                                padding: '15px 40px',
-                                borderRadius: '30px',
+                                border: '1px solid #BCAAA4', // Soft warm grey
+                                color: '#8D6E63',
+                                padding: '16px 40px',
                                 fontSize: '1.1rem',
+                                borderRadius: '50px',
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
                                 fontFamily: '"Quicksand", sans-serif'
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(232, 165, 152, 0.1)';
+                                e.currentTarget.style.background = '#FAF7F2';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.transform = 'translateY(0)';
                             }}
                         >
-                            {script.cta_text}
+                            Explore gently
                         </button>
 
-                        <div style={{ marginTop: '40px', fontSize: '0.9rem', color: '#9B6154', maxWidth: '500px', margin: '40px auto 0' }}>
-                            <p><strong>The Promise:</strong> {script.guarantee_text}</p>
+                        <div style={{ marginTop: '40px' }}>
+                            <p style={{ fontSize: '0.9rem', color: '#4A4A4A', marginBottom: '5px' }}>
+                                <PriceDisplay amountUSD={script.price_discounted} showBadge /> — lifetime access
+                            </p>
+                            <p style={{ fontSize: '0.8rem', color: '#A5A5A5', fontStyle: 'italic' }}>Priced to be accessible, not to pressure you.</p>
                         </div>
                     </section>
 
-                    <footer style={{ textAlign: 'center', paddingBottom: '60px', fontSize: '0.8rem', color: '#5C4033' }}>
-                        <p>Made with care. No manipulation. Just honesty.</p>
+                    {/* SECTION 8: PROMISE */}
+                    <section style={{ textAlign: 'center', marginBottom: '80px', maxWidth: '500px', margin: '0 auto 80px' }}>
+                        <p style={{ color: '#7A7A7A', lineHeight: '1.6', fontStyle: 'italic', fontSize: '0.95rem' }}>
+                            If this doesn’t feel supportive or grounding, you can request a refund. No explanations required.
+                        </p>
+                    </section>
+
+                    {/* FOOTER */}
+                    <footer style={{ textAlign: 'center', paddingBottom: '60px', fontSize: '0.8rem', color: '#CCC' }}>
+                        Made with care. No manipulation. No urgency. Just honesty.
                     </footer>
 
                 </div>
+
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -519,7 +567,7 @@ export default function ProductPage() {
                                     fontSize: '2rem',
                                     fontWeight: 'bold',
                                     fontFamily: '"JetBrains Mono", monospace'
-                                }}>{script.price_discounted}</span>
+                                }}><PriceDisplay amountUSD={script.price_discounted} /></span>
                             </div>
 
                             <button
@@ -596,8 +644,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -773,8 +821,8 @@ export default function ProductPage() {
                         <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>No grind. No fluff.</div>
 
                         <div className="entp-pricing" style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-                            <span style={{ textDecoration: 'line-through', color: '#64748b', fontSize: '1.5rem' }}>{script.price_original}</span>
-                            <span style={{ color: '#fff', fontSize: '3rem', fontWeight: 'bold' }}>{script.price_discounted}</span>
+                            <span style={{ textDecoration: 'line-through', color: '#64748b', fontSize: '1.5rem' }}><PriceDisplay amountUSD={script.price_original} /></span>
+                            <span style={{ color: '#fff', fontSize: '3rem', fontWeight: 'bold' }}><PriceDisplay amountUSD={script.price_discounted} showBadge /></span>
                         </div>
                         <p style={{ color: '#FF4ECD', marginTop: '10px', fontSize: '1rem' }}>Cheap compared to waiting ten years.</p>
 
@@ -943,8 +991,8 @@ export default function ProductPage() {
                         </button>
 
                         <div style={{ marginBottom: '40px', fontFamily: '"JetBrains Mono", monospace' }}>
-                            <span style={{ textDecoration: 'line-through', opacity: 0.5, marginRight: '15px', fontSize: '1.2rem' }}>{script.price_original}</span>
-                            <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '2rem' }}>{script.price_discounted}</span>
+                            <span style={{ textDecoration: 'line-through', opacity: 0.5, marginRight: '15px', fontSize: '1.2rem' }}><PriceDisplay amountUSD={script.price_original} /></span>
+                            <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '2rem' }}><PriceDisplay amountUSD={script.price_discounted} showBadge /></span>
                         </div>
 
                         <div style={{ textAlign: 'left' }}>
@@ -1231,8 +1279,8 @@ export default function ProductPage() {
 
                         {/* PRICING */}
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: '20px', marginBottom: '10px' }}>
-                            <span style={{ fontSize: '1.5rem', color: '#4B5563', textDecoration: 'line-through' }}>{script.price_original}</span>
-                            <span style={{ fontSize: '3.5rem', fontWeight: '700', color: '#fff', fontFamily: 'monospace' }}>{script.price_discounted}</span>
+                            <span style={{ fontSize: '1.5rem', color: '#4B5563', textDecoration: 'line-through' }}><PriceDisplay amountUSD={script.price_original} /></span>
+                            <span style={{ fontSize: '3.5rem', fontWeight: '700', color: '#fff', fontFamily: 'monospace' }}><PriceDisplay amountUSD={script.price_discounted} showBadge /></span>
                         </div>
                         <p style={{ color: '#6D28D9', fontSize: '1rem', marginBottom: '60px', fontWeight: '500' }}>
                             Priced to exclude amateurs.

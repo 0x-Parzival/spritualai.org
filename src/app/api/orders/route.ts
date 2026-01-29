@@ -9,6 +9,14 @@ export async function POST(request: Request) {
     try {
         const orderData = await request.json();
 
+        // VALIDATION: Check if orderData exists and has content
+        if (!orderData || Object.keys(orderData).length === 0) {
+            return NextResponse.json(
+                { success: false, error: 'Invalid order data: Body cannot be empty' },
+                { status: 400 }
+            );
+        }
+
         // 1. Read existing orders
         let orders = [];
         if (fs.existsSync(ORDERS_FILE_PATH)) {

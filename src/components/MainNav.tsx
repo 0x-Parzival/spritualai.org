@@ -1,0 +1,47 @@
+"use client";
+
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+export default function MainNav() {
+    const { user, signInWithGoogle } = useAuth();
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+        <nav className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-md' : 'bg-transparent'}`}>
+            <div className="flex items-center gap-2">
+                <img src="/logo.png" alt="Spiritual AI" className="h-8 w-8 opacity-80" />
+                <span className="text-white font-bold tracking-widest text-sm hidden md:block">SPIRITUAL AI</span>
+            </div>
+
+            <div className="flex items-center gap-6 text-sm">
+
+                {/* Profile / Auth Section */}
+                {user ? (
+                    <Link href="/profile" className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider font-bold text-xs flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        My Profile
+                    </Link>
+                ) : (
+                    <button
+                        onClick={signInWithGoogle}
+                        className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs"
+                    >
+                        Login
+                    </button>
+                )}
+
+                <a href="#contact" className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs">
+                    Contact Us
+                </a>
+            </div>
+        </nav>
+    );
+}

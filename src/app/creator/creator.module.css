@@ -4,15 +4,16 @@
 .container {
     position: relative;
     width: 100vw;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     font-family: "Orbitron", sans-serif;
     color: white;
 }
 
 /* Background Canvas */
 .canvasContainer {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -731,4 +732,36 @@
     .logoImg {
         width: 40px;
     }
+}
+
+.seoSection {
+    position: relative;
+    z-index: 10;
+    padding: 80px 20px;
+    background: linear-gradient(to bottom, transparent, #000 20%, #000);
+    color: #cbd5e1;
+    font-family: "Quicksand", sans-serif;
+}
+
+.seoContent {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.seoTitle {
+    font-family: "Marhey", sans-serif;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #fff, #3DF5FF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.seoText {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    text-align: justify;
 }

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import dynamic from "next/dynamic";
+
+const LotusAnimation = dynamic(() => import("../components/Effects/LotusAnimation"), { ssr: false });
 import Image from "next/image";
 import MobileHomeV2 from "../components/MobileHome/MobileHomeV2";
 import "./landing.css";
@@ -60,7 +62,11 @@ const ContactButton = ({ onClick }: ContactButtonProps) => (
     </button>
 );
 
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+
 export default function Home() {
+    const { user, signInWithGoogle } = useAuth();
     const [showLotus, setShowLotus] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const stars2Ref = useRef<HTMLDivElement>(null);
@@ -69,109 +75,84 @@ export default function Home() {
 
     useEffect(() => {
         // ---------------- STAR GENERATION ----------------
-        // ---------------- STAR GENERATION ----------------
-        function generateStars(element: HTMLDivElement | null, count: number, maxSize = 2000) {
-            if (!element) return;
+        // Run slightly deferred to unblock main thread
+        const starTimeout = setTimeout(() => {
+            function generateStars(element: HTMLDivElement | null, count: number, maxSize = 2000) {
+                if (!element) return;
 
-            const stars = [];
-            for (let i = 0; i < count; i++) {
-                const x = Math.floor(Math.random() * maxSize);
-                const y = Math.floor(Math.random() * maxSize);
-                stars.push(`${x}px ${y}px #FFF`);
+                const stars = [];
+                for (let i = 0; i < count; i++) {
+                    const x = Math.floor(Math.random() * maxSize);
+                    const y = Math.floor(Math.random() * maxSize);
+                    stars.push(`${x}px ${y}px #FFF`);
+                }
+
+                const boxShadowValue = stars.join(",");
+                element.style.boxShadow = boxShadowValue;
+
+                if (!element.querySelector(".star-clone")) {
+                    const after = document.createElement("div");
+                    after.className = "star-clone";
+                    after.style.cssText = `position:absolute;top:2000px;width:inherit;height:inherit;box-shadow:${boxShadowValue};`;
+                    element.appendChild(after);
+                }
             }
 
-            const boxShadowValue = stars.join(",");
-            element.style.boxShadow = boxShadowValue;
-
-            // Create the 'after' equivalent element for the animation loop
-            if (!element.querySelector(".star-clone")) {
-                const after = document.createElement("div");
-                after.className = "star-clone";
-                after.style.cssText = `position:absolute;top:2000px;width:inherit;height:inherit;box-shadow:${boxShadowValue};`;
-                element.appendChild(after);
-            }
-        }
-
-        const isMobile = window.innerWidth < 768;
-        // Significantly reduce stars on mobile for performance
-        generateStars(stars2Ref.current, isMobile ? 100 : 800);
-        generateStars(stars3Ref.current, isMobile ? 50 : 800);
+            const isMobile = window.innerWidth < 768;
+            generateStars(stars2Ref.current, isMobile ? 100 : 800);
+            generateStars(stars3Ref.current, isMobile ? 50 : 800);
+        }, 100);
 
         // ---------------- MOUSE MOVEMENT TILT ----------------
         const handleMouseMove = (e: MouseEvent) => {
-            if (!oceanRef.current || window.innerWidth < 768) return; // Disable tilt on mobile
-            const x = e.clientX / window.innerWidth - 0.5;
-            const yRotation = x * 10;
-            oceanRef.current.style.transform = `translate(-50%, -50%) rotateX(80deg) rotateZ(${yRotation}deg)`;
+            if (!oceanRef.current || window.innerWidth < 768) return;
+            // Debounce or reduce precision if needed for perf, but pure CSS transform is usually fast.
+            // Using requestAnimationFrame would be strictly better if heavy.
+            requestAnimationFrame(() => {
+                const x = e.clientX / window.innerWidth - 0.5;
+                const yRotation = x * 10;
+                if (oceanRef.current) {
+                    oceanRef.current.style.transform = `translate(-50%, -50%) rotateX(80deg) rotateZ(${yRotation}deg)`;
+                }
+            });
         };
 
         window.addEventListener("mousemove", handleMouseMove);
 
         // ---------------- SHOOTING STARS ----------------
-        const createShootingStar = () => {
-            const star = document.createElement("div");
-            star.className = "shooting-star";
-            document.body.appendChild(star);
-
-            const startX = Math.random() * window.innerWidth;
-            const startY = Math.random() * (window.innerHeight / 2);
-
-            star.style.left = `${startX}px`;
-            star.style.top = `${startY}px`;
-            star.style.opacity = "1";
-
-            const travelX = 300 + Math.random() * 300;
-            const travelY = 300 + Math.random() * 300;
-            const duration = 1000 + Math.random() * 1000;
-
-            star.animate([
-                { transform: "translate(0,0) rotate(45deg)", opacity: 1 },
-                { transform: `translate(${travelX}px,${travelY}px) rotate(45deg)`, opacity: 0 }
-            ], { duration, easing: "ease-out" });
-
-            setTimeout(() => {
-                if (star.parentNode) star.parentNode.removeChild(star);
-            }, duration);
-        };
-
+        // Deferred start
         const starInterval = setInterval(() => {
-            if (window.innerWidth >= 768 && Math.random() < 0.7) createShootingStar();
+            if (window.innerWidth >= 768 && Math.random() < 0.7) {
+                const star = document.createElement("div");
+                star.className = "shooting-star";
+                document.body.appendChild(star);
+
+                const startX = Math.random() * window.innerWidth;
+                const startY = Math.random() * (window.innerHeight / 2);
+
+                star.style.left = `${startX}px`;
+                star.style.top = `${startY}px`;
+                star.style.opacity = "1";
+
+                const travelX = 300 + Math.random() * 300;
+                const travelY = 300 + Math.random() * 300;
+                const duration = 1000 + Math.random() * 1000;
+
+                star.animate([
+                    { transform: "translate(0,0) rotate(45deg)", opacity: 1 },
+                    { transform: `translate(${travelX}px,${travelY}px) rotate(45deg)`, opacity: 0 }
+                ], { duration, easing: "ease-out" });
+
+                setTimeout(() => {
+                    if (star.parentNode) star.parentNode.removeChild(star);
+                }, duration);
+            }
         }, 2000);
 
-        // ---------------- FLOWER ANIMATION ----------------
-        // Setup initial states
-        const segmRs = document.querySelectorAll(".desktop-view .segmR");
-        segmRs.forEach((s, i) => {
-            (s as HTMLElement).style.transform = "rotate(" + 30 * i + "deg)";
-            (s as HTMLElement).style.transformOrigin = "bottom left";
-        });
-
-        const segmLs = document.querySelectorAll(".desktop-view .segmL");
-        segmLs.forEach((s, i) => {
-            (s as HTMLElement).style.transform = "rotate(" + -30 * (i + 1) + "deg)";
-            (s as HTMLElement).style.transformOrigin = "bottom left";
-        });
-
-        const rings = document.querySelectorAll(".desktop-view .ring");
-        rings.forEach((r, i) => {
-            (r as HTMLElement).style.width = 200 - 50 * i + "px";
-            (r as HTMLElement).style.height = 40 - 10 * i + "px";
-            (r as HTMLElement).style.margin = 10 - 10 * i + "px";
-        });
-
-        const tl1 = gsap.timeline({ repeat: -1, yoyo: true });
-        const tl2 = gsap.timeline({ repeat: -1, yoyo: true });
-
-        tl1.to(".desktop-view .segmR", { scale: 0.5, rotate: 0, duration: 4, ease: "sine.inOut" });
-        tl2.to(".desktop-view .segmL", { scale: 0.5, rotate: 0, duration: 4, ease: "sine.inOut" });
-
-        // Cleanup
         return () => {
+            clearTimeout(starTimeout);
             window.removeEventListener("mousemove", handleMouseMove);
             clearInterval(starInterval);
-            tl1.kill();
-            tl2.kill();
-            // Optional: remove shooting stars that might still be valid
             const shootingStars = document.querySelectorAll(".shooting-star");
             shootingStars.forEach(s => s.remove());
         };
@@ -184,8 +165,7 @@ export default function Home() {
             </div>
 
             <div className="desktop-view mobile-container">
-                {/* Desktop Content (Original Layout) */}
-
+                <LotusAnimation />
                 {/* 🌌 Main Background Optimized */}
                 <div className="main-background">
                     <Image
@@ -233,10 +213,48 @@ export default function Home() {
                 <div className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`} onClick={() => setIsSidebarOpen(false)} />
                 <div className={`contact-sidebar-panel ${isSidebarOpen ? 'active' : ''}`}>
                     <div className="sidebar-header">
-                        <h3>Contact Us</h3>
+                        <h3>Menu</h3>
                         <button className="close-btn" onClick={() => setIsSidebarOpen(false)}>×</button>
                     </div>
+
                     <div className="sidebar-content">
+                        {/* PROFILE SECTION */}
+                        <div className="profile-section-sidebar" style={{ marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '20px' }}>
+                            {user ? (
+                                <Link href="/profile" className="contact-link profile" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                    <div className="icon">
+                                        {user.user_metadata?.avatar_url ? (
+                                            <img src={user.user_metadata.avatar_url} alt="User" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                                        ) : (
+                                            <span>👤</span>
+                                        )}
+                                    </div>
+                                    <div className="details">
+                                        <span className="label" style={{ color: '#4FD1C5' }}>My Profile</span>
+                                        <span className="value">View Purchases</span>
+                                    </div>
+                                </Link>
+                            ) : (
+                                <button onClick={signInWithGoogle} className="contact-link login" style={{ width: '100%', textAlign: 'left', background: 'rgba(255,255,255,0.05)' }}>
+                                    <span className="icon">🔑</span>
+                                    <div className="details">
+                                        <span className="label">Access</span>
+                                        <span className="value">Login / Sign Up</span>
+                                    </div>
+                                </button>
+                            )}
+                        </div>
+
+                        <Link href="/mission" className="contact-link mission" style={{ marginBottom: '20px', background: 'rgba(255,255,255,0.02)' }}>
+                            <span className="icon">🚀</span>
+                            <div className="details">
+                                <span className="label" style={{ color: '#FCD34D' }}>Our Vision</span>
+                                <span className="value">Project Satyug</span>
+                            </div>
+                        </Link>
+
+                        <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#6b7280', marginBottom: '15px', paddingLeft: '10px' }}>Contact Us</h4>
+
                         <a href="https://wa.me/7457852306" target="_blank" rel="noopener noreferrer" className="contact-link whatsapp">
                             <span className="icon">💬</span>
                             <div className="details">
@@ -348,7 +366,7 @@ export default function Home() {
                         </div>
                     </div>
                 </a>
-            </div>
+            </div >
         </>
     );
 }

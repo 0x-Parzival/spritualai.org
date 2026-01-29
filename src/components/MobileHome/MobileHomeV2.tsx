@@ -3,10 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-// We reuse global effects from landing.css if needed, but defining our own structure for safety
 import styles from "./mobile-home-v2.module.css";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function MobileHomeV2() {
+    const { user, signInWithGoogle } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const starsRef = useRef<HTMLDivElement>(null);
 
@@ -22,33 +24,64 @@ export default function MobileHomeV2() {
             starsRef.current.style.boxShadow = stars.join(",");
         }
 
-        // Initialize Lotus Petals (Rotation) - Critical for shape
-        const segmRs = document.querySelectorAll(".mobile-v2-lotus .segmR");
+        // Initialize Lotus Petals (Rotation)
+        // Initialize Lotus Petals (Rotation)
+        const lotusSelector = ".mobile-v2-lotus";
+
+        const segmRs = document.querySelectorAll(`${lotusSelector} .segmR`);
         segmRs.forEach((s, i) => {
             (s as HTMLElement).style.transform = "rotate(" + 30 * i + "deg)";
             (s as HTMLElement).style.transformOrigin = "bottom left";
         });
 
-        const segmLs = document.querySelectorAll(".mobile-v2-lotus .segmL");
+        const segmLs = document.querySelectorAll(`${lotusSelector} .segmL`);
         segmLs.forEach((s, i) => {
             (s as HTMLElement).style.transform = "rotate(" + -30 * (i + 1) + "deg)";
             (s as HTMLElement).style.transformOrigin = "bottom left";
         });
 
-        const rings = document.querySelectorAll(".mobile-v2-lotus .ring");
+        const rings = document.querySelectorAll(`${lotusSelector} .ring`);
         rings.forEach((r, i) => {
             (r as HTMLElement).style.width = 200 - 50 * i + "px";
             (r as HTMLElement).style.height = 40 - 10 * i + "px";
             (r as HTMLElement).style.margin = 10 - 10 * i + "px";
         });
 
-        // GSAP for Lotus (Scoped to .mobile-v2-lotus)
-        const tl = gsap.timeline({ repeat: -1, yoyo: true });
-        tl.to(".mobile-v2-lotus .segmR", { scale: 0.5, rotate: 0, duration: 4, ease: "sine.inOut" });
-        tl.to(".mobile-v2-lotus .segmL", { scale: 0.5, rotate: 0, duration: 4, ease: "sine.inOut" });
+        // GSAP Animation (CodePen Port)
+        const tl1 = gsap.timeline({ repeat: -1, yoyo: true });
+        const tl2 = gsap.timeline({ repeat: -1, yoyo: true });
+
+        tl1.to(`${lotusSelector} .segmR`, {
+            scale: .5,
+            rotate: 0,
+            mixBlendMode: 'darken',
+            duration: 4,
+            ease: 'sine.inOut',
+        })
+            .to(`${lotusSelector} .corolla`, {
+                xPercent: -49,
+                yPercent: 49,
+                duration: 4,
+                ease: 'sine.inOut',
+            }, "<");
+
+        tl2.to(`${lotusSelector} .segmL`, {
+            scale: .5,
+            rotate: 0,
+            mixBlendMode: 'darken',
+            duration: 4,
+            ease: 'sine.inOut'
+        })
+            .to(`${lotusSelector} .corolla`, {
+                xPercent: -49,
+                yPercent: 49,
+                duration: 4,
+                ease: 'sine.inOut'
+            }, "<");
 
         return () => {
-            tl.kill();
+            tl1.kill();
+            tl2.kill();
         };
     }, []);
 
@@ -77,13 +110,12 @@ export default function MobileHomeV2() {
                         </div>
                     </div>
                 </div>
-                {/* Removed subtitle as per 'clean' design or keep small? User said 'keep wave effect on spiritual ai' - focusing on that. */}
                 <div className={styles.subtitle}>YOUR FIRST STEP TOWARDS TRANSFORMATION</div>
             </header>
 
             {/* 🔮 Center Content */}
             <main className={styles.main}>
-                {/* Lotus - Centered primarily */}
+                {/* Lotus */}
                 <div className={styles.lotusBox}>
                     <a href="/lotus-god" style={{ display: 'block', textDecoration: 'none' }}>
                         <div className="flower-container mobile-v2-lotus" style={{
@@ -92,8 +124,8 @@ export default function MobileHomeV2() {
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            position: 'relative', // Keep it relative to flow
-                            height: '150px', // Explicit height
+                            position: 'relative',
+                            height: '150px',
                             width: '200px'
                         }}>
                             <div className="corolla">
@@ -138,15 +170,35 @@ export default function MobileHomeV2() {
                 </button>
             </footer>
 
-            {/* Sidebar (Same Functional Implementation) */}
+            {/* Sidebar */}
             {isSidebarOpen && (
                 <div className={styles.overlay} onClick={() => setIsSidebarOpen(false)}>
                     <div className={styles.sidebar} onClick={e => e.stopPropagation()}>
                         <div className={styles.sidebarHeader}>
-                            <h3>Contact Us</h3>
+                            <h3>Menu</h3>
                             <button onClick={() => setIsSidebarOpen(false)}>×</button>
                         </div>
+
                         <div className={styles.sidebarLinks}>
+                            {/* PROFILE SECTION MOBILE */}
+                            <div style={{ marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
+                                {user ? (
+                                    <Link href="/profile" className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', justifyContent: 'center' }}>
+                                        <span>👤</span> My Profile
+                                    </Link>
+                                ) : (
+                                    <button onClick={signInWithGoogle} className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', width: '100%', justifyContent: 'center' }}>
+                                        <span>🔑</span> Login / Sign Up
+                                    </button>
+                                )}
+                            </div>
+
+                            <Link href="/mission" className={styles.sidebarLink} style={{ marginBottom: '20px', background: 'rgba(255,255,255,0.02)', justifyContent: 'center', color: '#FCD34D' }}>
+                                <span>🚀</span> Our Mission
+                            </Link>
+
+                            <h4 style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#6b7280', marginBottom: '10px', textAlign: 'center' }}>Contact Us</h4>
+
                             <a href="https://wa.me/7457852306" target="_blank" className={styles.sidebarLink}>
                                 <span>💬</span> WhatsApp
                             </a>

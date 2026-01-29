@@ -733,22 +733,26 @@ main.ocean-main {
   }
 }
 
-/* ---------------- BLOOMING FLOWER ---------------- */
-.flower-container main {
-  --lotus-scale: 0.6;
-  position: absolute;
-  bottom: 2%;
-  left: 50%;
-  transform: translateX(-50%) scale(var(--lotus-scale));
+/* ---------------- LOTUS ANIMATION STYLES (CodePen Port) ---------------- */
+:root {
+  --purpleOver: rgba(230, 70, 215, 0.8);
+  --purple0: rgba(180, 95, 180, 0.5);
+  --purple1: rgb(250, 215, 255);
+}
+
+.flower-container {
+  /* Aligns with user's 'main' for the lotus context */
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-end;
-  z-index: 3;
+  position: relative;
+  /* Adjust scale/position as needed for the site layout, keeping user's internal proportions */
+  transform: scale(0.6);
 }
 
 .corolla {
-  margin-bottom: 40px;
+  margin-bottom: 80px;
   min-height: 100px;
   width: max-content;
   display: flex;
@@ -757,23 +761,43 @@ main.ocean-main {
   position: relative;
 }
 
-.segmR,
+.segmR {
+  width: 100px;
+  height: 100px;
+  border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
+  background: linear-gradient(135deg, var(--purple0) 0%, var(--purple1) 50%, var(--purple0) 100%);
+  position: absolute;
+  transform-origin: bottom left;
+  /* Added from JS setup for initial state safety */
+}
+
+.segmR::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
+  background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 20%, var(--purpleOver) 100%);
+  box-shadow: 0px 0px 20px rgba(138, 50, 120, 0.2) inset;
+}
+
 .segmL {
   width: 100px;
   height: 100px;
   border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
-  background: linear-gradient(135deg, rgba(180, 95, 180, 0.5) 0%, rgb(250, 215, 255) 50%, rgba(180, 95, 180, 0.5) 100%);
+  background: linear-gradient(135deg, var(--purple0) 0%, var(--purple1) 50%, var(--purple0) 100%);
   position: absolute;
+  transform-origin: bottom left;
+  /* Added from JS setup */
 }
 
-.segmR::before,
 .segmL::before {
   content: "";
   position: absolute;
   width: 100px;
   height: 100px;
-  border-radius: inherit;
-  background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0) 20%, rgba(230, 70, 215, 0.8) 100%);
+  border-radius: 100% 0% 100% 0% / 100% 0% 100% 0%;
+  background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 20%, var(--purpleOver) 100%);
   box-shadow: 0px 0px 20px rgba(138, 50, 120, 0.2) inset;
 }
 
@@ -790,6 +814,79 @@ main.ocean-main {
   background: linear-gradient(hsla(185, 90%, 59%, 0) 0%, rgba(65, 195, 255, 0.5) 100%);
   border-radius: 80% 90% 80% 90%;
   box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.8) inset, 0px 3px 0px rgba(229, 246, 247, 0.8);
+  animation: bloom-rings 6s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+
+/* Lotus Segments Positioning & Animation */
+.corolla>div:nth-child(1) {
+  transform: rotate(15deg);
+  transform-origin: bottom right;
+}
+
+.corolla>div:nth-child(2) {
+  transform: rotate(40deg);
+  transform-origin: bottom right;
+}
+
+.corolla>div:nth-child(3) {
+  transform: rotate(85deg);
+  transform-origin: bottom right;
+}
+
+.corolla>div:nth-child(4) {
+  transform: rotate(135deg);
+  transform-origin: bottom right;
+}
+
+.corolla>div:nth-child(5) {
+  transform: rotate(175deg);
+  transform-origin: bottom right;
+}
+
+.corolla>div:nth-child(6) {
+  transform: rotate(225deg);
+  transform-origin: bottom left;
+}
+
+.corolla>div:nth-child(7) {
+  transform: rotate(270deg);
+  transform-origin: bottom left;
+}
+
+/* Rings Positioning */
+.rings>.ring:nth-child(1) {
+  height: 110px;
+  width: 100px;
+  transform: rotate(0deg);
+  animation-delay: 0.1s;
+}
+
+.rings>.ring:nth-child(2) {
+  height: 100px;
+  width: 90px;
+  transform: rotate(60deg);
+  animation-delay: 0.2s;
+}
+
+.rings>.ring:nth-child(3) {
+  height: 90px;
+  width: 80px;
+  transform: rotate(-60deg);
+  animation-delay: 0.3s;
+}
+
+/* Keyframes */
+@keyframes bloom-rings {
+  0% {
+    transform: scale(0.8) rotate(var(--r, 0deg));
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.1) rotate(var(--r, 0deg));
+    opacity: 1;
+  }
 }
 
 /* ---------------- RESPONSIVE UTILITIES ---------------- */

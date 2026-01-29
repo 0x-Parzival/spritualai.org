@@ -39,7 +39,18 @@ const QuizQuestion4 = ({ onAnswer, getMBTIType }: QuizQuestion4Props) => {
 
       <div className="relative h-full w-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
         <SciFiBackground variant="question4" />
-        
+
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          onClick={() => navigate("/quiz/3")}
+          className="absolute top-4 left-4 z-50 text-white/70 hover:text-white flex items-center gap-2 font-orbitron text-sm tracking-wider transition-colors"
+        >
+          <span>←</span> Back
+        </motion.button>
+
         <motion.div
           className="relative z-10 w-full max-w-5xl mx-auto flex flex-col h-full justify-center"
           initial={{ opacity: 0 }}
