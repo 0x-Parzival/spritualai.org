@@ -1,4 +1,4 @@
-# Spiritual AI Website spiritualai.shop
+# Spiritual AI Website spiritualai.store
 
 ## Project Setup (Node ≥ 20.9.0)
 
