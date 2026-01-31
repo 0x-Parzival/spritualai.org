@@ -859,8 +859,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -1027,8 +1027,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -1361,8 +1361,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -1664,8 +1664,8 @@ export default function ProductPage() {
                 <CheckoutModal
                     isOpen={isCheckoutOpen}
                     onClose={() => setIsCheckoutOpen(false)}
-                    productTitle={script.product_name}
-                    productPrice={script.price_discounted}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -1937,8 +1937,8 @@ export default function ProductPage() {
             <CheckoutModal
                 isOpen={isCheckoutOpen}
                 onClose={() => setIsCheckoutOpen(false)}
-                productTitle={script.product_name}
-                productPrice={script.price_discounted}
+                productName={script.product_name}
+                amountUSD={script.price_discounted}
                 productId={slug}
                 productType={mbtiType}
             />

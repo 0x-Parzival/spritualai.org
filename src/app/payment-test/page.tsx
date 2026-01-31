@@ -55,6 +55,8 @@ export default function PaymentTestPage() {
                 onClose={() => setIsModalOpen(false)}
                 productName="Empire of One Protocol"
                 amountUSD={497}
+                productId="test-product"
+                productType="TEST"
             />
         </div>
     );
