@@ -14,7 +14,7 @@ export default function QRCode({ value, size = 180, className = "" }: QRCodeProp
             <QRCodeSVG
                 value={value}
                 size={size}
-                level="L" // Low error correction is fine for clean display, scans faster
+                level="M" // Medium error correction for better reliability
                 includeMargin={false}
                 className="w-full h-full"
             />

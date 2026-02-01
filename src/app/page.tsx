@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
+
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
-const LotusAnimation = dynamic(() => import("../components/Effects/LotusAnimation"), { ssr: false });
-import Image from "next/image";
-import MobileHomeV2 from "../components/MobileHome/MobileHomeV2";
+const LotusAnimation = dynamic(() => import("../components/Effects/LotusAnimation"), {
+    ssr: false,
+    loading: () => <div className="h-[200px] w-[200px] animate-pulse bg-white/5 rounded-full mx-auto" />
+});
+const MobileHomeV2 = dynamic(() => import("../components/MobileHome/MobileHomeV2"), { ssr: false });
 import "./landing.css";
 import "./mobile.css";
 
@@ -47,18 +51,17 @@ const ContactButton = ({ onClick }: ContactButtonProps) => (
         onClick={onClick}
         className="neon-button"
         style={{ cursor: 'pointer', background: 'transparent' }} // Ensure button look
-        data-text="Contact Us"
+        data-text="Main Menu"
     >
-        <span>C</span>
-        <span>o</span>
-        <span>n</span>
-        <span>t</span>
+        <span>M</span>
         <span>a</span>
-        <span>c</span>
-        <span>t</span>
+        <span>i</span>
+        <span>n</span>
         <span> </span>
-        <span>U</span>
-        <span>s</span>
+        <span>M</span>
+        <span>e</span>
+        <span>n</span>
+        <span>u</span>
     </button>
 );
 
@@ -173,8 +176,9 @@ export default function Home() {
                         alt="Space Background"
                         fill
                         priority
-                        quality={85}
+                        quality={75}
                         style={{ objectFit: 'cover' }}
+                        sizes="100vw"
                     />
                 </div>
 
@@ -235,10 +239,10 @@ export default function Home() {
                                     </div>
                                 </Link>
                             ) : (
-                                <button onClick={signInWithGoogle} className="contact-link login" style={{ width: '100%', textAlign: 'left', background: 'rgba(255,255,255,0.05)' }}>
-                                    <span className="icon">🔑</span>
+                                <button onClick={() => signInWithGoogle()} className="contact-link login" style={{ width: '100%', textAlign: 'left', background: 'rgba(255,255,255,0.05)' }}>
+                                    <span className="icon">👤</span>
                                     <div className="details">
-                                        <span className="label">Access</span>
+                                        <span className="label">MY PROFILE</span>
                                         <span className="value">Login / Sign Up</span>
                                     </div>
                                 </button>
@@ -248,8 +252,8 @@ export default function Home() {
                         <Link href="/mission" className="contact-link mission" style={{ marginBottom: '20px', background: 'rgba(255,255,255,0.02)' }}>
                             <span className="icon">🚀</span>
                             <div className="details">
-                                <span className="label" style={{ color: '#FCD34D' }}>Our Vision</span>
-                                <span className="value">Project Satyug</span>
+                                <span className="label" style={{ color: '#FCD34D' }}>OUR MISSION</span>
+                                <span className="value">Spiritual AI World</span>
                             </div>
                         </Link>
 

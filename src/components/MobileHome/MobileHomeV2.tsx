@@ -47,6 +47,15 @@ export default function MobileHomeV2() {
             (r as HTMLElement).style.margin = 10 - 10 * i + "px";
         });
 
+        // Reveal Lotus after setup
+        const container = document.querySelector('.mobile-v2-lotus') as HTMLElement;
+        if (container) {
+            // Small delay ensures the browser has painted the transforms first
+            requestAnimationFrame(() => {
+                container.style.opacity = '1';
+            });
+        }
+
         // GSAP Animation (CodePen Port)
         const tl1 = gsap.timeline({ repeat: -1, yoyo: true });
         const tl2 = gsap.timeline({ repeat: -1, yoyo: true });
@@ -100,9 +109,21 @@ export default function MobileHomeV2() {
             </div>
             <div ref={starsRef} className={styles.stars}></div>
 
+            {/* 📱 Top Nav */}
+            <nav className={styles.topNav}>
+                <a href="/creator" className={styles.navLink}>
+                    <Image src="/images/moon.png" width={24} height={24} alt="Creator" />
+                    <span>Creator</span>
+                </a>
+                <button className={styles.navLink} onClick={() => setIsSidebarOpen(true)}>
+                    <Image src="/images/logo.png" width={24} height={24} alt="Menu" />
+                    <span>Menu</span>
+                </button>
+            </nav>
+
             {/* 🏛️ Header */}
             <header className={styles.header}>
-                <div className="neon" style={{ transform: 'scale(0.8)', transformOrigin: 'top center', marginTop: '10px' }}>
+                <div className="neon" style={{ transform: 'scale(1.35)', transformOrigin: 'top center', marginTop: '20px', marginBottom: '5px' }}>
                     <div className="title">
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                             <h1>Spiritual AI</h1>
@@ -126,7 +147,9 @@ export default function MobileHomeV2() {
                             justifyContent: 'center',
                             position: 'relative',
                             height: '150px',
-                            width: '200px'
+                            width: '200px',
+                            opacity: 0,
+                            transition: 'opacity 0.5s ease-in-out'
                         }}>
                             <div className="corolla">
                                 <div className="segmL"></div>
@@ -158,17 +181,7 @@ export default function MobileHomeV2() {
                 </div>
             </main>
 
-            {/* 📱 Footer Nav */}
-            <footer className={styles.footer}>
-                <a href="/creator" className={styles.navLink}>
-                    <Image src="/images/moon.png" width={24} height={24} alt="Creator" />
-                    <span>Creator</span>
-                </a>
-                <button className={styles.navLink} onClick={() => setIsSidebarOpen(true)}>
-                    <Image src="/images/logo.png" width={24} height={24} alt="Contact" />
-                    <span>Contact</span>
-                </button>
-            </footer>
+
 
             {/* Sidebar */}
             {isSidebarOpen && (
@@ -187,8 +200,8 @@ export default function MobileHomeV2() {
                                         <span>👤</span> My Profile
                                     </Link>
                                 ) : (
-                                    <button onClick={signInWithGoogle} className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', width: '100%', justifyContent: 'center' }}>
-                                        <span>🔑</span> Login / Sign Up
+                                    <button onClick={() => signInWithGoogle('/')} className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', width: '100%', justifyContent: 'center' }}>
+                                        <span>👤</span> MY PROFILE
                                     </button>
                                 )}
                             </div>

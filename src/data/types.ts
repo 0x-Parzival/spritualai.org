@@ -51,9 +51,9 @@ export interface MBTITheme {
         heading: string;
         body: string;
     };
-    layoutType: 'NT' | 'NF' | 'SJ' | 'SP' | 'INTJ_STRATEGIC' | 'INTP_CURIOSITY' | 'ENTJ_COMMAND' | 'ENTP_DYNAMIC' | 'ENTJ_IMPERIAL' | 'INFJ_ADVOCATE' | 'INFP_MEDIATOR';
+    layoutType: 'NT' | 'NF' | 'SJ' | 'SP' | 'INTJ_STRATEGIC' | 'INTP_CURIOSITY' | 'ENTJ_COMMAND' | 'ENTP_DYNAMIC' | 'ENTJ_IMPERIAL' | 'INFJ_ADVOCATE' | 'INFP_MEDIATOR' | 'ENFJ_PROTAGONIST' | 'ISTJ_LOGISTICIAN' | 'ISFJ_DEFENDER' | 'ESTJ_EXECUTIVE' | 'ESFJ_CONSUL' | 'ISTP_VIRTUOSO' | 'ISFP_ADVENTURER' | 'ESTP_ENTREPRENEUR' | 'ESFP_ENTERTAINER';
     vantaColor: number;
-    vantaEffect: 'net' | 'fog' | 'clouds' | 'waves' | 'rings' | 'globe';
+    vantaEffect: 'net' | 'fog' | 'clouds' | 'waves' | 'rings' | 'globe' | 'dots';
     vantaConfig: any;
     ctaStyle: 'sharp' | 'minimal' | 'bold' | 'playful' | 'elegant' | 'gentle' | 'warm' | 'joyful' | 'secure' | 'familiar' | 'business' | 'friendly' | 'utilitarian' | 'aesthetic' | 'punchy' | 'lively' | 'ghost';
     ctaLabel: string;

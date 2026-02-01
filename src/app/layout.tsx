@@ -87,6 +87,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { AuthProvider } from "@/context/AuthContext";
+import InstallPrompt from "@/components/InstallPrompt";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export default function RootLayout({
   children,
@@ -96,11 +98,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Deferred FontAwesome or replace with specific icons later. 
-            For now, preconnect to CDN if absolutely necessary, but preferably remove blocking link. 
-            I will comment it out to test if icons break. If they do, we'll lazy load it. */}
-        {/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /> */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased min-h-screen flex flex-col`}
@@ -115,6 +119,8 @@ export default function RootLayout({
             <main className="flex-grow">
               {children}
             </main>
+            <InstallPrompt />
+            <ServiceWorkerRegister />
           </AuthProvider>
         </CurrencyProvider>
         <Footer />

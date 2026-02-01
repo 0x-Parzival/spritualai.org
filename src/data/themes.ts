@@ -129,24 +129,24 @@ export const mbtiThemes: Record<string, MBTITheme> = {
     },
     ENFJ: {
         colors: {
-            primary: "#4361ee",
-            secondary: "#4cc9f0",
-            background: "#f8f9fa",
-            text: "#212529",
-            accent: "#4895ef",
+            primary: "#ff8c69", // Coral/Peach (Warmth)
+            secondary: "#fdd5b1", // Soft Apricot
+            background: "#fffaf0", // Floral White (Warm Neutral)
+            text: "#4a4a4a", // Soft Dark Gray
+            accent: "#87CEEB", // Sky Blue (Optimism)
             cardBg: "#ffffff",
-            muted: "#6c757d"
+            muted: "#8d8d8d"
         },
         fonts: {
-            heading: '"Plus Jakarta Sans", sans-serif',
+            heading: '"Outfit", sans-serif', // Friendly & Confident
             body: '"Inter", sans-serif'
         },
-        layoutType: 'NF',
-        vantaColor: 0x15803d,
+        layoutType: 'ENFJ_PROTAGONIST',
+        vantaColor: 0xff8c69,
         vantaEffect: 'clouds',
-        vantaConfig: { skyColor: 0x4361ee, cloudColor: 0x4cc9f0, cloudShadowColor: 0x1c2333, sunColor: 0xffd166, sunGlareColor: 0xfffacd, sunlightColor: 0xffffff, speed: 1.2 },
+        vantaConfig: { skyColor: 0x87CEEB, cloudColor: 0xff8c69, cloudShadowColor: 0xffecd2, sunColor: 0xffd700, sunGlareColor: 0xfffacd, sunlightColor: 0xffffff, speed: 0.8 },
         ctaStyle: 'warm',
-        ctaLabel: 'Join Us'
+        ctaLabel: 'Begin the Journey'
     },
     ENFP: {
         colors: {
@@ -171,11 +171,11 @@ export const mbtiThemes: Record<string, MBTITheme> = {
     },
     ISTJ: {
         colors: {
-            primary: "#1d3557",
-            secondary: "#457b9d",
-            background: "#f1faee",
-            text: "#1d3557",
-            accent: "#e63946",
+            primary: "#0E1A2B", // Navy Blue
+            secondary: "#2F3A4A", // Steel Gray
+            background: "#F5F7FA", // Light cool gray/white for clean look (or user specified White #E6E9EE but that might be too dark for bg, using #E6E9EE as text or bg? "White #E6E9EE" likely background)
+            text: "#0E1A2B",
+            accent: "#4A6FA5", // Muted Blue
             cardBg: "#ffffff",
             muted: "#666"
         },
@@ -183,116 +183,160 @@ export const mbtiThemes: Record<string, MBTITheme> = {
             heading: '"Inter", sans-serif',
             body: '"Inter", sans-serif'
         },
-        layoutType: 'SJ',
-        vantaColor: 0x0077b6,
+        layoutType: 'ISTJ_LOGISTICIAN',
+        vantaColor: 0x0E1A2B,
         vantaEffect: 'waves',
-        vantaConfig: { color: 0x1d3557, shininess: 35.00, waveHeight: 20.00, waveSpeed: 0.75, zoom: 0.65 },
+        vantaConfig: { color: 0x0E1A2B, shininess: 35.00, waveHeight: 20.00, waveSpeed: 0.75, zoom: 0.65 },
         ctaStyle: 'secure',
-        ctaLabel: 'Proceed Securely'
+        ctaLabel: 'Apply System'
     },
     ISFJ: {
         colors: {
-            primary: "#0077b6",
-            secondary: "#00b4d8",
-            background: "#caf0f8",
-            text: "#023e8a",
-            accent: "#90e0ef",
+            primary: "#A9C1B1", // Soft Sage
+            secondary: "#8B6F5A", // Light Brown
+            background: "#F5F1EB", // Warm Cream
+            text: "#4A4E5A",
+            accent: "#D9A5A5", // Rose
             cardBg: "#ffffff",
-            muted: "#555"
+            muted: "#7d8597"
         },
         fonts: {
             heading: '"Inter", sans-serif',
             body: '"Inter", sans-serif'
         },
-        layoutType: 'SJ',
-        vantaColor: 0x0077b6,
-        vantaEffect: 'waves',
-        vantaConfig: { color: 0x0077b6, shininess: 40.00, waveHeight: 15.00, waveSpeed: 0.8, zoom: 0.8 },
-        ctaStyle: 'familiar',
-        ctaLabel: 'Take the Next Step'
+        layoutType: 'ISFJ_DEFENDER',
+        vantaColor: 0xA9C1B1,
+        vantaEffect: 'fog',
+        vantaConfig: { highlightColor: 0xD9A5A5, midtoneColor: 0xA9C1B1, lowlightColor: 0xF5F1EB, baseColor: 0xffffff, blurFactor: 0.6, speed: 0.4 },
+        ctaStyle: 'gentle',
+        ctaLabel: 'Begin Safely'
     },
     ESTJ: {
         colors: {
-            primary: "#03045e",
-            secondary: "#0077b6",
-            background: "#ffffff",
-            text: "#03045e",
-            accent: "#e63946",
-            cardBg: "#f8f9fa",
-            muted: "#444"
+            primary: "#0B0D12", // Black
+            secondary: "#1C1F26", // Dark Charcoal
+            // background: "#FFFFFF", // Removed duplicate
+            // Let's go with Dark Mode for 'Command & Control'.
+            background: "#0B0D12",
+            text: "#FFFFFF",
+            accent: "#C1121F", // Crimson
+            cardBg: "#1C1F26",
+            muted: "#888"
         },
         fonts: {
-            heading: '"Inter", sans-serif',
+            heading: '"Chakra Petch", sans-serif', // Sci-fi/Auth
             body: '"Inter", sans-serif'
         },
-        layoutType: 'SJ',
-        vantaColor: 0x0077b6,
-        vantaEffect: 'waves',
-        vantaConfig: { color: 0x03045e, shininess: 50.00, waveHeight: 25.00, waveSpeed: 1.0, zoom: 1.0 },
-        ctaStyle: 'business',
-        ctaLabel: 'Buy Now'
+        layoutType: 'ESTJ_EXECUTIVE',
+        vantaColor: 0xC1121F,
+        vantaEffect: 'net',
+        vantaConfig: { color: 0xC1121F, backgroundColor: 0x0B0D12, points: 10.00, maxDistance: 20.00, spacing: 18.00 },
+        ctaStyle: 'bold',
+        ctaLabel: 'Deploy Now'
     },
     ESFJ: {
         colors: {
-            primary: "#fb8500",
-            secondary: "#ffb703",
-            background: "#ffffff",
+            primary: "#F3ECDC", // Warm Beige
+            secondary: "#A7C7E7", // Soft Blue
+            background: "#fffaf0",
             text: "#023047",
-            accent: "#219ebc",
-            cardBg: "rgba(33, 158, 188, 0.05)",
-            muted: "#555"
-        },
-        fonts: {
-            heading: '"Inter", sans-serif',
-            body: '"Inter", sans-serif'
-        },
-        layoutType: 'SJ',
-        vantaColor: 0x0077b6,
-        vantaEffect: 'waves',
-        vantaConfig: { color: 0xfb8500, shininess: 30.00, waveHeight: 20.00, waveSpeed: 1.1, zoom: 0.9 },
-        ctaStyle: 'friendly',
-        ctaLabel: 'Recommended'
-    },
-    ISTP: {
-        colors: {
-            primary: "#333533",
-            secondary: "#202020",
-            background: "#000000",
-            text: "#ffffff",
-            accent: "#f5cb5c",
-            cardBg: "#242424",
+            accent: "#F2CC8F", // Gold
+            cardBg: "#ffffff",
             muted: "#666"
         },
         fonts: {
-            heading: '"IBM Plex Mono", monospace',
+            heading: '"Outfit", sans-serif',
+            body: '"Inter", sans-serif'
+        },
+        layoutType: 'ESFJ_CONSUL',
+        vantaColor: 0xF2CC8F,
+        vantaEffect: 'clouds',
+        vantaConfig: { cloudColor: 0xA7C7E7, skyColor: 0xF3ECDC, sunColor: 0xF2CC8F, speed: 0.5 },
+        ctaStyle: 'friendly',
+        ctaLabel: 'Join Us'
+    },
+    ISTP: {
+        colors: {
+            primary: "#0F1115", // Matte Black
+            secondary: "#3A3F45", // Industrial Gray
+            background: "#050505",
+            text: "#E0E0E0",
+            accent: "#00E5FF", // Neon Cyan
+            cardBg: "#0F1115",
+            muted: "#666"
+        },
+        fonts: {
+            heading: '"JetBrains Mono", monospace',
             body: '"IBM Plex Sans", sans-serif'
         },
-        layoutType: 'SP',
-        vantaColor: 0xf5cb5c,
+        layoutType: 'ISTP_VIRTUOSO',
+        vantaColor: 0x00E5FF,
         vantaEffect: 'rings',
-        vantaConfig: { color: 0xf5cb5c, backgroundColor: 0x000000, backgroundAlpha: 1.0 },
+        vantaConfig: { color: 0x00E5FF, backgroundColor: 0x050505, backgroundAlpha: 1.0 },
         ctaStyle: 'utilitarian',
-        ctaLabel: 'Get Tool'
+        ctaLabel: 'Access Tool'
     },
     ISFP: {
         colors: {
-            primary: "#cdb4db",
-            secondary: "#ffafcc",
-            background: "#121212",
-            text: "#fefae0",
-            accent: "#a2d2ff",
-            cardBg: "rgba(255, 255, 255, 0.05)",
+            primary: "#6B8E6E", // Earth Green
+            secondary: "#E6D3A3", // Warm Sand
+            background: "#F9F7F2", // Light Natural
+            text: "#2C3E50",
+            accent: "#F4A261", // Peach
+            cardBg: "#ffffff",
             muted: "#888"
         },
         fonts: {
             heading: '"Cormorant Garamond", serif',
             body: '"Montserrat", sans-serif'
         },
-        layoutType: 'SP',
-        vantaColor: 0xff006e,
-        vantaEffect: 'globe',
-        vantaConfig: { color: 0xff006e, color2: 0x8338ec, size: 1.2, backgroundColor: 0x121212 },
+        layoutType: 'ISFP_ADVENTURER',
+        vantaColor: 0x6B8E6E,
+        vantaEffect: 'globe', // Or birds/fog
+        vantaConfig: { color: 0x6B8E6E, color2: 0xF4A261, size: 1.0, backgroundColor: 0xF9F7F2 },
         ctaStyle: 'lively',
+        ctaLabel: 'Explore'
+    },
+    ESTP: {
+        colors: {
+            primary: "#00FF88", // Neon Green
+            secondary: "#00C2FF", // Electric Blue
+            background: "#0A0A0A", // Jet Black
+            text: "#FFFFFF",
+            accent: "#FF7A00", // Orange
+            cardBg: "#141414",
+            muted: "#666"
+        },
+        fonts: {
+            heading: '"Teko", sans-serif', // Aggressive/Tall
+            body: '"Inter", "Roboto Condensed", sans-serif'
+        },
+        layoutType: 'ESTP_ENTREPRENEUR',
+        vantaColor: 0x00FF88,
+        vantaEffect: 'dots', // Speed/Particles
+        vantaConfig: { color: 0x00FF88, color2: 0x00C2FF, backgroundColor: 0x0A0A0A, size: 3.0, spacing: 30.00 },
+        ctaStyle: 'bold',
+        ctaLabel: 'Start Now'
+    },
+    ESFP: {
+        colors: {
+            primary: "#FF4D8D", // Hot Pink
+            secondary: "#FFD166", // Sunshine Yellow
+            background: "#0B0515", // Dark Party Mode or White? "Pop-art". Let's go Dark for "Stage Lights" contrast.
+            text: "#FFFFFF",
+            accent: "#4DFFF3", // Aqua Blue
+            cardBg: "#1A0F2E",
+            muted: "#999"
+        },
+        fonts: {
+            heading: '"Righteous", cursive', // Fun/Display
+            body: '"Poppins", sans-serif'
+        },
+        layoutType: 'ESFP_ENTERTAINER',
+        vantaColor: 0xFF4D8D,
+        vantaEffect: 'rings', // Or something dynamic
+        vantaConfig: { color: 0xFF4D8D, backgroundColor: 0x0B0515, color2: 0x4DFFF3, backgroundAlpha: 1.0 },
+        ctaStyle: 'joyful',
         ctaLabel: 'Jump In'
     }
 };

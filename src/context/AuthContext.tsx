@@ -12,6 +12,7 @@ export interface Profile {
     avatar_url: string | null;
     mbti_type?: string;
     bio?: string;
+    is_admin?: boolean;
 }
 
 interface AuthContextType {
@@ -19,7 +20,7 @@ interface AuthContextType {
     profile: Profile | null;
     session: Session | null;
     loading: boolean;
-    signInWithGoogle: () => Promise<void>;
+    signInWithGoogle: (redirectPath?: string) => Promise<void>;
     signOut: () => Promise<void>;
     refreshProfile: () => Promise<void>;
 }
@@ -49,7 +50,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     id: u.id,
                     email: u.email || null,
                     full_name: u.user_metadata?.full_name || null,
-                    avatar_url: u.user_metadata?.avatar_url || null
+                    avatar_url: u.user_metadata?.avatar_url || null,
+                    is_admin: false
                 });
             }
         } catch (e) {
@@ -76,11 +78,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setSession(session);
                 setUser(session?.user ?? null);
                 if (session?.user) {
-                    fetchProfile(session.user);
+                    fetchProfile(session.user).then(() => setLoading(false));
                 } else {
                     setProfile(null);
+                    setLoading(false);
                 }
-                setLoading(false);
             });
 
             return () => {
@@ -91,12 +93,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         initAuth();
     }, []);
 
-    const signInWithGoogle = async () => {
+    const signInWithGoogle = async (redirectPath = '/profile') => {
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined
+                    redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectPath)}`
                 }
             });
             if (error) throw error;

@@ -415,19 +415,23 @@ main.ocean-main {
 /* Sci-Fi Text Styles */
 .matrix-text {
   font-family: var(--font-orbitron), 'Courier New', Courier, monospace;
-  font-size: clamp(1.5rem, 8vw, 4.5rem);
+  font-size: clamp(1.5rem, 5vw, 4rem);
+  /* Reduced scaling factor to fit */
   font-weight: 900;
   color: #e0f7ff;
   text-transform: uppercase;
-  letter-spacing: clamp(2px, 1vw, 6px);
+  letter-spacing: clamp(1px, 0.5vw, 4px);
+  /* Tighter spacing */
   position: relative;
   text-align: center;
   z-index: 1;
   width: 100%;
   max-width: 90vw;
-  line-height: 1.2;
+  line-height: 1.1;
+  /* Tighter line height for potential multiline */
   word-wrap: break-word;
   white-space: normal;
+  /* Allow wrapping */
 
   /* Sci-Fi Glow */
   text-shadow:
@@ -443,8 +447,7 @@ main.ocean-main {
   background-clip: unset;
 
   animation: glitch-skew 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite both;
-  white-space: nowrap;
-  /* Enforce single line */
+  /* white-space: nowrap; REMOVED to allow wrapping */
 }
 
 .matrix-text::before,
@@ -749,6 +752,9 @@ main.ocean-main {
   position: relative;
   /* Adjust scale/position as needed for the site layout, keeping user's internal proportions */
   transform: scale(0.6);
+  opacity: 0;
+  /* Hidden initially to prevent distortion */
+  transition: opacity 0.5s ease-in-out;
 }
 
 .corolla {

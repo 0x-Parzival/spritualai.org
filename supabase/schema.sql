@@ -12,6 +12,7 @@ IF NOT EXISTS ( SELECT 1 FROM information_schema.tables WHERE table_schema = 'pu
         website text, 
         mbti_type text, 
         bio text, 
+        is_admin boolean DEFAULT false,
         CONSTRAINT username_length CHECK (username IS NULL OR char_length(username) >= 3) 
     ); 
 END IF;

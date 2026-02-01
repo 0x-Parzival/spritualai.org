@@ -31,7 +31,7 @@ export default function MainNav() {
                     </Link>
                 ) : (
                     <button
-                        onClick={signInWithGoogle}
+                        onClick={() => signInWithGoogle()}
                         className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs"
                     >
                         Login

@@ -29,6 +29,14 @@ export default function LotusAnimation() {
             (r as HTMLElement).style.margin = 10 - 10 * i + "px";
         });
 
+        // Reveal Lotus after setup (Desktop)
+        const container = document.querySelector('.desktop-view .flower-container') as HTMLElement;
+        if (container) {
+            requestAnimationFrame(() => {
+                container.style.opacity = '1';
+            });
+        }
+
         const tl1 = gsap.timeline({ repeat: -1, yoyo: true });
         const tl2 = gsap.timeline({ repeat: -1, yoyo: true });
 

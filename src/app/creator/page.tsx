@@ -15,7 +15,62 @@ const loadTexture = (url: string) => {
 const CreatorPage = () => {
     const [activePopup, setActivePopup] = useState<string | null>(null);
     const [maximized, setMaximized] = useState(false);
+    const [currentMeImage, setCurrentMeImage] = useState("/images/me.png");
+    const [glitchActive, setGlitchActive] = useState(false);
     const canvasRef = useRef<HTMLDivElement>(null);
+
+    // Image rotation logic
+    useEffect(() => {
+        if (activePopup !== 'about') {
+            setGlitchActive(false);
+            setCurrentMeImage("/images/me.png");
+            return;
+        }
+
+        // Define sequence
+        const images = [
+            "/images/me.png",
+            "/images/me_krishna.png",
+            "/images/me_shiv.png",
+            "/images/me_ai.png",
+            "/images/me_buddha.png",
+            "/images/me_confucius.png",
+            "/images/me_jesus.png",
+            "/images/me_mahavira.png",
+            "/images/me_nanak.png",
+            "/images/me_zoroaster.png"
+        ];
+
+        let currentIndex = 0;
+
+        // Skip first 3 seconds then start cycling
+        const initialDelay = setTimeout(() => {
+            const interval = setInterval(() => {
+                // Trigger glitch
+                setGlitchActive(true);
+
+                // Change image halfway through glitch
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % images.length;
+                    setCurrentMeImage(images[currentIndex]);
+                }, 150); // Faster switch for glitch impact
+
+                // End glitch
+                setTimeout(() => {
+                    setGlitchActive(false);
+                }, 300); // Shorter glitch duration for snappiness
+
+            }, 3000);
+
+            return () => clearInterval(interval);
+        }, 3000);
+
+        return () => {
+            clearTimeout(initialDelay);
+            setGlitchActive(false);
+            setCurrentMeImage("/images/me.png");
+        };
+    }, [activePopup]);
 
     // --- Cosmic Anomaly 3D Logic ---
     useEffect(() => {
@@ -222,8 +277,8 @@ const CreatorPage = () => {
             scene.add(centralLight);
 
             const textureLoader = new THREE.TextureLoader();
-            const textureFlare0 = textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png');
-            const textureFlare3 = textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare3.png');
+            const textureFlare0 = textureLoader.load('/assets/textures/lensflare/lensflare0.png');
+            const textureFlare3 = textureLoader.load('/assets/textures/lensflare/lensflare3.png');
             const lensflare = new Lensflare();
             lensflare.addElement(new LensflareElement(textureFlare0, 500, 0, centralLight.color));
             lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
@@ -337,22 +392,22 @@ const CreatorPage = () => {
                 nebula: {
                     sphere: [new THREE.Color(0x00ffff), new THREE.Color(0xff1493), new THREE.Color(0x4169e1), new THREE.Color(0xff69b4), new THREE.Color(0x00bfff)],
                     rings: (i: number, count: number, j: number, pCount: number) => new THREE.Color().setHSL((i / count) * 0.6 + (j / pCount) * 0.2 + 0.5, 0.8, 0.6),
-                    hdr: 'https://www.spacespheremaps.com/wp-content/uploads/HDR_blue_nebulae-1.hdr'
+                    hdr: '/assets/hdr/HDR_blue_nebulae-1.hdr'
                 },
                 sunset: {
                     sphere: [new THREE.Color(0xff4500), new THREE.Color(0xff8c00), new THREE.Color(0xffd700), new THREE.Color(0xff0080), new THREE.Color(0xda70d6)],
                     rings: (i: number, count: number, j: number, pCount: number) => new THREE.Color().setHSL((i / count) * 0.1 + (j / pCount) * 0.1 + 0.0, 0.9, 0.7),
-                    hdr: 'https://www.spacespheremaps.com/wp-content/uploads/HDR_silver_and_gold_nebulae.hdr'
+                    hdr: '/assets/hdr/HDR_silver_and_gold_nebulae.hdr'
                 },
                 forest: {
                     sphere: [new THREE.Color(0x228b22), new THREE.Color(0x00ff7f), new THREE.Color(0x3cb371), new THREE.Color(0x1e90ff), new THREE.Color(0x87cefa)],
                     rings: (i: number, count: number, j: number, pCount: number) => new THREE.Color().setHSL((i / count) * 0.2 + (j / pCount) * 0.1 + 0.25, 0.8, 0.55),
-                    hdr: 'https://www.spacespheremaps.com/wp-content/uploads/HDR_subdued_multi_nebulae.hdr'
+                    hdr: '/assets/hdr/HDR_subdued_multi_nebulae.hdr'
                 },
                 aurora: {
                     sphere: [new THREE.Color(0x00ff7f), new THREE.Color(0x40e0d0), new THREE.Color(0x483d8b), new THREE.Color(0x9932cc), new THREE.Color(0x00fa9a)],
                     rings: (i: number, count: number, j: number, pCount: number) => new THREE.Color().setHSL((i / count) * 0.3 + (j / pCount) * 0.1 + 0.45, 0.9, 0.65),
-                    hdr: 'https://www.spacespheremaps.com/wp-content/uploads/HDR_multi_nebulae.hdr'
+                    hdr: '/assets/hdr/HDR_multi_nebulae.hdr'
                 }
             };
             const theme = themes[themeName];
@@ -655,8 +710,8 @@ const CreatorPage = () => {
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.aboutContainer}>
-                                    <div className={styles.imgFrame}>
-                                        <img src="/creator_assets/me.jpeg" alt="Keshav Baliyan" />
+                                    <div className={`${styles.imgFrame} ${glitchActive ? styles.glitchActive : ''}`}>
+                                        <img src={currentMeImage} alt="Keshav Baliyan" />
                                     </div>
                                     <div className={styles.aboutContent}>
                                         <h1 className={styles.aboutTitle}>OPERATOR: Keshav Baliyan (0xPARZIVAL)</h1>

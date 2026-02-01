@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import PriceDisplay from "@/components/Currency/PriceDisplay";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Order {
     id: string;
@@ -60,171 +61,315 @@ export default function ProfilePage() {
     };
 
     if (loading) return (
-        <div className="min-h-screen bg-black flex items-center justify-center text-white/50">
-            Loading profile...
+        <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center gap-4"
+            >
+                <div className="w-12 h-12 border-t-2 border-cyan-500 rounded-full animate-spin"></div>
+                <span className="text-white/30 font-mono text-xs uppercase tracking-widest">Synchronizing...</span>
+            </motion.div>
         </div>
     );
 
     if (!user) return (
-        <div className="min-h-screen bg-black flex flex-col items-center justify-center text-white space-y-6">
-            <h1 className="text-2xl font-bold">Access Restricted</h1>
-            <p className="text-gray-400">Please login to view your profile and orders.</p>
-            <button
-                onClick={signInWithGoogle}
-                className="bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-gray-200 transition-colors flex items-center gap-2"
+        <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-4 md:p-6 text-center">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-md w-full glass-card p-6 md:p-10 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-2xl"
             >
-                <i className="fab fa-google"></i> Login with Google
-            </button>
-            <Link href="/" className="text-sm text-gray-500 hover:text-white">Return Home</Link>
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-tr from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 md:mb-8 border border-white/10">
+                    <i className="fas fa-lock text-2xl md:text-3xl text-white/50"></i>
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4 tracking-tight">Access Restricted</h1>
+                <p className="text-sm md:text-base text-gray-400 mb-8 md:mb-10 leading-relaxed">Unlock your personalized spiritual journey and access your transformation protocols.</p>
+
+                <button
+                    onClick={() => signInWithGoogle()}
+                    className="w-full bg-white text-black h-12 md:h-14 rounded-2xl font-bold hover:bg-cyan-400 transition-all duration-300 flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-cyan-500/20 group text-sm md:text-base"
+                >
+                    <i className="fab fa-google text-lg transition-transform group-hover:rotate-12"></i>
+                    Initialize Membership
+                </button>
+
+                <Link href="/" className="inline-block mt-6 md:mt-8 text-xs md:text-sm text-white/30 hover:text-white transition-colors duration-300">
+                    Return to Terminal
+                </Link>
+            </motion.div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-[#050505] text-gray-100 font-sans">
+        <div className="min-h-screen bg-[#050505] text-gray-100 font-sans selection:bg-cyan-500/30">
+            {/* Background elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/5 blur-[120px] rounded-full"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/5 blur-[120px] rounded-full"></div>
+            </div>
+
             {/* Header */}
-            <nav className="border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0 z-40">
-                <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <Link href="/" className="font-bold text-lg tracking-wider text-white">SPIRITUAL AI</Link>
-                    <button onClick={signOut} className="text-sm text-gray-400 hover:text-white transition-colors">
-                        Sign Out
-                    </button>
+            <nav className="border-b border-white/5 bg-black/40 backdrop-blur-xl sticky top-0 z-50">
+                <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+                    <Link href="/" className="font-black text-xl tracking-[0.2em] text-white hover:text-cyan-400 transition-colors duration-500">
+                        SPIRITUAL <span className="text-cyan-500">AI</span>
+                    </Link>
+                    <div className="flex items-center gap-6">
+                        <button onClick={signOut} className="text-xs uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors duration-300 font-bold">
+                            Terminate Session
+                        </button>
+                    </div>
                 </div>
             </nav>
 
-            <main className="max-w-4xl mx-auto px-4 py-12">
+            <main className="max-w-6xl mx-auto px-6 py-8 md:py-16 relative z-10">
+                <div className="grid lg:grid-cols-[1fr_350px] gap-12 items-start">
 
-                {/* Profile Header */}
-                <div className="bg-[#0f0f15] border border-white/5 rounded-2xl p-8 mb-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/10">
-                        {profile?.avatar_url ? (
-                            <Image
-                                src={profile.avatar_url}
-                                alt="User"
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gray-800 flex items-center justify-center text-2xl">
-                                {profile?.full_name?.charAt(0) || user.email?.charAt(0)}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex-1">
-                        <h1 className="text-3xl font-bold text-white mb-2">{profile?.full_name || "Traveler"}</h1>
-                        <p className="text-gray-400 font-mono text-sm">{user.email}</p>
-
-                        {!isEditing && (
-                            <div className="mt-4 flex flex-wrap gap-4">
-                                {profile?.mbti_type && (
-                                    <span className="px-3 py-1 bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 text-xs rounded-full uppercase tracking-wider font-bold">
-                                        {profile.mbti_type}
-                                    </span>
-                                )}
-                                {profile?.bio && (
-                                    <p className="w-full text-gray-300 italic border-l-2 border-white/20 pl-4 py-1 text-sm leading-relaxed">
-                                        "{profile.bio}"
-                                    </p>
-                                )}
-                            </div>
-                        )}
-
-                        {isEditing && (
-                            <div className="mt-6 space-y-4 max-w-md bg-black/20 p-4 rounded-lg">
-                                <div>
-                                    <label className="text-xs uppercase text-gray-500 mb-1 block">Personality Type (MBTI)</label>
-                                    <select
-                                        className="w-full bg-[#1a1a20] border border-white/10 rounded p-2 text-sm focus:border-cyan-500/50 outline-none"
-                                        value={editForm.mbti_type}
-                                        onChange={(e) => setEditForm({ ...editForm, mbti_type: e.target.value })}
-                                    >
-                                        <option value="">Select Type</option>
-                                        {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map(t => (
-                                            <option key={t} value={t}>{t}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="text-xs uppercase text-gray-500 mb-1 block">Your Bio / Manifesto</label>
-                                    <textarea
-                                        className="w-full bg-[#1a1a20] border border-white/10 rounded p-2 text-sm focus:border-cyan-500/50 outline-none h-24 resize-none"
-                                        placeholder="What brings you here?"
-                                        value={editForm.bio}
-                                        onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <button
-                        onClick={() => {
-                            if (isEditing) handleSave();
-                            else setIsEditing(true);
-                        }}
-                        disabled={saving}
-                        className={`px-5 py-2 rounded-lg text-sm font-bold border transition-colors ${isEditing
-                                ? 'bg-white text-black border-white hover:bg-gray-200'
-                                : 'bg-transparent text-white border-white/20 hover:border-white'
-                            }`}
-                    >
-                        {saving ? 'Saving...' : (isEditing ? 'Save Profile' : 'Edit Profile')}
-                    </button>
-                    {isEditing && (
-                        <button
-                            onClick={() => setIsEditing(false)}
-                            className="text-sm text-gray-500 hover:text-white px-3"
+                    <div className="space-y-12">
+                        {/* Profile Hero Section */}
+                        <motion.section
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-white/[0.02] border border-white/5 rounded-[32px] md:rounded-[40px] p-6 md:p-12 backdrop-blur-sm relative overflow-hidden group"
                         >
-                            Cancel
-                        </button>
-                    )}
-                </div>
-
-                {/* Orders Section */}
-                <div>
-                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-                        <i className="fas fa-history text-cyan-500"></i> Purchase History
-                    </h2>
-
-                    {orders.length === 0 ? (
-                        <div className="bg-[#0f0f15] border border-white/5 rounded-2xl p-12 text-center text-gray-500">
-                            <i className="fas fa-box-open text-4xl mb-4 opacity-50"></i>
-                            <p>No active protocols found.</p>
-                            <Link href="/" className="inline-block mt-4 text-cyan-400 hover:text-cyan-300 text-sm">
-                                Explore Products
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="grid gap-4">
-                            {orders.map((order) => (
-                                <div key={order.id} className="bg-[#0f0f15] border border-white/5 rounded-xl p-5 flex items-center justify-between group hover:border-white/20 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-cyan-900/10 rounded-lg flex items-center justify-center text-cyan-500">
-                                            <i className="fas fa-file-code"></i>
+                            <div className="flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left relative z-10">
+                                <div className="shrink-0">
+                                    <div className="relative w-24 h-24 md:w-40 md:h-40 p-1 bg-gradient-to-tr from-cyan-500 to-purple-600 rounded-full shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-700">
+                                        <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0a0f] relative">
+                                            {profile?.avatar_url ? (
+                                                <Image
+                                                    src={profile.avatar_url}
+                                                    alt="User Identity"
+                                                    fill
+                                                    className="object-cover opacity-90 hover:opacity-100 transition-opacity"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-4xl font-bold bg-white/5 text-white/20">
+                                                    {profile?.full_name?.charAt(0) || user.email?.charAt(0)}
+                                                </div>
+                                            )}
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-white">{order.product_name}</h4>
-                                            <p className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-sm font-mono text-gray-300">
-                                            <PriceDisplay amountUSD={order.amount_paid} />
-                                        </div>
-                                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${order.status === 'COMPLETED' ? 'bg-green-500/20 text-green-400' :
-                                                order.status === 'FAILED' ? 'bg-red-500/20 text-red-400' :
-                                                    'bg-yellow-500/20 text-yellow-400'
-                                            }`}>
-                                            {order.status}
-                                        </span>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
 
+                                <div className="flex-1 space-y-6">
+                                    <div>
+                                        <div className="flex flex-wrap items-center gap-3 mb-2 justify-center md:justify-start">
+                                            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">
+                                                {profile?.full_name || "Initiate"}
+                                            </h1>
+                                            {profile?.mbti_type && (
+                                                <span className="px-4 py-1.5 bg-cyan-500 text-black text-[10px] font-black rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                                                    {profile.mbti_type}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-white/40 font-mono text-sm tracking-tighter flex items-center gap-2 justify-center md:justify-start">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                            {user.email}
+                                        </p>
+                                    </div>
+
+                                    {!isEditing && (
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="space-y-4"
+                                            >
+                                                {profile?.bio ? (
+                                                    <p className="text-lg text-gray-400 leading-relaxed font-light italic">
+                                                        "{profile.bio}"
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-sm text-white/20 uppercase tracking-widest italic">User profile pending configuration...</p>
+                                                )}
+                                                <button
+                                                    onClick={() => setIsEditing(true)}
+                                                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cyan-400 hover:text-white transition-colors group/btn"
+                                                >
+                                                    Modify Identity <i className="fas fa-arrow-right transition-transform group-hover/btn:translate-x-1"></i>
+                                                </button>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    )}
+
+                                    {isEditing && (
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className="grid gap-6 p-6 bg-white/[0.03] border border-white/5 rounded-3xl"
+                                        >
+                                            <div className="grid md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] uppercase font-black text-white/30 tracking-widest">Psychometric Profile</label>
+                                                    <select
+                                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cyan-500/50 outline-none transition-all appearance-none cursor-pointer"
+                                                        value={editForm.mbti_type}
+                                                        onChange={(e) => setEditForm({ ...editForm, mbti_type: e.target.value })}
+                                                    >
+                                                        <option value="" className="bg-black">Unspecified</option>
+                                                        {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map(t => (
+                                                            <option key={t} value={t} className="bg-black">{t}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] uppercase font-black text-white/30 tracking-widest">Cognitive Manifesto</label>
+                                                <textarea
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-cyan-500/50 outline-none h-28 resize-none transition-all"
+                                                    placeholder="Define your purpose..."
+                                                    value={editForm.bio}
+                                                    onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                                                <button
+                                                    onClick={handleSave}
+                                                    disabled={saving}
+                                                    className="flex-1 bg-white text-black h-12 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-cyan-400 transition-all disabled:opacity-50"
+                                                >
+                                                    {saving ? 'Synchronizing...' : 'Save Configuration'}
+                                                </button>
+                                                <button
+                                                    onClick={() => setIsEditing(false)}
+                                                    className="px-6 h-12 text-xs font-black text-white/40 hover:text-white uppercase tracking-widest transition-colors"
+                                                >
+                                                    Discard
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Decorative grid pattern */}
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
+                        </motion.section>
+
+                        {/* Activity / Protocols Section */}
+                        <section className="space-y-8">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-2xl font-black text-white px-2 border-l-4 border-cyan-500">
+                                    DEPLOYED PROTOCOLS
+                                </h2>
+                                <span className="text-[10px] font-mono text-white/30 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">
+                                    {orders.length} ACTIVE SESSIONS
+                                </span>
+                            </div>
+
+                            {orders.length === 0 ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="bg-white/[0.01] border border-dashed border-white/10 rounded-[32px] p-20 text-center"
+                                >
+                                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                        <i className="fas fa-terminal text-2xl text-white/20"></i>
+                                    </div>
+                                    <p className="text-white/30 font-mono text-sm mb-8">NO ACTIVE PROTOCOLS DETECTED IN CLOUD REGISTRY</p>
+                                    <Link href="/" className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                                        Initialize Protocol
+                                    </Link>
+                                </motion.div>
+                            ) : (
+                                <div className="grid gap-4">
+                                    {orders.map((order, idx) => (
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: idx * 0.1 }}
+                                            key={order.id}
+                                            className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-white/10 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between transition-all duration-500"
+                                        >
+                                            <div className="flex items-center gap-6 mb-4 md:mb-0">
+                                                <div className="w-14 h-14 bg-black/40 border border-white/10 rounded-xl flex items-center justify-center text-cyan-500 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all">
+                                                    <i className="fas fa-code-branch text-xl"></i>
+                                                </div>
+                                                <div className="text-center md:text-left">
+                                                    <h4 className="font-bold text-lg text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{order.product_name}</h4>
+                                                    <div className="flex items-center gap-4 mt-1 justify-center md:justify-start">
+                                                        <p className="text-[10px] font-mono text-white/30 uppercase">ID: {order.id.split('-')[0]}</p>
+                                                        <span className="w-1 h-1 rounded-full bg-white/10"></span>
+                                                        <p className="text-[10px] font-mono text-white/30">{new Date(order.created_at).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-8 w-full md:w-auto justify-between md:justify-end border-t border-white/5 md:border-0 pt-4 md:pt-0">
+                                                <div className="text-right">
+                                                    <div className="text-lg font-black text-white mb-1">
+                                                        <PriceDisplay amountUSD={order.amount_paid} />
+                                                    </div>
+                                                    <span className={`text-[9px] uppercase font-black tracking-widest px-3 py-1 rounded-full ${order.status === 'COMPLETED' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                        order.status === 'FAILED' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                                                            'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                                                        }`}>
+                                                        {order.status}
+                                                    </span>
+                                                </div>
+                                                <button className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                                                    <i className="fas fa-arrow-up-right-from-square text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    </div>
+
+                    {/* Sidebar / Stats */}
+                    <aside className="space-y-6 lg:sticky lg:top-32">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white/[0.02] border border-white/5 rounded-[32px] p-8 text-center"
+                        >
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-8 px-4 py-1.5 bg-white/5 rounded-full inline-block">
+                                EVOLUTION METRICS
+                            </h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="text-2xl font-black text-white mb-1">{orders.length}</div>
+                                    <div className="text-[9px] font-bold text-white/20 uppercase tracking-wider">Acquired</div>
+                                </div>
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <div className="text-2xl font-black text-white mb-1">0%</div>
+                                    <div className="text-[9px] font-bold text-white/20 uppercase tracking-wider">Mastery</div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <div className="bg-gradient-to-br from-cyan-500/10 to-transparent p-[1px] rounded-[32px]">
+                            <div className="bg-[#0f0f15] rounded-[32px] p-8 space-y-6">
+                                <h3 className="font-bold text-white flex items-center gap-2">
+                                    <i className="fas fa-shield-alt text-cyan-500"></i> Terminal Security
+                                </h3>
+                                <div className="space-y-4">
+                                    <p className="text-xs text-white/40 leading-relaxed italic">
+                                        Your neural interface data is encrypted and persistent across planetary nodes.
+                                    </p>
+                                    <div className="pt-4 border-t border-white/5">
+                                        <Link href="/settings" className="block text-[10px] font-black uppercase tracking-widest text-cyan-400 hover:text-white transition-colors">
+                                            Universal Settings <i className="fas fa-chevron-right ml-1"></i>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                </div>
             </main>
+
+            <footer className="max-w-6xl mx-auto px-6 py-12 border-t border-white/5 text-center">
+                <p className="text-[10px] uppercase font-black tracking-[0.4em] text-white/10">
+                    Neural Synchronization Active &copy; 2026 SPIRITUAL AI
+                </p>
+            </footer>
         </div>
     );
 }

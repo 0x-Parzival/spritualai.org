@@ -28,17 +28,19 @@
     pointer-events: none;
 }
 
-/* Header */
+/* Main */
+/* Main */
 .header {
     flex: 0 0 140px;
-    /* High enough for scale(1.2) text */
     width: 100%;
     z-index: 10;
+    /* Remove subtle background to let stars show through fully if desired, or keep gradient */
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;
+    padding-top: 60px;
+    /* Push title down to avoid overlap with Nav */
 }
 
 .subtitle {
@@ -132,35 +134,56 @@
 }
 
 /* Footer */
-.footer {
-    flex: 0 0 70px;
+/* Top Nav */
+.topNav {
+    position: absolute;
+    /* Overlay on background */
+    top: 0;
+    left: 0;
     width: 100%;
-    z-index: 10;
-    background: rgba(5, 5, 10, 0.9);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    height: 70px;
+    /* Fixed height for touch target */
+    z-index: 20;
+    background: transparent;
+    /* Seamless blend */
+    border-bottom: none;
+    /* Remove border for cleaner look */
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    padding-bottom: env(safe-area-inset-bottom);
+    justify-content: space-between;
+    padding: 0 24px;
+    /* Standard mobile padding */
+    padding-top: env(safe-area-inset-top);
 }
 
 .navLink {
     background: none;
     border: none;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    /* Horizontal orientation */
     align-items: center;
-    gap: 5px;
-    color: rgba(255, 255, 255, 0.5);
+    gap: 10px;
+    /* Better spacing */
+    color: rgba(255, 255, 255, 0.7);
+    /* Slightly brighter */
     text-decoration: none;
     cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.navLink:hover {
+    color: #fff;
 }
 
 .navLink span {
-    font-size: 0.7rem;
+    font-family: 'Orbitron', sans-serif;
+    /* Ensure font matches aesthetics */
+    font-size: 0.8rem;
+    /* Slightly larger */
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    font-weight: 600;
 }
 
 /* Sidebar */

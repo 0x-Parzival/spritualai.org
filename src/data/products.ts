@@ -739,7 +739,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "You don't need to become more. You just need space to be yourself.",
                     subheadline: "A gentle framework for people who feel deeply and want to live honestly.",
                     hook_image_prompt: "A paintbrush painting a door in the air that opens to a treasure room.",
-                    image_url: "/images/products/infp_art.png",
+                    image_url: "/images/products/infp_dream_to_reality.png",
                     pain_story: "You have always felt a little different. You care deeply—sometimes more than is convenient. You want your life to feel true, not just successful. But the world keeps asking you to harden, optimize, and perform. Something in you refuses.",
                     agitation_bullets: [
                         "Feeling breathless from the hustle.",
@@ -772,7 +772,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "Flow like Water. Don't Grind like Stone.",
                     subheadline: "Your pain was not an accident. It was training.",
                     hook_image_prompt: "A river flowing effortlessly around rocks to reach the ocean.",
-                    image_url: "/images/products/infp_flow.png",
+                    image_url: "/images/products/infp_healers_journey.png",
                     pain_story: "You aren't lazy. You are cynical about things that don't matter. When you care, you are unstoppable. But standard advice tries to force you into a grid. You need a flow, not a cage.",
                     agitation_bullets: [
                         "Guilt over 'wasted' days.",
@@ -805,7 +805,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "Your sensitivity is a radio for truth.",
                     subheadline: "You aren't shy. You are selective.",
                     hook_image_prompt: "An open book where the words turn into birds flying out.",
-                    image_url: "/images/products/infp_book.png",
+                    image_url: "/images/products/infp_introvert_power.png",
                     pain_story: "Your attention is gold. Small talk is plastic. You leave parties drained because you gave away your soul and got nothing in return. You crave depth, but the world offers surface.",
                     agitation_bullets: [
                         "Writer's block caused by perfectionism.",
@@ -837,7 +837,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "The World is Hard. You are Soft. That is your Strength.",
                     subheadline: "Don't harden your heart. Strengthen your spine.",
                     hook_image_prompt: "A glowing heart protected by a transparent, soft bubble in a gray city.",
-                    image_url: "/images/products/infp_heart.png",
+                    image_url: "/images/products/infp_idealism_survival.png",
                     pain_story: "You feel the weight of the world. Every headline, every cruelty, every injustice lands on your skin. You want to help, but sometimes you just want to hide. You don't have to choose between caring and surviving.",
                     agitation_bullets: [
                         "Doomscrolling until you are paralyzed.",
@@ -869,7 +869,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU BLEED WHEN PEOPLE LOOK AT YOU WRONG.",
                     subheadline: "YOU BLEED WHEN PEOPLE LOOK AT YOU WRONG.",
                     hook_image_prompt: "A door in a library opening to a galaxy.",
-                    image_url: "/images/products/infp_shield.png",
+                    image_url: "/images/products/infp_resilience.png",
                     pain_story: "When someone criticizes you, you hand them the pen and let them rewrite your self-worth. You confuse their Opinion with Truth. Because you aren't sure who you are, you let the world decide for you.",
                     agitation_bullets: [
                         "Creative blocks lasting months.",
@@ -916,6 +916,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "TIRED OF DRAGGING PEOPLE UP THE MOUNTAIN?",
                     subheadline: "TIRED OF DRAGGING PEOPLE UP THE MOUNTAIN?",
                     hook_image_prompt: "A figure on a stage with arms open, golden light connecting them to a crowd.",
+                    image_url: "/images/products/enfj_burden_of_potential.png",
                     pain_story: "You don't date reality; you date potential. You are projecting your own ambition onto people who want to be average. You are trying to teach eagles to fly, but you are actually throwing rocks off a cliff.",
                     agitation_bullets: [
                         "Martyr syndrome.",
@@ -947,6 +948,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOUR \"NICENESS\" IS A LIE.",
                     subheadline: "YOUR \"NICENESS\" IS A LIE.",
                     hook_image_prompt: "A network of glowing hearts connecting around a campfire.",
+                    image_url: "/images/products/enfj_harmony_trap.png",
                     pain_story: "You believe Conflict = Destruction. So you swallow your truth. But a relationship that can't handle the truth is a hostage situation. Friction creates heat. Heat creates transformation.",
                     agitation_bullets: [
                         "Being the only energy source.",
@@ -978,6 +980,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU DON'T WANT FOLLOWERS. YOU WANT EQUALS.",
                     subheadline: "YOU DON'T WANT FOLLOWERS. YOU WANT EQUALS.",
                     hook_image_prompt: "A beautiful golden gate that is closed, protecting a garden.",
+                    image_url: "/images/products/enfj_cult_of_personality.png",
                     pain_story: "You think you are serving them. Actually, you are creating dependency. You are the Sun, and they are planets. It feeds your ego, but starves your soul. True leadership isn't shining on people. It's igniting them.",
                     agitation_bullets: [
                         "Resentment building up.",
@@ -1009,6 +1012,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "WHO ARE YOU WHEN NO ONE IS WATCHING?",
                     subheadline: "WHO ARE YOU WHEN NO ONE IS WATCHING?",
                     hook_image_prompt: "Two faces looking at each other with a stream of light connecting their foreheads.",
+                    image_url: "/images/products/enfj_mirror_effect.png",
                     pain_story: "You change your colors to match the room. This isn't \"adaptability.\" It's a lack of Core Identity. You are looking for yourself in the eyes of other people. But they can only show you their reflection.",
                     agitation_bullets: [
                         "Miscommunication.",
@@ -1040,6 +1044,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU GIVE GREAT HUGS. BUT YOU CAN'T TAKE ONE.",
                     subheadline: "YOU GIVE GREAT HUGS. BUT YOU CAN'T TAKE ONE.",
                     hook_image_prompt: "Microphone glowing on a stage.",
+                    image_url: "/images/products/enfj_art_of_receiving.png",
                     pain_story: "You think you are protecting them from your mess. But you are actually controlling the dynamic. By always being the Giver, you stay safe. Receiving requires Surrender. You are lonely because you built a wall and called it Strength.",
                     agitation_bullets: [
                         "Um's and Ah's.",
@@ -1086,6 +1091,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE DROWNING IN OPPORTUNITY.",
                     subheadline: "YOU ARE DROWNING IN OPPORTUNITY.",
                     hook_image_prompt: "A puzzle being completed, the final piece glowing.",
+                    image_url: "/images/products/enfp_fomo_cure.png",
                     pain_story: "You crave \"More\" because you don't trust \"Less.\" 10 half-eaten sandwiches don't make a meal. You aren't missing the party. You are missing Yourself.",
                     agitation_bullets: [
                         "Wasted potential.",
@@ -1117,6 +1123,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ADDICTED TO THE START.",
                     subheadline: "ADDICTED TO THE START.",
                     hook_image_prompt: "A constellation of stars connecting to form a face.",
+                    image_url: "/images/products/enfp_golden_idea.png",
                     pain_story: "You think you are lazy. You aren't. You are an Explorer. But the world demands Farmers. You are trying to force yourself to plow the field, and it's killing your soul. Your boredom is not a bug. It's a Feature.",
                     agitation_bullets: [
                         "Losing touch with cool people.",
@@ -1148,6 +1155,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "EVERYONE LOVES THE PARTY. NO ONE SEES THE UBER HOME.",
                     subheadline: "EVERYONE LOVES THE PARTY. NO ONE SEES THE UBER HOME.",
                     hook_image_prompt: "A megaphone shooting out colorful birds.",
+                    image_url: "/images/products/enfp_sad_clown.png",
                     pain_story: "You pay for your place in the group by being the Funny One. You trained your friends to treat you like a TV show. TV shows aren't allowed to be depressed. You are surrounded by fans, but you have no friends.",
                     agitation_bullets: [
                         "Rampling.",
@@ -1179,6 +1187,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE CATNIP FOR NARCISSISTS.",
                     subheadline: "YOU ARE CATNIP FOR NARCISSISTS.",
                     hook_image_prompt: "A desk covered in toys and colorful tools.",
+                    image_url: "/images/products/enfp_vampire_slayer.png",
                     pain_story: "You have a Savior Complex. You think if you love them enough, they will change. You see the Prince inside the Beast. But some Beasts are just Beasts. You are not a Rehab Center for emotionally stunted adults.",
                     agitation_bullets: [
                         "Burnout from boredom.",
@@ -1210,6 +1219,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "TERRIFIED OF BECOMING A ZOMBIE?",
                     subheadline: "TERRIFIED OF BECOMING A ZOMBIE?",
                     hook_image_prompt: "A group of colorful avatars meeting in a digital forest.",
+                    image_url: "/images/products/enfp_magical_adult.png",
                     pain_story: "You believe Structure kills Magic. But a river without banks is just a puddle. By refusing to build a container (\"Adulting\"), your energy leaks out everywhere. You aren't protecting your inner child; you are neglecting them.",
                     agitation_bullets: [
                         "Shallow friendships.",
@@ -1256,6 +1266,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "RUNNING WINDOWS 95 IN AN AI WORLD.",
                     subheadline: "RUNNING WINDOWS 95 IN AN AI WORLD.",
                     hook_image_prompt: "A perfectly organized archive room with infinite depth.",
+                    image_url: "/images/products/istj_change_protocol.png",
                     pain_story: "You hate unpredictability. You hate when people change plans last minute. You feel like the only adult in a room full of children. You want a life that runs like a Swiss watch.",
                     agitation_bullets: [
                         "Dealing with other people's mess.",
@@ -1287,6 +1298,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "THE ATLAS COMPLEX.",
                     subheadline: "THE ATLAS COMPLEX.",
                     hook_image_prompt: "A data stream actively sorting itself into neat boxes.",
+                    image_url: "/images/products/istj_atlas_complex.png",
                     pain_story: "You trust Systems. You do not trust People. People are variables. But hoarding responsibility is not \"competence.\" It is poor architecture. If you get sick, the system collapses. That is irresponsible.",
                     agitation_bullets: [
                         "Digital hoarding.",
@@ -1319,6 +1331,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "IGNORING SADNESS IS ILLOGICAL.",
                     subheadline: "IGNORING SADNESS IS ILLOGICAL.",
                     hook_image_prompt: "A sturdy bank vault made of gold bricks.",
+                    image_url: "/images/products/istj_emotional_audit.png",
                     pain_story: "You have no Processing Unit for emotion. For anger? \"Swallow it.\" For sadness? \"Work harder.\" This isn't Stoicism. This is Emotional Constipation. Stoicism is processing. You are hoarding.",
                     agitation_bullets: [
                         "Fear of inflation.",
@@ -1350,6 +1363,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "NETWORKING FOR PEOPLE WHO HATE PEOPLE.",
                     subheadline: "NETWORKING FOR PEOPLE WHO HATE PEOPLE.",
                     hook_image_prompt: "A steel chain where every link is perfect.",
+                    image_url: "/images/products/istj_social_algorithm.png",
                     pain_story: "We stop asking you to be charming. We teach you to view Socializing as a Protocol. Small Talk = Handshake Protocol (Secure Connection). Networking = Redundant Node System (Job Security).",
                     agitation_bullets: [
                         " breaking a streak.",
@@ -1381,6 +1395,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "LOSING THE RACE TO DUMBER PEOPLE.",
                     subheadline: "LOSING THE RACE TO DUMBER PEOPLE.",
                     hook_image_prompt: "A library card catalog stretching to infinity.",
+                    image_url: "/images/products/istj_anti_perfectionism.png",
                     pain_story: "You treat an email like a dissertation. Not everything needs to be perfect. You are bankrupting your energy on low-value tasks. The person who provides value wins. The person who provides nothing (perfectly) loses.",
                     agitation_bullets: [
                         "Social awkwardness of names.",
@@ -1427,6 +1442,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU AREN'T \"NICE.\" you are afraid.",
                     subheadline: "YOU AREN'T \"NICE.\" you are afraid.",
                     hook_image_prompt: "A cozy living room with a fireplace that emits emotional warmth.",
+                    image_url: "/images/products/isfj_disease_to_please.png",
                     pain_story: "You give 100% of your energy away. And then you secretly resent them for it. \"After everything I did...\" This isn't Service; it's emotional banking. And the bank is bankrupt. You are setting yourself on fire to keep others warm.",
                     agitation_bullets: [
                         "Clutter causing anxiety.",
@@ -1458,6 +1474,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "My Dearest,",
                     subheadline: "My Dearest,",
                     hook_image_prompt: "A pair of hands holding a glowing heart, but the hands are cracking.",
+                    image_url: "/images/products/isfj_invisible_contract.png",
                     pain_story: "You believe if you have to ask for love, it \"doesn't count.\" You want them to anticipate your needs, because that's what you do. But anticipating needs is Your Superpower, not the standard human setting. Expecting everyone to be an ISFJ is a recipe for disappointment.",
                     agitation_bullets: [
                         "Resentment.",
@@ -1489,6 +1506,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE HALLUCINATING TRAGEDIES.",
                     subheadline: "YOU ARE HALLUCINATING TRAGEDIES.",
                     hook_image_prompt: "A family calendar that turns into a beautiful mural.",
+                    image_url: "/images/products/isfj_worry_loop.png",
                     pain_story: "You think if you suffer now, it won't hurt as much later. You are paying interest on a debt you don't owe. If the bad thing doesn't happen? You paid for nothing. If it does? You paid twice. Stop paying.",
                     agitation_bullets: [
                         "Mental load overload.",
@@ -1520,6 +1538,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE A HISTORIAN OF PAIN.",
                     subheadline: "YOU ARE A HISTORIAN OF PAIN.",
                     hook_image_prompt: "A pillar of stone supporting a massive tranquil temple.",
+                    image_url: "/images/products/isfj_memory_box.png",
                     pain_story: "Most people forget. You archive. You polish old arguments. You dust off old insults. You think Remembering = Protecting. \"If I remember the hurt, I won't let it happen again.\" But you aren't protecting yourself. You are poisoning yourself.",
                     agitation_bullets: [
                         "Being overlooked.",
@@ -1551,6 +1570,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "THE GHOST IN THE MACHINE.",
                     subheadline: "THE GHOST IN THE MACHINE.",
                     hook_image_prompt: "A photo album where the pictures are moving memories.",
+                    image_url: "/images/products/isfj_silent_partner.png",
                     pain_story: "You were taught \"Work speaks for itself.\" It doesn't. \"Bragging is bad.\" But stating facts is not bragging. \"I increased efficiency by 20%\" is not arrogance. It is Data. By hiding your data, you are managing your career into the ground.",
                     agitation_bullets: [
                         "Fear of drifting apart.",
@@ -1597,6 +1617,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE COLORBLIND TO NUANCE.",
                     subheadline: "YOU ARE COLORBLIND TO NUANCE.",
                     hook_image_prompt: "A gantt chart constructing a skyscraper in real time.",
+                    image_url: "/images/products/estj_grey_zone.png",
                     pain_story: "If you treat everything like a nail because you love hammers, you are just breaking windows.",
                     agitation_bullets: [
                         "Herding cats.",
@@ -1628,6 +1649,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE TERRIFIED OF SUNDAY AFTERNOON.",
                     subheadline: "YOU ARE TERRIFIED OF SUNDAY AFTERNOON.",
                     hook_image_prompt: "A lion sitting at the head of a boardroom table.",
+                    image_url: "/images/products/estj_identity_hedge.png",
                     pain_story: "You have invested 100% of your self-worth stock in one volatile asset: Your Career. When the machine stops (Retirement, Layoff), you disappear.",
                     agitation_bullets: [
                         "Being questioned by subordinates.",
@@ -1659,6 +1681,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE A FIXER. THEY DON'T WANT TO BE FIXED.",
                     subheadline: "YOU ARE A FIXER. THEY DON'T WANT TO BE FIXED.",
                     hook_image_prompt: "A factory floor running in perfect synchronization.",
+                    image_url: "/images/products/estj_listening_vault.png",
                     pain_story: "\"Why cry about spilled milk?\" Logic works for milk. It fails for humans. Humans need to \"download\" emotions before they can \"upload\" solutions. By interrupting, you reject the download. You tell them: \"Your feelings are a waste of time.\"",
                     agitation_bullets: [
                         "Repetitive questions.",
@@ -1690,6 +1713,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU THINK YOU ARE HELPING. THEY THINK YOU ARE A TYRANT.",
                     subheadline: "YOU THINK YOU ARE HELPING. THEY THINK YOU ARE A TYRANT.",
                     hook_image_prompt: "A marble column that is perfectly straight and white.",
+                    image_url: "/images/products/estj_micromanagement_detox.png",
                     pain_story: "By inserting yourself into every process, you have become the bottleneck. You have trained your team to be helpless. They stopped thinking because you do it for them. Congratulations, you played yourself.",
                     agitation_bullets: [
                         "Mediocrity acceptance.",
@@ -1721,6 +1745,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ANGER IS NOT A PRODUCTIVITY TOOL.",
                     subheadline: "ANGER IS NOT A PRODUCTIVITY TOOL.",
                     hook_image_prompt: "A dashboard showing health, wealth, and relationships as business metrics.",
+                    image_url: "/images/products/estj_rage_valve.png",
                     pain_story: "\"It is better to be feared than loved.\" Not in 2024. If people fear you, they lie to you. They hide mistakes to avoid the explosion. Your temper is not a sign of strength. It is a sign of Weakness. It means you have lost control.",
                     agitation_bullets: [
                         "Work-Life imbalance.",
@@ -1767,6 +1792,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "The Party is Over.",
                     subheadline: "The Party is Over.",
                     hook_image_prompt: "A banquet table laden with food and happy guests raising a toast.",
+                    image_url: "/images/products/esfj_approval_detox.png",
                     pain_story: "You think if everyone smiles, you are close. Wrong. Real intimacy requires friction. You have 100 acquaintances who like your \"mask,\" and 0 friends who know your soul. You are lonely in a crowded room.",
                     agitation_bullets: [
                         "Event anxiety.",
@@ -1798,6 +1824,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "KILLING THEM WITH KINDNESS.",
                     subheadline: "KILLING THEM WITH KINDNESS.",
                     hook_image_prompt: "A spinning rolodex that glows.",
+                    image_url: "/images/products/esfj_caretaker_curse.png",
                     pain_story: "You think helplessness is a trait they have. No. By doing everything, you robbed them of the ability to do it themselves.",
                     agitation_bullets: [
                         "Double booking.",
@@ -1829,6 +1856,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "You bond over Common Enemies.",
                     subheadline: "You bond over Common Enemies.",
                     hook_image_prompt: "A hand lifting another hand, with mutual light shining.",
+                    image_url: "/images/products/esfj_gossip_detox.png",
                     pain_story: "Your social circle is a shark tank, and you are bleeding.",
                     agitation_bullets: [
                         "Feeling taken for granted.",
@@ -1860,6 +1888,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "THE HARMONY TRAP",
                     subheadline: "THE HARMONY TRAP",
                     hook_image_prompt: "A queen bee surrounded by a harmonious hive.",
+                    image_url: "/images/products/esfj_harmony_trap.png",
                     pain_story: "You aren't protecting the relationship. You are rotting it.",
                     agitation_bullets: [
                         "Gossip handling.",
@@ -1891,6 +1920,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "QUEEN OF SMALL TALK.",
                     subheadline: "QUEEN OF SMALL TALK.",
                     hook_image_prompt: "A knot being untied by gentle hands.",
+                    image_url: "/images/products/esfj_shallow_end.png",
                     pain_story: "Holidays are stressful because of In-Laws, siblings, and old feuds. You are the one stuck in the middle trying to make everyone smile.",
                     agitation_bullets: [
                         "Walking on eggshells.",
@@ -1937,6 +1967,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "SYSTEM ERROR: EMOTION NOT FOUND.",
                     subheadline: "SYSTEM ERROR: EMOTION NOT FOUND.",
                     hook_image_prompt: "A human body shown as a complex engine schematic.",
+                    image_url: "/images/products/istp_emotional_diagnostic.png",
                     pain_story: "You hate emotional drama. You just want things to WORK. Whether it's a broken toaster or a broken relationship, you want to open the hood, find the faulty part, and replace it. But people aren't logic gates.",
                     agitation_bullets: [
                         "Emotional irrationality.",
@@ -1968,6 +1999,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE NOT HONEST. YOU ARE MEAN.",
                     subheadline: "YOU ARE NOT HONEST. YOU ARE MEAN.",
                     hook_image_prompt: "A tactical backpack filled with high-tech gear.",
+                    image_url: "/images/products/istp_blunt_instrument.png",
                     pain_story: "You see the supply chains breaking. You see the fragility of the grid. You aren't scared; you just want to be prepared. But you hate the 'tinfoil hat' crowd.",
                     agitation_bullets: [
                         "Dependency on the system.",
@@ -1999,6 +2031,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU WANT A CAT, NOT A DOG.",
                     subheadline: "YOU WANT A CAT, NOT A DOG.",
                     hook_image_prompt: "A person walking through a wall in a maze.",
+                    image_url: "/images/products/istp_commitment_code.png",
                     pain_story: "You hate red tape. You hate 'process for process's sake'. You know there is a faster way, but people tell you it's 'not allowed'. You want to get to the outcome now.",
                     agitation_bullets: [
                         "Waiting in line.",
@@ -2030,6 +2063,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "PEACE FEELS LIKE DEATH.",
                     subheadline: "PEACE FEELS LIKE DEATH.",
                     hook_image_prompt: "A pilot in a cockpit with alarms blaring, looking perfectly calm.",
+                    image_url: "/images/products/istp_adrenaline_junkie.png",
                     pain_story: "You are good in a crisis. But sometimes you are too detached. People think you don't care. Or you bottle it up until you explode. You need a way to process stress physically.",
                     agitation_bullets: [
                         "Adrenaline dumps.",
@@ -2061,6 +2095,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "THE MYTH OF MERIT.",
                     subheadline: "THE MYTH OF MERIT.",
                     hook_image_prompt: "Hands working on a complex watch mechanism.",
+                    image_url: "/images/products/istp_lone_wolf.png",
                     pain_story: "You hate classrooms. You hate theory. You learn by breaking things. Traditional education fails you because it doesn't let you touch the problem.",
                     agitation_bullets: [
                         "Boring lectures.",
@@ -2107,6 +2142,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "You are an Open Wound.",
                     subheadline: "You are an Open Wound.",
                     hook_image_prompt: "A room where every object triggers joy and color.",
+                    image_url: "/images/products/isfp_sensitive_soul.png",
                     pain_story: "You are sensitive to your environment. Ugly lights, bad textures, and boring walls drain your soul. You want your outer world to reflect your inner beauty.",
                     agitation_bullets: [
                         "Visual clutter.",
@@ -2138,6 +2174,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "The Unfinished Masterpiece MESS.",
                     subheadline: "The Unfinished Masterpiece MESS.",
                     hook_image_prompt: "A gallery wall with 'Sold' stickers on everything.",
+                    image_url: "/images/products/isfp_unfinished_masterpiece.png",
                     pain_story: "You make beautiful things. But you hate 'pushing' them. You hope people will just notice. They won't. You need a way to share your gift that feels genuine.",
                     agitation_bullets: [
                         "Underpricing work.",
@@ -2169,6 +2206,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "Volcano Disguised AS A MEADOW.",
                     subheadline: "Volcano Disguised AS A MEADOW.",
                     hook_image_prompt: "A hand running through tall grass at sunset.",
+                    image_url: "/images/products/isfp_silent_resentment.png",
                     pain_story: "Standard meditation makes you anxious. 'Clear your mind'? Impossible. You experience the world through touch, taste, sound. Use that.",
                     agitation_bullets: [
                         "Monkey mind.",
@@ -2200,6 +2238,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "NINJA OF AVOIDANCE.",
                     subheadline: "NINJA OF AVOIDANCE.",
                     hook_image_prompt: "A mannequin with a unique, colorful, mismatched but perfect outfit.",
+                    image_url: "/images/products/isfp_the_ghost.png",
                     pain_story: "You hate uniforms. You hate looking like everyone else. But sometimes you struggle to put your unique vibe into a cohesive look. You want to walk into a room and be 'seen'.",
                     agitation_bullets: [
                         "Closet full of nothing to wear.",
@@ -2231,6 +2270,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "PROFESSIONAL SHAPESHIFTER.",
                     subheadline: "PROFESSIONAL SHAPESHIFTER.",
                     hook_image_prompt: "A person doing yoga on a cliff edge at sunrise.",
+                    image_url: "/images/products/isfp_identity_crisis.png",
                     pain_story: "You hate gyms. You hate diets. The moment someone tells you to do 10 reps, you want to leave. You need a way to move and eat that feels like freedom.",
                     agitation_bullets: [
                         "Gym boredom.",
@@ -2458,6 +2498,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ALLERGIC TO FOREVER.",
                     subheadline: "ALLERGIC TO FOREVER.",
                     hook_image_prompt: "A smartphone displaying a Stripe notification: '$1,000 Payment Received'.",
+                    image_url: "/images/products/estp_peter_pan.png",
                     pain_story: "You have 100 ideas. You see opportunity everywhere. But you get bogged down in 'legal' or 'websites'. You miss the window. You want the rush of the first sale.",
                     agitation_bullets: [
                         "Analysis paralysis.",
@@ -2489,6 +2530,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU ARE AFRAID OF THE QUIET.",
                     subheadline: "YOU ARE AFRAID OF THE QUIET.",
                     hook_image_prompt: "Two hands shaking over a table covered in money.",
+                    image_url: "/images/products/estp_quiet_guide.png",
                     pain_story: "You know you are leaving value on the table. You hate paying retail. You hate losing arguments. You want the thrill of the win.",
                     agitation_bullets: [
                         "Overpaying.",
@@ -2520,6 +2562,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "FERRARI WITH NO BRAKES.",
                     subheadline: "FERRARI WITH NO BRAKES.",
                     hook_image_prompt: "A person in a crowd, glowing, with everyone leaning in towards them.",
+                    image_url: "/images/products/estp_reckless_driver.png",
                     pain_story: "You are naturally charming, but you want to weaponize it. You want to be able to talk your way into VIP, out of tickets, and into deals.",
                     agitation_bullets: [
                         "Getting 'No'.",
@@ -2551,6 +2594,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ALWAYS CLOSING.",
                     subheadline: "ALWAYS CLOSING.",
                     hook_image_prompt: "A clock ticking down the final second, an explosion of productivity.",
+                    image_url: "/images/products/estp_salesman_curse.png",
                     pain_story: "You can't work without a fire under you. People tell you to plan ahead. Screw that. You work best when the building is burning. Learn to harness the fire.",
                     agitation_bullets: [
                         "Boredom lethargy.",
@@ -2582,6 +2626,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ADDICTED TO THE START.",
                     subheadline: "ADDICTED TO THE START.",
                     hook_image_prompt: "A poker player pushing chips 'All In' with a slight smile.",
+                    image_url: "/images/products/estp_shiny_object.png",
                     pain_story: "You love risk. But you've been burned. You want to swing for the fences without striking out. You need a system for evaluating upsides.",
                     agitation_bullets: [
                         "Reckless losses.",
@@ -2628,6 +2673,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "YOU SAY YOU HATE DRAMA.",
                     subheadline: "YOU SAY YOU HATE DRAMA.",
                     hook_image_prompt: "A person stepping onto a dance floor, the crowd parting and cheering.",
+                    image_url: "/images/products/esfp_drama_magnet.png",
                     pain_story: "You love attention, but you want it to be for the right reasons. You want to be remembered as the person who made everyone feel amazing, not just loud.",
                     agitation_bullets: [
                         "Being dismissed as 'too much'.",
@@ -2659,6 +2705,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "ALLERGIC TO SAVING.",
                     subheadline: "ALLERGIC TO SAVING.",
                     hook_image_prompt: "A VIP pass made of solid gold.",
+                    image_url: "/images/products/esfp_impulsive_shopper.png",
                     pain_story: "You are the one bringing the party. Why aren't you getting paid? You organize the fun, you bring the people. It's time to cash in on your gravity.",
                     agitation_bullets: [
                         "Being the broke 'fun' friend.",
@@ -2690,6 +2737,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "Who are you when the music stops?",
                     subheadline: "Who are you when the music stops?",
                     hook_image_prompt: "A life raft turning into a luxury yacht instantly.",
+                    image_url: "/images/products/esfp_spotlight_addiction.png",
                     pain_story: "You fear boredom like death. You hate scripts. You want to flow through life, handling whatever comes with a laugh. But anxiety sometimes kills the joke.",
                     agitation_bullets: [
                         "Awkward pauses.",
@@ -2721,6 +2769,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "GREAT FRIEND... WHEN YOU SHOW UP.",
                     subheadline: "GREAT FRIEND... WHEN YOU SHOW UP.",
                     hook_image_prompt: "A gray office cubicle bursting into colorful confetti.",
+                    image_url: "/images/products/esfp_the_flake.png",
                     pain_story: "Work is so... serious. It drains you. You know that happy people work harder, but the bosses are stiff. You want to be successful without becoming a robot.",
                     agitation_bullets: [
                         "Corporate depression.",
@@ -2752,6 +2801,7 @@ export const productsData: Record<string, MBTIProfile> = {
                     headline: "GOOD VIBES ONLY.",
                     subheadline: "GOOD VIBES ONLY.",
                     hook_image_prompt: "A calendar with blank spaces that glow gold.",
+                    image_url: "/images/products/esfp_toxic_positivity.png",
                     pain_story: "You hate commitment because it kills options. But having NO plan means you end up doing nothing. You need a structure that creates freedom.",
                     agitation_bullets: [
                         "Flaking on plans.",

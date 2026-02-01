@@ -49,6 +49,9 @@ export default function VantaBackground({ effectName, config }: VantaBackgroundP
                     case 'globe':
                         VantaModule = await import('vanta/dist/vanta.globe.min');
                         break;
+                    case 'dots':
+                        VantaModule = await import('vanta/dist/vanta.dots.min');
+                        break;
                     case 'cells':
                     default:
                         VantaModule = await import('vanta/dist/vanta.cells.min');

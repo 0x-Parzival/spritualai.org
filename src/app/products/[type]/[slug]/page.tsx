@@ -3,13 +3,14 @@
 import React from "react";
 import { useState } from "react";
 import { notFound, useParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { productsData } from "../../../../data/products";
 import { mbtiThemes } from "../../../../data/themes";
 import { Product } from "../../../../data/types";
 import "../../product.css";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import VantaBackground from "../../../../components/VantaBackground";
+const VantaBackground = dynamic(() => import("../../../../components/VantaBackground"), { ssr: false });
 import CheckoutModal from "../../../../components/Payment/CheckoutModal";
 import PriceDisplay from "../../../../components/Currency/PriceDisplay";
 
@@ -124,7 +125,7 @@ export default function ProductPage() {
                     </div>
 
                     {/* 5. LifeOS ARCHITECTURE */}
-                    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
+                    <section className="intj-lifeos-grid">
                         <div>
                             <h3 className="sales-heading" style={{ fontSize: '2rem' }}>{script.product_name}</h3>
                             <p style={{ fontSize: '1.2rem', color: '#9ca3af' }}>{script.product_description}</p>
@@ -161,7 +162,9 @@ export default function ProductPage() {
                             {script.bonuses.map((bonus: any, i: number) => (
                                 <div key={i} style={{ marginTop: '20px', textAlign: 'center' }}>
                                     <span style={{ color: '#4FD1C5', fontWeight: 'bold' }}>BONUS:</span> <span style={{ color: '#d1d5db' }}>{bonus.title}</span>
-                                    <span style={{ display: 'block', fontSize: '0.9rem', color: '#6b7280' }}>{bonus.description} ({bonus.value} Value)</span>
+                                    <span style={{ display: 'block', fontSize: '0.9rem', color: '#6b7280' }}>
+                                        {bonus.description} (<PriceDisplay amountUSD={bonus.value} /> Value)
+                                    </span>
                                 </div>
                             ))}
                         </div>
@@ -191,6 +194,619 @@ export default function ProductPage() {
                     productType={mbtiType}
                 />
             </div>
+        );
+    }
+
+    // --- ENFP CAMPAIGNER LAYOUT ---
+    if (mbtiType === 'ENFP') {
+        const { script } = product;
+        return (
+            <div className="product-page layout-enfp" style={{
+                background: '#ffffff',
+                color: '#000000',
+                fontFamily: '"Outfit", sans-serif',
+                minHeight: '100vh',
+                overflowX: 'hidden'
+            }}>
+                <style jsx>{`
+                    .enfp-container {
+                        max-width: 1000px;
+                        margin: 0 auto;
+                        padding: 0 20px;
+                    }
+                    .enfp-card {
+                        background: #fefae0;
+                        border-radius: 20px;
+                        padding: 30px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                        border: 2px solid #fff;
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        cursor: pointer;
+                    }
+                    .enfp-card:hover {
+                        transform: translateY(-8px) rotate(1deg);
+                        box-shadow: 0 20px 40px rgba(255, 0, 110, 0.15);
+                        border-color: #ff006e;
+                    }
+                    .enfp-btn {
+                        background: linear-gradient(135deg, #ff006e, #fb5607);
+                        color: white !important;
+                        padding: 20px 45px;
+                        border-radius: 50px;
+                        font-weight: 700;
+                        font-size: 1.2rem;
+                        border: none;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 10px 25px rgba(255, 0, 110, 0.3);
+                        display: inline-block;
+                        text-decoration: none;
+                    }
+                    .enfp-btn:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 15px 35px rgba(255, 0, 110, 0.5);
+                    }
+                    .hero-visual {
+                        animation: float 6s ease-in-out infinite;
+                    }
+                    @keyframes float {
+                        0% { transform: translateY(0px); }
+                        50% { transform: translateY(-15px); }
+                        100% { transform: translateY(0px); }
+                    }
+                `}</style>
+
+                {/* Back Link */}
+                <div style={{ padding: '20px 0' }}>
+                    <div className="enfp-container">
+                        <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#333', textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>
+                            ← Back
+                        </Link>
+                    </div>
+                </div>
+
+                {/* HERO SECTION */}
+                <header style={{ textAlign: 'center', marginTop: '40px', marginBottom: '80px' }}>
+                    <div className="enfp-container">
+                        <span style={{
+                            background: '#ffbe0b',
+                            color: '#000',
+                            padding: '8px 20px',
+                            borderRadius: '30px',
+                            fontWeight: '800',
+                            letterSpacing: '1px',
+                            marginBottom: '25px',
+                            display: 'inline-block',
+                            boxShadow: '0 5px 15px rgba(255, 190, 11, 0.3)'
+                        }}>
+                            ENFP EXCLUSIVE
+                        </span>
+
+                        <h1 style={{
+                            fontSize: 'clamp(3rem, 6vw, 4.5rem)',
+                            fontWeight: '800',
+                            lineHeight: 1.1,
+                            marginBottom: '20px',
+                            background: 'linear-gradient(45deg, #ff006e, #fb5607)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}>
+                            {product.title}
+                        </h1>
+
+                        <p style={{
+                            fontSize: '1.5rem',
+                            maxWidth: '700px',
+                            margin: '0 auto 40px',
+                            lineHeight: 1.5,
+                            color: '#444'
+                        }}>
+                            What if your life didn’t have to feel smaller to be stable?<br />
+                            <span style={{ color: '#ff006e', fontWeight: 'bold' }}>A playful, meaningful framework for curious minds who refuse to live on autopilot.</span>
+                        </p>
+
+                        <div className="hero-visual" style={{
+                            maxWidth: '900px',
+                            margin: '0 auto',
+                            borderRadius: '30px',
+                            overflow: 'hidden',
+                            boxShadow: '0 30px 60px rgba(0,0,0,0.1)',
+                            border: '4px solid #fff'
+                        }}>
+                            {product.script.image_url ? (
+                                <img src={product.script.image_url} alt={product.title} style={{ width: '100%', display: 'block' }} />
+                            ) : (
+                                <div style={{ height: '500px', background: 'linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    [ Visual: {script.hook_image_prompt} ]
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </header>
+
+                {/* EMOTIONAL EXCITEMENT */}
+                <section style={{ padding: '80px 0', background: '#fff' }}>
+                    <div className="enfp-container" style={{ textAlign: 'center', maxWidth: '800px' }}>
+                        <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '30px' }}>You’re not lost. You’re exploring.</h2>
+                        <div style={{ fontSize: '1.3rem', lineHeight: 1.8, color: '#555', textAlign: 'left' }}>
+                            <p style={{ marginBottom: '20px' }}>
+                                You get excited by ideas. You see possibilities everywhere. You feel called toward <i>more</i> — even when you can’t name it.
+                            </p>
+                            <p style={{ marginBottom: '20px' }}>
+                                And the world keeps telling you to calm down, settle, specialize.
+                            </p>
+                            <p style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#000' }}>
+                                But what if your curiosity is the point?
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* WHAT THIS IS */}
+                <section style={{ padding: '80px 0', background: '#fefae0' }}>
+                    <div className="enfp-container" style={{ textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '20px', color: '#fb5607' }}>This isn’t a plan.<br />It’s a playground.</h2>
+                        <p style={{ fontSize: '1.3rem', maxWidth: '600px', margin: '0 auto 60px', color: '#666' }}>
+                            It’s a flexible, creative space designed to help you follow curiosity without chaos.
+                        </p>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px', textAlign: 'left' }}>
+                            <div className="enfp-card">
+                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🌈</div>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>Follow the Spark</h3>
+                                <p style={{ color: '#555' }}>Start where curiosity feels alive. Don't force yourself into a linear path.</p>
+                            </div>
+                            <div className="enfp-card">
+                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🧭</div>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>Connect the Dots</h3>
+                                <p style={{ color: '#555' }}>Turn scattered ideas into surprising clarity. Your pattern recognition is your superpower.</p>
+                            </div>
+                            <div className="enfp-card">
+                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🚀</div>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>Move Flexibly</h3>
+                                <p style={{ color: '#555' }}>Momentum without pressure. Ship things because it's fun, not because you "have to".</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* SOCIAL HOOK */}
+                <section style={{ padding: '100px 0', textAlign: 'center' }}>
+                    <div className="enfp-container">
+                        <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '30px' }}>Your growth doesn’t just change you.</h2>
+                        <p style={{ fontSize: '1.4rem', maxWidth: '700px', margin: '0 auto', lineHeight: 1.6, color: '#444' }}>
+                            When you’re aligned, inspired, and alive — your energy ripples outward. ENFPs change rooms, conversations, and futures just by being fully themselves.
+                        </p>
+                    </div>
+                </section>
+
+                {/* CTA */}
+                <section style={{ padding: '80px 0 120px', background: 'linear-gradient(180deg, #fff 0%, #fff0f5 100%)', textAlign: 'center' }}>
+                    <div className="enfp-container">
+                        <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '20px' }}>Curious?</h2>
+                        <p style={{ fontSize: '1.3rem', marginBottom: '40px', color: '#666' }}>You don’t have to decide anything yet.</p>
+
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            className="enfp-btn"
+                        >
+                            Let me explore
+                        </button>
+
+                        <div style={{ marginTop: '30px', color: '#888' }}>
+                            <div style={{ fontWeight: 'bold', color: '#333', fontSize: '1.2rem' }}>
+                                <PriceDisplay amountUSD={script.price_discounted} showBadge /> — lifetime access
+                            </div>
+                            <p style={{ fontSize: '0.9rem', marginTop: '10px' }}>
+                                One decision. Infinite exploration.<br />
+                                If it doesn't spark excitement, full refund. No awkward emails.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <footer style={{ textAlign: 'center', padding: '40px', color: '#999', fontSize: '0.9rem' }}>
+                    Built for curious souls. No pressure. No urgency. Just possibility.
+                </footer>
+                <CheckoutModal
+                    isOpen={isCheckoutOpen}
+                    onClose={() => setIsCheckoutOpen(false)}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
+                    productId={slug}
+                    productType={mbtiType}
+                />
+            </div>
+        );
+    }
+
+    // --- ENFJ PROTAGONIST LAYOUT ---
+    if (theme.layoutType === 'ENFJ_PROTAGONIST') {
+        const { script } = product;
+        return (
+            <div className="product-page layout-enfj" style={{
+                background: '#fffaf0', // Warm floral white
+                color: '#4a4a4a',
+                fontFamily: '"Inter", sans-serif',
+                minHeight: '100vh',
+                overflowX: 'hidden'
+            }}>
+                <style jsx>{`
+                    .enfj-container {
+                        max-width: 1000px;
+                        margin: 0 auto;
+                        padding: 0 20px;
+                    }
+                    .enfj-section {
+                        margin-bottom: 100px;
+                    }
+                    .enfj-card {
+                        background: #fff;
+                        border-radius: 16px;
+                        padding: 30px;
+                        box-shadow: 0 10px 30px rgba(255, 140, 105, 0.1);
+                        border: 1px solid rgba(255, 140, 105, 0.1);
+                        transition: transform 0.3s ease;
+                    }
+                    .enfj-card:hover {
+                        transform: translateY(-5px);
+                    }
+                    .enfj-btn {
+                        background: #ff8c69;
+                        color: white !important;
+                        padding: 18px 40px;
+                        border-radius: 50px;
+                        font-weight: 600;
+                        font-size: 1.1rem;
+                        border: none;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(255, 140, 105, 0.4);
+                        display: inline-block;
+                        text-decoration: none;
+                    }
+                    .enfj-btn:hover {
+                        background: #ff7650;
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(255, 140, 105, 0.6);
+                    }
+                    .text-gradient {
+                        background: linear-gradient(135deg, #ff8c69, #ffb347);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }
+                `}</style>
+
+                {/* Back Link */}
+                <div style={{ padding: '20px 0', borderBottom: '1px solid #ffe4d1' }}>
+                    <div className="enfj-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8d8d8d', textDecoration: 'none', fontWeight: 500 }}>
+                            ← Back
+                        </Link>
+                        <Link href="/" style={{ color: '#8d8d8d', textDecoration: 'none', fontWeight: 500 }}>
+                            Home
+                        </Link>
+                        <span style={{ color: '#8d8d8d', opacity: 0.6 }}>/ The Protagonist (ENFJ)</span>
+                    </div>
+                </div>
+
+                {/* HERO SECTION */}
+                <header className="enfj-section" style={{ textAlign: 'center', marginTop: '60px' }}>
+                    <div className="enfj-container">
+                        <span style={{
+                            display: 'inline-block',
+                            background: 'rgba(255, 140, 105, 0.1)',
+                            color: '#ff8c69',
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            marginBottom: '20px',
+                            letterSpacing: '1px'
+                        }}>
+                            ENFJ EXCLUSIVE
+                        </span>
+
+                        <h1 style={{
+                            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                            fontWeight: '700',
+                            color: '#2d3436',
+                            lineHeight: 1.1,
+                            marginBottom: '24px',
+                            fontFamily: '"Outfit", sans-serif'
+                        }}>
+                            {product.title}
+                        </h1>
+
+                        <p style={{
+                            fontSize: '1.25rem',
+                            color: '#636e72',
+                            maxWidth: '600px',
+                            margin: '0 auto 40px',
+                            lineHeight: 1.6
+                        }}>
+                            <span className="text-gradient">A purpose-driven framework for people who feel called<br />
+                                to guide, uplift, and bring out the best in others.</span>
+                        </p>
+
+                        <div style={{ position: 'relative', maxWidth: '800px', margin: '0 auto', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+                            {product.script.image_url ? (
+                                <img src={product.script.image_url} alt={product.title} style={{ width: '100%', display: 'block' }} />
+                            ) : (
+                                <div style={{ height: '400px', background: 'linear-gradient(135deg, #ffd1b3, #ffeaa7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d35400' }}>
+                                    [ Warm Visual: {script.hook_image_prompt} ]
+                                </div>
+                            )}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                padding: '30px',
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+                                color: 'white',
+                                textAlign: 'left'
+                            }}>
+                                <h2 style={{ fontSize: '1.5rem', fontWeight: '600' }}>{product.title}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                {/* REST OF ENFJ CONTENT (Placeholder for now, keeping existing structure if needed or just letting it flow)
+                   Actually, the previous ENFJ block continued below. I need to make sure I don't break the file structure.
+                   The previous view showed I was inside the return.
+                   Wait, I am adding ENFP handling. I should add a check for ENFP *before* ENFJ or as a separate block.
+                   But the ViewFile showed generic structure until the ENFJ block.
+                   I will insert the ENFP block BEFORE the ENFJ block if possible, or replace the whole Return logic to route correctly.
+                   The current file has:
+                   if (mbtiType === 'INTJ') ...
+                   if (mbtiType === 'ENFJ') ...
+                   
+                   I need to find where ENFJ starts.
+                   Line 245 was start of return?
+                   Let's look at the file content again to be sure where to insert ENFP.
+                   I should ViewFile again to be safe.
+                */}
+                {/* Back Link */}
+                <div style={{ padding: '20px 0', borderBottom: '1px solid #ffe4d1' }}>
+                    <div className="enfj-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8d8d8d', textDecoration: 'none', fontWeight: 500 }}>
+                            ← Back
+                        </Link>
+                        <Link href="/" style={{ color: '#8d8d8d', textDecoration: 'none', fontWeight: 500 }}>
+                            Home
+                        </Link>
+                        <span style={{ color: '#8d8d8d', opacity: 0.6 }}>/ The Protagonist (ENFJ)</span>
+                    </div>
+                </div>
+
+                {/* HERO SECTION */}
+                <header className="enfj-section" style={{ textAlign: 'center', marginTop: '60px' }}>
+                    <div className="enfj-container">
+                        <span style={{
+                            display: 'inline-block',
+                            background: 'rgba(255, 140, 105, 0.1)',
+                            color: '#ff8c69',
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            fontSize: '0.85rem',
+                            fontWeight: 'bold',
+                            marginBottom: '20px',
+                            letterSpacing: '1px'
+                        }}>
+                            ENFJ EXCLUSIVE
+                        </span>
+
+                        <h1 style={{
+                            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                            fontWeight: '700',
+                            color: '#2d3436',
+                            lineHeight: 1.1,
+                            marginBottom: '24px',
+                            fontFamily: '"Outfit", sans-serif'
+                        }}>
+                            {product.title}
+                        </h1>
+
+                        <p style={{
+                            fontSize: '1.25rem',
+                            color: '#636e72',
+                            maxWidth: '600px',
+                            margin: '0 auto 40px',
+                            lineHeight: 1.6
+                        }}>
+                            You were never meant to walk this path alone.<br />
+                            <span className="text-gradient">A purpose-driven framework for people who feel called<br />
+                                to guide, uplift, and bring out the best in others.</span>
+                        </p>
+
+
+                        <div style={{ position: 'relative', maxWidth: '800px', margin: '0 auto', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+                            {product.script.image_url ? (
+                                <img src={product.script.image_url} alt="Ideal Future" style={{ width: '100%', display: 'block' }} />
+                            ) : (
+                                <div style={{ height: '400px', background: 'linear-gradient(135deg, #ffd1b3, #ffeaa7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d35400' }}>
+                                    [ Warm Visual: {script.hook_image_prompt} ]
+                                </div>
+                            )}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                padding: '30px',
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+                                color: 'white',
+                                textAlign: 'left'
+                            }}>
+                                <h2 style={{ fontSize: '1.5rem', fontWeight: '600' }}>{product.title}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </header >
+
+                {/* SECTION 2: EMOTIONAL VALIDATION */}
+                < section className="enfj-section" >
+                    <div className="enfj-container" style={{ maxWidth: '800px', textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '2rem', marginBottom: '30px', color: '#2d3436', fontFamily: '"Outfit", sans-serif' }}>
+                            You carry responsibility naturally.
+                        </h2>
+                        <div style={{ fontSize: '1.15rem', color: '#636e72', lineHeight: 1.8, textAlign: 'left' }}>
+                            <p style={{ marginBottom: '20px' }}>
+                                You notice when others are struggling. You instinctively step into the role of supporter, guide, or motivator. You feel fulfilled when people around you grow.
+                            </p>
+                            <div style={{
+                                background: '#fff0e6',
+                                borderLeft: '4px solid #ff8c69',
+                                padding: '20px 30px',
+                                borderRadius: '0 8px 8px 0',
+                                marginTop: '30px'
+                            }}>
+                                <p style={{ margin: 0, fontStyle: 'italic', color: '#a65132' }}>
+                                    But carrying everyone else can become heavy when you don’t have space to refuel or reflect.
+                                </p>
+                            </div>
+                            <p style={{ marginTop: '30px' }}>
+                                Specifically regarding: {script.pain_story}
+                            </p>
+                        </div>
+                    </div>
+                </section >
+
+                {/* SECTION 3: WHAT THIS IS */}
+                < section className="enfj-section" style={{ background: '#fff', padding: '80px 0' }
+                }>
+                    <div className="enfj-container">
+                        <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto' }}>
+                            <h2 style={{ fontSize: '2rem', marginBottom: '40px', color: '#2d3436' }}>
+                                This isn’t about fixing yourself.
+                            </h2>
+                            <p style={{ fontSize: '1.2rem', marginBottom: '30px', color: '#636e72' }}>
+                                It’s about strengthening your ability to:
+                            </p>
+                            <ul style={{
+                                textAlign: 'left',
+                                listStyle: 'none',
+                                // padding: 0 removed in favor of padding: '40px' below
+                                fontSize: '1.1rem',
+                                color: '#2d3436',
+                                background: '#fdfbf7',
+                                display: 'inline-block',
+                                borderRadius: '16px',
+                                padding: '40px'
+                            }}>
+                                <li style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <span style={{ color: '#ff8c69', fontSize: '1.4rem' }}>✦</span> lead with empathy without burning out
+                                </li>
+                                <li style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <span style={{ color: '#ff8c69', fontSize: '1.4rem' }}>✦</span> communicate with clarity and heart
+                                </li>
+                                <li style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <span style={{ color: '#ff8c69', fontSize: '1.4rem' }}>✦</span> create positive change that lasts
+                                </li>
+                            </ul>
+                            <p style={{ marginTop: '40px', fontStyle: 'italic', color: '#8d8d8d' }}>
+                                "{script.transition_mechanism}"
+                            </p>
+                        </div>
+                    </div>
+                </section >
+
+                {/* SECTION 4: HOW IT EMPOWERS YOU */}
+                < section className="enfj-section" >
+                    <div className="enfj-container">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+                            <div className="enfj-card">
+                                <div style={{ fontSize: '2rem', marginBottom: '20px' }}>🌱</div>
+                                <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: '#2d3436' }}>Emotional Intelligence</h3>
+                                <p style={{ color: '#636e72', lineHeight: 1.6 }}>Understand your own needs while supporting others. Gain clarity on where you end and others begin.</p>
+                            </div>
+                            <div className="enfj-card">
+                                <div style={{ fontSize: '2rem', marginBottom: '20px' }}>🌍</div>
+                                <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: '#2d3436' }}>Purposeful Influence</h3>
+                                <p style={{ color: '#636e72', lineHeight: 1.6 }}>Turn care and vision into meaningful action. Structure your impact so it scales without draining you.</p>
+                            </div>
+                            <div className="enfj-card">
+                                <div style={{ fontSize: '2rem', marginBottom: '20px' }}>🤍</div>
+                                <h3 style={{ fontSize: '1.4rem', marginBottom: '15px', color: '#2d3436' }}>Sustainable Leadership</h3>
+                                <p style={{ color: '#636e72', lineHeight: 1.6 }}>Help others grow without losing yourself. Build systems of support that sustain everyone, including you.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section >
+
+                {/* SECTION 5: WHO THIS IS FOR */}
+                < section className="enfj-section" >
+                    <div className="enfj-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
+                        <div style={{ background: '#fff', borderRadius: '16px', padding: '40px', borderTop: '4px solid #81ecec' }}>
+                            <h3 style={{ fontSize: '1.3rem', marginBottom: '25px', color: '#2d3436' }}>This will resonate if you:</h3>
+                            <ul style={{ listStyle: 'none', padding: 0, color: '#636e72' }}>
+                                <li style={{ marginBottom: '12px', display: 'flex', gap: '10px' }}><span style={{ color: '#81ecec' }}>✔</span> feel called to guide others</li>
+                                <li style={{ marginBottom: '12px', display: 'flex', gap: '10px' }}><span style={{ color: '#81ecec' }}>✔</span> value harmony and growth</li>
+                                <li style={{ display: 'flex', gap: '10px' }}><span style={{ color: '#81ecec' }}>✔</span> want to lead with heart and clarity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section >
+
+                {/* SECTION 6: CTA */}
+                < section className="enfj-section" style={{ textAlign: 'center', padding: '80px 20px', background: 'linear-gradient(to bottom, transparent, rgba(255, 140, 105, 0.05))' }
+                }>
+                    <div className="enfj-container">
+                        <h2 style={{ fontSize: '2.2rem', marginBottom: '20px', color: '#2d3436' }}>Average impact is not enough.</h2>
+                        <p style={{ fontSize: '1.3rem', color: '#636e72', marginBottom: '40px' }}>
+                            When you grow, others benefit too.
+                        </p>
+
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            className="enfj-btn"
+                        >
+                            Begin the journey
+                        </button>
+                    </div>
+                </section >
+
+                {/* SECTION 7: PRICING */}
+                < section className="enfj-section" style={{ textAlign: 'center' }}>
+                    <div className="enfj-container">
+                        <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#2d3436', fontFamily: '"Outfit", sans-serif' }}>
+                            <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                            <span style={{ fontSize: '1rem', color: '#636e72', fontWeight: 'normal', display: 'block', marginTop: '10px' }}>lifetime access</span>
+                        </div>
+                        <p style={{ marginTop: '20px', color: '#8d8d8d', maxWidth: '400px', margin: '20px auto 0' }}>
+                            Designed to support long-term growth, not short-term hype.
+                        </p>
+                    </div>
+                </section >
+
+                {/* SECTION 8: PROMISE */}
+                < section className="enfj-section" style={{ paddingBottom: '60px' }}>
+                    <div className="enfj-container" style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+                        <div style={{ padding: '30px', background: '#fff', borderRadius: '16px', border: '1px dashed #d1ccc0' }}>
+                            <p style={{ color: '#636e72', lineHeight: 1.6 }}>
+                                <strong>Our Promise:</strong> If this doesn’t feel supportive, inspiring, or aligned with your values, you can request a refund — no questions asked. Trust and care matter.
+                            </p>
+                        </div>
+                    </div>
+                </section >
+
+                {/* FOOTER */}
+                < footer style={{ textAlign: 'center', padding: '40px 20px', borderTop: '1px solid #ffe4d1', color: '#b2bec3' }}>
+                    <p style={{ marginBottom: '10px' }}>Created with intention.</p>
+                    <p>Designed for people who uplift others.<br />No urgency. Just purpose.</p>
+                </footer >
+
+                <CheckoutModal
+                    isOpen={isCheckoutOpen}
+                    onClose={() => setIsCheckoutOpen(false)}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
+                    productId={slug}
+                    productType={mbtiType}
+                />
+            </div >
         );
     }
 
@@ -275,10 +891,19 @@ export default function ProductPage() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Scroll Indicator */}
+                        <div style={{ marginTop: '30px', animation: 'float 3s ease-in-out infinite' }}>
+                            <span style={{ fontSize: '1.5rem', color: '#D5BDAF', cursor: 'pointer' }} onClick={() => {
+                                document.getElementById('infp-content-start')?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                ↓
+                            </span>
+                        </div>
                     </header>
 
                     {/* SECTION 2: EMOTIONAL MIRROR */}
-                    <section style={{ marginBottom: '100px' }}>
+                    <section id="infp-content-start" style={{ marginBottom: '100px', scrollMarginTop: '40px' }}>
                         <h2 style={{ fontSize: '1.8rem', fontWeight: '400', color: '#4A4A4A', marginBottom: '30px', fontFamily: '"Lora", serif' }}>
                             You’ve always felt a little different.
                         </h2>
@@ -383,10 +1008,30 @@ export default function ProductPage() {
                             Explore gently
                         </button>
 
+                        <style jsx>{`
+                            @keyframes float {
+                                0% { transform: translateY(0px); }
+                                50% { transform: translateY(10px); }
+                                100% { transform: translateY(0px); }
+                            }
+                            .infp-cta-button {
+                                background: #e8a598 !important;
+                                color: #fff !important;
+                                border: none !important;
+                                box-shadow: 0 4px 15px rgba(232, 165, 152, 0.4);
+                                font-weight: 600;
+                            }
+                            .infp-cta-button:hover {
+                                background: #d69488 !important;
+                                transform: translateY(-2px) !important;
+                                box-shadow: 0 6px 20px rgba(232, 165, 152, 0.6);
+                            }
+                        `}</style>
+
                         <div style={{ marginTop: '40px' }}>
-                            <p style={{ fontSize: '0.9rem', color: '#4A4A4A', marginBottom: '5px' }}>
+                            <div style={{ fontSize: '0.9rem', color: '#4A4A4A', marginBottom: '5px' }}>
                                 <PriceDisplay amountUSD={script.price_discounted} showBadge /> — lifetime access
-                            </p>
+                            </div>
                             <p style={{ fontSize: '0.8rem', color: '#A5A5A5', fontStyle: 'italic' }}>Priced to be accessible, not to pressure you.</p>
                         </div>
                     </section>
@@ -625,7 +1270,7 @@ export default function ProductPage() {
                                         <div key={i} style={{ marginBottom: '6px', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                                             <span style={{ opacity: 0.5 }}>//</span>
                                             <span>{b.title}</span>
-                                            <span style={{ color: '#7C7CFF', opacity: 0.8 }}>[{b.value}]</span>
+                                            <span style={{ color: '#7C7CFF', opacity: 0.8 }}>[<PriceDisplay amountUSD={b.value} />]</span>
                                         </div>
                                     ))}
                                 </div>
@@ -686,12 +1331,8 @@ export default function ProductPage() {
                 </div>
 
                 {/* Header */}
-                <header className="mbti-header">
-                    <div className="mbti-title short">
-                        <h1>{mbtiType}</h1>
-                        <h1>{mbtiType}</h1>
-                    </div>
-                </header>
+                {/* Header removed to prevent overlap with Back button as per request */}
+
 
                 <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px' }}>
 
@@ -821,8 +1462,12 @@ export default function ProductPage() {
                         <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>No grind. No fluff.</div>
 
                         <div className="entp-pricing" style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-                            <span style={{ textDecoration: 'line-through', color: '#64748b', fontSize: '1.5rem' }}><PriceDisplay amountUSD={script.price_original} /></span>
-                            <span style={{ color: '#fff', fontSize: '3rem', fontWeight: 'bold' }}><PriceDisplay amountUSD={script.price_discounted} showBadge /></span>
+                            <span style={{ textDecoration: 'line-through', color: '#64748b', fontSize: '1.5rem' }}>
+                                <PriceDisplay amountUSD={script.price_original} />
+                            </span>
+                            <span style={{ color: '#fff', fontSize: '3rem', fontWeight: 'bold' }}>
+                                <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                            </span>
                         </div>
                         <p style={{ color: '#FF4ECD', marginTop: '10px', fontSize: '1rem' }}>Cheap compared to waiting ten years.</p>
 
@@ -903,7 +1548,7 @@ export default function ProductPage() {
                 <main className="sales-container" style={{ maxWidth: '1000px', marginTop: '60px' }}>
 
                     {/* HERO */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 0.8fr)', gap: '60px', alignItems: 'center', marginBottom: '100px' }}>
+                    <div className="entj-hero-grid-inline">
                         <div>
                             <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '16px', letterSpacing: '2px', textTransform: 'uppercase' }}>ENTJ EXCLUSIVE</div>
                             <h1 className="sales-heading" style={{ fontSize: '3.5rem', lineHeight: '1.1', marginBottom: '24px', letterSpacing: '-1px' }}>
@@ -932,7 +1577,7 @@ export default function ProductPage() {
                         <div style={{ borderTop: '1px solid #C1121F', width: '60px', marginBottom: '20px' }}></div>
                         <h2 className="sales-heading" style={{ fontSize: '2rem', marginBottom: '40px' }}>The Internal Bottleneck</h2>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '40px' }}>
+                        <div className="entj-bottleneck-grid">
                             <div style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#94a3b8' }}>
                                 <p style={{ marginBottom: '20px' }}>{script.pain_story}</p>
                             </div>
@@ -959,7 +1604,7 @@ export default function ProductPage() {
                         <h3 className="sales-heading" style={{ fontSize: '2rem', marginBottom: '10px' }}>{product.title}</h3>
                         <p style={{ fontSize: '1.2rem', marginBottom: '60px', color: '#94a3b8' }}>{script.product_description}</p>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: '#141923', border: '1px solid #141923' }}>
+                        <div className="entj-protocol-grid">
                             {script.features_bullets.map((feature: string, i: number) => {
                                 const parts = feature.split(':');
                                 const title = parts[0];
@@ -1142,7 +1787,7 @@ export default function ProductPage() {
                     </header>
 
                     {/* INTERNAL BOTTLENECK */}
-                    <section style={{ marginBottom: '160px', display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 1fr', gap: '60px', alignItems: 'start' }}>
+                    <section className="entj-imperial-bottleneck-grid">
                         <div>
                             <div style={{ color: '#6D28D9', fontSize: '0.9rem', marginBottom: '20px', fontWeight: 'bold' }}>THE INTERNAL BOTTLENECK</div>
                             <h2 style={{ fontSize: '2.5rem', lineHeight: '1.2', marginBottom: '30px', fontWeight: '600' }}>
@@ -1302,7 +1947,7 @@ export default function ProductPage() {
                                         <div style={{ fontSize: '0.9rem', color: '#9CA3AF' }}>{bonus.description}</div>
                                     </div>
                                     <div style={{ color: '#4B5563', fontWeight: '600' }}>
-                                        {bonus.value}
+                                        <PriceDisplay amountUSD={bonus.value} />
                                     </div>
                                 </div>
                             ))}
@@ -1615,9 +2260,13 @@ export default function ProductPage() {
                         </motion.button>
 
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', alignItems: 'center', color: '#4B5563', fontSize: '0.9rem' }}>
-                            <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>{script.price_original}</span>
+                            <span style={{ textDecoration: 'line-through', opacity: 0.6 }}>
+                                <PriceDisplay amountUSD={script.price_original} />
+                            </span>
                             <span>→</span>
-                            <span style={{ color: '#8e94f2', fontWeight: 'bold', fontSize: '1.1rem' }}>{script.price_discounted}</span>
+                            <span style={{ color: '#8e94f2', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                            </span>
                         </div>
 
                         {/* Bonuses */}
@@ -1666,6 +2315,423 @@ export default function ProductPage() {
                     onClose={() => setIsCheckoutOpen(false)}
                     productName={script.product_name}
                     amountUSD={script.price_discounted}
+
+                    productId={slug}
+                    productType={mbtiType}
+                />
+            </div>
+        )
+    }
+
+    // --- ISTP VIRTUOSO LAYOUT ---
+    if (theme.layoutType === 'ISTP_VIRTUOSO') {
+        const { script } = product;
+        return (
+            <div className="product-page layout-istp-virtuoso" style={{
+                backgroundColor: '#000000', // Absolute Black for contrast
+                color: '#E0E0E0',
+                fontFamily: '"JetBrains Mono", "Consolas", monospace', // Utilitarian font
+                minHeight: '100vh',
+                overflowX: 'hidden'
+            }}>
+                {/* Back Button */}
+                <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
+                    <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        color: '#00FF41', // Matrix Green/High Vis
+                        textDecoration: 'none',
+                        background: '#111', padding: '5px 16px',
+                        border: '1px solid #00FF41',
+                        fontSize: '0.9rem', fontWeight: 'bold'
+                    }}>
+                        <span>{'<'}</span>
+                        <span>BACK_TO_INDEX</span>
+                    </Link>
+                </div>
+
+                <nav style={{ padding: '20px', borderBottom: '1px solid #333', textAlign: 'right', fontFamily: 'monospace', color: '#666' }}>
+                    <span style={{ color: '#00FF41' }}>USER:</span> GUEST // <span style={{ color: '#00FF41' }}>TYPE:</span> ISTP
+                </nav>
+
+                <main style={{ maxWidth: '900px', margin: '0 auto', padding: '60px 20px' }}>
+
+                    {/* 1. HERO - SCHEMATIC STYLE */}
+                    <div style={{
+                        border: '1px solid #333',
+                        padding: '40px',
+                        position: 'relative',
+                        marginBottom: '80px',
+                        background: 'repeating-linear-gradient(45deg, #050505, #050505 10px, #0a0a0a 10px, #0a0a0a 20px)'
+                    }}>
+                        <div style={{ position: 'absolute', top: '-10px', left: '20px', background: '#000', padding: '0 10px', color: '#00FF41', fontSize: '0.8rem' }}>
+                            PROJECT_SPECIFICATION
+                        </div>
+
+                        <h1 style={{
+                            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                            fontFamily: 'monospace',
+                            color: '#FFFFFF',
+                            marginBottom: '20px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '-1px'
+                        }}>
+                            {script.headline}
+                        </h1>
+
+                        <p style={{
+                            fontSize: '1.2rem',
+                            color: '#CCCCCC',
+                            fontFamily: 'monospace',
+                            borderLeft: '4px solid #00FF41',
+                            paddingLeft: '20px',
+                            marginBottom: '40px'
+                        }}>
+                            {script.subheadline}
+                        </p>
+
+                        <div style={{ border: '1px dashed #666', padding: '10px', display: 'inline-block', color: '#666', fontSize: '0.8rem' }}>
+                            STATUS: VISUAL_RENDER_PENDING <br />
+                            SRC: {product.script.image_url || "NULL"}
+                        </div>
+                        {product.script.image_url && (
+                            <img src={product.script.image_url} alt="Schematic" style={{ marginTop: '20px', width: '100%', filter: 'grayscale(100%) contrast(1.2)', border: '1px solid #333' }} />
+                        )}
+                    </div>
+
+                    {/* 2. THE PROBLEM - DIAGNOSTIC REPORT */}
+                    <div style={{ marginBottom: '100px' }}>
+                        <h2 style={{ color: '#00FF41', fontSize: '1.5rem', fontFamily: 'monospace', marginBottom: '30px' }}>
+                            {'>'} RUNNING_DIAGNOSTIC...
+                        </h2>
+
+                        <div style={{ display: 'grid', gap: '30px', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                            <div style={{ border: '1px solid #333', padding: '30px' }}>
+                                <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '15px' }}>ERROR LOG (PAIN POINTS)</h3>
+                                <p style={{ color: '#aaa', lineHeight: '1.6', fontFamily: 'monospace' }}>
+                                    {script.pain_story}
+                                </p>
+                            </div>
+
+                            <div style={{ border: '1px solid #333', padding: '30px' }}>
+                                <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '15px' }}>SYSTEM FAILURES</h3>
+                                <ul style={{ listStyle: 'none', padding: 0 }}>
+                                    {script.agitation_bullets.map((bullet: string | { title: string }, i: number) => (
+                                        <li key={i} style={{ marginBottom: '15px', color: '#ff3333', display: 'flex', gap: '10px' }}>
+                                            <span>[!]</span>
+                                            <span>{typeof bullet === 'string' ? bullet : bullet.title}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 3. THE FIX - TOOLKIT */}
+                    <div style={{ marginBottom: '100px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                            <span style={{ background: '#00FF41', color: '#000', padding: '5px 10px', fontWeight: 'bold' }}>SOLUTION_FOUND</span>
+                            <h2 style={{ fontSize: '2.5rem', color: '#fff', marginTop: '20px', fontFamily: 'monospace' }}>{script.transition_mechanism}</h2>
+                        </div>
+
+                        <div style={{ borderTop: '2px solid #333', borderBottom: '2px solid #333' }}>
+                            {script.features_bullets.map((feature: string, i: number) => (
+                                <div key={i} style={{
+                                    padding: '30px',
+                                    borderBottom: '1px solid #222',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '20px'
+                                }}>
+                                    <div style={{ fontSize: '2rem', color: '#00FF41', opacity: 0.5 }}>0{i + 1}</div>
+                                    <div style={{ fontFamily: 'monospace', color: '#ddd' }}>{feature}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* 4. ACQUISITION */}
+                    <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', border: '2px solid #00FF41', padding: '40px' }}>
+                        <h3 style={{ color: '#00FF41', marginBottom: '20px' }}>READY TO DEPLOY?</h3>
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginBottom: '30px' }}>
+                            <span style={{ textDecoration: 'line-through', color: '#666' }}>
+                                <PriceDisplay amountUSD={script.price_original} />
+                            </span>
+                            <span style={{ fontSize: '2.5rem', color: '#fff' }}>
+                                <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                            </span>
+                        </div>
+
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            style={{
+                                background: '#00FF41',
+                                color: '#000',
+                                border: 'none',
+                                padding: '20px 40px',
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold',
+                                fontFamily: 'monospace',
+                                cursor: 'pointer',
+                                width: '100%',
+                                textTransform: 'uppercase'
+                            }}
+                        >
+                            {'>'} {script.cta_text}
+                        </button>
+
+                        <div style={{ marginTop: '20px', fontSize: '0.9rem', color: '#888' }}>
+                            {script.guarantee_text}
+                        </div>
+                    </div>
+
+                </main>
+                <CheckoutModal
+                    isOpen={isCheckoutOpen}
+                    onClose={() => setIsCheckoutOpen(false)}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
+                    productId={slug}
+                    productType={mbtiType}
+                />
+            </div>
+        )
+    }
+
+    // --- ESFJ CONSUL LAYOUT ---
+    if (theme.layoutType === 'ESFJ_CONSUL') {
+        const { script } = product;
+        return (
+            <div className="product-page layout-esfj-consul" style={{
+                backgroundColor: '#FFFBF0', // Warm Cream
+                color: '#4A4A4A',
+                fontFamily: '"Outfit", sans-serif',
+                minHeight: '100vh',
+                overflowX: 'hidden'
+            }}>
+                {/* Custom Nav */}
+                <div style={{ background: '#fff', padding: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ textDecoration: 'none', color: '#666', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span>← Back to Community</span>
+                    </Link>
+                    <div style={{ fontWeight: 'bold', color: '#F2CC8F' }}>ESFJ • THE CONSUL</div>
+                </div>
+
+                <main style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>
+
+                    {/* Header */}
+                    <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                        <h1 style={{ fontSize: '3rem', color: '#2C3E50', marginBottom: '20px', lineHeight: '1.2' }}>{script.headline}</h1>
+                        <p style={{ fontSize: '1.3rem', color: '#7f8c8d', maxWidth: '600px', margin: '0 auto' }}>{script.subheadline}</p>
+                    </div>
+
+                    {/* Warm Image Frame */}
+                    <div style={{
+                        padding: '20px',
+                        background: '#fff',
+                        borderRadius: '20px',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+                        marginBottom: '80px',
+                        textAlign: 'center'
+                    }}>
+                        {product.script.image_url && (
+                            <img src={product.script.image_url} alt="Community" style={{ width: '100%', borderRadius: '12px' }} />
+                        )}
+                        <div style={{ marginTop: '20px', fontStyle: 'italic', color: '#95a5a6' }}>
+                            "Designed with your loved ones in mind."
+                        </div>
+                    </div>
+
+                    {/* Story / Connection */}
+                    <div style={{ background: '#fff', padding: '40px', borderRadius: '16px', marginBottom: '60px', borderLeft: '6px solid #F2CC8F' }}>
+                        <h2 style={{ fontSize: '1.8rem', marginBottom: '20px', color: '#E67E22' }}>Let's be honest...</h2>
+                        <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#555' }}>
+                            {script.pain_story}
+                        </p>
+                        <ul style={{ marginTop: '30px', listStyle: 'none', padding: 0 }}>
+                            {script.agitation_bullets.map((bullet: string | { title: string }, i: number) => (
+                                <li key={i} style={{ padding: '10px 0', borderBottom: '1px solid #eee', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <span style={{ color: '#E74C3C' }}>❤</span> {typeof bullet === 'string' ? bullet : bullet.title}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* How It Helps */}
+                    <div style={{ marginBottom: '80px' }}>
+                        <h2 style={{ textAlign: 'center', marginBottom: '40px', color: '#2C3E50' }}>How this supports you & yours</h2>
+                        <div style={{ display: 'grid', gap: '20px' }}>
+                            {script.features_bullets.map((feature: string, i: number) => (
+                                <div key={i} style={{ background: '#fff', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+                                    <div style={{ fontWeight: 'bold', color: '#F2CC8F', marginBottom: '5px' }}>Benefit {i + 1}</div>
+                                    <div style={{ color: '#555' }}>{feature}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Join Us CTA */}
+                    <div style={{ background: '#2C3E50', color: '#fff', padding: '50px', borderRadius: '20px', textAlign: 'center' }}>
+                        <h2 style={{ marginBottom: '20px', color: '#F2CC8F' }}>Join the Family</h2>
+                        <p style={{ marginBottom: '30px', opacity: 0.8 }}>{script.guarantee_text}</p>
+
+                        <div style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '10px' }}>
+                            <PriceDisplay amountUSD={script.price_discounted} showBadge />
+                        </div>
+                        <div style={{ textDecoration: 'line-through', opacity: 0.6, marginBottom: '30px' }}>
+                            <PriceDisplay amountUSD={script.price_original} />
+                        </div>
+
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            style={{
+                                background: '#F2CC8F',
+                                color: '#2C3E50',
+                                padding: '20px 50px',
+                                fontSize: '1.2rem',
+                                borderRadius: '50px',
+                                border: 'none',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                boxShadow: '0 10px 20px rgba(242, 204, 143, 0.3)'
+                            }}
+                        >
+                            {script.cta_text}
+                        </button>
+                    </div>
+
+                </main>
+                <CheckoutModal
+                    isOpen={isCheckoutOpen}
+                    onClose={() => setIsCheckoutOpen(false)}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
+                    productId={slug}
+                    productType={mbtiType}
+                />
+            </div>
+        )
+    }
+
+    // --- ESTJ EXECUTIVE LAYOUT ---
+    if (theme.layoutType === 'ESTJ_EXECUTIVE') {
+        const { script } = product;
+        return (
+            <div className="product-page layout-estj-executive" style={{
+                backgroundColor: '#F1F5F9', // Slate-100 (Clean, Professional)
+                color: '#0F172A', // Slate-900
+                fontFamily: '"Inter", sans-serif',
+                minHeight: '100vh',
+                overflowX: 'hidden'
+            }}>
+                {/* Top Bar - Dashboard Style */}
+                <div style={{ background: '#0F172A', color: '#fff', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 'bold', letterSpacing: '1px' }}>ESTJ // EXECUTIVE DASHBOARD</div>
+                    <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ color: '#fff', textDecoration: 'none', fontSize: '0.9rem', border: '1px solid #fff', padding: '5px 15px' }}>
+                        CLOSE FILE
+                    </Link>
+                </div>
+
+                <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px' }}>
+
+                    {/* Executive Summary (Hero) */}
+                    <div style={{ background: '#fff', border: '1px solid #ccc', padding: '40px', marginBottom: '40px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                        <div style={{ textTransform: 'uppercase', color: '#64748B', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '10px' }}>EXECUTIVE SUMMARY</div>
+                        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '20px', color: '#0F172A' }}>{script.headline}</h1>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: '600', color: '#334155', marginBottom: '30px', borderBottom: '2px solid #0F172A', paddingBottom: '20px', display: 'inline-block' }}>{script.subheadline}</h2>
+
+                        <div style={{ display: 'flex', gap: '30px', marginTop: '20px' }}>
+                            <div style={{ flex: 1 }}>
+                                {product.script.image_url && (
+                                    <img src={product.script.image_url} alt="Report Visual" style={{ width: '100%', border: '4px solid #0F172A' }} />
+                                )}
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                <div style={{ marginBottom: '20px' }}>
+                                    <strong>CURRENT STATUS:</strong> <span style={{ color: '#DC2626' }}>INEFFICIENT</span>
+                                </div>
+                                <div style={{ marginBottom: '20px' }}>
+                                    <strong>TARGET STATUS:</strong> <span style={{ color: '#16A34A' }}>OPTIMIZED</span>
+                                </div>
+                                <p style={{ color: '#475569' }}>{script.pain_story.substring(0, 150)}...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Operational Inefficencies */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '40px' }}>
+                        <div style={{ background: '#fff', border: '1px solid #ccc', padding: '30px' }}>
+                            <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', borderBottom: '2px solid #DC2626', paddingBottom: '10px', display: 'block' }}>IDENTIFIED RISKS</h3>
+                            <ul style={{ paddingLeft: '20px' }}>
+                                {script.agitation_bullets.map((bullet: string | { title: string }, i: number) => (
+                                    <li key={i} style={{ marginBottom: '10px', fontWeight: '500' }}>
+                                        {typeof bullet === 'string' ? bullet : bullet.title}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div style={{ background: '#fff', border: '1px solid #ccc', padding: '30px' }}>
+                            <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', borderBottom: '2px solid #16A34A', paddingBottom: '10px', display: 'block' }}>PROPOSED PROTOCOL</h3>
+                            <p style={{ fontWeight: 'bold', marginBottom: '15px' }}>{script.transition_mechanism}</p>
+                            <p style={{ fontSize: '0.9rem', color: '#475569' }}>Implementation of this protocol is expected to yield immediate results. No experimental theories. Just proven methodology.</p>
+                        </div>
+                    </div>
+
+                    {/* Deliverables */}
+                    <div style={{ background: '#0F172A', color: '#fff', padding: '40px', marginBottom: '40px' }}>
+                        <h3 style={{ borderBottom: '1px solid #fff', paddingBottom: '10px', marginBottom: '20px' }}>DELIVERABLES</h3>
+                        {script.features_bullets.map((feature: string, i: number) => (
+                            <div key={i} style={{ display: 'flex', marginBottom: '15px', alignItems: 'center', gap: '15px' }}>
+                                <div style={{ background: '#fff', color: '#0F172A', width: '25px', height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>{i + 1}</div>
+                                <div>{feature}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Authorization / Buy */}
+                    <div style={{ background: '#fff', border: '4px solid #0F172A', padding: '40px', textAlign: 'center' }}>
+                        <h3 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>AUTHORIZE PURCHASE</h3>
+
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '30px', alignItems: 'center' }}>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '0.8rem', color: '#666' }}>STANDARD PRICE</div>
+                                <div style={{ textDecoration: 'line-through' }}><PriceDisplay amountUSD={script.price_original} /></div>
+                            </div>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '0.8rem', color: '#666' }}>CORPORATE RATE</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: '800', color: '#0F172A' }}><PriceDisplay amountUSD={script.price_discounted} showBadge /></div>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            style={{
+                                background: '#1D4ED8', // Corporate Blue
+                                color: '#fff',
+                                padding: '20px 60px',
+                                fontSize: '1.2rem',
+                                fontWeight: 'bold',
+                                border: 'none',
+                                cursor: 'pointer',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px'
+                            }}
+                        >
+                            {script.cta_text}
+                        </button>
+
+                        <div style={{ marginTop: '20px', fontSize: '0.8rem', color: '#666', maxWidth: '500px', margin: '20px auto 0' }}>
+                            {script.guarantee_text}
+                        </div>
+                    </div>
+
+                </main>
+                <CheckoutModal
+                    isOpen={isCheckoutOpen}
+                    onClose={() => setIsCheckoutOpen(false)}
+                    productName={script.product_name}
+                    amountUSD={script.price_discounted}
+
                     productId={slug}
                     productType={mbtiType}
                 />
@@ -1881,8 +2947,8 @@ export default function ProductPage() {
                     <h3 className="sales-heading" style={{ fontSize: '1.5rem', color: 'var(--text-color)' }}>GET IMMEDIATE ACCESS</h3>
 
                     <div className="price-container">
-                        <span className="price-original">{script.price_original}</span>
-                        <span className="price-discounted">{script.price_discounted}</span>
+                        <span className="price-original"><PriceDisplay amountUSD={script.price_original} /></span>
+                        <span className="price-discounted"><PriceDisplay amountUSD={script.price_discounted} showBadge /></span>
                     </div>
 
                     <div className="bonus-stack">
@@ -1892,7 +2958,7 @@ export default function ProductPage() {
                                     <strong style={{ color: 'var(--text-color)', display: 'block' }}>BONUS: {bonus.title}</strong>
                                     <span style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>{bonus.description}</span>
                                 </div>
-                                <span className="bonus-value">{bonus.value} Value</span>
+                                <span className="bonus-value"><PriceDisplay amountUSD={bonus.value} /> Value</span>
                             </div>
                         ))}
                     </div>
