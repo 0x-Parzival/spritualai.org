@@ -6,3 +6,4 @@ declare module 'vanta/dist/vanta.clouds2.min';
 declare module 'vanta/dist/vanta.rings.min';
 declare module 'vanta/dist/vanta.globe.min';
 declare module 'vanta/dist/vanta.cells.min';
+declare module 'vanta/dist/vanta.dots.min';
