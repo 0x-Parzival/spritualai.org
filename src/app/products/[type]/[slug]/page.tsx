@@ -48,11 +48,38 @@ export default function ProductPage() {
         }
     };
 
+    // --- SEO SCHEMA GENERATION ---
+    const script = product?.script;
+    const jsonLd = script ? {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.title,
+        description: script.product_description || script.headline,
+        brand: {
+            '@type': 'Brand',
+            name: 'Spiritual AI'
+        },
+        offers: {
+            '@type': 'Offer',
+            price: script.price_discounted,
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock',
+            url: typeof window !== 'undefined' ? window.location.href : `https://spiritualai.store/products/${type}/${slug}`,
+            validFrom: '2024-01-01',
+            priceValidUntil: '2027-12-31'
+        },
+        image: script.image_url ? [`https://spiritualai.store${script.image_url}`] : [],
+        audience: {
+            '@type': 'Audience',
+            audienceType: `${mbtiType} Personality Type`
+        }
+    } : null;
+
     // --- INTJ STRATEGIC LAYOUT ---
     if (theme.layoutType === 'INTJ_STRATEGIC') {
         const { script } = product;
         return (
-            <div className="product-page layout-intj-strategic" style={{ position: 'relative' }}>
+            <div className="product-page layout-intj-strategic" style={{ position: 'relative' }}>{jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -208,7 +235,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                <style jsx>{`
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}<style jsx>{`
                     .enfp-container {
                         max-width: 1000px;
                         margin: 0 auto;
@@ -431,7 +458,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                <style jsx>{`
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}<style jsx>{`
                     .enfj-container {
                         max-width: 1000px;
                         margin: 0 auto;
@@ -821,7 +848,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                {/* Back Button */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button */}
                 <div style={{ position: 'absolute', top: '30px', left: '30px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -1069,7 +1096,7 @@ export default function ProductPage() {
         const [expandedThought, setExpandedThought] = useState<number | null>(null);
 
         return (
-            <div className="product-page layout-intp-curiosity" style={{ position: 'relative' }}>
+            <div className="product-page layout-intp-curiosity" style={{ position: 'relative' }}>{jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         color: '#64748b', textDecoration: 'none',
@@ -1311,7 +1338,7 @@ export default function ProductPage() {
                 '--primary': '#3DF5FF',
                 '--accent-glow': '#3DF5FF'
             } as React.CSSProperties}>
-                {/* Back Button */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button */}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -1520,7 +1547,7 @@ export default function ProductPage() {
 
         return (
             <div className="product-page layout-entj-command" style={{ background: '#0C0F14', minHeight: '100vh', color: '#fff', fontFamily: '"Inter", sans-serif' }}>
-                {/* Back Button */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button */}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -1692,7 +1719,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                {/* Back Button */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button */}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -2028,7 +2055,7 @@ export default function ProductPage() {
                 overflowX: 'hidden',
                 lineHeight: '1.8'
             }}>
-                {/* Back Button - Gentle text link */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button - Gentle text link */}
                 <div style={{ position: 'absolute', top: '30px', left: '30px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         color: '#4B5563',
@@ -2334,7 +2361,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                {/* Back Button */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Back Button */}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -2509,7 +2536,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                {/* Custom Nav */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Custom Nav */}
                 <div style={{ background: '#fff', padding: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ textDecoration: 'none', color: '#666', display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <span>← Back to Community</span>
@@ -2624,7 +2651,7 @@ export default function ProductPage() {
                 minHeight: '100vh',
                 overflowX: 'hidden'
             }}>
-                {/* Top Bar - Dashboard Style */}
+                {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}{/* Top Bar - Dashboard Style */}
                 <div style={{ background: '#0F172A', color: '#fff', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontWeight: 'bold', letterSpacing: '1px' }}>ESTJ // EXECUTIVE DASHBOARD</div>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{ color: '#fff', textDecoration: 'none', fontSize: '0.9rem', border: '1px solid #fff', padding: '5px 15px' }}>

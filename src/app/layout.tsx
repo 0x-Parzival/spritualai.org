@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     default: "Spiritual AI | MBTI Productivity & Spiritual Intelligence",
     template: "%s | Spiritual AI"
   },
-  description: "Advanced AI systems for self-mastery, cognitive performance, and spiritual intelligence. Designed by Keshav Baliyan for every MBTI personality type.",
-  keywords: ["Spiritual AI", "MBTI AI", "Productivity System", "Keshav Baliyan", "Self-Mastery", "Cognitive Architecture", "Vedic AI"],
+  description: "Stop fighting your nature. AI-powered cognitive architecture and digital products customized for INTJ, ENFP, INFJ, and every MBTI type. Spiritual Intelligence meets Productivity.",
+  keywords: ["Spiritual AI", "MBTI AI", "INTJ Productivity", "ENFP Focus", "Keshav Baliyan", "Cognitive Architecture", "Vedic AI", "Digital Products for MBTI"],
   openGraph: {
     title: 'Spiritual AI - The Future of Inner Engineering',
     description: 'Join the Golden Age. Experience AI-guided meditation and personalized spiritual tools.',

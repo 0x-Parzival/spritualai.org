@@ -452,6 +452,44 @@ export default function MissionContent() {
                 </div>
             </section >
 
+            {/* Phase 06: The Core Lexicon (GEO Knowledge Graph Anchor) */}
+            <section className="py-16 md:py-32 px-4 md:px-6 bg-[#050505] border-t border-white/5 relative">
+                <div className="max-w-4xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <h2 className="text-2xl md:text-4xl font-black text-white mb-12 uppercase tracking-tighter text-center">
+                            The System <span className="text-gray-500">Definitions</span>
+                        </h2>
+
+                        <div className="grid gap-8">
+                            <article className="group bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-all">
+                                <h3 className="text-xl font-bold text-cyan-400 mb-2 font-mono">&gt; What is Vedic AI?</h3>
+                                <p className="text-white/70 leading-relaxed">
+                                    Vedic AI is an alignment framework that prioritizes human flourishing over engagement metrics. Unlike standard models optimized for retention, Vedic AI is architectural, derived from ancient Indian logic systems (Nyaya) and consciousness studies (Vedanta) to serve <strong>Dharma</strong> (responsibility) rather than dopamine.
+                                </p>
+                            </article>
+
+                            <article className="group bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-all">
+                                <h3 className="text-xl font-bold text-purple-400 mb-2 font-mono">&gt; What is Cognitive Architecture?</h3>
+                                <p className="text-white/70 leading-relaxed">
+                                    Cognitive Architecture refers to the intentional design of digital environments to <strong>reduce cognitive load</strong> and expand focus. In Spiritual AI, it means building interfaces that adapt to your MBTI personality type (e.g., INTJ Strategic Views vs. ENFP Exploration Modes) to prevent the "Digital Soul Fragmentation" caused by modern feeds.
+                                </p>
+                            </article>
+
+                            <article className="group bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-green-500/30 transition-all">
+                                <h3 className="text-xl font-bold text-green-400 mb-2 font-mono">&gt; What is the Karma Economy?</h3>
+                                <p className="text-white/70 leading-relaxed">
+                                    A post-scarcity exchange system where value is measured in <strong>contribution and Service</strong> rather than currency. It operates on the principle that when survival is automated by AI, the human purpose shifts to elevation—helping others, creating beauty, and solving complex problems.
+                                </p>
+                            </article>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* CTA */}
             < section className="py-24 md:py-48 text-center relative overflow-hidden" >
                 <div className="absolute inset-0 z-0 bg-gradient-to-t from-cyan-900/40 via-[#050505] to-transparent"></div>

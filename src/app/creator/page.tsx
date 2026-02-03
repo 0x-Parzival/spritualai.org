@@ -948,6 +948,20 @@ const CreatorPage = () => {
                             but evolve the user's state of mind. His systems are built for those who refuse to choose between efficiency and enlightenment.
                         </p>
                     </div>
+
+                    {/* Semantic Timeline for AI/SEO */}
+                    <div style={{ marginTop: '60px' }}>
+                        <h2 className={styles.seoTitle} style={{ fontSize: '1.8rem' }}>Evolution Timeline</h2>
+                        <div style={{ borderLeft: '2px solid #333', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+                            {timelineEvents.map((ev, i) => (
+                                <article key={i}>
+                                    <div style={{ color: '#a2ea37', fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '5px' }}>{ev.date}</div>
+                                    <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '10px' }}>{ev.title}</h3>
+                                    <p style={{ color: '#94a3b8' }}>{ev.desc}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

@@ -41,8 +41,10 @@ export default function Footer() {
                         <h3 className="text-xs font-bold text-white mb-6 uppercase tracking-[0.2em] opacity-50">Intelligence</h3>
                         <ul className="space-y-3 text-sm font-light">
                             <li><Link href="/MBTI" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> MBTI Systems</Link></li>
-                            <li><Link href="/creator" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> The Creator</Link></li>
+                            <li><Link href="/research" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> AI Research Labs</Link></li>
                             <li><Link href="/mission" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> Our Mission</Link></li>
+                            <li><Link href="/creator" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> The Creator</Link></li>
+                            <li><Link href="/press" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> Press & Media</Link></li>
                         </ul>
                     </div>
 
@@ -50,7 +52,7 @@ export default function Footer() {
                     <div className="md:col-span-4">
                         <h3 className="text-xs font-bold text-white mb-6 uppercase tracking-[0.2em] opacity-50">Connect</h3>
                         <ul className="space-y-3 text-sm font-light mb-8">
-                            <li><a href="mailto:contact@spiritualai.store" className="hover:text-cyan-400 transition-colors">contact@spiritualai.store</a></li>
+                            <li><a href="mailto:admin@spiritualai.store" className="hover:text-cyan-400 transition-colors">admin@spiritualai.store</a></li>
                             <li><a href="https://www.linkedin.com/in/keshav-baliyan/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Creator Profile</a></li>
                         </ul>
                     </div>
