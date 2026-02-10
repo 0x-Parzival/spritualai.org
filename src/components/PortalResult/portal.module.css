@@ -16,8 +16,9 @@
 /* Base Card Styling */
 .portalCard {
     position: absolute;
-    width: 600px;
-    /* Doubled width from 300px */
+    width: 1000px;
+    max-width: 95vw;
+    /* Doubled width from 300px, increased for large text */
     height: 800px;
     /* Doubled height from 400px */
     background: rgba(10, 12, 18, 0.6);
@@ -163,7 +164,7 @@
 .portalCard h1 {
     font-weight: 900;
     /* Bolder */
-    font-size: 80px;
+    font-size: 240px;
     /* Doubled */
     margin-bottom: 30px;
     /* Scaled margin */
@@ -174,12 +175,11 @@
     text-align: center;
 
     /* 5-color gradient flow */
-    background: linear-gradient(90deg,
-            #ff00ff,
-            #00ffff,
-            #00ff00,
-            #ffff00,
-            #ff0000);
+    background: linear-gradient(135deg,
+            #0E1B1A,
+            #1F6F5C,
+            #2B4E73,
+            #8A1FA8);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;

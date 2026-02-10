@@ -421,16 +421,7 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
                     <div className={styles.gooeyBlob}></div>
                 </div>
                 <div className={styles.portalContent}>
-                    {/* MBTI Image */}
-                    <img
-                        src={imagePath}
-                        alt={mbtiType}
-                        className={styles.mbtiImage}
-                        onError={(e) => {
-                            console.warn(`Missing image: ${imagePath}`);
-                            e.currentTarget.style.display = 'none';
-                        }}
-                    />
+
                     <h2>Your pattern aligns with</h2>
                     <h1>{mbtiType}</h1>
                     <p className={styles.reframeText}>
