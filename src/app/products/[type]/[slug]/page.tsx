@@ -2767,7 +2767,7 @@ export default function ProductPage() {
     }
 
     // --- STANDARD LAYOUT ---
-    const { script } = product;
+    // script is already defined above
 
     // Animation Variants
     const fadeIn = {
