@@ -7,12 +7,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Static routes
     const routes = [
         '',
-        '/mission',
-        '/profile',
+        '/discover',
         '/creator',
+        '/mission',
         '/lotus-god',
-        '/MBTI',
-        '/cosmic-compass',
+        '/products',
+        '/research',
+        '/press',
     ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),

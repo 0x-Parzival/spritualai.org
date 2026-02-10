@@ -1,107 +1,375 @@
-/* ---------------- NEON BUTTON ---------------- */
-/* ---------------- CREATOR SECTION (Desktop) ---------------- */
-.creator-section {
+/* ---------------- ATMOSPHERE LAYERS ---------------- */
+/* Vignette */
+.vignette {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 10, 0.4) 80%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-.contact-section {
+/* Film Grain */
+.film-grain {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  inset: 0;
+  pointer-events: none;
+  z-index: 190;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/200' opacity='0.5'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-.moon-img,
-.logo-img {
-  width: 120px;
-  height: auto;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-  animation: moonPulse 4s ease-in-out infinite alternate;
-  transition: all 0.3s ease;
-  border-radius: 50%;
-  border: 2px solid transparent;
+/* Realistic Volumetric Fog & Mist Layers */
+.fog-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  /* Above ocean, below UI */
 }
 
-.moon-img:hover,
-.logo-img:hover {
-  filter: drop-shadow(0 0 20px #00fff9);
-  border-color: #00fff9;
-  box-shadow: 0 0 15px rgba(0, 255, 249, 0.5);
-  transform: scale(1.15);
-  cursor: pointer;
+/* Primary Horizon Fog - Cloudy, Volumetric */
+.fog-layer-horizon {
+  position: absolute;
+  bottom: calc(38.2% - 150px);
+  left: 0;
+  width: 100%;
+  height: 400px;
+  background:
+    /* Multiple cloud-like radial gradients for realistic fog */
+    radial-gradient(ellipse 800px 200px at 20% 50%, rgba(200, 220, 240, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 180px at 60% 60%, rgba(180, 210, 235, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 900px 220px at 85% 45%, rgba(190, 215, 238, 0.11) 0%, transparent 58%),
+    radial-gradient(ellipse 700px 190px at 40% 55%, rgba(175, 205, 230, 0.09) 0%, transparent 62%),
+    /* Base atmospheric gradient */
+    linear-gradient(to top,
+      rgba(160, 200, 230, 0.08) 0%,
+      rgba(180, 215, 240, 0.12) 30%,
+      rgba(200, 225, 245, 0.06) 60%,
+      transparent 100%);
+  filter: blur(35px);
+  animation: driftMist 25s ease-in-out infinite alternate, cloudShift 40s ease-in-out infinite;
 }
 
-@keyframes moonPulse {
-  from {
-    opacity: 0.8;
+/* Secondary Mid-Level Fog - Adds depth */
+.fog-layer-mid {
+  position: absolute;
+  top: 35%;
+  left: 0;
+  width: 100%;
+  height: 450px;
+  background:
+    radial-gradient(ellipse 1000px 300px at 30% 50%, rgba(140, 180, 220, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 800px 250px at 70% 60%, rgba(150, 190, 225, 0.04) 0%, transparent 75%),
+    radial-gradient(ellipse 900px 280px at 50% 55%, rgba(130, 175, 215, 0.045) 0%, transparent 72%);
+  filter: blur(50px);
+  animation: pulseMist 18s ease-in-out infinite, slowDrift 35s ease-in-out infinite alternate;
+}
+
+/* Tertiary Upper Atmosphere Haze */
+.fog-layer-mid::after {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  background:
+    radial-gradient(ellipse 1200px 200px at 45% 50%, rgba(120, 160, 200, 0.03) 0%, transparent 80%);
+  filter: blur(60px);
+  animation: atmosphericFloat 30s ease-in-out infinite;
+}
+
+/* Realistic Fog Animations */
+@keyframes driftMist {
+  0% {
+    transform: translateX(-3%) scaleX(1.0);
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translateX(3%) scaleX(1.08);
+    opacity: 0.7;
+  }
+}
+
+@keyframes pulseMist {
+
+  0%,
+  100% {
+    opacity: 0.5;
     transform: scale(1);
   }
 
-  to {
-    opacity: 1;
-    transform: scale(1.1);
+  50% {
+    opacity: 0.7;
+    transform: scale(1.06);
   }
 }
 
-.neon-button {
-  padding: 8px 15px;
-  color: #ff0000;
-  text-transform: uppercase;
+@keyframes cloudShift {
+
+  0%,
+  100% {
+    filter: blur(35px) brightness(1);
+  }
+
+  33% {
+    filter: blur(40px) brightness(1.05);
+  }
+
+  66% {
+    filter: blur(32px) brightness(0.98);
+  }
+}
+
+@keyframes slowDrift {
+  0% {
+    transform: translateX(2%) translateY(0);
+  }
+
+  100% {
+    transform: translateX(-2%) translateY(-15px);
+  }
+}
+
+@keyframes atmosphericFloat {
+
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(-20px) scaleY(1.1);
+    opacity: 0.6;
+  }
+}
+
+/* ---------------- BUTTON EFFECTS ---------------- */
+@keyframes particle-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  90% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-40px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.button-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 9999px;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particle-float 1.5s ease-out forwards;
+  z-index: 1;
+}
+
+/* Enhanced Button Effects */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.secondary-cta {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: translateY(-1cm);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(45deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+  color: white;
+  font-weight: 500;
+  padding: 10px 28px;
+  border-radius: 50px;
   text-decoration: none;
   font-family: 'Orbitron', sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  overflow: hidden;
-  transition: 0.3s;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid #ff0000;
-  border-radius: 3px;
-  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
-  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(79, 209, 197, 0.5);
+}
+
+/* Animated gradient border moving in opposite direction */
+.secondary-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  padding: 1px;
+  background: linear-gradient(135deg,
+      #0E1B1A,
+      #1F6F5C,
+      #2B4E73,
+      #8A1FA8);
+  background-size: 300% 300%;
+  animation: gradientFlowReverse 8s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: -1;
+}
+
+@keyframes gradientFlowReverse {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  50% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.secondary-cta:hover::before {
+  animation: gradientFlowReverse 4s ease infinite;
+}
+
+.secondary-cta:hover {
+  transform: translateY(-1.2cm) scale(1.02);
+  box-shadow: 0 8px 30px rgba(79, 209, 197, 0.4);
+  background: linear-gradient(45deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  text-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+}
+
+.secondary-cta::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(circle,
+      rgba(79, 209, 197, 0.1) 0%,
+      rgba(79, 209, 197, 0.05) 30%,
+      transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.secondary-cta:hover::after {
+  opacity: 1;
+}
+
+.secondary-cta:active {
+  transform: translateY(-1.1cm) scale(0.98);
+  box-shadow: 0 2px 10px rgba(0, 222, 229, 0.3);
+}
+
+/* ---------------- NAVIGATION BUTTONS - */
+.creator-section,
+.contact-section {
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
   display: flex;
-  gap: 0.05em;
-  transform: scale(0.8);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 25px;
+  background: #0f172a;
+  /* Solid dark blue background - no transparency */
+  border: 2px solid #4fd1c5;
+  /* Teal border */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: all 0.3s ease;
+  transform: scale(0.67);
+  /* Reduced by 33% */
+  transform-origin: top;
 }
 
-.neon-button:hover {
-  background: #ff0000;
-  color: #fff;
-  box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #ff0000;
-  text-shadow: 0 0 2px #fff;
-  border-color: #fff;
+.creator-section {
+  left: 20px;
 }
 
-.neon-button span {
-  position: relative;
-  display: inline-block;
-  transition: 0.5s;
+.contact-section {
+  right: 20px;
 }
 
-.neon-button:hover span {
-  color: #000;
-  transform: translateY(-2px) rotate(2deg);
-  animation: neonGlow 1s ease-in-out infinite alternate;
+.creator-section:hover,
+.contact-section:hover {
+  transform: translateY(1px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  background: #1e293b;
+  /* Slightly lighter blue on hover */
+  border-color: #4fd1c5;
+  /* Brighter teal border on hover */
 }
 
-@keyframes neonGlow {
-  from {
-    text-shadow: 0 0 3px #fff, 0 0 5px #fff, 0 0 10px #ff0000, 0 0 20px #ff0000;
-  }
+/* Navigation Button Text */
+.nav-link-contrast {
+  color: #fff !important;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.75px;
+  text-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  to {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0000, 0 0 25px #ff0000;
-  }
+.creator-section:hover .nav-link-contrast,
+.contact-section:hover .nav-link-contrast {
+  color: #4fd1c5 !important;
+  text-shadow: 0 0 12px rgba(79, 209, 197, 0.8);
+}
+
+/* Button Icons */
+.creator-section img,
+.contact-section img {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(79, 209, 197, 0.3));
+}
+
+.creator-section:hover img,
+.contact-section:hover img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(79, 209, 197, 0.6));
 }
 
 /* ---------------- LOTUS BOTTOM CONTAINER ---------------- */
@@ -198,6 +466,13 @@ body {
   }
 }
 
+/* Desktop Zoom Effect */
+@media (min-width: 769px) {
+  body {
+    zoom: 0.8;
+  }
+}
+
 /* ---------------- STAR OCEAN BACKGROUND ---------------- */
 body {
   /* background:
@@ -209,10 +484,11 @@ body {
 
 #stars2,
 #stars3 {
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: 0;
-  background: transparent;
+  left: 5%;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 
@@ -281,18 +557,39 @@ body {
 }
 
 /* ---------------- OCEAN ---------------- */
+/* Ocean Main Container - Masked to Horizon */
 main.ocean-main {
-  position: absolute;
+  position: fixed;
   inset: 0;
   perspective: 2000px;
   z-index: 1;
   pointer-events: none;
-  /* Allow clicking through ocean */
+  /* Mask the ocean to only appear below the horizon line (61.8%) */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 61.8%, black 61.8%);
+  mask-image: linear-gradient(to bottom, transparent 61.8%, black 61.8%);
+}
+
+/* Fog, Mist, and Glow behind the Ocean */
+.ocean-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* Horizon Line Glow */
+    radial-gradient(ellipse at 50% 61.8%, rgba(144, 238, 144, 0.3) 0%, rgba(144, 238, 144, 0) 50%),
+    /* Rising Mist */
+    linear-gradient(to top, rgba(200, 255, 220, 0.1) 0%, transparent 40%);
+  z-index: -1;
+  /* Behind the ocean plane */
+  pointer-events: none;
+  filter: blur(20px);
 }
 
 .ocean {
-  top: 75%;
+  top: 61.8%;
+  /* Golden Ratio Horizon Anchor */
   left: 50%;
+  /* Revert to original giant plane transform which works best for perspective */
   transform: translate(-50%, -50%) rotateX(80deg);
   width: 4000px;
   height: 4000px;
@@ -325,11 +622,11 @@ main.ocean-main {
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 10vh 20px 5vh;
+  padding: 5vh 20px 5vh;
   position: relative;
   z-index: 50;
   text-align: center;
-  min-height: 40vh;
+  min-height: auto;
   pointer-events: none;
 }
 
@@ -350,7 +647,8 @@ main.ocean-main {
 }
 
 .title h1 {
-  font-size: clamp(30px, 11.5vw, 70px);
+  font-size: clamp(40px, 8vw, 72px);
+  /* Original size maintained */
   font-weight: bolder;
   text-transform: uppercase;
   letter-spacing: clamp(1px, 1vw, 3px);
@@ -594,6 +892,55 @@ main.ocean-main {
   max-width: 90vw;
 }
 
+/* Gradient Flow Button Styles */
+.gradient-flow-btn {
+  background: linear-gradient(135deg, #0E1B1A, #1F6F5C, #2B4E73, #8A1FA8);
+  background-size: 300% 300%;
+  animation: gradientFlow 5s ease infinite;
+  box-shadow: 0 4px 15px rgba(31, 111, 92, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-flow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(138, 31, 168, 0.5);
+}
+
+.secondary-cta {
+  padding: 15px 30px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+}
+
+.secondary-cta:hover {
+  background: linear-gradient(135deg, #0E1B1A, #1F6F5C, #2B4E73, #8A1FA8);
+  background-size: 300% 300%;
+  animation: gradientFlow 5s ease infinite;
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 0 20px rgba(138, 31, 168, 0.4);
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .neon-btn {
   background: transparent;
   border: 4px solid #ff003c;
@@ -751,10 +1098,40 @@ main.ocean-main {
   align-items: center;
   position: relative;
   /* Adjust scale/position as needed for the site layout, keeping user's internal proportions */
-  transform: scale(0.6);
+  /* Increased scale from 0.85 to 1.05 (~20% increase) */
+  transform: scale(1.05);
   opacity: 0;
   /* Hidden initially to prevent distortion */
   transition: opacity 0.5s ease-in-out;
+  /* Stronger radial glow */
+  filter: drop-shadow(0 0 30px rgba(230, 70, 215, 0.6));
+}
+
+/* Water Reflection Shimmer */
+.flower-container::after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  width: 140%;
+  height: 30px;
+  background: radial-gradient(ellipse at center, rgba(230, 70, 215, 0.4) 0%, transparent 70%);
+  filter: blur(8px);
+  z-index: -1;
+  opacity: 0.7;
+  animation: waterShimmer 3s ease-in-out infinite alternate;
+}
+
+@keyframes waterShimmer {
+  0% {
+    transform: scaleX(0.95);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scaleX(1.05);
+    opacity: 0.9;
+  }
+
 }
 
 .corolla {
@@ -1157,4 +1534,188 @@ main.ocean-main {
 /* Hide Mobile App Layout on Desktop */
 .mobile-layout {
   display: none;
+}
+
+/* Floating Text Animation */
+@keyframes floatText {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.floating-text {
+  animation: floatText 3s ease-in-out infinite;
+  display: inline-block;
+  color: #4fd1c5;
+  text-shadow: 0 0 10px rgba(79, 209, 197, 0.5);
+  margin-bottom: 0.5rem;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* ---------------- GRADIENT FLOW BUTTON ---------------- */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+.gradient-flow-btn {
+  /* Gradient Background with Animation */
+  background: linear-gradient(135deg,
+      #0E1B1A,
+      #1F6F5C,
+      #2B4E73,
+      #8A1FA8);
+  background-size: 300% 300%;
+  animation: gradientFlow 8s ease infinite;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Soft Halo Glow & Elevation */
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 222, 229, 0.1) inset,
+    0 0 25px rgba(0, 222, 229, 0.2);
+
+  /* Border */
+  border: 1px solid rgba(0, 222, 229, 0.3);
+  border-top: 1px solid rgba(0, 222, 229, 0.5);
+
+  /* Text */
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+
+  transition: all 0.4s ease;
+  transform: translateY(0);
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-flow-btn:hover {
+  /* Enhanced glow and animation speed on hover */
+  animation: gradientFlow 4s ease infinite;
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(0, 222, 229, 0.3) inset,
+    0 0 40px rgba(0, 222, 229, 0.4);
+  transform: translateY(-2px);
+  border-color: rgba(0, 222, 229, 0.8) !important;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+  background-size: 400% 400%;
+}
+
+.gradient-flow-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.5),
+    0 0 15px rgba(0, 222, 229, 0.2) inset;
+}
+
+/* Secondary CTA - Soft Pill with Gradient Hover */
+
+.secondary-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+      transparent,
+      rgba(79, 209, 197, 0.1),
+      transparent,
+      rgba(79, 209, 197, 0.2),
+      transparent);
+  transform: rotate(45deg) translate(-30%, -30%);
+  transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 0;
+}
+
+.secondary-cta:hover::before {
+  transform: rotate(45deg) translate(0, 0);
+}
+
+.secondary-cta:hover {
+  transform: translateY(-1.2cm) scale(1.02);
+  box-shadow: 0 8px 30px rgba(79, 209, 197, 0.4);
+  border-color: #4fd1c5;
+  background: rgba(15, 23, 42, 0.95);
+  text-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+}
+
+.secondary-cta:hover::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(circle,
+      rgba(79, 209, 197, 0.1) 0%,
+      rgba(79, 209, 197, 0.05) 30%,
+      transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.secondary-cta:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 10px rgba(0, 222, 229, 0.3);
+}
+
+/* ---------------- NAV LINK CONTRAST ---------------- */
+.nav-link-contrast {
+  color: #00DEE5 !important;
+  /* Electric Cyan */
+  text-shadow: 0 0 10px rgba(0, 222, 229, 0.5);
+  transition: all 0.3s ease;
+}
+
+.nav-link-contrast:hover {
+  color: #54FAD2 !important;
+  /* Neon Mint */
+  text-shadow: 0 0 15px rgba(84, 250, 210, 0.8);
+  transform: scale(1.05);
+}
+
+/* ---------------- GOLDEN GLOW TEXT ---------------- */
+.golden-glow-text {
+  text-shadow:
+    0 0 10px rgba(255, 215, 0, 0.6),
+    0 0 20px rgba(255, 223, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.2);
+  color: #fffacd;
+  /* LemonChiffon base color for light gold feel */
+  transition: all 0.3s ease;
+}
+
+.golden-glow-text:hover {
+  text-shadow:
+    0 0 15px rgba(255, 215, 0, 0.8),
+    0 0 25px rgba(255, 223, 0, 0.6),
+    0 0 35px rgba(255, 215, 0, 0.4);
 }

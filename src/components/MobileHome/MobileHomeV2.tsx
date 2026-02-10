@@ -172,9 +172,9 @@ export default function MobileHomeV2() {
                 {/* Question */}
                 <div className={styles.questionBox}>
                     <h2>DO YOU KNOW YOUR<br />PERSONALITY TYPE?</h2>
-                    <div className={styles.actions}>
+                    <div className={styles.btnGroup}>
                         <a href="/MBTI" className={styles.btnYes}>YES</a>
-                        <a href="/cosmic-compass/" className={styles.btnNo}>NO</a>
+                        <a href="/login" className={styles.btnNo}>NO</a>
                     </div>
 
                     <a href="/lotus-god" className={styles.lotusLink}>click to see lotus god</a>

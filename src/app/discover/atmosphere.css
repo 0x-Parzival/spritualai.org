@@ -1,0 +1,173 @@
+/* Atmospheric Layers - Matching Homepage */
+.vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 10, 0.4) 80%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.film-grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 190;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg' opacity='0.5'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.fog-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.fog-layer-horizon {
+    position: absolute;
+    bottom: calc(38.2% - 150px);
+    left: 0;
+    width: 100%;
+    height: 400px;
+    background:
+        radial-gradient(ellipse 800px 200px at 20% 50%, rgba(200, 220, 240, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 180px at 60% 60%, rgba(180, 210, 235, 0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 900px 220px at 85% 45%, rgba(190, 215, 238, 0.11) 0%, transparent 58%),
+        radial-gradient(ellipse 700px 190px at 40% 55%, rgba(175, 205, 230, 0.09) 0%, transparent 62%),
+        linear-gradient(to top,
+            rgba(160, 200, 230, 0.08) 0%,
+            rgba(180, 215, 240, 0.12) 30%,
+            rgba(200, 225, 245, 0.06) 60%,
+            transparent 100%);
+    filter: blur(35px);
+    animation: driftMist 25s ease-in-out infinite alternate, cloudShift 40s ease-in-out infinite;
+}
+
+.fog-layer-mid {
+    position: absolute;
+    bottom: calc(38.2% + 100px);
+    left: 0;
+    width: 100%;
+    height: 300px;
+    background:
+        radial-gradient(ellipse 700px 150px at 30% 50%, rgba(210, 230, 245, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 500px 120px at 70% 60%, rgba(190, 220, 240, 0.07) 0%, transparent 60%),
+        linear-gradient(to top,
+            rgba(180, 210, 235, 0.05) 0%,
+            transparent 100%);
+    filter: blur(40px);
+    animation: slowDrift 30s ease-in-out infinite alternate;
+}
+
+.fog-layer-upper {
+    position: absolute;
+    bottom: calc(38.2% + 250px);
+    left: 0;
+    width: 100%;
+    height: 250px;
+    background:
+        radial-gradient(ellipse 600px 100px at 50% 50%, rgba(220, 235, 250, 0.05) 0%, transparent 50%),
+        linear-gradient(to top,
+            rgba(200, 220, 240, 0.03) 0%,
+            transparent 100%);
+    filter: blur(50px);
+    animation: atmosphericFloat 35s ease-in-out infinite alternate;
+}
+
+@keyframes driftMist {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes cloudShift {
+
+    0%,
+    100% {
+        filter: blur(35px) brightness(1);
+    }
+
+    33% {
+        filter: blur(40px) brightness(1.05);
+    }
+
+    66% {
+        filter: blur(32px) brightness(0.98);
+    }
+}
+
+@keyframes slowDrift {
+    0% {
+        transform: translateX(2%) translateY(0);
+    }
+
+    100% {
+        transform: translateX(-2%) translateY(-15px);
+    }
+}
+
+@keyframes atmosphericFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scaleY(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: translateY(-20px) scaleY(1.1);
+        opacity: 0.6;
+    }
+}
+/* Ocean Animations */
+.ocean {
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(180deg, rgba(0, 119, 190, 0) 0%, rgba(0, 119, 190, 0.3) 50%, rgba(0, 119, 190, 0.5) 100%);
+}
+
+.chunks {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.chunks::before,
+.chunks::after {
+    content: "";
+    position: absolute;
+    width: 300vw;
+    height: 300vw;
+    top: -280vw;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.chunks::before {
+    border-radius: 45%;
+    background: rgba(0, 119, 190, 0.3);
+    animation: drift 8000ms infinite linear;
+}
+
+.chunks::after {
+    border-radius: 40%;
+    background: rgba(0, 119, 190, 0.2);
+    animation: drift 12000ms infinite linear;
+}
+
+@keyframes drift {
+    from { transform: translate(-50%, 0) rotate(0deg); }
+    to { transform: translate(-50%, 0) rotate(360deg); }
+}

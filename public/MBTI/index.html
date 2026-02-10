@@ -106,45 +106,56 @@
       }
     }
 
-    /* ---------- Search Bar ---------- */
+    /* ---------- Grounding Copy ---------- */
+    .grounding-copy {
+      text-align: center;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin: -10px auto 30px;
+      max-width: 600px;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    /* ---------- Search Bar (Softened) ---------- */
     .search-bar-container {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 30px;
+      right: 30px;
+      z-index: 1003;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 16px;
-      background: rgba(20, 20, 30, 0.8);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 50px;
+      background: rgba(20, 20, 30, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 25px;
+      padding: 10px 18px;
       transition: all 0.3s ease;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      width: 280px;
-      pointer-events: auto;
+      backdrop-filter: blur(10px);
+      width: 220px;
     }
 
     .search-bar-container input {
       background: transparent;
       border: none;
-      color: white;
-      font-family: 'Lato', sans-serif;
-      font-size: 14px;
       outline: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
       width: 100%;
+      font-family: 'Lato', sans-serif;
     }
 
     .search-bar-container input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.35);
     }
 
     .search-bar-container:hover,
     .search-bar-container:focus-within {
-      background: rgba(30, 30, 45, 0.9);
-      border-color: rgba(0, 188, 255, 0.4);
-      box-shadow: 0 0 15px rgba(0, 188, 255, 0.2);
+      background: rgba(30, 30, 45, 0.6);
+      border-color: rgba(0, 188, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 188, 255, 0.1);
     }
 
     @media (max-width: 768px) {
@@ -264,6 +275,7 @@
       justify-content: center;
       font-family: 'Orbitron', sans-serif;
       margin: 20px 0 20px 0;
+      margin-top: calc(20px + 1cm);
       /* Reduced margins to prevent overflow */
       pointer-events: auto;
       text-shadow: 0 0 10px rgba(0, 188, 255, 0.7);
@@ -280,11 +292,11 @@
     /* Remove duplicate .title styles */
 
     .title h1 {
-      font-size: clamp(20px, 6vw, 64px);
+      font-size: clamp(18px, 5vw, 37px);
 
-      /* Double size for desktop */
+      /* Increased by 33% for desktop */
       @media (min-width: 1024px) {
-        font-size: 5rem;
+        font-size: 2.33rem;
       }
 
       font-weight: 900;
@@ -350,6 +362,42 @@
       overflow: visible;
     }
 
+    /* Subtle category grouping - Analysts (Purple) */
+    .mbti-button.row-purple {
+      --neon: 180, 94, 255;
+    }
+
+    .mbti-button.row-purple .mbti-bg {
+      background: rgba(15, 10, 25, 0.75);
+    }
+
+    /* Diplomats (Blue) */
+    .mbti-button.row-blue {
+      --neon: 0, 188, 255;
+    }
+
+    .mbti-button.row-blue .mbti-bg {
+      background: rgba(0, 15, 25, 0.75);
+    }
+
+    /* Sentinels (Green) */
+    .mbti-button.row-green {
+      --neon: 0, 230, 140;
+    }
+
+    .mbti-button.row-green .mbti-bg {
+      background: rgba(0, 20, 15, 0.75);
+    }
+
+    /* Explorers (Yellow) */
+    .mbti-button.row-yellow {
+      --neon: 250, 230, 80;
+    }
+
+    .mbti-button.row-yellow .mbti-bg {
+      background: rgba(20, 18, 0, 0.75);
+    }
+
     .mbti-button {
       width: 100%;
       height: 120px;
@@ -378,7 +426,7 @@
       background: rgba(0, 20, 30, 0.7);
       backdrop-filter: blur(4px);
       clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       z-index: 1;
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
     }
@@ -396,13 +444,33 @@
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events: none;
+      transition: all 0.4s ease;
     }
 
+    /* Refined hover: inward glow + subtle lift */
     .mbti-button:hover .mbti-bg,
     .mbti-button.touch-active .mbti-bg {
-      transform: scale(1.05);
-      background: rgba(0, 30, 40, 0.9);
-      box-shadow: 0 0 30px rgba(var(--neon), 0.4);
+      transform: translateY(-3px);
+      background: rgba(0, 30, 40, 0.85);
+      box-shadow:
+        0 4px 20px rgba(var(--neon), 0.15),
+        inset 0 0 30px rgba(var(--neon), 0.2);
+    }
+
+    .mbti-button:hover .mbti-bg::before,
+    .mbti-button.touch-active .mbti-bg::before {
+      background: linear-gradient(90deg, rgba(var(--neon), 1), rgba(var(--neon), 0.4));
+    }
+
+    /* Focus effect: reduce opacity of other cards */
+    .mbti-wrap:has(.mbti-button:hover) .mbti-button:not(:hover) {
+      opacity: 0.4;
+      transition: opacity 0.3s ease;
+    }
+
+    .mbti-button {
+      opacity: 1;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     /* Text Container */
@@ -644,20 +712,23 @@
   <!-- Search Bar -->
   <div class="search-bar-container">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
-      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: rgba(255,255,255,0.6);">
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: rgba(255,255,255,0.35);">
       <circle cx="11" cy="11" r="8"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
     </svg>
-    <input type="text" id="productSearch" placeholder="search digital product" aria-label="Search digital products">
+    <input type="text" id="productSearch" placeholder="Search by type (e.g., INFP, INTJ)"
+      aria-label="Search personality types">
     <div id="searchDropdown" class="search-results"></div>
   </div>
 
   <!-- UI overlay -->
   <div class="ui">
     <div class="title" aria-hidden="true">
-      <h1>PICK YOUR PERSONALITY TYPE</h1>
-      <h1>PICK YOUR PERSONALITY TYPE</h1>
+      <h1>Select the personality you already know yourself as</h1>
+      <h1>Select the personality you already know yourself as</h1>
     </div>
+
+    <p class="grounding-copy">This lets us tailor guidance, tools, and insights precisely to how you think.</p>
 
     <div class="mbti-wrap" id="mbtiWrap" role="list" aria-label="MBTI choices">
       <!-- 16 buttons evenly laid out -->
@@ -1181,164 +1252,105 @@
       });
     });
 
-    // --- Search Dropdown Logic ---
-    const allProducts = [
-      // INTP (Analysts - Purple)
-      { id: 'mastery', type: 'intp', name: 'First Principles Focus' },
-      { id: 'social-life', type: 'intp', name: 'Social Algorithm Hack' },
-      { id: 'second-brain', type: 'intp', name: 'Archive Protocol Brain' },
-      { id: 'theory-everything', type: 'intp', name: 'Magnum Opus Blueprint' },
-      { id: 'debug-existence', type: 'intp', name: 'Existence Patch 1.0' },
+    // --- Search/Filter Logic for Personality Types ---
+    const allPersonalityTypes = [
+      // Analysts (Purple)
+      { type: 'INTJ', role: 'The Architect', category: 'Analyst' },
+      { type: 'INTP', role: 'The Logician', category: 'Analyst' },
+      { type: 'ENTJ', role: 'The Commander', category: 'Analyst' },
+      { type: 'ENTP', role: 'The Debater', category: 'Analyst' },
 
-      // INTJ (Analysts - Purple)
-      { id: 'systemize-life', type: 'intj', name: 'LifeOS Architecture' },
-      { id: 'think-ahead', type: 'intj', name: 'Strategic Mindware' },
-      { id: 'rapid-competence', type: 'intj', name: 'Rapid Acquisition Protocol' },
-      { id: 'win-arguments', type: 'intj', name: 'Rational Rhetoric Mastery' },
-      { id: 'global-business', type: 'intj', name: 'Dark Room Protocol' },
+      // Diplomats (Blue)
+      { type: 'INFJ', role: 'The Advocate', category: 'Diplomat' },
+      { type: 'INFP', role: 'The Mediator', category: 'Diplomat' },
+      { type: 'ENFJ', role: 'The Protagonist', category: 'Diplomat' },
+      { type: 'ENFP', role: 'The Campaigner', category: 'Diplomat' },
 
-      // ENTJ (Analysts - Purple)
-      { id: 'empire-of-one', type: 'entj', name: 'Empire of One Protocol' },
-      { id: 'execute-12-months', type: 'entj', name: 'War-Time Execution' },
-      { id: 'outmaneuver-competitor', type: 'entj', name: 'Grand Strategy Library' },
-      { id: 'command-room', type: 'entj', name: 'Executive Presence' },
-      { id: 'vision-survives', type: 'entj', name: 'Dynasty Architecture' },
+      // Sentinels (Green)
+      { type: 'ISTJ', role: 'The Logistician', category: 'Sentinel' },
+      { type: 'ISFJ', role: 'The Defender', category: 'Sentinel' },
+      { type: 'ESTJ', role: 'The Executive', category: 'Sentinel' },
+      { type: 'ESFJ', role: 'The Consul', category: 'Sentinel' },
 
-      // ENTP (Analysts - Purple)
-      { id: 'idea-generator', type: 'entp', name: 'Genesis Engine ideas' },
-      { id: 'persuasion', type: 'entp', name: 'Belief Engineering Kit' },
-      { id: 'thrive-chaos', type: 'entp', name: 'Chaos Protocol Mastery' },
-      { id: 'speed-learning', type: 'entp', name: 'Speedrunner Codex' },
-      { id: 'infinite-career', type: 'entp', name: 'Polymath Playbook' },
-
-      // INFJ (Diplomats - Blue)
-      { id: 'burnout-shield', type: 'infj', name: 'Guardian Protocol Shield' },
-      { id: 'counselor', type: 'infj', name: 'Insight Coaching' },
-      { id: 'sacred-calling', type: 'infj', name: 'Soul-preneur Blueprint' },
-      { id: 'chameleon', type: 'infj', name: 'Identity Anchor' },
-      { id: 'intuition', type: 'infj', name: 'Third Eye Toolkit' },
-
-      // INFP (Diplomats - Blue)
-      { id: 'dream-to-reality', type: 'infp', name: 'Dream-Weaver\'s Loom' },
-      { id: 'healers-journey', type: 'infp', name: 'Kintsugi Method Healing' },
-      { id: 'introvert-power', type: 'infp', name: 'Cat In Dog Park' },
-      { id: 'meaning', type: 'infp', name: 'Soul Compass' },
-      { id: 'resilience', type: 'infp', name: 'Teflon Soul Armor' },
-
-      // ENFJ (Diplomats - Blue)
-      { id: 'burden-of-potential', type: 'enfj', name: 'Sovereignty Protocol' },
-      { id: 'harmony-trap', type: 'enfj', name: 'Conflict Alchemist' },
-      { id: 'cult-of-personality', type: 'enfj', name: 'Legacy Weaver' },
-      { id: 'mirror-effect', type: 'enfj', name: 'Identity Reclamation' },
-      { id: 'art-of-receiving', type: 'enfj', name: 'Reciprocity Reset' },
-
-      // ENFP (Diplomats - Blue)
-      { id: 'fomo-cure', type: 'enfp', name: 'Essentialist\'s Knife' },
-      { id: 'golden-idea', type: 'enfp', name: 'Chaos Pilot' },
-      { id: 'sad-clown', type: 'enfp', name: 'Tragic Comedy Blueprint' },
-      { id: 'vampire-slayer', type: 'enfp', name: 'Slayer\'s Guide toxic' },
-      { id: 'magical-adult', type: 'enfp', name: 'Adulting Guide Magic' },
-
-      // ISTJ (Sentinels - Green)
-      { id: 'change-protocol', type: 'istj', name: 'Future-Proof Framework' },
-      { id: 'atlas-complex', type: 'istj', name: 'Architect\'s Exit' },
-      { id: 'emotional-audit', type: 'istj', name: 'Logic of Feeling' },
-      { id: 'social-algorithm', type: 'istj', name: 'Network Interface' },
-      { id: 'anti-perfectionism', type: 'istj', name: 'Imperfect Executor' },
-
-      // ISFJ (Sentinels - Green)
-      { id: 'disease-to-please', type: 'isfj', name: 'Fortress of Kindness' },
-      { id: 'invisible-contract', type: 'isfj', name: 'Art of The Ask' },
-      { id: 'worry-loop', type: 'isfj', name: 'Calm Anchor Household' },
-      { id: 'memory-box', type: 'isfj', name: 'Emotional Declutter' },
-      { id: 'silent-partner', type: 'isfj', name: 'Quiet Power Strategy' },
-
-      // ESTJ (Sentinels - Green)
-      { id: 'grey-zone', type: 'estj', name: 'Context Engine' },
-      { id: 'identity-hedge', type: 'estj', name: 'Legacy Beyond Work' },
-      { id: 'listening-vault', type: 'estj', name: 'Listening Vault' },
-      { id: 'micromanagement-detox', type: 'estj', name: 'Hands-Off Protocol' },
-      { id: 'rage-valve', type: 'estj', name: 'Iron Calm Management' },
-
-      // ESFJ (Sentinels - Green)
-      { id: 'approval-detox', type: 'esfj', name: 'Authentic Core Host' },
-      { id: 'caretaker-curse', type: 'esfj', name: 'Independence Protocol' },
-      { id: 'gossip-detox', type: 'esfj', name: 'Clean Connect Terms' },
-      { id: 'harmony-trap', type: 'esfj', name: 'Conflict Canvas' },
-      { id: 'shallow-end', type: 'esfj', name: 'Deep Dive Drama' },
-
-      // ISTP (Explorers - Yellow)
-      { id: 'emotional-diagnostic', type: 'istp', name: 'Black Box Mechanic' },
-      { id: 'blunt-instrument', type: 'istp', name: 'System Interface Ready' },
-      { id: 'commitment-code', type: 'istp', name: 'Stronghold Shortcuts' },
-      { id: 'adrenaline-junkie', type: 'istp', name: 'Eject Button Cool' },
-      { id: 'lone-wolf', type: 'istp', name: 'Network Key Skills' },
-
-      // ISFP (Explorers - Yellow)
-      { id: 'sensitive-soul', type: 'isfp', name: 'Armor For Sensitivity' },
-      { id: 'unfinished-masterpiece', type: 'isfp', name: 'Gallery Art Selling' },
-      { id: 'silent-resentment', type: 'isfp', name: 'Pressure Gauge Sense' },
-      { id: 'the-ghost', type: 'isfp', name: 'Séance Personal Brand' },
-      { id: 'identity-crisis', type: 'isfp', name: 'The Mirror Core' },
-
-      // ESTP (Explorers - Yellow)
-      { id: 'peter-pan', type: 'estp', name: 'Anchor System Launch' },
-      { id: 'quiet-guide', type: 'estp', name: 'Static Void Negotiate' },
-      { id: 'reckless-driver', type: 'estp', name: 'Calculated Risk Charm' },
-      { id: 'salesman-curse', type: 'estp', name: 'The Real Deal Done' },
-      { id: 'shiny-object', type: 'estp', name: 'Finish Line Gambler' },
-
-      // ESFP (Explorers - Yellow)
-      { id: 'drama-magnet', type: 'esfp', name: 'Reality Check Stars' },
-      { id: 'impulsive-shopper', type: 'esfp', name: 'Cash Detox Influencer' },
-      { id: 'spotlight-addiction', type: 'esfp', name: 'Green Room Comedy' },
-      { id: 'the-flake', type: 'esfp', name: 'Calendar Lock Fun' },
-      { id: 'toxic-positivity', type: 'esfp', name: 'The Shadow Work Deep' },
+      // Explorers (Yellow)
+      { type: 'ISTP', role: 'The Virtuoso', category: 'Explorer' },
+      { type: 'ISFP', role: 'The Adventurer', category: 'Explorer' },
+      { type: 'ESTP', role: 'The Entrepreneur', category: 'Explorer' },
+      { type: 'ESFP', role: 'The Entertainer', category: 'Explorer' }
     ];
 
     const searchInput = document.getElementById('productSearch');
     const dropdown = document.getElementById('searchDropdown');
+    const allButtons = document.querySelectorAll('.mbti-button');
 
     searchInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
+      const term = e.target.value.toUpperCase().trim();
+
       if (!term) {
+        // Show all buttons when search is empty
+        allButtons.forEach(btn => {
+          btn.style.display = '';
+        });
         dropdown.style.display = 'none';
         return;
       }
 
-      const matches = allProducts.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.type.toLowerCase().includes(term)
+      // Filter personality types
+      const matches = allPersonalityTypes.filter(p =>
+        p.type.startsWith(term) ||
+        p.type.includes(term) ||
+        p.role.toLowerCase().includes(term.toLowerCase()) ||
+        p.category.toLowerCase().includes(term.toLowerCase())
       );
 
+      // Hide/show buttons based on matches
+      allButtons.forEach(btn => {
+        const btnType = btn.getAttribute('data-mbti');
+        const isMatch = matches.some(m => m.type === btnType);
+        btn.style.display = isMatch ? '' : 'none';
+      });
+
+      // Show dropdown with matches
       const typeColors = {
-        intj: '#b45eff', intp: '#b45eff', entj: '#b45eff', entp: '#b45eff',
-        infj: '#00bcff', infp: '#00bcff', enfj: '#00bcff', enfp: '#00bcff',
-        istj: '#00e68c', isfj: '#00e68c', estj: '#00e68c', esfj: '#00e68c',
-        istp: '#fae650', isfp: '#fae650', estp: '#fae650', esfp: '#fae650'
+        'Analyst': '#b45eff',
+        'Diplomat': '#00bcff',
+        'Sentinel': '#00e68c',
+        'Explorer': '#fae650'
       };
 
       if (matches.length > 0) {
         dropdown.innerHTML = matches.map(p => {
-          const color = typeColors[p.type.toLowerCase()] || '#00bcd4';
+          const color = typeColors[p.category] || '#00bcd4';
           return `
-            <a href="/products/${p.type}/${p.id}" class="search-item">
-              <span class="product-name" style="color: ${color};">${p.name}</span>
-              <span class="product-type">${p.type} Optimized</span>
-            </a>
+            <div class="search-item" onclick="document.querySelector('[data-mbti=&quot;${p.type}&quot;]').click()" style="cursor: pointer;">
+              <span class="product-name" style="color: ${color}; font-weight: bold;">${p.type}</span>
+              <span class="product-type">${p.role}</span>
+            </div>
           `;
         }).join('');
         dropdown.style.display = 'flex';
       } else {
-        dropdown.style.display = 'none';
+        dropdown.innerHTML = '<div class="search-item" style="color: rgba(255,255,255,0.5);">No personality types found</div>';
+        dropdown.style.display = 'flex';
       }
     });
 
-    // Close dropdown on click outside
+    // Close dropdown and reset filter on click outside
     document.addEventListener('click', (e) => {
       if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.style.display = 'none';
       }
+    });
+
+    // Reset filter when search is cleared
+    searchInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        if (!searchInput.value) {
+          allButtons.forEach(btn => {
+            btn.style.display = '';
+          });
+        }
+      }, 200);
     });
   </script>
 </body>

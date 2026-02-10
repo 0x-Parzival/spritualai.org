@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 
 const LotusAnimation = dynamic(() => import("../components/Effects/LotusAnimation"), {
     ssr: false,
-    loading: () => <div className="h-[200px] w-[200px] animate-pulse bg-white/5 rounded-full mx-auto" />
 });
 const MobileHomeV2 = dynamic(() => import("../components/MobileHome/MobileHomeV2"), { ssr: false });
 import "./landing.css";
@@ -102,8 +101,9 @@ export default function Home() {
             }
 
             const isMobile = window.innerWidth < 768;
-            generateStars(stars2Ref.current, isMobile ? 100 : 800);
-            generateStars(stars3Ref.current, isMobile ? 50 : 800);
+            // Double the number of stars and increase maxSize to cover full screen width
+            generateStars(stars2Ref.current, isMobile ? 200 : 1600, window.innerWidth * 1.5);
+            generateStars(stars3Ref.current, isMobile ? 100 : 1600, window.innerWidth * 1.5);
         }, 100);
 
         // ---------------- MOUSE MOVEMENT TILT ----------------
@@ -163,11 +163,37 @@ export default function Home() {
 
     return (
         <>
+            {/* Hidden SEO Content for Search Engines & AI - Invisible to users */}
+            <div className="sr-only" aria-hidden="true">
+                <h1>Spiritual AI: Personalized Guidance for Your Personality Type</h1>
+                <p>
+                    Spiritual AI is a platform that provides personalized spiritual and productivity
+                    guidance based on your personality type. Using MBTI (Myers-Briggs Type Indicator)
+                    insights, we deliver AI-powered recommendations tailored to how your mind naturally
+                    works—whether you're an INTJ, ENFP, INFJ, or any of the 16 personality types.
+                </p>
+                <p>
+                    Unlike generic self-help advice, Spiritual AI understands that different personalities
+                    need different approaches. Our system combines spiritual intelligence with cognitive
+                    architecture to help you achieve clarity, focus, and personal growth in a way that
+                    feels natural to you.
+                </p>
+            </div>
+
+            {/* 🌫️ Atmosphere Layers */}
+            <div className="vignette" />
+            <div className="film-grain" />
+            <div className="fog-container">
+                <div className="fog-layer-horizon" />
+                <div className="fog-layer-mid" />
+            </div>
+
             <div className="mobile-view">
                 <MobileHomeV2 />
             </div>
 
-            <div className="desktop-view mobile-container">
+            <article itemScope itemType="https://schema.org/WebPage" className="desktop-view mobile-container"
+            >
                 <LotusAnimation />
                 {/* 🌌 Main Background Optimized */}
                 <div className="main-background">
@@ -182,35 +208,34 @@ export default function Home() {
                     />
                 </div>
 
-                <div className="creator-section">
-                    <a href="/creator">
-                        <Image
-                            src="/images/moon.png"
-                            alt="Moon"
-                            className="moon-img"
-                            width={180}
-                            height={180}
-                            priority
-                            quality={90}
-                            style={{ cursor: 'pointer' }}
-                        />
+                <div className="creator-section" style={{ top: '20px', left: '20px', position: 'absolute', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 10 }}>
+                    <a href="/creator" className="flex items-center gap-2 text-white/90 hover:text-white transition-colors" style={{ textDecoration: 'none' }}>
+                        <div className="w-10 h-10 rounded-full overflow-hidden border border-purple-500/50">
+                            <Image
+                                src="/images/moon.png"
+                                alt="Guide"
+                                width={40}
+                                height={40}
+                                className="object-cover"
+                            />
+                        </div>
+                        <span className="text-sm font-medium tracking-wide nav-link-contrast">About the Guide →</span>
                     </a>
-                    <NeonButton />
                 </div>
 
-                <div className="contact-section">
-                    <div onClick={() => setIsSidebarOpen(true)} style={{ cursor: 'pointer' }}>
-                        <Image
-                            src="/images/logo.png"
-                            alt="Logo"
-                            className="logo-img"
-                            width={180}
-                            height={180}
-                            priority
-                            quality={90}
-                        />
-                    </div>
-                    <ContactButton onClick={() => setIsSidebarOpen(true)} />
+                <div className="contact-section" style={{ top: '20px', right: '20px', position: 'absolute', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 10 }}>
+                    <button onClick={() => setIsSidebarOpen(true)} className="flex items-center gap-2 text-white/90 hover:text-white transition-colors bg-transparent border-none cursor-pointer">
+                        <span className="text-sm font-medium tracking-wide nav-link-contrast">How This Works</span>
+                        <div className="w-10 h-10 rounded-full overflow-hidden border border-cyan-500/50">
+                            <Image
+                                src="/images/logo.png"
+                                alt="Logo"
+                                width={40}
+                                height={40}
+                                className="object-cover"
+                            />
+                        </div>
+                    </button>
                 </div>
 
                 {/* Contact Sidebar */}
@@ -315,8 +340,8 @@ export default function Home() {
                     </div>
                 </main>
 
-                {/* ✨ Title */}
-                <div className="container">
+                {/* ✨ Title Container - Adjusted for User Request (moved down ~0.5 inch) */}
+                <div className="container" style={{ paddingTop: '10vh' }}>
                     <div className="neon">
                         <div className="title">
                             <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -324,28 +349,82 @@ export default function Home() {
                                 <h1>Spiritual AI</h1>
                             </div>
                             <div className="subtitle-lotus-container">
-                                <h2 className="subtitle-text">
-                                    YOUR FIRST STEP TOWARDS TRANSFORMATION
+                                <h2 className="subtitle-text" style={{ fontSize: '1.2rem', textTransform: 'none', letterSpacing: '0.05em', marginTop: '1rem', color: '#4fd1c5' }}>
+                                    Personalized clarity for how your mind works
                                 </h2>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* 🔮 Personality Question Section */}
-                <div className="mbti-container">
-                    <h2 className="matrix-text">DO YOU KNOW YOUR PERSONALITY TYPE?</h2>
 
-                    <div className="button-group">
-                        <a href="/MBTI" className="neon-btn" data-text="YES" target="_self">YES</a>
-                        <a href="/cosmic-compass/" className="neon-btn" data-text="NO">NO</a>
+                {/* 🔮 Personality Question Section - Adjusted for Golden Ratio (~38% head, ~45% CTA) */}
+                <div className="mbti-container content-center text-center px-4" style={{ zIndex: 5, marginTop: '2vh' }}>
+                    <h2 className="text-3xl md:text-5xl font-serif text-white mb-0 leading-tight drop-shadow-lg golden-glow-text" style={{ fontFamily: 'serif', maxWidth: '1200px', margin: '0 auto 0', fontSize: 'clamp(2rem, 5vw, 4.5rem)', lineHeight: '1.2' }}>
+                        Your personality is why most<br />advice never worked for you.
+                    </h2>
+
+                    <p className="text-lg md:text-xl text-white/80 mb-2 tracking-wide font-light whitespace-nowrap" style={{ maxWidth: '800px', margin: '0 auto 1rem', transform: 'translateY(-10px)' }}>
+                        Get guidance designed for how you think — not generic self-help.
+                    </p>
+
+                    <div className="button-group flex flex-col items-center gap-6" style={{ marginTop: '0', transform: 'translateY(-20px)', marginBottom: '20px' }}>
+                        {/* Primary CTA - Discovery Quiz */}
+                        <a
+                            href="/discover"
+                            className="rounded-full text-white tracking-widest transition-all duration-300 gradient-flow-btn"
+                            style={{
+                                textDecoration: 'none',
+                                fontSize: '1.5rem',
+                                fontWeight: 600,
+                                textShadow: '0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4)',
+                                minWidth: '453px',
+                                padding: '16.5px 32px',
+                                textAlign: 'center',
+                                lineHeight: '1.5',
+                                display: 'inline-block',
+                                height: '65px',
+                                boxSizing: 'border-box'
+                            }}
+                        >
+                            Start with your personality
+                        </a>
+                        <span className="text-white/50 text-xs tracking-widest uppercase mt-2">
+                            4 questions · About a minute · No sign up
+                        </span>
+
+                        {/* Secondary CTA - Direct to personality types */}
+                        <a href="/mbti" className="secondary-cta" style={{
+                            marginTop: '16px',
+                            fontSize: '0.95rem',
+                            padding: '8px 24px',
+                            borderRadius: '9999px',
+                            background: 'rgba(15, 23, 42, 0.7)',
+                            border: '1px solid rgba(79, 209, 197, 0.5)',
+                            transition: 'all 0.3s ease',
+                            textDecoration: 'none',
+                            color: 'white',
+                            display: 'inline-block',
+                            textAlign: 'center',
+                            minWidth: '280px',
+                            height: '40px',
+                            lineHeight: '24px',
+                            fontWeight: '500',
+                            letterSpacing: '0.5px',
+                            boxSizing: 'border-box'
+                        }}>
+                            I know my personality type
+                        </a>
                     </div>
                 </div>
 
                 {/* 🌸 Blooming Flower with Lotus God Trigger */}
-                <a href="/lotus-god" className="lotus-link-wrapper">
-                    <div className="lotus-bottom-container">
-                        <div className="flower-container">
+                <div className="lotus-bottom-container" style={{ bottom: 'auto', top: '62%', transform: 'translate(-50%, 0)' }}>
+                    <Link href="/lotus-god" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <div
+                            className="flower-container"
+                            style={{ cursor: 'pointer' }}
+                        >
                             <main>
                                 <div className="corolla">
                                     <div className="segmL"></div>
@@ -363,14 +442,18 @@ export default function Home() {
                                 </div>
                             </main>
                         </div>
-                        <div className="lotus-trigger-bottom">
-                            <span className="lotus-trigger-link">
-                                click to see lotus god
-                            </span>
-                        </div>
+                    </Link>
+                    <div className="lotus-trigger-bottom text-center flex flex-col gap-2" style={{ marginTop: '2vh' }}>
+                        <span className="floating-text">Tap on the lotus</span>
+                        <span className="text-white/70 text-sm tracking-wider font-light">
+                            To enter gently through a short guided ritual
+                        </span>
+                        <span className="text-amber-200/60 text-xs tracking-[0.2em] uppercase">
+                            Those who complete it receive a gift.
+                        </span>
                     </div>
-                </a>
-            </div >
+                </div>
+            </article>
         </>
     );
 }

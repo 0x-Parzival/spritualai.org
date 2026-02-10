@@ -1,0 +1,594 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    perspective: 2000px;
+    z-index: 50;
+    /* User request: "after pressing go it should move in tunnel" - handled by JS/Canvas logic */
+}
+
+/* Base Card Styling */
+.portalCard {
+    position: absolute;
+    width: 600px;
+    /* Doubled width from 300px */
+    height: 800px;
+    /* Doubled height from 400px */
+    background: rgba(10, 12, 18, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    /* Increased radius */
+    border: 1px solid rgba(0, 255, 170, 0.8);
+    box-shadow: 0 0 60px rgba(0, 255, 170, 0.5), 0 0 100px rgba(0, 179, 255, 0.3),
+        inset 0 0 40px rgba(0, 255, 170, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 2.2s cubic-bezier(0.1, 1, 0.1, 1);
+    z-index: 10;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transform: scale(0.95);
+    /* Slightly scaled down to fit viewport if needed */
+}
+
+/* ... (previous styles) ... */
+
+
+
+.portalCard h1 {
+    font-weight: 700;
+    font-size: 48px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-align: center;
+
+    /* 5-color gradient flow */
+    background: linear-gradient(90deg,
+            #ff00ff,
+            #00ffff,
+            #00ff00,
+            #ffff00,
+            #ff0000);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientFlow 5s ease infinite;
+    text-shadow: none;
+    /* Removed shadow to keep gradient clean */
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.portalButton {
+    /* ... existing styles ... */
+    margin-top: 20px;
+}
+
+.retakeButton {
+    margin-top: 30px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    z-index: 20;
+}
+
+.retakeButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.portalCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 19px;
+    padding: 1px;
+    background: linear-gradient(135deg, #00ffaa, #00a3ff);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.9;
+    transition: opacity 1.5s ease;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(0, 255, 170, 1);
+}
+
+.portalCard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: linear-gradient(135deg,
+            rgba(0, 255, 170, 0.15) 0%,
+            rgba(0, 179, 255, 0.15) 100%);
+    opacity: 0.5;
+    z-index: 1;
+}
+
+/* Content Styling */
+.portalContent {
+    transition: all 1.1s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    width: 100%;
+}
+
+.mbtiImage {
+    width: 380px;
+    /* Increased from 300px */
+    height: 380px;
+    /* Increased from 300px */
+    object-fit: contain;
+    margin-bottom: 30px;
+    /* Adjusted margin */
+    filter: drop-shadow(0 0 30px rgba(0, 255, 170, 0.6));
+    animation: floatImage 6s ease-in-out infinite;
+}
+
+.portalCard h1 {
+    font-weight: 900;
+    /* Bolder */
+    font-size: 80px;
+    /* Doubled */
+    margin-bottom: 30px;
+    /* Scaled margin */
+    /* ... rest of h1 */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    line-height: 1.1;
+    text-align: center;
+
+    /* 5-color gradient flow */
+    background: linear-gradient(90deg,
+            #ff00ff,
+            #00ffff,
+            #00ff00,
+            #ffff00,
+            #ff0000);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientFlow 5s ease infinite;
+    text-shadow: none;
+}
+
+.portalCard h2 {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    text-align: center;
+}
+
+.reframeText {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+    max-width: 80%;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* ... (keyframes gradientFlow) ... */
+
+.portalButton {
+    padding: 24px 64px;
+    border: 3px solid #00ffaa;
+    border-radius: 100px;
+    color: white;
+    font-weight: 700;
+    font-size: 32px;
+    /* Increased font size */
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 170, 0.5);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    margin-top: 30px;
+    /* Scaled margin */
+}
+
+/* ... (portalButton pseudo-elements and hover) ... */
+
+/* ... (retakeButton) ... */
+
+/* ... (pseudo elements for card) ... */
+
+/* Gooey Effect Background */
+.gooeyEffect {
+    position: absolute;
+    inset: 0;
+    border-radius: 40px;
+    overflow: hidden;
+    z-index: 0;
+    opacity: 0.9;
+    filter: blur(4px);
+    /* Increased blur */
+}
+
+.gooeyBlob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(24px);
+    /* Increased blur */
+    animation: floatBlob 15s infinite ease-in-out;
+    opacity: 0.9;
+}
+
+.gooeyBlob:nth-child(1) {
+    width: 500px;
+    height: 500px;
+    left: -100px;
+    top: 200px;
+    background: radial-gradient(circle,
+            rgba(0, 255, 170, 0.7) 0%,
+            rgba(0, 255, 170, 0) 70%);
+    animation-duration: 8s;
+}
+
+.gooeyBlob:nth-child(2) {
+    width: 400px;
+    height: 400px;
+    right: -60px;
+    top: 100px;
+    background: radial-gradient(circle,
+            rgba(0, 179, 255, 0.7) 0%,
+            rgba(0, 179, 255, 0) 70%);
+    animation-duration: 8s;
+    animation-delay: -3s;
+}
+
+.gooeyBlob:nth-child(3) {
+    width: 360px;
+    height: 360px;
+    right: 100px;
+    bottom: 200px;
+    background: radial-gradient(circle,
+            rgba(0, 255, 170, 0.7) 0%,
+            rgba(0, 255, 170, 0) 70%);
+    animation-duration: 10s;
+    animation-delay: -4s;
+}
+
+.gooeyBlob:nth-child(4) {
+    width: 440px;
+    /* Doubled */
+    height: 440px;
+    /* Doubled */
+    left: 60px;
+    bottom: 60px;
+    background: radial-gradient(circle,
+            rgba(0, 179, 255, 0.7) 0%,
+            rgba(0, 179, 255, 0) 70%);
+    animation-duration: 10s;
+    animation-delay: -4s;
+}
+
+@keyframes floatBlob {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    20% {
+        transform: translate(30px, 20px) scale(1.05);
+    }
+
+    40% {
+        transform: translate(20px, 40px) scale(0.95);
+    }
+
+    60% {
+        transform: translate(-20px, 30px) scale(1.1);
+    }
+
+    80% {
+        transform: translate(-30px, -20px) scale(0.9);
+    }
+}
+
+/* Content Styling */
+.portalContent {
+    transition: all 1.1s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    width: 100%;
+}
+
+.mbtiImage {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 170, 0.6));
+    animation: floatImage 6s ease-in-out infinite;
+}
+
+@keyframes floatImage {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.portalCard h1 {
+    color: white;
+    /* font-family: "Unica One", sans-serif; - Assuming standard font for now unless imported globally */
+    font-weight: 300;
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.8s ease;
+    text-shadow: 0 0 15px rgba(0, 255, 170, 0.7);
+    position: relative;
+    z-index: 5;
+    line-height: 1.2;
+    text-align: center;
+}
+
+/* Tunnel Skip Button */
+.skipButton {
+    margin-top: 40px;
+    padding: 16px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    color: white;
+    /* Default white text */
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 1s ease 2s forwards;
+    /* Delay appearance */
+    pointer-events: auto;
+    /* Enable clicks */
+
+    /* Default fallback color if variable missing */
+    --type-color: #00ffaa;
+}
+
+.skipButton:hover {
+    background: var(--type-color);
+    border-color: var(--type-color);
+    color: #000;
+    /* Dark text on bright background for contrast */
+    box-shadow: 0 0 30px var(--type-color);
+    transform: scale(1.05);
+    font-weight: 700;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.portalButton {
+    padding: 14px 32px;
+    background: rgba(10, 12, 20, 0.3);
+    border: 2px solid #00ffaa;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    margin-top: 10px;
+}
+
+.portalButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            rgba(0, 255, 170, 0.3),
+            rgba(0, 179, 255, 0.3));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.portalButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.7);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    border-color: #00ffdd;
+}
+
+.portalButton:hover::before {
+    opacity: 1;
+}
+
+/* Tunnel & Canvas */
+.tunnelContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    transition: all 0s;
+}
+
+.tunnelContainer.active {
+    pointer-events: all;
+    z-index: 15;
+}
+
+.tunnelCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: circle(10% at 50% 50%);
+    /* Starts small behind card */
+    transition: clip-path 1.8s ease-out;
+    display: none;
+}
+
+.tunnelCanvas.active {
+    clip-path: circle(150% at 50% 50%);
+    /* Expands to fill screen */
+}
+
+/* Tunnel Text Overlay */
+.tunnelOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    text-align: center;
+    z-index: 100;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tunnelText {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: white;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+    font-family: sans-serif;
+    /* Clean, modern */
+    max-width: 600px;
+}
+
+.tunnelText.visible {
+    opacity: 1;
+}
+
+.microCopy {
+    font-size: 14px;
+    color: rgba(0, 255, 170, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    margin-top: 10px;
+}
+
+.microCopy.visible {
+    opacity: 1;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Zoom Animation Classes */
+.portalCard.zoomIn {
+    transform: translateZ(500px) scale(6);
+    opacity: 0;
+    transition: transform 2s ease-out, opacity 1.5s ease-in;
+}
+
+.portalCard.zoomIn::before,
+.portalCard.zoomIn::after {
+    opacity: 0;
+}
+
+.portalCard.zoomIn .portalContent {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+.cardBg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+}

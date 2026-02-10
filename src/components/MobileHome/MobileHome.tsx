@@ -63,9 +63,9 @@ export default function MobileHome() {
                     <h2 className={styles.mbtiQuestion}>
                         DO YOU KNOW YOUR<br />PERSONALITY TYPE?
                     </h2>
-                    <div className={styles.btnGroup}>
-                        <a href="/MBTI/mbti.html" className={styles.neonActionBtn}>YES</a>
-                        <a href="/cosmic-compass/" className={styles.neonActionBtn}>NO</a>
+                    <div className={styles.neonActionGroup}>
+                        <a href="/lotus-god" className={styles.neonActionBtn}>YES</a>
+                        <a href="/login" className={styles.neonActionBtn}>NO</a>
                     </div>
                 </div>
 
