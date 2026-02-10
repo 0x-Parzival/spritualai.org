@@ -1,10 +1,9 @@
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
 // Configuration
-const PARTICLE_COUNT = 700;
+const PARTICLE_COUNT = 1000;
 const PARTICLE_SIZE = 0.02;
-const FLOW_SPEED = 0.2;
-const MOUSE_INFLUENCE = 0.05;
+const MOUSE_INFLUENCE = 0.1;
 
 class SpiritualBackground {
     constructor() {
@@ -36,17 +35,18 @@ class SpiritualBackground {
         this.addEventListeners();
     }
 
+    getThemeColors() {
+        const style = getComputedStyle(document.body);
+        const primary = style.getPropertyValue('--accent-primary').trim() || '#9154ff';
+        const secondary = style.getPropertyValue('--accent-secondary').trim() || '#bd00ff';
+        return { primary, secondary };
+    }
+
     init() {
-        // Scene
         this.scene = new THREE.Scene();
-        // this.scene.background = new THREE.Color(0x050510); // Very dark blue/black
-        // Transparent background
-
-        // Camera
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.1, 1000);
-        this.camera.position.z = 2;
+        this.camera.position.z = 3;
 
-        // Renderer
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             alpha: true,
@@ -55,7 +55,6 @@ class SpiritualBackground {
         this.renderer.setSize(this.width, this.height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // Particles
         this.createParticles();
     }
 
@@ -63,80 +62,35 @@ class SpiritualBackground {
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(PARTICLE_COUNT * 3);
         const colors = new Float32Array(PARTICLE_COUNT * 3);
-        const sizes = new Float32Array(PARTICLE_COUNT);
+        const { primary, secondary } = this.getThemeColors();
 
-        // Detect Theme Color
-        const bodyClass = document.body.className;
-        let colorA = new THREE.Color(0x9154ff); // Default/Purple
-        let colorB = new THREE.Color(0xbd00ff);
-
-        if (bodyClass.includes('theme-green')) {
-            colorA = new THREE.Color(0x00e68c);
-            colorB = new THREE.Color(0x00ffaa);
-        } else if (bodyClass.includes('theme-blue')) {
-            colorA = new THREE.Color(0x00bcff);
-            colorB = new THREE.Color(0x0060ff);
-        } else if (bodyClass.includes('theme-yellow')) {
-            colorA = new THREE.Color(0xffce00);
-            colorB = new THREE.Color(0xff8c00);
-        }
+        const colorA = new THREE.Color(primary);
+        const colorB = new THREE.Color(secondary);
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
-            // Position
-            positions[i * 3] = (Math.random() - 0.5) * 5;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 5;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 5;
 
-            // Color
             const mixedColor = colorA.clone().lerp(colorB, Math.random());
             colors[i * 3] = mixedColor.r;
             colors[i * 3 + 1] = mixedColor.g;
             colors[i * 3 + 2] = mixedColor.b;
-
-            // Size
-            sizes[i] = Math.random();
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-        // Shader Material for round glowing particles
-        const vertexShader = `
-            attribute float size;
-            attribute vec3 color;
-            varying vec3 vColor;
-            void main() {
-                vColor = color;
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = size * (300.0 / -mvPosition.z);
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `;
-
-        const fragmentShader = `
-            varying vec3 vColor;
-            void main() {
-                float r = distance(gl_PointCoord, vec2(0.5));
-                if (r > 0.5) discard;
-                float alpha = 1.0 - (r * 2.0);
-                alpha = pow(alpha, 1.5);
-                gl_FragColor = vec4(vColor, alpha);
-            }
-        `;
-
-        this.material = new THREE.ShaderMaterial({
-            uniforms: {
-                time: { value: 0 },
-            },
-            vertexShader,
-            fragmentShader,
+        const material = new THREE.PointsMaterial({
+            size: 0.03,
+            vertexColors: true,
             transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending,
+            sizeAttenuation: true
         });
 
-        this.points = new THREE.Points(geometry, this.material);
+        this.points = new THREE.Points(geometry, material);
         this.scene.add(this.points);
     }
 
@@ -158,7 +112,6 @@ class SpiritualBackground {
     animate() {
         requestAnimationFrame(this.animate.bind(this));
 
-        // Physics/Movement
         this.mouseX += (this.targetMouseX - this.mouseX) * 0.05;
         this.mouseY += (this.targetMouseY - this.mouseY) * 0.05;
 
@@ -168,21 +121,8 @@ class SpiritualBackground {
         this.points.rotation.x += this.mouseY * MOUSE_INFLUENCE;
         this.points.rotation.y += this.mouseX * MOUSE_INFLUENCE;
 
-        // Wave effect
-        const positions = this.points.geometry.attributes.position.array;
-        const time = Date.now() * 0.001;
-
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            // Subtle flowing movement can be added here if needed
-        }
-
         this.renderer.render(this.scene, this.camera);
     }
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => new SpiritualBackground());
-} else {
-    new SpiritualBackground();
-}
+document.addEventListener('DOMContentLoaded', () => new SpiritualBackground());
