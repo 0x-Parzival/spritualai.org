@@ -411,6 +411,15 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
 
     const typeColor = getTypeColor(mbtiType);
 
+    const roleMap: Record<string, string> = {
+        INTJ: "Architect", INTP: "Logician", ENTJ: "Commander", ENTP: "Debater",
+        INFJ: "Advocate", INFP: "Mediator", ENFJ: "Protagonist", ENFP: "Campaigner",
+        ISTJ: "Logistician", ISFJ: "Defender", ESTJ: "Executive", ESFJ: "Consul",
+        ISTP: "Virtuoso", ISFP: "Adventurer", ESTP: "Entrepreneur", ESFP: "Entertainer"
+    };
+
+    const role = roleMap[mbtiType] || "Mind";
+
     return (
         <div className={styles.container}>
             <div id="portalCard" className={styles.portalCard} ref={cardRef}>
@@ -424,6 +433,18 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
 
                     <h2>Your pattern aligns with</h2>
                     <h1>{mbtiType}</h1>
+                    <p style={{
+                        fontSize: '1rem',
+                        color: 'rgba(0, 255, 238, 0.5)',
+                        textShadow: '0 0 10px rgba(0, 255, 238, 0.3)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '3px',
+                        marginTop: '-10px',
+                        marginBottom: '20px',
+                        fontFamily: 'Orbitron, sans-serif'
+                    }}>
+                        [{role}]
+                    </p>
                     <p className={styles.reframeText}>
                         This describes how your mind naturally seeks clarity, truth, and direction — not your limits.
                     </p>

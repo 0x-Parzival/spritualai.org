@@ -27,8 +27,8 @@
     width: 210mm;
     /* A4 */
     min-height: 297mm;
-    padding: 15mm;
-    /* Slightly less padding for more content space */
+    padding: 12mm;
+    /* Reduced padding for more content space */
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
     display: flex;
@@ -36,40 +36,41 @@
 }
 
 .header {
-    border-bottom: 3px solid #000;
-    padding-bottom: 25px;
-    margin-bottom: 30px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+    margin-bottom: 18px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
 .name {
-    font-size: 42px;
+    font-size: 32px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -1px;
     line-height: 1;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     background: -webkit-linear-gradient(45deg, #000, #333);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .headline {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
     color: #555;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
 }
 
 .contactInfo {
-    font-size: 13px;
+    font-size: 11px;
     color: #666;
     display: flex;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -80,71 +81,102 @@
 }
 
 .section {
-    margin-bottom: 35px;
+    margin-bottom: 20px;
 }
 
 .sectionTitle {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     color: #444;
     border-bottom: 2px solid #000;
-    padding-bottom: 8px;
-    margin-bottom: 20px;
+    padding-bottom: 5px;
+    margin-bottom: 12px;
 }
 
 .item {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .itemHeader {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .position {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: #000;
 }
 
+.projectLink {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.projectLink:hover {
+    color: #333;
+    border-bottom: 2px solid #000;
+}
+
+@media print {
+    .projectLink {
+        color: #000;
+        text-decoration: none;
+        border-bottom: none;
+    }
+}
+
 .company {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 500;
     color: #444;
 }
 
 .date {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     color: #888;
     text-transform: uppercase;
 }
 
 .description {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 12px;
+    line-height: 1.4;
     color: #333;
+}
+
+.description ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.description li {
+    margin-bottom: 3px;
 }
 
 .skillsList {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
 }
 
 .skill {
     background: #000;
     color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .downloadBtn {
@@ -172,6 +204,11 @@
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
+@page {
+    margin: 0;
+    size: A4;
+}
+
 @media print {
     .container {
         padding: 0;
@@ -180,11 +217,17 @@
 
     .paper {
         box-shadow: none;
-        padding: 0;
+        padding: 12mm;
         width: 100%;
+        margin: 0;
     }
 
     .downloadBtn {
         display: none;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
     }
 }

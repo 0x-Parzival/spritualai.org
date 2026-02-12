@@ -387,7 +387,7 @@ export default function Home() {
                                 boxSizing: 'border-box'
                             }}
                         >
-                            Start with your personality
+                            Discover the architecture of your mind
                         </a>
                         <span className="text-white/50 text-xs tracking-widest uppercase mt-2">
                             4 questions · About a minute · No sign up
