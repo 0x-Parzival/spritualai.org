@@ -10,6 +10,7 @@ const LoginPage = () => {
 
     const handleFocus = (field: 'email' | 'password' | 'submit') => {
         if (currentAnimation.current) currentAnimation.current.pause();
+        if (!pathRef.current) return;
 
         let strokeDashoffset = 0;
         let strokeDasharray = '240 1386';
@@ -21,19 +22,18 @@ const LoginPage = () => {
             strokeDasharray = '530 1386';
         }
 
-        currentAnimation.current = animate({
-            targets: pathRef.current,
+        currentAnimation.current = animate(pathRef.current, {
             strokeDashoffset: {
-                value: strokeDashoffset,
+                value: (strokeDashoffset as any),
                 duration: 700,
                 easing: 'easeOutQuart'
             },
             strokeDasharray: {
-                value: strokeDasharray,
+                value: (strokeDasharray as any),
                 duration: 700,
                 easing: 'easeOutQuart'
             }
-        });
+        } as any);
     };
 
     return (
