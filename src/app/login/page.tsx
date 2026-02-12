@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import * as anime from 'animejs';
+import { animate } from 'animejs';
 import styles from './login.module.css';
 
 const LoginPage = () => {
@@ -21,7 +21,7 @@ const LoginPage = () => {
             strokeDasharray = '530 1386';
         }
 
-        currentAnimation.current = anime({
+        currentAnimation.current = animate({
             targets: pathRef.current,
             strokeDashoffset: {
                 value: strokeDashoffset,
