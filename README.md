@@ -8,7 +8,7 @@
    # Then restart your terminal or run `source ~/.bashrc`
    ```
 2. **Install the required Node version** (reads the `.nvmrc` file):
-   ```bash
+   ```bashvb
    cd /home/parzival/spritualai.org
    nvm install   # installs 20.9.0 as specified in .nvmrc
    nvm use       # switches to 20.9.0 for this session
