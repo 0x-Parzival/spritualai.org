@@ -1316,7 +1316,7 @@ export default function LotusGod() {
                     </div>
 
                     {/* Above Goddess Message */}
-                    <div style={{
+                    <div className="awakened-title-container" style={{
                         position: 'absolute',
                         top: '22%',
                         left: '50%',
@@ -1556,29 +1556,34 @@ export default function LotusGod() {
                     /* Mobile Responsiveness */
                     @media (max-width: 768px) {
                         .sacred-hud {
-                            top: 40px !important;
+                            top: 20px !important;
                             left: 50% !important;
-                            transform: translateX(-50%) scale(0.7);
+                            transform: translateX(-50%) scale(0.6);
+                        }
+                        .awakened-title-container {
+                            top: 140px !important;
                         }
                         .awakened-title {
-                            font-size: 1.2rem !important;
+                            font-size: 1.1rem !important;
                             letter-spacing: 2px !important;
+                            margin-bottom: 5px !important;
                         }
                         .awakened-subtext {
-                            font-size: 0.8rem !important;
+                            font-size: 0.75rem !important;
                         }
                         .reward-notification {
-                            top: 140px !important;
+                            top: 240px !important;
                             right: 0 !important;
                             left: 0 !important;
                             text-align: center !important;
-                            padding: 0 10px !important;
+                            padding: 0 15px !important;
+                            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.4), transparent);
                         }
                         .reward-notification .reward-title {
-                            font-size: 0.8rem !important;
+                            font-size: 0.75rem !important;
                         }
                         .reward-notification .reward-code {
-                            font-size: 1rem !important;
+                            font-size: 0.9rem !important;
                         }
                         .cta-container {
                             bottom: 40px !important;
@@ -1586,14 +1591,14 @@ export default function LotusGod() {
                             padding: 0 20px;
                         }
                         .cta-container a {
-                            padding: 12px 30px !important;
-                            font-size: 0.9rem !important;
+                            padding: 10px 25px !important;
+                            font-size: 0.85rem !important;
                         }
                         .cta-journey-text {
-                            font-size: 0.75rem !important;
+                            font-size: 0.7rem !important;
                         }
                         .cta-time-limit {
-                            font-size: 0.7rem !important;
+                            font-size: 0.65rem !important;
                         }
                     }
                 `}} />

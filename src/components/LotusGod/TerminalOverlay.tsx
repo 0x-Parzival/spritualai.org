@@ -109,13 +109,20 @@ export default function TerminalOverlay({ clickCount }: Props) {
 
                     @media (max-width: 768px) {
                         .terminal-overlay {
-                            right: 10px !important;
-                            top: 30% !important;
-                            font-size: 0.75rem !important;
-                            max-width: 150px;
+                            right: 0 !important;
+                            left: 0 !important;
+                            top: auto !important;
+                            bottom: 120px !important;
+                            transform: none !important;
+                            text-align: center !important;
+                            font-size: 0.7rem !important;
+                            max-width: 100% !important;
+                            padding: 0 20px;
+                            background: rgba(0,0,0,0.3);
+                            backdrop-filter: blur(5px);
                         }
                         .terminal-overlay p {
-                            margin: 4px 0 !important;
+                            margin: 2px 0 !important;
                         }
                     }
                 `}} />
