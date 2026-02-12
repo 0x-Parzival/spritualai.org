@@ -12,91 +12,475 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>INTP - The Logician: Ultimate Growth Guide | Spiritual AI</title>
   <link href="premium.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      width: 100vw;
+      min-height: 100vh;
+      background-color: #000000;
+    }
 
-  <script type="application/ld+json" id="seo-schema">
-  {
-  "@context": "https://schema.org/",
-  "@type": "ItemList",
-  "name": "INTP Transformation Toolkit",
-  "description": "AI-powered digital products specifically designed for The Logician personalities.",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "item": {
-        "@type": "Product",
-        "name": "How to Master Focus without Rigid Schedules in 7 Days",
-        "description": "An AI-powered workspace that adapts to YOUR brain. It doesn't force a schedule; it curates your 'Next Logical Step' based on your current dopamine levels.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#focus-mastery",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
+    .banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .webgl {
+      width: 100%;
+      height: 100vh;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      outline: none;
+    }
+
+    .webgl canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .btn {
+      position: fixed;
+      bottom: 20px;
+      transform: translateY(-50%);
+      padding: 12px 24px;
+      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      text-decoration: none;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .btn-left {
+      left: 30px;
+    }
+
+    #canvas-container {
+      display: none;
+    }
+
+    /* Restore back-button */
+    .back-button {
+      display: flex !important;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      color: white;
+      pointer-events: auto;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      /* Fix section alignment */
+    }
+
+    /* Core Drivers Refined - Side Panel & Visibility */
+    .section-content.drivers-layout {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      min-height: 400px;
+    }
+
+    .drivers-list {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 15px;
+      padding: 0;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .drivers-list li {
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      list-style: none;
+      padding: 16px 24px;
+      background: rgba(145, 84, 255, 0.12);
+      border: 1px solid rgba(145, 84, 255, 0.4);
+      border-radius: 12px;
+      width: 320px;
+      text-align: left;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 500;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    .drivers-list li:hover {
+      background: rgba(145, 84, 255, 0.25);
+      border-color: #9154ff;
+      box-shadow: 0 0 25px rgba(145, 84, 255, 0.5);
+      transform: translateX(10px);
+    }
+
+    .drivers-list li::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: 0.5s;
+    }
+
+    .drivers-list li:hover::before {
+      transform: translateX(100%);
+    }
+
+    .driver-terminal {
+      flex-grow: 1;
+      background: rgba(10, 10, 10, 0.6);
+      border: 1px solid rgba(145, 84, 255, 0.3);
+      border-radius: 16px;
+      padding: 30px;
+      height: 100%;
+      min-height: 350px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .drivers-layout:has(li:hover) .driver-terminal {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .terminal-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: rgba(145, 84, 255, 0.6);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(145, 84, 255, 0.1);
+      letter-spacing: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .terminal-header::after {
+      content: '● ● ●';
+      color: rgba(145, 84, 255, 0.3);
+    }
+
+    #terminal-text {
+      font-family: 'Lato', sans-serif;
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.9);
+      white-space: pre-wrap;
+    }
+
+    #terminal-text::after {
+      content: '|';
+      animation: blink 1s step-end infinite;
+      color: #9154ff;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+
+      from,
+      to {
+        opacity: 1;
       }
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "item": {
-        "@type": "Product",
-        "name": "How to Hack Social Dynamics without Faking Etiquette in 2 Weeks",
-        "description": "A framework that deconstructs social interactions into logical flowcharts. No emotion required\u2014just pure pattern matching.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#social-hacking",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
-      }
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "item": {
-        "@type": "Product",
-        "name": "How to Learn Any Skill without Boring Repetition in 48 Hours",
-        "description": "An AI tool that strips away the fluff and gives you the raw logic gates of any skill. Learn the 20% that gives 80% of results.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#skill-upload",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
-      }
-    },
-    {
-      "@type": "ListItem",
-      "position": 4,
-      "item": {
-        "@type": "Product",
-        "name": "How to Find Your Life Purpose without Woo-Woo Nonsense in 60 Minutes",
-        "description": "A guided AI framework to construct a personal philosophy that is logically consistent and emotionally resonant.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#existential-purpose",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
-      }
-    },
-    {
-      "@type": "ListItem",
-      "position": 5,
-      "item": {
-        "@type": "Product",
-        "name": "How to Automate Your Income without Marketing Sleaze in 30 Days",
-        "description": "A complete guide to building 'No-Code' SaaS and digital assets that sell themselves via search intent, not social hype.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#passive-income-systems",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
+
+      50% {
+        opacity: 0;
       }
     }
-  ]
-}
+
+    @media (max-width: 900px) {
+      .section-content.drivers-layout {
+        flex-direction: column;
+      }
+
+      .drivers-list li {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    /* Move scroll indicator 1cm lower (~38px) */
+    .scroll-indicator {
+      bottom: -8px !important;
+    }
+
+    /* ATC Button CSS Integration Refined */
+    @property --complete {
+      initial-value: 0;
+      inherits: true;
+      syntax: '<number>';
+    }
+
+    .atc-main {
+      scale: 1;
+      position: relative;
+      margin: 15px 0 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .atc {
+      user-select: none;
+      -webkit-tap-highlight-color: #0000;
+      position: relative;
+      border-radius: 100px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      background: #000;
+      transition: translate 0.16s, scale 0.16s;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .atc[data-adding='false']:active {
+      translate: 0 1px;
+      scale: 0.98;
+    }
+
+    .atc__content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      gap: 0.5rem;
+      padding: 12px 24px;
+      border-radius: inherit;
+      position: relative;
+      z-index: 2;
+    }
+
+    .atc__content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: #000;
+      opacity: 1;
+      z-index: -1;
+      transition: opacity 0.26s ease-out;
+    }
+
+    .atc__cart,
+    .atc__cart--dummy,
+    .atc__check {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+    }
+
+    .atc__check,
+    .atc__cart--dummy {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      opacity: 0;
+      translate: -50% -50%;
+    }
+
+    .atc__cart-content {
+      fill: #9154ff;
+    }
+
+    .atc__check {
+      stroke: #9154ff;
+      stroke-width: 2;
+    }
+
+    .atc__icon {
+      overflow: visible !important;
+      width: 100%;
+      height: 100%;
+    }
+
+    .atc__border {
+      position: absolute;
+      inset: -2px;
+      border: 2px solid transparent;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .atc__border--static {
+      opacity: 0;
+      border-color: #fff;
+    }
+
+    .atc__border--complete {
+      border-color: #9154ff;
+      opacity: 0;
+    }
+
+    .atc__border--animated {
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0) border-box;
+      mask-composite: exclude;
+      z-index: -1;
+    }
+
+    .atc__border--animated::after {
+      content: '';
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from calc(var(--complete, 0) * 180deg) in hsl increasing hue,
+          #0000 0 calc((1 - var(--complete)) * 20%),
+          #9154ff calc((1 - var(--complete)) * 30%),
+          #bd00ff calc(100% - ((1 - var(--complete)) * 30%)),
+          #0000 calc(100% - ((1 - var(--complete)) * 20%)) 100%);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      translate: -50% -50%;
+      animation: atc-spin 2s infinite linear;
+      transition: --complete 0.22s ease-out;
+    }
+
+    @keyframes atc-spin {
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    /* Modal Styling */
+    .driver-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .driver-modal.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: rgba(15, 15, 15, 0.95);
+      padding: 40px;
+      border: 1px solid rgba(145, 84, 255, 0.3);
+      width: 90%;
+      max-width: 550px;
+      border-radius: 24px;
+      box-shadow: 0 0 50px rgba(145, 84, 255, 0.2);
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .driver-modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 28px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #9154ff;
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', sans-serif;
+      color: #9154ff;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    .modal-body h4 {
+      color: white;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .modal-body p {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .relevance-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(145, 84, 255, 0.2);
+      border: 1px solid rgba(145, 84, 255, 0.4);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: #b388ff;
+      margin-bottom: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+      }
+    }
   </script>
 
   <script type="application/ld+json" id="seo-schema">
@@ -111,12 +495,13 @@
       "position": 1,
       "item": {
         "@type": "Product",
-        "name": "How to Master Focus without Rigid Schedules in 7 Days",
-        "description": "An AI-powered workspace that adapts to YOUR brain. It doesn't force a schedule; it curates your 'Next Logical Step' based on your current dopamine levels.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#focus-mastery",
+        "name": "How to Learn Any Skill without Boring Repetition in 48 Hours",
+        "description": "Focuses on the 20% of logic that yields 80% results, mirroring the INTP love for deconstructing complex systems efficiently.",
+        "url": "https://spiritualai.org/MBTI/personality/intp.html#skill-upload",
         "offers": {
           "@type": "Offer",
           "priceCurrency": "USD",
+          "price": "49",
           "availability": "https://schema.org/InStock"
         }
       }
@@ -126,12 +511,13 @@
       "position": 2,
       "item": {
         "@type": "Product",
-        "name": "How to Hack Social Dynamics without Faking Etiquette in 2 Weeks",
-        "description": "A framework that deconstructs social interactions into logical flowcharts. No emotion required\u2014just pure pattern matching.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#social-hacking",
+        "name": "How to Master Focus without Rigid Schedules in 7 Days",
+        "description": "A non-linear, AI-adapted system that respects the INTP aversion to rigid discipline, curating steps based on real-time brain states.",
+        "url": "https://spiritualai.org/MBTI/personality/intp.html#focus-mastery",
         "offers": {
           "@type": "Offer",
           "priceCurrency": "USD",
+          "price": "29",
           "availability": "https://schema.org/InStock"
         }
       }
@@ -141,42 +527,13 @@
       "position": 3,
       "item": {
         "@type": "Product",
-        "name": "How to Learn Any Skill without Boring Repetition in 48 Hours",
-        "description": "An AI tool that strips away the fluff and gives you the raw logic gates of any skill. Learn the 20% that gives 80% of results.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#skill-upload",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
-      }
-    },
-    {
-      "@type": "ListItem",
-      "position": 4,
-      "item": {
-        "@type": "Product",
         "name": "How to Find Your Life Purpose without Woo-Woo Nonsense in 60 Minutes",
-        "description": "A guided AI framework to construct a personal philosophy that is logically consistent and emotionally resonant.",
+        "description": "Tackles existential questions through pure logic, turning vague 'meaning' into a consistent analytical framework.",
         "url": "https://spiritualai.org/MBTI/personality/intp.html#existential-purpose",
         "offers": {
           "@type": "Offer",
           "priceCurrency": "USD",
-          "availability": "https://schema.org/InStock"
-        }
-      }
-    },
-    {
-      "@type": "ListItem",
-      "position": 5,
-      "item": {
-        "@type": "Product",
-        "name": "How to Automate Your Income without Marketing Sleaze in 30 Days",
-        "description": "A complete guide to building 'No-Code' SaaS and digital assets that sell themselves via search intent, not social hype.",
-        "url": "https://spiritualai.org/MBTI/personality/intp.html#passive-income-systems",
-        "offers": {
-          "@type": "Offer",
-          "priceCurrency": "USD",
+          "price": "99",
           "availability": "https://schema.org/InStock"
         }
       }
@@ -188,8 +545,9 @@
 
 <body class="theme-purple">
   <!-- WebGL Background -->
-  <canvas id="webgl-canvas"></canvas>
-  <script type="module" src="webgl-background.js"></script>
+  <div class="webgl"></div>
+  <div id="canvas-container"></div>
+  <script type="module" src="intp-background.js"></script>
 
   <!-- Back Button -->
   <a href="/MBTI" class="back-button">
@@ -203,26 +561,24 @@
 
   <div class="container">
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
-      <img src="/images/logo.png" alt="Spiritual AI Logo" style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
+      <img src="/images/logo.png" alt="Spiritual AI Logo"
+        style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
     </div>
 
     <div class="mbti-hero-visual">
 
 
       <header class="mbti-header">
-      <div class="mbti-title short">
-        <h1>INTP</h1>
-        <h1>INTP</h1>
-      </div>
-      <p class="mbti-subtitle">The Logician</p>
-    </header>
-
-      <div class="hero-bg-container">
-        <canvas id="header-canvas" class="hero-bg"></canvas>
-      </div>
+        <div class="mbti-title short">
+          <h1>INTP</h1>
+          <h1>INTP</h1>
+        </div>
+        <p class="mbti-subtitle">The Logician</p>
+      </header>
       <img src="../HOVER/INTP.png" alt="INTP Character" class="hero-character">
 
-      <div class="scroll-indicator" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
+      <div class="scroll-indicator"
+        onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
@@ -244,14 +600,29 @@
 
     <section class="section">
       <h2 class="section-title">Core Drivers & Strengths</h2>
-      <div class="section-content">
-        <ul>
-          <li>Intellectual Autonomy</li>
-          <li>Efficiency & Competence</li>
-          <li>Avoiding Social/Bureaucratic drudgery</li>
-          <li>Understanding the 'System'</li>
-          <li>Novelty & Innovation</li>
+      <div class="section-content drivers-layout">
+        <ul class="drivers-list" onmouseleave="resetTerminal()">
+          <li onclick="showDriver('autonomy')" onmouseover="typeDriver('autonomy')">
+            Intellectual Autonomy
+          </li>
+          <li onclick="showDriver('efficiency')" onmouseover="typeDriver('efficiency')">
+            Efficiency & Competence
+          </li>
+          <li onclick="showDriver('drudgery')" onmouseover="typeDriver('drudgery')">
+            Avoiding Social/Bureaucratic drudgery
+          </li>
+          <li onclick="showDriver('system')" onmouseover="typeDriver('system')">
+            Understanding the 'System'
+          </li>
+          <li onclick="showDriver('novelty')" onmouseover="typeDriver('novelty')">
+            Novelty & Innovation
+          </li>
         </ul>
+
+        <div class="driver-terminal">
+          <div class="terminal-header">DRIVER_ANALYSIS_MOD_v1.0.4</div>
+          <div id="terminal-text">Hover over a Core Driver analysis module to initialize description stream...</div>
+        </div>
       </div>
     </section>
 
@@ -270,37 +641,6 @@
       <h2 class="section-title">Premium Resources for The Logician</h2>
       <div class="products-grid">
 
-        <div class="product-card" onclick="window.location.href='/products/intp/mastery'">
-          <div class="product-header">
-            <h3 class="product-title">How to Master Focus without Rigid Schedules in 7 Days</h3>
-            <span class="product-price"><span class="original-price">$99</span> $29</span>
-          </div>
-          <div class="product-content">
-            <h4 class="product-headline">How to Enter Deep Flow on Command Without Creating Soul-Sucking Spreadsheets or
-              waking up at 5AM</h4>
-            <p class="product-subhead">For the mind that never stops running: A non-linear system for extreme
-              productivity.</p>
-            <p class="product-description">An AI-powered workspace that adapts to YOUR brain. It doesn't force a
-              schedule; it curates your 'Next Logical Step' based on your current dopamine levels.</p>
-            <a href="/products/intp/mastery" class="product-cta">Initialize System</a>
-          </div>
-        </div>
-
-        <div class="product-card" onclick="window.location.href='/products/intp/social-life'">
-          <div class="product-header">
-            <h3 class="product-title">How to Hack Social Dynamics without Faking Etiquette in 2 Weeks</h3>
-            <span class="product-price"><span class="original-price">$199</span> $59</span>
-          </div>
-          <div class="product-content">
-            <h4 class="product-headline">How to Network Like a Power Broker Without 'Small Talk' or Fake Smiles</h4>
-            <p class="product-subhead">Treat human interaction like a system to be optimized, not a performance to be
-              endured.</p>
-            <p class="product-description">A framework that deconstructs social interactions into logical flowcharts. No
-              emotion required—just pure pattern matching.</p>
-            <a href="/products/intp/social-life" class="product-cta">Download The Social Code</a>
-          </div>
-        </div>
-
         <div class="product-card" onclick="window.location.href='/products/intp/second-brain'">
           <div class="product-header">
             <h3 class="product-title">How to Learn Any Skill without Boring Repetition in 48 Hours</h3>
@@ -310,9 +650,84 @@
             <h4 class="product-headline">Upload Skills to Your Brain Like Neo. No 10,000 Hours. Just Pure Data
               Compression.</h4>
             <p class="product-subhead">For the INTP who wants to know EVERYTHING but hates the grind.</p>
-            <p class="product-description">An AI tool that strips away the fluff and gives you the raw logic gates of
-              any skill. Learn the 20% that gives 80% of results.</p>
-            <a href="/products/intp/second-brain" class="product-cta">Start Upload</a>
+            <p class="product-description">This tops the list because INTPs thrive on rapid, conceptual mastery rather
+              than rote practice. The "data compression" approach—focusing on the 20% of logic that yields 80%
+              results—mirrors their love for deconstructing complex systems efficiently, without the tedium that often
+              derails their curiosity-driven learning.</p>
+            <div class="atc-main">
+              <button class="atc" aria-label="Add to cart" data-product="Skill Upload" data-adding="false">
+                <span class="atc__content">
+                  <span class="atc__cart">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <rect class="atc__cart-content" x="9" y="-1" width="10" height="10" rx="2" />
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__cart--dummy">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__check">
+                    <svg class="atc__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__text">Start Upload</span>
+                </span>
+                <span class="atc__border atc__border--animated"></span>
+                <span class="atc__border atc__border--static"></span>
+                <span class="atc__border atc__border--complete"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card" onclick="window.location.href='/products/intp/mastery'">
+          <div class="product-header">
+            <h3 class="product-title">How to Master Focus without Rigid Schedules in 7 Days</h3>
+            <span class="product-price"><span class="original-price">$99</span> $29</span>
+          </div>
+          <div class="product-content">
+            <h4 class="product-headline">How to Enter Deep Flow on Command Without Creating Soul-Sucking Spreadsheets.
+            </h4>
+            <p class="product-subhead">A non-linear system for addressing the classic INTP struggle with sustained
+              attention.</p>
+            <p class="product-description">The non-linear, AI-adapted system respects their aversion to spreadsheets or
+              early wake-ups, instead curating steps based on real-time brain states. This provides intellectual control
+              over productivity without imposing external discipline.</p>
+            <div class="atc-main">
+              <button class="atc" aria-label="Add to cart" data-product="Focus Mastery" data-adding="false">
+                <span class="atc__content">
+                  <span class="atc__cart">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <rect class="atc__cart-content" x="9" y="-1" width="10" height="10" rx="2" />
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__cart--dummy">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__check">
+                    <svg class="atc__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__text">Initialize System</span>
+                </span>
+                <span class="atc__border atc__border--animated"></span>
+                <span class="atc__border atc__border--static"></span>
+                <span class="atc__border atc__border--complete"></span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -324,25 +739,40 @@
           <div class="product-content">
             <h4 class="product-headline">Solve the 'Meaning of Life' Equation. No Crystals, No Chanting, Just Logic.
             </h4>
-            <p class="product-subhead">Turn your existential dread into a grand unified theory of your life.</p>
-            <p class="product-description">A guided AI framework to construct a personal philosophy that is logically
-              consistent and emotionally resonant.</p>
-            <a href="/products/intp/theory-everything" class="product-cta">Construct Meaning</a>
-          </div>
-        </div>
-
-        <div class="product-card" onclick="window.location.href='/products/intp/debug-existence'">
-          <div class="product-header">
-            <h3 class="product-title">How to Automate Your Income without Marketing Sleaze in 30 Days</h3>
-            <span class="product-price"><span class="original-price">$128</span> $32</span>
-          </div>
-          <div class="product-content">
-            <h4 class="product-headline">Build a Money Machine That Runs on Logic, Not Charisma.</h4>
-            <p class="product-subhead">Stop trading time for money. Start building assets that exist independently of
-              your labor.</p>
-            <p class="product-description">A complete guide to building 'No-Code' SaaS and digital assets that sell
-              themselves via search intent, not social hype.</p>
-            <a href="/products/intp/debug-existence" class="product-cta">Build The Machine</a>
+            <p class="product-subhead">Tackling existential questions through pure logic, turning vague "meaning" into a
+              consistent framework.</p>
+            <p class="product-description">This guided AI tool lets them build a personal theory analytically, offering
+              depth and autonomy without emotional overreach. It's ideal for those seeking resonance in a grounded,
+              revisitable format.</p>
+            <div class="atc-main">
+              <button class="atc" aria-label="Add to cart" data-product="Life Purpose" data-adding="false">
+                <span class="atc__content">
+                  <span class="atc__cart">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <rect class="atc__cart-content" x="9" y="-1" width="10" height="10" rx="2" />
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__cart--dummy">
+                    <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__check">
+                    <svg class="atc__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </span>
+                  <span class="atc__text">Construct Meaning</span>
+                </span>
+                <span class="atc__border atc__border--animated"></span>
+                <span class="atc__border atc__border--static"></span>
+                <span class="atc__border atc__border--complete"></span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -350,7 +780,160 @@
     </section>
 
   </div>
-<script src="header-shader.js"></script>
+
+  <!-- Driver Definition Modal -->
+  <div id="driver-modal" class="driver-modal" onclick="closeDriver(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="close-modal" onclick="closeDriver(event)">&times;</span>
+      <div class="relevance-tag">INTP Core Driver</div>
+      <h2 id="modal-title" class="modal-title"></h2>
+      <div class="modal-body">
+        <h4>Definition</h4>
+        <p id="modal-definition"></p>
+        <h4>INTP Relevance</h4>
+        <p id="modal-relevance"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    const driverData = {
+      autonomy: {
+        title: "Intellectual Autonomy",
+        definition: "The ability to think and reach conclusions independently of external influences, authority, or dogma.",
+        relevance: "Essential for the INTP's dominant Introverted Thinking (Ti), which requires a clean, objective framework free from social bias or 'because I said so' logic."
+      },
+      efficiency: {
+        title: "Efficiency & Competence",
+        definition: "The prioritization of logical flow and functional mastery over superficial status or effort for effort's sake.",
+        relevance: "INTPs loathe 'busy work.' They value competence in themselves and others, seeking the most elegant solution that achieves the maximum result with minimal wasted energy."
+      },
+      drudgery: {
+        title: "Avoiding Social/Bureaucratic Drudgery",
+        definition: "A deep-seated aversion to arbitrary rules, small talk, and administrative overhead that doesn't serve a clear logical purpose.",
+        relevance: "Safeguards the INTP's mental energy. By skipping redundant interactions and red tape, they preserve bandwidth for high-level problem solving."
+      },
+      system: {
+        title: "Understanding the 'System'",
+        definition: "The drive to deconstruct any environment or concept to understand its underlying principles and architecture.",
+        relevance: "This is the INTP's 'reality code.' Whether it's software or the universe itself, they must understand how the gears turn before they can operate within it."
+      },
+      novelty: {
+        title: "Novelty & Innovation",
+        definition: "The constant pursuit of new ideas and mental models to avoid stagnation and intellectual decay.",
+        relevance: "Powered by Extraverted Intuition (Ne), this prevents the INTP from getting stuck in an echo chamber, providing fresh data to be analyzed."
+      }
+    };
+
+    let typingInterval;
+    function typeDriver(id) {
+      const data = driverData[id];
+      if (!data) return;
+
+      const container = document.getElementById('terminal-text');
+      const fullText = `${data.title}\n\nDEFINITION:\n${data.definition}\n\nINTP RELEVANCE:\n${data.relevance}`;
+
+      let charIndex = 0;
+      container.innerHTML = '';
+      clearInterval(typingInterval);
+
+      typingInterval = setInterval(() => {
+        if (charIndex < fullText.length) {
+          container.innerHTML += fullText.charAt(charIndex);
+          charIndex++;
+          // Auto-scroll terminal if needed
+          const terminal = document.querySelector('.driver-terminal');
+          terminal.scrollTop = terminal.scrollHeight;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, 15);
+    }
+
+    function resetTerminal() {
+      clearInterval(typingInterval);
+      const container = document.getElementById('terminal-text');
+      container.innerHTML = 'Hover over a Core Driver analysis module to initialize description stream...';
+    }
+
+    function showDriver(id) {
+      const data = driverData[id];
+      if (!data) return;
+
+      document.getElementById('modal-title').innerText = data.title;
+      document.getElementById('modal-definition').innerText = data.definition;
+      document.getElementById('modal-relevance').innerText = data.relevance;
+
+      const modal = document.getElementById('driver-modal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDriver(e) {
+      const modal = document.getElementById('driver-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // ATC Button Logic Refined
+    document.querySelectorAll('.atc').forEach(button => {
+      const text = button.querySelector('.atc__text');
+      const cart = button.querySelector('.atc__cart');
+      const item = button.querySelector('.atc__cart-content');
+      const dummy = button.querySelector('.atc__cart--dummy');
+      const check = button.querySelector('.atc__check');
+      const animatedBorder = button.querySelector('.atc__border--animated');
+      const staticBorder = button.querySelector('.atc__border--static');
+      const completeBorder = button.querySelector('.atc__border--complete');
+
+      let running = false;
+
+      gsap.set(item, { y: -24 });
+
+      button.addEventListener('click', (e) => {
+        if (running) return;
+        running = true;
+        button.dataset.adding = 'true';
+
+        const dummyRect = dummy.getBoundingClientRect();
+        const cartRect = cart.getBoundingClientRect();
+        const distance = dummyRect.left - cartRect.left;
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            running = false;
+            button.dataset.adding = 'false';
+          }
+        });
+
+        tl.set(button, { '--complete': 1 })
+          .to(cart, { x: distance, duration: 0.22 })
+          .to(cart, { rotate: -20, yoyo: true, repeat: 1, duration: 0.11 }, 0)
+          .to(text, { opacity: 0, x: distance, duration: 0.22, filter: 'blur(6px)' }, 0)
+          .to(item, { y: 0, duration: 0.1, delay: 0.1 })
+          .to(staticBorder, { opacity: 1, duration: 0.1 }, '<')
+          .set(button, { '--complete': 0 })
+          .set(animatedBorder, { opacity: 0 })
+          .to(cart, { x: distance + 100, opacity: 0, duration: 0.6, delay: 0.1 })
+          .to(cart, { rotate: -30, duration: 0.1 }, '<')
+          .to(completeBorder, { opacity: 1, duration: 0.22 }, '<')
+          .to(check, { opacity: 1, scale: 1.5, yoyo: true, repeat: 1, duration: 0.25 }, "-=0.2")
+          .set(text, { x: 0 })
+          .set(cart, { x: -100, rotate: 0 })
+          .set(item, { y: -24 })
+          .to([staticBorder, completeBorder], { opacity: 0, duration: 0.5, delay: 0.125 })
+          .to(text, { opacity: 1, duration: 0.22, filter: 'blur(0px)' })
+          .to(cart, { x: 0, opacity: 1, duration: 0.3 })
+          .to(animatedBorder, { opacity: 1, duration: 1 });
+      });
+    });
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDriver();
+    });
+  </script>
 </body>
 
 </html>

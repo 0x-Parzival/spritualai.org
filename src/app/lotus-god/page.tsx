@@ -1359,23 +1359,26 @@ export default function LotusGod() {
                     transform: 'translateX(-50%)',
                     zIndex: 2002,
                     textAlign: 'center',
-                    animation: 'fadeIn 2s ease-out'
+                    animation: 'ctaEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards'
                 }}>
-                    <a href="/discover" style={{
+                    <a href="/discover" className="pulse-button" style={{
                         display: 'inline-block',
-                        padding: '15px 45px',
-                        background: 'rgba(0, 229, 255, 0.1)',
+                        padding: '16px 48px',
+                        background: 'rgba(0, 229, 255, 0.08)',
                         color: '#fff',
                         textDecoration: 'none',
-                        borderRadius: '40px',
-                        border: '1px solid #00e5ff',
+                        borderRadius: '100px',
+                        border: '1px solid rgba(0, 229, 255, 0.5)',
                         fontFamily: 'Orbitron, sans-serif',
                         fontWeight: 'bold',
-                        letterSpacing: '2px',
-                        transition: 'all 0.4s ease',
-                        boxShadow: '0 0 20px rgba(0, 229, 255, 0.3)',
-                        backdropFilter: 'blur(10px)',
-                        marginBottom: '15px'
+                        fontSize: '1rem',
+                        letterSpacing: '3px',
+                        transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: '0 0 30px rgba(0, 229, 255, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.1)',
+                        backdropFilter: 'blur(12px)',
+                        marginBottom: '20px',
+                        position: 'relative',
+                        overflow: 'hidden'
                     }}>
                         ENTER YOUR PATH →
                     </a>
@@ -1400,7 +1403,8 @@ export default function LotusGod() {
                         ONLY AVAILABLE FOR THE NEXT 24 HOURS
                     </div>
                 </div>
-            )}
+            )
+            }
 
             {/* Sacred HUD: Circular Arc of Dots */}
             <div className="sacred-hud" style={{
@@ -1529,8 +1533,30 @@ export default function LotusGod() {
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(20px); }
+                        from { opacity: 0; transform: translateY(15px); }
                         to { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes ctaEntrance {
+                        0% { 
+                            opacity: 0; 
+                            transform: translateX(-50%) translateY(40px) scale(0.9);
+                            filter: blur(10px);
+                        }
+                        100% { 
+                            opacity: 1; 
+                            transform: translateX(-50%) translateY(0) scale(1);
+                            filter: blur(0);
+                        }
+                    }
+                    .pulse-button:hover {
+                        background: rgba(0, 229, 255, 0.15) !important;
+                        border-color: #00e5ff !important;
+                        box-shadow: 0 0 50px rgba(0, 229, 255, 0.5), inset 0 0 20px rgba(0, 229, 255, 0.2) !important;
+                        transform: translateY(-2px) scale(1.02);
+                        letter-spacing: 4px !important;
+                    }
+                    .pulse-button:active {
+                        transform: translateY(1px) scale(0.98);
                     }
                     @keyframes smoothAwaken {
                         0% { opacity: 0; transform: translate(-50%, 10px) scale(0.95); }
@@ -1604,40 +1630,42 @@ export default function LotusGod() {
                 `}} />
             </div>
 
-            {clickCount < 33 && !showOverlay && (
-                <div style={{
-                    position: 'absolute',
-                    top: '25%',
-                    width: '100%',
-                    textAlign: 'center',
-                    pointerEvents: 'none',
-                    zIndex: 500,
-                    animation: 'pulseHint 3s infinite ease-in-out'
-                }}>
+            {
+                clickCount < 33 && !showOverlay && (
                     <div style={{
-                        display: 'inline-block',
-                        padding: '10px 20px',
-                        background: 'rgba(255,255,255,0.05)',
-                        backdropFilter: 'blur(4px)',
-                        borderRadius: '30px',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: 'rgba(255,255,255,0.6)',
-                        fontFamily: 'Orbitron, sans-serif',
-                        fontSize: '0.8rem',
-                        letterSpacing: '1px'
+                        position: 'absolute',
+                        top: '25%',
+                        width: '100%',
+                        textAlign: 'center',
+                        pointerEvents: 'none',
+                        zIndex: 500,
+                        animation: 'pulseHint 3s infinite ease-in-out'
                     }}>
-                        Tap to send energy pulse • Drag to rotate
-                    </div>
-                    <style dangerouslySetInnerHTML={{
-                        __html: `
+                        <div style={{
+                            display: 'inline-block',
+                            padding: '10px 20px',
+                            background: 'rgba(255,255,255,0.05)',
+                            backdropFilter: 'blur(4px)',
+                            borderRadius: '30px',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: 'rgba(255,255,255,0.6)',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '0.8rem',
+                            letterSpacing: '1px'
+                        }}>
+                            Tap to send energy pulse • Drag to rotate
+                        </div>
+                        <style dangerouslySetInnerHTML={{
+                            __html: `
                             @keyframes pulseHint {
                                 0% { opacity: 0.3; transform: translateY(5px); }
                                 50% { opacity: 0.7; transform: translateY(0); }
                                 100% { opacity: 0.3; transform: translateY(5px); }
                             }
                         `}} />
-                </div>
-            )}
+                    </div>
+                )
+            }
 
             {/* Pulse Messages & Terminal */}
             <TerminalOverlay clickCount={clickCount} />
@@ -1677,6 +1705,6 @@ export default function LotusGod() {
             }}>
                 BACK HOME
             </a>
-        </div>
+        </div >
     );
 }

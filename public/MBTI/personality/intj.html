@@ -13,6 +13,90 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>INTJ - The Architect: Ultimate Growth Guide | Spiritual AI</title>
   <link href="premium.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .terminal-container {
+      background-color: #0d0d0d;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 25px;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .dot-red {
+      background: #ff5f56;
+    }
+
+    .dot-yellow {
+      background: #ffbd2e;
+    }
+
+    .dot-green {
+      background: #27c93f;
+    }
+
+    .prompt {
+      margin-top: 15px;
+    }
+
+    .prompt p {
+      margin: 5px 0;
+      color: #55ff55;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .prompt .output {
+      color: #ddd;
+      display: block;
+      margin-top: 2px;
+      margin-bottom: 10px;
+      padding-left: 15px;
+      border-left: 1px solid #333;
+    }
+
+    .active:after {
+      content: '_';
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+  </style>
 
   <script type="application/ld+json" id="seo-schema">
   {
@@ -204,26 +288,28 @@
 
   <div class="container">
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
-      <img src="/images/logo.png" alt="Spiritual AI Logo" style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
+      <img src="/images/logo.png" alt="Spiritual AI Logo"
+        style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
     </div>
 
     <div class="mbti-hero-visual">
 
 
       <header class="mbti-header">
-      <div class="mbti-title long">
-        <h1>INTJ</h1>
-        <h1>INTJ</h1>
-      </div>
-      <p class="mbti-subtitle">The Architect</p>
-    </header>
+        <div class="mbti-title long">
+          <h1>INTJ</h1>
+          <h1>INTJ</h1>
+        </div>
+        <p class="mbti-subtitle">The Architect</p>
+      </header>
 
       <div class="hero-bg-container">
         <canvas id="header-canvas" class="hero-bg"></canvas>
       </div>
       <img src="../HOVER/INTJ.png" alt="INTJ Character" class="hero-character">
 
-      <div class="scroll-indicator" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
+      <div class="scroll-indicator"
+        onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
@@ -240,6 +326,19 @@
           precision, hidden depth.</p>
         <p>This premium view highlights the strengths and deeper psychological triggers associated with this type,
           specifically curated for the The Architect mind.</p>
+
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-dot dot-red"></div>
+            <div class="terminal-dot dot-yellow"></div>
+            <div class="terminal-dot dot-green"></div>
+          </div>
+          <main class="prompt">
+            <p>The future ain't what it used to be</p>
+            <p>It's so crowded, nobody comes here anymore</p>
+            <p>I really didn't say everything I said</p>
+          </main>
+        </div>
       </div>
     </section>
 
@@ -343,7 +442,72 @@
     </section>
 
   </div>
-<script src="header-shader.js"></script>
+  <script>
+    $(function () {
+      var $lines = $('.prompt p');
+      var lineContents = [];
+
+      $lines.each(function (i) {
+        lineContents[i] = $(this).text();
+        $(this).text('').show();
+      });
+
+      var skip = false;
+
+      function typeLine(idx) {
+        if (idx >= lineContents.length) return;
+
+        var element = $lines.eq(idx);
+        var content = lineContents[idx];
+        var charIdx = 0;
+        var displayedContent = 'echo "' + content + '"';
+
+        element.append('~$ ').addClass('active');
+
+        function typeChar() {
+          var rand = Math.round(Math.random() * 80) + 20;
+
+          setTimeout(function () {
+            var char = displayedContent[charIdx++];
+            if (charIdx <= displayedContent.length) {
+              element.text(element.text() + char);
+              typeChar();
+            } else {
+              element.removeClass('active');
+              element.append('<br/><span class="output">' + content + '</span>');
+              typeLine(++idx);
+            }
+          }, skip ? 0 : rand);
+        }
+
+        // Start typing "echo ..."
+        var echoStr = '~$ echo "' + content + '"';
+        element.text('~$ ');
+
+        var echoCharIdx = 3; // start after ~$ 
+        var fullTarget = '~$ echo "' + content + '"';
+
+        function typeEcho() {
+          setTimeout(function () {
+            if (echoCharIdx < fullTarget.length) {
+              element.text(fullTarget.substring(0, echoCharIdx + 1));
+              echoCharIdx++;
+              typeEcho();
+            } else {
+              element.removeClass('active');
+              element.append('<br/><span class="output">' + content + '</span>');
+              typeLine(++idx);
+            }
+          }, skip ? 0 : (Math.round(Math.random() * 50) + 20));
+        }
+
+        typeEcho();
+      }
+
+      typeLine(0);
+    });
+  </script>
+  <script src="header-shader.js"></script>
 </body>
 
 </html>

@@ -659,6 +659,16 @@ const CreatorPage = () => {
                         <span className={styles.buttonLabel}>WHO AM I?</span>
                     </div>
 
+                    <Link href="/images/portfolio/index.html" target="_blank" className={styles.resumeLinkWrapper}>
+                        <div className={styles.iconWrapper}>
+                            <div className={`${styles.iconBox} ${styles.portfolioIcon}`} title="Portfolio">
+                                🌐
+                                <span className={styles.tooltipText}>Portfolio</span>
+                            </div>
+                            <span className={styles.buttonLabel}>PORTFOLIO</span>
+                        </div>
+                    </Link>
+
                     <div className={styles.iconWrapper} onClick={() => togglePopup('projects')}>
                         <div className={`${styles.iconBox} ${styles.projectsIcon}`} title="Projects">
                             <i className="fa-solid fa-laptop-code"></i> 💻
@@ -701,12 +711,12 @@ const CreatorPage = () => {
                     <motion.div className={`${styles.popup} ${maximized ? styles.maximized : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className={styles.popupContainer}>
                             <div className={styles.popupHeader}>
+                                <span>Who Am I?</span>
                                 <div className={styles.buttonContainer}>
                                     <button className={`${styles.circleBtn} ${styles.red}`} onClick={closePopup}></button>
                                     <button className={`${styles.circleBtn} ${styles.yellow}`} onClick={() => setMaximized(false)}></button>
                                     <button className={`${styles.circleBtn} ${styles.green}`} onClick={() => setMaximized(!maximized)}></button>
                                 </div>
-                                <span style={{ marginLeft: '10px' }}>Who Am I?</span>
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.aboutContainer}>
@@ -794,12 +804,12 @@ const CreatorPage = () => {
                     <motion.div className={`${styles.popup} ${maximized ? styles.maximized : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className={styles.popupContainer}>
                             <div className={styles.popupHeader}>
+                                <span>Creations</span>
                                 <div className={styles.buttonContainer}>
                                     <button className={`${styles.circleBtn} ${styles.red}`} onClick={closePopup}></button>
                                     <button className={`${styles.circleBtn} ${styles.yellow}`} onClick={() => setMaximized(false)}></button>
                                     <button className={`${styles.circleBtn} ${styles.green}`} onClick={() => setMaximized(!maximized)}></button>
                                 </div>
-                                <span style={{ marginLeft: '10px' }}>Creations</span>
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.skillList}>
@@ -854,12 +864,12 @@ const CreatorPage = () => {
                     <motion.div className={`${styles.popup} ${maximized ? styles.maximized : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className={styles.popupContainer}>
                             <div className={styles.popupHeader}>
+                                <span>Highlights & Vibes</span>
                                 <div className={styles.buttonContainer}>
                                     <button className={`${styles.circleBtn} ${styles.red}`} onClick={closePopup}></button>
                                     <button className={`${styles.circleBtn} ${styles.yellow}`} onClick={() => setMaximized(false)}></button>
                                     <button className={`${styles.circleBtn} ${styles.green}`} onClick={() => setMaximized(!maximized)}></button>
                                 </div>
-                                <span style={{ marginLeft: '10px' }}>Highlights & Vibes</span>
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.aboutContent}>
@@ -886,12 +896,12 @@ const CreatorPage = () => {
                     <motion.div className={`${styles.popup} ${maximized ? styles.maximized : ''}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className={styles.popupContainer}>
                             <div className={styles.popupHeader}>
+                                <span>Contact</span>
                                 <div className={styles.buttonContainer}>
                                     <button className={`${styles.circleBtn} ${styles.red}`} onClick={closePopup}></button>
                                     <button className={`${styles.circleBtn} ${styles.yellow}`} onClick={() => setMaximized(false)}></button>
                                     <button className={`${styles.circleBtn} ${styles.green}`} onClick={() => setMaximized(!maximized)}></button>
                                 </div>
-                                <span style={{ marginLeft: '10px' }}>Contact</span>
                             </div>
                             <div className={styles.popupBody}>
                                 <div className={styles.aboutContent} style={{ textAlign: 'center' }}>

@@ -394,7 +394,7 @@ export default function Home() {
                         </span>
 
                         {/* Secondary CTA - Direct to personality types */}
-                        <a href="/mbti" className="secondary-cta" style={{
+                        <a href="/MBTI" className="secondary-cta" style={{
                             marginTop: '16px',
                             fontSize: '0.95rem',
                             padding: '8px 24px',
