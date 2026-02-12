@@ -1,6 +1,6 @@
 # Spiritual AI Website www.spiritualai.store
 
-## Project Setup (Node ≥ 20.9.0)
+## Project Setup 
 
 1. **Install nvm** (Node Version Manager) if you don't have it:
    ```bash
