@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   },
   "scripts": {
     "preinstall": "node -e \"const v = process.versions.node.split('.').map(Number); if (v[0] < 20 || (v[0] === 20 && v[1] < 9)) { console.error('❌ Node >=20.9.0 required. Current version:', process.versions.node); process.exit(1); }\"",

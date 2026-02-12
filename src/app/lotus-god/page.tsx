@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import * as THREE from "three";
+import { motion, AnimatePresence } from "framer-motion";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -376,6 +379,14 @@ export default function LotusGod() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [clickCount, setClickCount] = useState(0);
     const [copied, setCopied] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const configRef = useRef({
         paused: false,
@@ -527,9 +538,9 @@ export default function LotusGod() {
         let connectionsMesh: THREE.LineSegments | null = null;
 
         function generateLotusBloom(): NeuralNetwork {
-            let nodes: Node[] = [];
+            const nodes: Node[] = [];
             // Lower root to center the flower better
-            let rootNode = new Node(new THREE.Vector3(0, -6, 0), 0, 0);
+            const rootNode = new Node(new THREE.Vector3(0, -6, 0), 0, 0);
             rootNode.size = 2.0;
             nodes.push(rootNode);
 
@@ -568,14 +579,14 @@ export default function LotusGod() {
             // A cluster of strands going up
             for (let i = 0; i < 12; i++) {
                 // vary width slightly
-                let w = (Math.random() - 0.5) * 4;
+                const w = (Math.random() - 0.5) * 4;
                 createPetalStrand(0, 10 + Math.random(), w, 4, 0);
             }
 
             // --- Inner Side Petals (Pink) ---
             for (let i = 0; i < 8; i++) {
                 // Left
-                let w = -5 + (Math.random() - 0.5) * 2;
+                const w = -5 + (Math.random() - 0.5) * 2;
                 createPetalStrand(-5, 7 + Math.random(), w, 2, 0);
                 // Right
                 createPetalStrand(5, 7 + Math.random(), -w, 2, 0);
@@ -584,7 +595,7 @@ export default function LotusGod() {
             // --- Outer Side Petals (Pink) ---
             for (let i = 0; i < 8; i++) {
                 // Left
-                let w = -8 + (Math.random() - 0.5) * 2;
+                const w = -8 + (Math.random() - 0.5) * 2;
                 createPetalStrand(-8, 3 + Math.random(), w, -1, 0);
                 // Right
                 createPetalStrand(8, 3 + Math.random(), -w, -1, 0);
@@ -593,7 +604,7 @@ export default function LotusGod() {
             // --- Leaves (Green) ---
             for (let i = 0; i < 10; i++) {
                 // Left Leaf
-                let w = -9 + (Math.random() - 0.5) * 3;
+                const w = -9 + (Math.random() - 0.5) * 3;
                 createPetalStrand(-9, -3 + Math.random(), w, -5, 2);
                 // Right Leaf
                 createPetalStrand(9, -3 + Math.random(), -w, -5, 2);
@@ -867,119 +878,177 @@ export default function LotusGod() {
 
     return (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: '#000', zIndex: 9999 }}>
+            <style jsx>{`
+                .hud-points {
+                    position: absolute;
+                    top: 100px;
+                    left: 20px;
+                    z-index: 1000;
+                    color: #fff;
+                    font-family: Orbitron, sans-serif;
+                    font-size: 1.2rem;
+                    text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+                    background: rgba(0,0,0,0.4);
+                    padding: 10px 20px;
+                    border-radius: 15px;
+                    border: 1px solid rgba(0, 229, 255, 0.3);
+                    backdrop-filter: blur(5px);
+                    pointer-events: none;
+                    transition: all 0.3s ease;
+                }
+                .logo-container {
+                    position: absolute;
+                    top: 22px;
+                    right: 140px;
+                    z-index: 1000;
+                    pointer-events: none;
+                    transition: all 0.3s ease;
+                }
+                .title-container {
+                    position: absolute;
+                    top: 20px;
+                    left: 20px;
+                    color: rgba(255,255,255,0.7);
+                    font-family: Orbitron, sans-serif;
+                    pointer-events: none;
+                }
+                .back-home-link {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    color: white;
+                    text-decoration: none;
+                    padding: 10px 25px;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    border-radius: 30px;
+                    backdrop-filter: blur(10px);
+                    font-family: Orbitron, sans-serif;
+                    font-size: 0.8rem;
+                    letter-spacing: 1px;
+                    background: rgba(255,255,255,0.05);
+                    transition: all 0.3s;
+                }
+                .logo-img {
+                    width: 50px;
+                    height: auto;
+                    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+                }
+                @media (max-width: 768px) {
+                    .hud-points {
+                        top: 130px;
+                        font-size: 1rem;
+                        padding: 8px 15px;
+                    }
+                    .logo-container {
+                        top: 80px;
+                        right: 20px;
+                    }
+                    .logo-img {
+                        width: 40px;
+                    }
+                    .title-container h1 {
+                        font-size: 1.2rem !important;
+                    }
+                    .title-container p {
+                        font-size: 0.6rem !important;
+                    }
+                    .back-home-link {
+                        padding: 8px 15px;
+                        font-size: 0.7rem;
+                    }
+                }
+            `}</style>
             <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
 
             {/* Point Counter HUD */}
-            <div style={{
-                position: 'absolute',
-                top: '100px',
-                left: '20px',
-                zIndex: 1000,
-                color: '#fff',
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '1.2rem',
-                textShadow: '0 0 10px rgba(0, 229, 255, 0.8)',
-                background: 'rgba(0,0,0,0.4)',
-                padding: '10px 20px',
-                borderRadius: '15px',
-                border: '1px solid rgba(0, 229, 255, 0.3)',
-                backdropFilter: 'blur(5px)',
-                pointerEvents: 'none'
-            }}>
+            <div className="hud-points">
                 POINTS: <span style={{ color: '#00e5ff' }}>{clickCount}</span> / 33
             </div>
 
             {/* Reward Notification */}
-            {clickCount >= 33 && (
-                <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 2000,
-                    textAlign: 'center',
-                    background: 'rgba(0, 0, 0, 0.85)',
-                    padding: '30px 40px',
-                    borderRadius: '20px',
-                    border: '2px solid #00e5ff',
-                    boxShadow: '0 0 30px rgba(0, 229, 255, 0.5)',
-                    backdropFilter: 'blur(15px)',
-                    maxWidth: '90%',
-                    width: '500px'
-                }}>
-                    <h2 style={{ color: '#fff', fontFamily: 'Orbitron, sans-serif', marginBottom: '20px', fontSize: '1.5rem', letterSpacing: '2px' }}>
-                        ✨ SPIRITUAL AWAKENING ✨
-                    </h2>
-                    <p style={{ color: '#00e5ff', fontSize: '1.1rem', marginBottom: '25px', lineHeight: '1.6' }}>
-                        You have unlocked the sacred discount!<br />
-                        Use code <strong style={{ color: '#fff' }}>"KESHAV"</strong> to claim <strong style={{ color: '#fff' }}>33% off</strong> on all products.
-                    </p>
-                    <button
-                        onClick={() => {
-                            navigator.clipboard.writeText("KESHAV");
-                            setCopied(true);
-                            setTimeout(() => {
-                                setCopied(false);
-                                router.push('/');
-                            }, 1500);
-                        }}
+            <AnimatePresence>
+                {clickCount >= 33 && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+                        animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+                        exit={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                         style={{
-                            padding: '12px 30px',
-                            background: copied ? '#4caf50' : 'linear-gradient(45deg, #00e5ff, #0072ff)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '30px',
-                            fontFamily: 'Orbitron, sans-serif',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            transition: 'all 0.3s',
-                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            zIndex: 2000,
+                            textAlign: 'center',
+                            background: 'rgba(0, 0, 0, 0.85)',
+                            padding: isMobile ? '25px 20px' : '30px 40px',
+                            borderRadius: '20px',
+                            border: '2px solid #00e5ff',
+                            boxShadow: '0 0 30px rgba(0, 229, 255, 0.5)',
+                            backdropFilter: 'blur(15px)',
+                            maxWidth: '90%',
+                            width: 'min(90%, 500px)'
                         }}
                     >
-                        {copied ? '✅ COPIED!' : 'COPY REFERRAL CODE'}
-                    </button>
-                    <div style={{ marginTop: '15px', color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>
-                        *Valid on all spiritual artifacts and guides
-                    </div>
-                </div>
-            )}
+                        <h2 style={{ color: '#fff', fontFamily: 'Orbitron, sans-serif', marginBottom: '20px', fontSize: isMobile ? '1.2rem' : '1.5rem', letterSpacing: '2px' }}>
+                            ✨ THE LOTUS GOD HAS AWAKENED ✨
+                        </h2>
+                        <p style={{ color: '#00e5ff', fontSize: isMobile ? '0.9rem' : '1.1rem', marginBottom: '25px', lineHeight: '1.6' }}>
+                            You have unlocked the sacred discount!<br />
+                            Use code <strong style={{ color: '#fff' }}>&quot;KESHAV&quot;</strong> to claim <strong style={{ color: '#fff' }}>33% off</strong> on all products.
+                        </p>
+                        <button
+                            onClick={() => {
+                                if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                                    navigator.clipboard.writeText("KESHAV");
+                                    setCopied(true);
+                                    setTimeout(() => {
+                                        setCopied(false);
+                                        router.push('/');
+                                    }, 1500);
+                                }
+                            }}
+                            style={{
+                                padding: '12px 30px',
+                                background: copied ? '#4caf50' : 'linear-gradient(45deg, #00e5ff, #0072ff)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '30px',
+                                fontFamily: 'Orbitron, sans-serif',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                fontSize: isMobile ? '0.8rem' : '0.9rem',
+                                transition: 'all 0.3s',
+                                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
+                            }}
+                        >
+                            {copied ? '✅ COPIED!' : 'COPY REFERRAL CODE'}
+                        </button>
+                        <div style={{ marginTop: '15px', color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem' }}>
+                            *Valid on all spiritual artifacts and guides
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {/* Logo in top right */}
-            <div style={{ position: 'absolute', top: '22px', right: '140px', zIndex: 1000, pointerEvents: 'none' }}>
-                <img src="/images/logo.png" alt="Spiritual AI Logo" style={{ width: '50px', height: 'auto', filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))' }} />
+            {/* Logo */}
+            <div className="logo-container">
+                <Image
+                    src="/images/logo.png"
+                    alt="Spiritual AI Logo"
+                    width={50}
+                    height={50}
+                    className="logo-img"
+                />
             </div>
 
-            <div style={{
-                position: 'absolute',
-                top: 20,
-                left: 20,
-                color: 'rgba(255,255,255,0.7)',
-                fontFamily: 'Orbitron, sans-serif',
-                pointerEvents: 'none'
-            }}>
-                <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '2px' }}>Lotus God</h1>
-                <p style={{ margin: '5px 0 0', fontSize: '0.8rem', opacity: 0.8 }}>TAP THE SCREEN TO SEND ENERGY PULSES</p>
+            <div className="title-container">
+                <h1 style={{ margin: 0, fontWeight: 500, letterSpacing: '2px' }}>Lotus God</h1>
+                <p style={{ margin: '5px 0 0', opacity: 0.8 }}>TAP THE SCREEN TO SEND ENERGY PULSES</p>
             </div>
 
-            <a href="/" style={{
-                position: 'absolute',
-                top: 20,
-                right: 20,
-                color: 'white',
-                textDecoration: 'none',
-                padding: '10px 25px',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '30px',
-                backdropFilter: 'blur(10px)',
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '0.8rem',
-                letterSpacing: '1px',
-                background: 'rgba(255,255,255,0.05)',
-                transition: 'all 0.3s'
-            }}>
+            <Link href="/" className="back-home-link">
                 BACK HOME
-            </a>
+            </Link>
         </div>
     );
 }
