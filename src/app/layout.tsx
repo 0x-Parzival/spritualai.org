@@ -25,14 +25,14 @@ const orbitron = Orbitron({
 export const metadata: Metadata = {
   metadataBase: new URL('https://spiritualai.store'),
   title: {
-    default: "Spiritual AI — Personalized Guidance for How Your Mind Works",
+    default: "Spiritual AI — MBTI, Personality Type & Spiritual Guidance",
     template: "%s | Spiritual AI"
   },
-  description: "Spiritual AI provides personality-based guidance designed for how you think. Get personalized clarity through AI-powered insights tailored to your MBTI type — not generic self-help.",
-  keywords: ["Spiritual AI", "personality-based guidance", "MBTI", "personalized spiritual guidance", "cognitive architecture"],
+  description: "Spiritual AI provides personalized guidance designed for how your mind works. Get clarity through AI-powered insights tailored to your MBTI personality type — not generic self-help.",
+  keywords: ["spiritual ai", "mbti", "personality type", "personality-based guidance", "MBTI", "personalized spiritual guidance", "cognitive architecture"],
   openGraph: {
-    title: 'Spiritual AI — Personalized Guidance for How Your Mind Works',
-    description: 'Get personality-based spiritual and productivity guidance tailored to your MBTI type. AI-powered insights designed for how you think.',
+    title: 'Spiritual AI — MBTI, Personality Type & Spiritual Guidance',
+    description: 'Get personalized spiritual and productivity guidance tailored to your MBTI personality type. AI-powered insights designed for how you think.',
     url: 'https://spiritualai.store',
     siteName: 'Spiritual AI',
     images: [
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Spiritual AI — Personalized Guidance for How Your Mind Works',
-    description: 'Get personality-based spiritual and productivity guidance tailored to your MBTI type.',
+    title: 'Spiritual AI — MBTI, Personality Type & Spiritual Guidance',
+    description: 'Get personalized spiritual and productivity guidance tailored to your MBTI personality type.',
     images: ['/images/shiva_universe_realistic.png'],
   },
   robots: {
@@ -117,7 +117,7 @@ const softwareSchema = {
     "price": "0",
     "priceCurrency": "USD"
   },
-  "description": "AI-powered personality-based guidance system for spiritual growth and productivity tailored to your MBTI type",
+  "description": "AI-powered personality type guidance system for spiritual growth and productivity tailored to your MBTI type",
   "url": "https://spiritualai.store",
   "author": {
     "@type": "Person",

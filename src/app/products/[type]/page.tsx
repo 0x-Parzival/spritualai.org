@@ -3,12 +3,28 @@ import { productsData } from "../../../data/products";
 import Link from "next/link";
 import "../product.css";
 import VantaBackground from "../../../components/VantaBackground";
+import { Metadata } from "next";
 
 type Props = {
     params: Promise<{
         type: string;
     }>;
 };
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+    const params = await props.params;
+    const { type } = params;
+    const mbtiType = type.toUpperCase();
+    const profile = productsData[mbtiType];
+
+    if (!profile) return {};
+
+    return {
+        title: `${profile.name} (${mbtiType}) Digital Products & Tools`,
+        description: `Optimize your ${mbtiType} personality type with AI-powered tools and guides. Personalized for the ${profile.name} cognitive architecture.`,
+        keywords: `${mbtiType}, ${profile.name}, spiritual ai, mbti, personality type, personal growth, cognitive optimization`,
+    };
+}
 
 export default async function ProductHubPage(props: Props) {
     const params = await props.params;
