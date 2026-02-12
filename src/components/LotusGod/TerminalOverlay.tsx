@@ -72,7 +72,7 @@ export default function TerminalOverlay({ clickCount }: Props) {
 
     return (
         <main
-            className="prompt"
+            className="prompt terminal-overlay"
             style={{
                 position: "absolute",
                 right: "5%",
@@ -96,17 +96,29 @@ export default function TerminalOverlay({ clickCount }: Props) {
 
             <style dangerouslySetInnerHTML={{
                 __html: `
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-45%);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(-50%);
-          }
-        }
-      `}} />
+                    @keyframes fadeIn {
+                      from {
+                        opacity: 0;
+                        transform: translateY(-45%);
+                      }
+                      to {
+                        opacity: 1;
+                        transform: translateY(-50%);
+                      }
+                    }
+
+                    @media (max-width: 768px) {
+                        .terminal-overlay {
+                            right: 10px !important;
+                            top: 30% !important;
+                            font-size: 0.75rem !important;
+                            max-width: 150px;
+                        }
+                        .terminal-overlay p {
+                            margin: 4px 0 !important;
+                        }
+                    }
+                `}} />
         </main>
     );
 }

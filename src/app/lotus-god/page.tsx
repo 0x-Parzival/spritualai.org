@@ -583,7 +583,8 @@ export default function LotusGod() {
         if (clickCount >= 33) {
             const timer = setTimeout(() => {
                 setShowReward(true);
-                setShowCTA(true);
+                SoundManager.playRewardSound();
+                setTimeout(() => setShowCTA(true), 2500);
             }, 15000); // 15s delay for deep immersion after completion
             return () => clearTimeout(timer);
         }
@@ -1285,7 +1286,7 @@ export default function LotusGod() {
             {showReward && (
                 <>
                     {/* Top Right Reward */}
-                    <div style={{
+                    <div className="reward-notification" style={{
                         position: 'absolute',
                         top: '60px',
                         right: '40px',
@@ -1293,7 +1294,7 @@ export default function LotusGod() {
                         textAlign: 'right',
                         animation: 'fadeIn 1s ease-out'
                     }}>
-                        <div style={{
+                        <div className="reward-title" style={{
                             color: '#ffd700',
                             fontFamily: 'Orbitron, sans-serif',
                             fontSize: '1rem',
@@ -1302,7 +1303,7 @@ export default function LotusGod() {
                         }}>
                             YOUR REWARD
                         </div>
-                        <div style={{
+                        <div className="reward-code" style={{
                             color: '#fff',
                             fontFamily: 'Orbitron, sans-serif',
                             fontSize: '1.2rem',
@@ -1322,10 +1323,11 @@ export default function LotusGod() {
                         transform: 'translateX(-50%)',
                         zIndex: 2004,
                         textAlign: 'center',
-                        animation: 'fadeIn 1.5s ease-out',
-                        width: '100%'
+                        animation: 'smoothAwaken 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        width: '100%',
+                        padding: '0 20px'
                     }}>
-                        <h2 style={{
+                        <h2 className="awakened-title" style={{
                             color: '#ffd700',
                             fontFamily: 'Orbitron, sans-serif',
                             fontSize: '2.2rem',
@@ -1336,7 +1338,7 @@ export default function LotusGod() {
                         }}>
                             THE LOTUS GOD HAS AWAKENED
                         </h2>
-                        <p style={{
+                        <p className="awakened-subtext" style={{
                             color: 'rgba(255, 255, 255, 0.9)',
                             fontFamily: 'Orbitron, sans-serif',
                             fontSize: '1rem',
@@ -1350,7 +1352,7 @@ export default function LotusGod() {
             )}
 
             {showCTA && (
-                <div style={{
+                <div className="cta-container" style={{
                     position: 'absolute',
                     bottom: '60px',
                     left: '50%',
@@ -1377,7 +1379,7 @@ export default function LotusGod() {
                     }}>
                         ENTER YOUR PATH →
                     </a>
-                    <div style={{
+                    <div className="cta-journey-text" style={{
                         color: '#ffffff',
                         fontFamily: 'Orbitron, sans-serif',
                         fontSize: '0.9rem',
@@ -1387,7 +1389,7 @@ export default function LotusGod() {
                     }}>
                         Your clarity journey begins now.
                     </div>
-                    <div style={{
+                    <div className="cta-time-limit" style={{
                         color: '#ff4444',
                         fontFamily: 'Orbitron, sans-serif',
                         fontSize: '0.8rem',
@@ -1401,7 +1403,7 @@ export default function LotusGod() {
             )}
 
             {/* Sacred HUD: Circular Arc of Dots */}
-            <div style={{
+            <div className="sacred-hud" style={{
                 position: 'absolute',
                 top: '100px',
                 left: '40px',
@@ -1523,12 +1525,16 @@ export default function LotusGod() {
                     </div>
                 </div>
 
-                {/* CSS for animations */}
+                {/* CSS for animations & responsiveness */}
                 <style dangerouslySetInnerHTML={{
                     __html: `
                     @keyframes fadeIn {
                         from { opacity: 0; transform: translateY(20px); }
                         to { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes smoothAwaken {
+                        0% { opacity: 0; transform: translate(-50%, 10px) scale(0.95); }
+                        100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
                     }
                     @keyframes pulse {
                         0% { opacity: 0.6; transform: scale(0.95); }
@@ -1540,6 +1546,55 @@ export default function LotusGod() {
                         20% { opacity: 1; transform: translate(-50%, -50%); }
                         80% { opacity: 1; transform: translate(-50%, -50%); }
                         100% { opacity: 0; transform: translate(-50%, -60%); }
+                    }
+                    @keyframes pulseHint {
+                        0% { opacity: 0.3; transform: translateX(-50%) translateY(5px); }
+                        50% { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+                        100% { opacity: 0.3; transform: translateX(-50%) translateY(5px); }
+                    }
+
+                    /* Mobile Responsiveness */
+                    @media (max-width: 768px) {
+                        .sacred-hud {
+                            top: 40px !important;
+                            left: 50% !important;
+                            transform: translateX(-50%) scale(0.7);
+                        }
+                        .awakened-title {
+                            font-size: 1.2rem !important;
+                            letter-spacing: 2px !important;
+                        }
+                        .awakened-subtext {
+                            font-size: 0.8rem !important;
+                        }
+                        .reward-notification {
+                            top: 140px !important;
+                            right: 0 !important;
+                            left: 0 !important;
+                            text-align: center !important;
+                            padding: 0 10px !important;
+                        }
+                        .reward-notification .reward-title {
+                            font-size: 0.8rem !important;
+                        }
+                        .reward-notification .reward-code {
+                            font-size: 1rem !important;
+                        }
+                        .cta-container {
+                            bottom: 40px !important;
+                            width: 100%;
+                            padding: 0 20px;
+                        }
+                        .cta-container a {
+                            padding: 12px 30px !important;
+                            font-size: 0.9rem !important;
+                        }
+                        .cta-journey-text {
+                            font-size: 0.75rem !important;
+                        }
+                        .cta-time-limit {
+                            font-size: 0.7rem !important;
+                        }
                     }
                 `}} />
             </div>

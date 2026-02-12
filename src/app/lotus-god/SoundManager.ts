@@ -166,4 +166,39 @@ export class SoundManager {
         lfo.start(t);
         // Loop forever
     }
+
+    static playRewardSound() {
+        if (!this.initialized) this.init();
+        if (this.ctx?.state === 'suspended') this.ctx.resume();
+        if (!this.ctx || !this.masterGain) return;
+
+        const t = this.ctx.currentTime;
+
+        // Digital Chime: Two high-frequency sine waves with a harmonic relationship
+        // to simulate a "ding" or "credit" sound.
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+
+        // Frequencies for a "premium digital chime" (E6 and B6)
+        osc1.frequency.setValueAtTime(1318.51, t); // E6
+        osc2.frequency.setValueAtTime(1975.53, t); // B6
+
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.2, t + 0.01); // Quick attack
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 1.5); // Sweet decay
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.masterGain);
+        if (this.reverbNode) gain.connect(this.reverbNode);
+
+        osc1.start(t);
+        osc2.start(t);
+        osc1.stop(t + 1.5);
+        osc2.stop(t + 1.5);
+    }
 }
