@@ -14,7 +14,7 @@
    nvm use       # switches to 20.9.0 for this session
    ```
    *Tip:* Add `nvm use` to your shell's `cd` hook so the correct version is automatically selected when you `cd` into the project.
-3. **Install dependencies and start the development server**:
+3. **Install dependencies and start theevelopment server**:
    ```bash
    npm install
    npm run dev
