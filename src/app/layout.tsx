@@ -126,6 +126,7 @@ const softwareSchema = {
 };
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -177,6 +178,7 @@ export default function RootLayout({
         </CurrencyProvider>
         <Footer />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
