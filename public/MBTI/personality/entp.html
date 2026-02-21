@@ -186,10 +186,18 @@
   </script>
 </head>
 
-<body class="theme-purple">
-  <!-- WebGL Background -->
-  <canvas id="webgl-canvas"></canvas>
-  <script type="module" src="webgl-background.js"></script>
+<body class="theme-purple" style="background: transparent;">
+  <!-- Unicorn Studio Background -->
+  <div data-us-project="SMqRrhCciAr2SxmxUIAc"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1; pointer-events: none;"></div>
+  <script src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js"></script>
+  <script>
+    UnicornStudio.init().then((scenes) => {
+      console.log("Unicorn Studio initialized", scenes);
+    });
+  </script>
+
+
 
   <!-- Back Button -->
   <a href="/MBTI" class="back-button">
@@ -203,26 +211,28 @@
 
   <div class="container">
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
-      <img src="/images/logo.png" alt="Spiritual AI Logo" style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
+      <img src="/images/logo.png" alt="Spiritual AI Logo"
+        style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
     </div>
 
     <div class="mbti-hero-visual">
 
 
       <header class="mbti-header">
-      <div class="mbti-title short">
-        <h1>ENTP</h1>
-        <h1>ENTP</h1>
-      </div>
-      <p class="mbti-subtitle">The Debater</p>
-    </header>
+        <div class="mbti-title short">
+          <h1>ENTP</h1>
+          <h1>ENTP</h1>
+        </div>
+        <p class="mbti-subtitle">The Debater</p>
+      </header>
 
       <div class="hero-bg-container">
         <canvas id="header-canvas" class="hero-bg"></canvas>
       </div>
       <img src="../HOVER/ENTP.png" alt="ENTP Character" class="hero-character">
 
-      <div class="scroll-indicator" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
+      <div class="scroll-indicator"
+        onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
@@ -339,7 +349,7 @@
     </section>
 
   </div>
-<script src="header-shader.js"></script>
+  <script src="header-shader.js"></script>
 </body>
 
 </html>

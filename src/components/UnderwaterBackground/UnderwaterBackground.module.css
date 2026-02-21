@@ -1,0 +1,240 @@
+.underwaterContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.surface {
+    mix-blend-mode: overlay;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.surface::before,
+.surface::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://images.unsplash.com/photo-1518837695005-2083093ee35b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTEyMTIwOTZ8&ixlib=rb-4.0.3&q=80&w=400");
+    background-repeat: repeat-x;
+
+    --duration: 8s;
+    --lowHeight: 30vh;
+    --highHeight: 70vh;
+    --layerNum: 2;
+    --index: 0;
+    --opacity: 0.4;
+
+    animation: surfaceAnim var(--duration) linear infinite;
+    animation-delay: calc((var(--duration) / var(--layerNum)) * var(--index) * -1);
+    opacity: 0;
+    mask-image: linear-gradient(to top, white, transparent var(--lowHeight));
+}
+
+.surface::before {
+    --index: 0;
+    transform: scale3d(1, -1, 1);
+}
+
+.surface::after {
+    --index: 1;
+    transform: scale3d(-1, -1, 1);
+}
+
+.caustics {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    filter: url(#noise1);
+}
+
+.caustics::before,
+.caustics::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://images.unsplash.com/photo-1568145675395-66a2eda0c6d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTEyMTAwNjh8&ixlib=rb-4.0.3&q=80&w=400");
+    background-repeat: repeat;
+
+    --duration: 10s;
+    --gapY: 0px;
+    --ratioW: 1;
+
+    background-size: calc(100% / var(--ratioW)) 30vh;
+    animation: causticsAnim calc(var(--duration) * (var(--ratioW))) linear infinite;
+    opacity: 0.3;
+    mask-image: linear-gradient(to top,
+            white,
+            transparent,
+            transparent,
+            transparent);
+}
+
+.caustics::after {
+    --duration: 11s;
+    --gapY: 10vh;
+    animation-delay: -2s;
+    transform: scale3d(-1, 1, 1);
+}
+
+.bg {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom,
+            white,
+            gray 25%,
+            gray 60%,
+            khaki);
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+}
+
+.sun {
+    mix-blend-mode: overlay;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.sun div {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 0;
+    animation: sunAnim 7s ease infinite alternate;
+
+    mask-image: linear-gradient(to bottom,
+            transparent 15%,
+            white 50%,
+            white 55%,
+            transparent 80%);
+}
+
+.sun_layer1 {
+    background: linear-gradient(to right,
+            transparent 39%,
+            white 40%,
+            transparent 41%,
+            transparent 48.5%,
+            white 50%,
+            transparent 51.5%,
+            transparent 53%,
+            white 54%,
+            transparent 55%,
+            transparent 70%,
+            white 71%,
+            transparent 72%);
+}
+
+.sun_layer2 {
+    animation-delay: -2s;
+    animation-duration: 7.8s;
+    animation-direction: alternate-reverse;
+    background: linear-gradient(to right,
+            transparent 32%,
+            white 33%,
+            transparent 34%,
+            transparent 38%,
+            white 39%,
+            transparent 40%,
+            transparent 53%,
+            white 54%,
+            transparent 55%,
+            transparent 63.5%,
+            white 65%,
+            transparent 66.5%);
+}
+
+.sun_layer3 {
+    animation-delay: -5s;
+    animation-duration: 8.5s;
+    background: linear-gradient(to right,
+            transparent 38.5%,
+            white 40%,
+            transparent 41.5%,
+            transparent 47%,
+            white 48%,
+            transparent 49%,
+            transparent 52%,
+            white 53%,
+            transparent 54%,
+            transparent 60%,
+            white 61%,
+            transparent 62%);
+}
+
+@keyframes surfaceAnim {
+    0% {
+        opacity: 0;
+        background-position: center bottom;
+        background-size: 100% var(--highHeight);
+    }
+
+    20% {
+        opacity: var(--opacity);
+    }
+
+    100% {
+        opacity: 0;
+        background-position: center bottom calc(-1 * var(--lowHeight));
+        background-size: 100% var(--lowHeight);
+    }
+}
+
+@keyframes causticsAnim {
+    0% {
+        background-position: bottom var(--gapY) left;
+    }
+
+    100% {
+        background-position: bottom var(--gapY) left -100vw;
+    }
+}
+
+@keyframes sunAnim {
+    0% {
+        opacity: 0.1;
+        transform: skew(5deg) scale3d(3, 1.5, 1);
+    }
+
+    50% {
+        opacity: 0.08;
+        transform: skew(0deg) scale3d(1.5, 1, 1);
+    }
+
+    100% {
+        opacity: 0.1;
+        transform: skew(-5deg) scale3d(3, 1, 1);
+    }
+}
+
+.svgHidden {
+    display: none;
+}

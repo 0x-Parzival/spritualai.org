@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Search, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
     title: 'Spiritual AI Labs | Research & Protocols',
@@ -77,18 +78,32 @@ export default function ResearchIndex() {
                         </div>
                     </Link>
 
-                    {/* Placeholder for Article 3 */}
-                    <div className="group bg-white/5 p-10 rounded-[30px] border border-white/10 opacity-50 cursor-not-allowed">
-                        <div className="mb-6 h-40 bg-white/5 rounded-2xl w-full"></div>
-                        <div className="space-y-4">
-                            <div className="h-4 bg-white/10 rounded w-1/3"></div>
-                            <div className="h-8 bg-white/10 rounded w-3/4"></div>
-                            <div className="h-4 bg-white/10 rounded w-full"></div>
+                    {/* Article 3: Research Remix */}
+                    <Link href="/research/remix" className="group bg-white/5 p-10 rounded-[30px] border border-white/10 hover:border-cyan-500/50 transition-all block relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-5">
+                            <Search className="w-24 h-24" />
                         </div>
-                        <div className="mt-8 text-xs font-mono text-white/20 uppercase tracking-widest">
-                            // DECIPHERING... [COMING SOON]
+                        <div className="mb-6 h-40 bg-gradient-to-br from-cyan-900/20 to-black rounded-2xl w-full flex items-center justify-center">
+                            <span className="text-4xl text-cyan-500">🧪</span>
                         </div>
-                    </div>
+                        <div className="space-y-4 relative z-10">
+                            <div className="flex items-center gap-4 mb-2">
+                                <span className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-cyan-300">
+                                    Lab Tool
+                                </span>
+                                <span className="text-xs text-white/40 font-mono">LIVE ALPHA</span>
+                            </div>
+                            <h2 className="text-2xl font-black group-hover:text-cyan-400 transition-colors">
+                                Product Research Remix
+                            </h2>
+                            <p className="text-sm text-white/50 leading-relaxed">
+                                AI-powered market intelligence. Conduct deep research and synthesize structured buyer reports in seconds.
+                            </p>
+                            <div className="pt-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-cyan-500 opacity-0 group-hover:opacity-100 transition-all">
+                                Launch Tool <ArrowRight className="w-3 h-3" />
+                            </div>
+                        </div>
+                    </Link>
                 </div>
             </main>
 

@@ -1,0 +1,355 @@
+/* Cleaned up CSS for Lotus Component */
+
+.stage {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 420px;
+    display: grid;
+    place-items: center;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    margin: 0 auto;
+}
+
+.stage::before {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background:
+        radial-gradient(circle at 50% 60%, rgba(255, 60, 245, .18), transparent 55%),
+        radial-gradient(circle at 50% 60%, rgba(53, 248, 255, .16), transparent 60%);
+    filter: blur(14px);
+    transform: translateZ(-60px);
+    pointer-events: none;
+}
+
+/* wrapper */
+.lotusWrap {
+    width: 220px;
+    height: 220px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(70deg);
+    animation: spin 20s linear infinite;
+    cursor: pointer;
+    outline: none;
+
+    --open: 1;
+    /* 1 open, 0 closed */
+}
+
+.lotusWrap.closed {
+    --open: 0;
+}
+
+/* glow pulse */
+.lotusWrap::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 60, 245, .18), transparent 60%);
+    filter: blur(12px);
+    opacity: .8;
+    transform: translateZ(-40px);
+    animation: pulse 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.lotus {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+}
+
+/* ring list centered properly */
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transform-style: preserve-3d;
+}
+
+.petal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+
+    /* anchor rotation at the petal's bottom tip */
+    transform-origin: center bottom;
+
+    /* rotate first, then fold/open */
+    transform:
+        translate(-50%, -50%) rotateZ(var(--rz)) rotateX(calc(var(--baseX) * var(--open))) rotateY(calc(var(--baseY) * var(--open)));
+    will-change: transform;
+}
+
+.petalSvg {
+    display: block;
+    height: auto;
+    transform-origin: center top;
+    /* closed => folded; open => nearly flat */
+    transform: rotateX(calc(var(--svgTilt) * (1 - var(--open))));
+    transition: transform var(--speed) cubic-bezier(0, .75, .25, 1);
+    filter:
+        drop-shadow(0 0 8px rgba(255, 60, 245, .35)) drop-shadow(0 0 10px rgba(53, 248, 255, .25));
+    will-change: transform;
+}
+
+.petalPath {
+    fill: url(#neonGrad);
+    stroke: rgba(255, 255, 255, .18);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+/* center orb */
+.core {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0px);
+    background: radial-gradient(circle at 30% 30%,
+            rgba(255, 255, 255, .7),
+            rgba(255, 60, 245, .25) 35%,
+            rgba(53, 248, 255, .2) 70%,
+            rgba(0, 0, 0, 0) 72%);
+    box-shadow:
+        0 0 18px rgba(255, 60, 245, .45),
+        0 0 22px rgba(53, 248, 255, .35);
+    pointer-events: none;
+}
+
+/* ring configs */
+.r1 {
+    --size: 72px;
+    --lift: 18px;
+    --baseX: 15deg;
+    --baseY: 5deg;
+    --svgTilt: 75deg;
+}
+
+.r2 {
+    --size: 60px;
+    --lift: 15px;
+    --baseX: 30deg;
+    --baseY: 5deg;
+    --svgTilt: 60deg;
+}
+
+.r3 {
+    --size: 48px;
+    --lift: 12px;
+    --baseX: 60deg;
+    --baseY: 5deg;
+    --svgTilt: 30deg;
+}
+
+/* apply size per ring */
+.ring .petalSvg {
+    width: var(--size);
+}
+
+/* stagger bloom per ring */
+.r1 .petalSvg {
+    transition-delay: 0ms;
+}
+
+.r2 .petalSvg {
+    transition-delay: 140ms;
+}
+
+.r3 .petalSvg {
+    transition-delay: 280ms;
+}
+
+@keyframes spin {
+    from {
+        transform: rotateX(70deg) rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateX(70deg) rotateZ(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: .95;
+    }
+}
+
+.lotusSubtext {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(-50%);
+    width: 200px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    z-index: 100;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .lotusSubtext {
+        left: auto;
+        right: auto;
+        top: calc(100% + 20px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90vw;
+        max-width: 320px;
+        text-align: center;
+    }
+
+    .lotusSubtext::after {
+        display: none;
+        /* Hide tail on mobile since it's now below */
+    }
+}
+
+/* Bubble tail */
+.lotusSubtext::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent rgba(255, 255, 255, 0.05) transparent transparent;
+}
+
+.readyToBurst {
+    animation: float 3s ease-in-out infinite;
+    opacity: 1;
+}
+
+.bursting {
+    animation: burst 0.5s forwards cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(-50%) translateX(0);
+    }
+
+    50% {
+        transform: translateY(-50%) translateX(-10px);
+    }
+}
+
+@keyframes burst {
+    0% {
+        transform: translateY(-50%) scale(1);
+        opacity: 1;
+        filter: blur(0px);
+    }
+
+    100% {
+        transform: translateY(-50%) scale(1.5);
+        opacity: 0;
+        filter: blur(10px);
+    }
+}
+
+.lotusSubtext p {
+    margin: 0;
+}
+
+.lotusSubtext p:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+.stemContainer {
+    position: absolute;
+    top: calc(50% + 15px);
+    /* Start from bottom of core orb */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 1300vh;
+    z-index: -1;
+    /* Behind petals but core glow will cover the joint */
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.stemSvg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.stemLine {
+    stroke: rgba(184, 90, 255, 1);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter:
+        drop-shadow(0 0 10px rgba(255, 60, 245, 0.8)) drop-shadow(0 0 20px rgba(184, 90, 255, 0.4));
+    animation: stemPulse 4s ease-in-out infinite, stemLiquid 10s ease-in-out infinite;
+}
+
+@keyframes stemPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        stroke-width: 2.5;
+    }
+
+    50% {
+        opacity: 1;
+        stroke-width: 4;
+    }
+}
+
+@keyframes stemLiquid {
+
+    0%,
+    100% {
+        transform: translateX(0) scaleX(1);
+    }
+
+    25% {
+        transform: translateX(8px) scaleX(1.05);
+    }
+
+    75% {
+        transform: translateX(-8px) scaleX(1.1);
+    }
+}

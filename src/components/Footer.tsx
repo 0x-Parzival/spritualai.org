@@ -40,6 +40,7 @@ export default function Footer() {
                     <div className="md:col-span-3">
                         <h3 className="text-xs font-bold text-white mb-6 uppercase tracking-[0.2em] opacity-50">Intelligence</h3>
                         <ul className="space-y-3 text-sm font-light">
+                            <li><Link href="/store" className="text-cyan-400 font-bold hover:text-cyan-300 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> Digital Store <span className="text-[8px] bg-cyan-500/10 px-1 rounded border border-cyan-500/20">NEW</span></Link></li>
                             <li><Link href="/MBTI" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> MBTI Systems</Link></li>
                             <li><Link href="/research" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> AI Research Labs</Link></li>
                             <li><Link href="/mission" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span className="opacity-0 hover:opacity-100 transition-opacity">›</span> Our Mission</Link></li>

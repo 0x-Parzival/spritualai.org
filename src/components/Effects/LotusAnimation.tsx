@@ -43,7 +43,6 @@ export default function LotusAnimation() {
         tl1.to(`${desktopLotusSelector} .segmR`, {
             scale: .5,
             rotate: 0,
-            mixBlendMode: 'darken',
             duration: 4,
             ease: 'sine.inOut',
         })
@@ -57,7 +56,6 @@ export default function LotusAnimation() {
         tl2.to(`${desktopLotusSelector} .segmL`, {
             scale: .5,
             rotate: 0,
-            mixBlendMode: 'darken',
             duration: 4,
             ease: 'sine.inOut'
         })

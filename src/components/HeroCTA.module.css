@@ -1,0 +1,298 @@
+/* HeroCTA.module.css */
+
+.mbtiContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0 auto;
+    gap: 20px;
+    width: fit-content;
+    max-width: 90vw;
+    padding: 22px 0;
+    z-index: 5;
+    pointer-events: auto;
+    /* Move MBTI section up by 1 inch (96px) on desktop approx */
+}
+
+@media (min-width: 768px) {
+    .mbtiContainer {
+        transform: translateY(51px);
+        /* Adjusted from 89px to move ~1cm (38px) higher */
+    }
+}
+
+.goldenGlowText {
+    text-shadow:
+        0 0 10px rgba(255, 215, 0, 0.6),
+        0 0 20px rgba(255, 223, 0, 0.4),
+        0 0 30px rgba(255, 215, 0, 0.2);
+    color: #fffacd;
+    /* LemonChiffon base color for light gold feel */
+    transition: all 0.3s ease;
+    font-family: serif;
+    max-width: 1200px;
+    margin: 0 auto 0;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    line-height: 1.2;
+    text-align: center;
+}
+
+.goldenGlowText:hover {
+    text-shadow:
+        0 0 15px rgba(255, 215, 0, 0.8),
+        0 0 25px rgba(255, 223, 0, 0.6),
+        0 0 35px rgba(255, 215, 0, 0.4);
+}
+
+.subText {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 auto 1rem;
+    transform: translateY(-10px);
+    max-width: 800px;
+    text-align: center;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.gradientFlowBtn {
+    /* Existing Gradient Background */
+    background: linear-gradient(135deg,
+            #0E1B1A,
+            #1F6F5C,
+            #2B4E73,
+            #8A1FA8);
+    background-size: 300% 300%;
+    animation: gradientFlow 8s ease infinite;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    /* Soft Halo Glow & Elevation */
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 222, 229, 0.1) inset,
+        0 0 25px rgba(0, 222, 229, 0.2);
+
+    /* Text */
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+
+    transition: all 0.4s ease;
+    transform: translateY(0);
+    position: relative;
+    /* overflow: hidden; Removed to allow neon border pseudo-element to show outside */
+
+    text-decoration: none;
+    font-size: clamp(1.47rem, 3vw, 2.21rem);
+    font-weight: 600;
+    min-width: 916px;
+    max-width: 95vw;
+    padding: 24px 48px;
+    text-align: center;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+
+    /* NEON BORDER CONTAINER */
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .gradientFlowBtn {
+        font-size: clamp(0.75rem, 3.5vw, 0.95rem);
+        min-width: 280px;
+        padding: 14px 24px;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .mbtiContainer {
+        gap: 12px;
+        padding: 12px 0;
+        transform: translateY(10px);
+    }
+}
+
+.gradientFlowBtn::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    padding: 4px;
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg,
+            #00f2ff,
+            #7000ff,
+            #ff00ea,
+            #00f2ff);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Add a separate rotating element or use background-image rotation logic */
+.gradientFlowBtn::before {
+    background: conic-gradient(from var(--border-angle, 0deg),
+            #00f2ff,
+            #7000ff,
+            #ff00ea,
+            #00f2ff);
+    animation: rotateBorderVar 3s linear infinite;
+}
+
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes rotateBorderVar {
+    from {
+        --border-angle: 0deg;
+    }
+
+    to {
+        --border-angle: 360deg;
+    }
+}
+
+.gradientFlowBtn:hover {
+    animation: gradientFlow 4s ease infinite;
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(0, 222, 229, 0.3) inset,
+        0 0 40px rgba(0, 222, 229, 0.4);
+    transform: translateY(-2px);
+    border-color: rgba(0, 222, 229, 0.8) !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+    background-size: 400% 400%;
+}
+
+.secondaryCta {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    padding: 8px 32px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(79, 209, 197, 0.5);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+    text-align: center;
+    min-width: 280px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    position: relative;
+    overflow: hidden;
+}
+
+.secondaryCta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(79, 209, 197, 0.4);
+    border-color: #4fd1c5;
+    background: rgba(15, 23, 42, 0.95);
+    text-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+}
+
+.hint {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.scrollHintContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4rem;
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+.mouse {
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.wheel {
+    width: 4px;
+    height: 8px;
+    background-color: white;
+    border-radius: 2px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollWheel 1.5s infinite;
+}
+
+.scrollText {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes scrollWheel {
+    0% {
+        top: 6px;
+        opacity: 1;
+    }
+
+    100% {
+        top: 24px;
+        opacity: 0;
+    }
+}

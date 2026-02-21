@@ -11,6 +11,8 @@ import InfpMediator from '@/components/layouts/InfpMediator';
 import EntjCommand from '@/components/layouts/EntjCommand';
 import IntpLogic from '@/components/layouts/IntpLogic';
 import EntpDynamic from '@/components/layouts/EntpDynamic';
+import EstjExecutive from '@/components/layouts/EstjExecutive';
+import IstpVirtuoso from '@/components/layouts/IstpVirtuoso';
 // We will import others as we create them. For now, fallback to a basic message or 404 if incomplete.
 
 // Helper to find product by slug
@@ -106,6 +108,10 @@ function renderLayout(layoutType: string, product: any, theme: any, mbtiType: st
             return <IntpLogic product={product} theme={theme} mbtiType={mbtiType} />;
         case 'ENTP_DYNAMIC':
             return <EntpDynamic product={product} theme={theme} mbtiType={mbtiType} />;
+        case 'ISTP_VIRTUOSO':
+            return <IstpVirtuoso product={product} theme={theme} mbtiType={mbtiType} />;
+        case 'ESTJ_EXECUTIVE':
+            return <EstjExecutive product={product} theme={theme} mbtiType={mbtiType} />;
         // Add other cases as we extract them
         default:
             // Fallback for now if layout not extracted yet

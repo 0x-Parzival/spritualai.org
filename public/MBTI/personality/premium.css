@@ -2,11 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Orbitron:wght@400;500;700;900&display=swap');
 
 :root {
-    --glass-bg: transparent;
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shine: rgba(255, 255, 255, 0.03);
+    --glass-bg: rgba(255, 255, 255, 0.015);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shine: rgba(255, 255, 255, 0.05);
     --text-main: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
+    --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 40%, transparent 60%, rgba(255, 255, 255, 0.05));
 }
 
 /* Color Themes */
@@ -52,6 +53,48 @@ body.theme-yellow {
 
     50% {
         clip-path: polygon(0 51%, 9% 57%, 21% 62%, 36% 63%, 49% 57%, 60% 50%, 75% 46%, 91% 44%, 100% 42%, 100% 100%, 0 100%);
+    }
+}
+
+/* Liquid Glass Core Utility */
+.liquid-glass {
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px) saturate(200%) contrast(95%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%) contrast(95%);
+    border: 1px solid var(--glass-border);
+    border-top: 1px solid var(--glass-shine);
+    overflow: hidden;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.5),
+        inset 0 0 100px rgba(255, 255, 255, 0.02);
+}
+
+.liquid-glass::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+    opacity: 0.15;
+    pointer-events: none;
+    animation: liquid-flow 15s ease infinite alternate;
+    z-index: 0;
+}
+
+@keyframes liquid-flow {
+    0% {
+        transform: translate(-5%, -5%) rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: translate(5%, 5%) rotate(5deg) scale(1.1);
+    }
+
+    100% {
+        transform: translate(-5%, -5%) rotate(-5deg) scale(1);
     }
 }
 
@@ -198,18 +241,30 @@ canvas#webgl-canvas,
 
 /* Cards / Sections */
 .section {
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(200%) brightness(0.85);
+    -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(0.85);
     border: 1px solid var(--glass-border);
     border-top: 1px solid var(--glass-shine);
-    border-radius: 24px;
+    border-radius: 28px;
     padding: 50px;
     margin-bottom: 40px;
-    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
-    position: relative;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 0 80px rgba(255, 255, 255, 0.015);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--liquid-refraction);
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .section::before {
@@ -218,15 +273,18 @@ canvas#webgl-canvas,
     top: 0;
     left: 0;
     width: 100%;
-    height: 4px;
+    height: 1px;
     background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
-    opacity: 0.7;
+    opacity: 0.6;
+    z-index: 3;
 }
 
 .section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(var(--accent-glow), 0.1);
-    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-8px) scale(1.01);
+    box-shadow:
+        0 40px 70px -15px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(var(--accent-glow), 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .section-title {
@@ -255,7 +313,10 @@ canvas#webgl-canvas,
     color: var(--text-muted);
     position: relative;
     z-index: 2;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.05);
+    /* 95% transparent */
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--accent-glow);
     padding: 30px;
     border-radius: 16px;
     margin-top: 20px;
@@ -283,7 +344,7 @@ canvas#webgl-canvas,
 }
 
 .section-content li:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.01) !important;
     border-left-color: var(--accent-glow);
     padding-left: 25px;
     color: white;
@@ -319,17 +380,29 @@ canvas#webgl-canvas,
 }
 
 .product-card {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    position: relative;
+    background: rgba(0, 0, 0, 0.05);
+    /* 95% transparent */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid var(--accent-glow);
+    border-radius: 20px;
     padding: 30px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     height: 100%;
-    position: relative;
     overflow: hidden;
     cursor: pointer;
+}
+
+.product-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--liquid-refraction);
+    opacity: 0.05;
+    pointer-events: none;
 }
 
 .product-card::before {
@@ -338,16 +411,16 @@ canvas#webgl-canvas,
     top: 0;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 1px;
     background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-10px) scale(1.02);
+    background: rgba(255, 255, 255, 0.04);
     border-color: var(--accent-glow);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .product-header {

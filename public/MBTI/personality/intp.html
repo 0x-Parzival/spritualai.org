@@ -26,14 +26,16 @@
       left: 0;
       width: 100%;
       padding: 15px;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(5px);
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px) saturate(180%);
+      -webkit-backdrop-filter: blur(15px) saturate(180%);
       color: white;
       text-align: center;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
       z-index: 100;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid var(--glass-border);
     }
 
     .webgl {
@@ -59,23 +61,29 @@
       position: fixed;
       bottom: 20px;
       transform: translateY(-50%);
-      padding: 12px 24px;
-      background: rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 28px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-shine);
       border-radius: 30px;
       color: white;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
       text-decoration: none;
-      backdrop-filter: blur(5px);
-      transition: all 0.3s ease;
+      backdrop-filter: blur(10px) saturate(160%);
+      -webkit-backdrop-filter: blur(10px) saturate(160%);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       z-index: 100;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent-glow);
+      box-shadow: 0 0 20px rgba(var(--accent-glow), 0.2);
       transform: translateY(-50%) scale(1.05);
     }
 
@@ -128,8 +136,9 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       list-style: none;
       padding: 16px 24px;
-      background: rgba(145, 84, 255, 0.12);
-      border: 1px solid rgba(145, 84, 255, 0.4);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-shine);
       border-radius: 12px;
       width: 320px;
       text-align: left;
@@ -137,8 +146,10 @@
       font-family: 'Orbitron', sans-serif;
       font-weight: 500;
       letter-spacing: 1px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .drivers-list li:hover {
@@ -166,7 +177,7 @@
 
     .driver-terminal {
       flex-grow: 1;
-      background: rgba(10, 10, 10, 0.6);
+      background: rgba(10, 10, 10, 0.4);
       border: 1px solid rgba(145, 84, 255, 0.3);
       border-radius: 16px;
       padding: 30px;
@@ -174,10 +185,19 @@
       min-height: 350px;
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       opacity: 0;
       transform: scale(0.95);
       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .driver-terminal::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
       pointer-events: none;
     }
 
@@ -260,6 +280,16 @@
       margin: 15px 0 0;
       display: flex;
       justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-preview {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .btn-preview:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
     }
 
     .atc {
@@ -411,16 +441,29 @@
     }
 
     .modal-content {
-      background: rgba(15, 15, 15, 0.95);
+      background: rgba(10, 10, 12, 0.6);
       padding: 40px;
-      border: 1px solid rgba(145, 84, 255, 0.3);
+      border: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-shine);
       width: 90%;
       max-width: 550px;
-      border-radius: 24px;
-      box-shadow: 0 0 50px rgba(145, 84, 255, 0.2);
+      border-radius: 28px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(145, 84, 255, 0.1);
       position: relative;
       transform: translateY(20px);
-      transition: transform 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+    }
+
+    .modal-content::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--liquid-refraction);
+      opacity: 0.1;
+      pointer-events: none;
+      border-radius: inherit;
     }
 
     .driver-modal.active .modal-content {
@@ -544,6 +587,19 @@
 </head>
 
 <body class="theme-purple">
+  <!-- Liquid Overlay -->
+  <div class="liquid-overlay"></div>
+  <style>
+    .liquid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(145, 84, 255, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+  </style>
+
   <!-- WebGL Background -->
   <div class="webgl"></div>
   <div id="canvas-container"></div>
@@ -655,7 +711,14 @@
               results—mirrors their love for deconstructing complex systems efficiently, without the tedium that often
               derails their curiosity-driven learning.</p>
             <div class="atc-main">
-              <button class="atc" aria-label="Add to cart" data-product="Skill Upload" data-adding="false">
+              <button class="atc btn-preview" onclick="event.stopPropagation(); window.open('/welcome-neo', '_blank')">
+                <span class="atc__content">
+                  <span class="atc__text">Preview</span>
+                </span>
+                <span class="atc__border atc__border--static"></span>
+              </button>
+              <button class="atc" aria-label="Add to cart" data-product="Skill Upload" data-adding="false"
+                onclick="event.stopPropagation()">
                 <span class="atc__content">
                   <span class="atc__cart">
                     <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
@@ -700,7 +763,15 @@
               early wake-ups, instead curating steps based on real-time brain states. This provides intellectual control
               over productivity without imposing external discipline.</p>
             <div class="atc-main">
-              <button class="atc" aria-label="Add to cart" data-product="Focus Mastery" data-adding="false">
+              <button class="atc btn-preview"
+                onclick="event.stopPropagation(); window.open('https://spiritualai.org/preview/focus-mastery', '_blank')">
+                <span class="atc__content">
+                  <span class="atc__text">Preview</span>
+                </span>
+                <span class="atc__border atc__border--static"></span>
+              </button>
+              <button class="atc" aria-label="Add to cart" data-product="Focus Mastery" data-adding="false"
+                onclick="event.stopPropagation()">
                 <span class="atc__content">
                   <span class="atc__cart">
                     <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">
@@ -745,7 +816,15 @@
               depth and autonomy without emotional overreach. It's ideal for those seeking resonance in a grounded,
               revisitable format.</p>
             <div class="atc-main">
-              <button class="atc" aria-label="Add to cart" data-product="Life Purpose" data-adding="false">
+              <button class="atc btn-preview"
+                onclick="event.stopPropagation(); window.open('https://spiritualai.org/preview/life-purpose', '_blank')">
+                <span class="atc__content">
+                  <span class="atc__text">Preview</span>
+                </span>
+                <span class="atc__border atc__border--static"></span>
+              </button>
+              <button class="atc" aria-label="Add to cart" data-product="Life Purpose" data-adding="false"
+                onclick="event.stopPropagation()">
                 <span class="atc__content">
                   <span class="atc__cart">
                     <svg class="atc__icon" viewBox="0 0 24 24" fill="currentColor">

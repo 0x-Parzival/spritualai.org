@@ -3,6 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Zap } from "lucide-react";
 
 export default function MainNav() {
     const { user, signInWithGoogle } = useAuth();
@@ -21,7 +22,12 @@ export default function MainNav() {
                 <span className="text-white font-bold tracking-widest text-sm hidden md:block">SPIRITUAL AI</span>
             </div>
 
+
             <div className="flex items-center gap-6 text-sm">
+                <Link href="/store" className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider font-bold text-xs flex items-center gap-2 px-3 py-1 border border-cyan-500/20 rounded-full bg-cyan-500/5">
+                    <Zap className="w-3 h-3 fill-cyan-400" />
+                    Digital Store
+                </Link>
 
                 {/* Profile / Auth Section */}
                 {user ? (

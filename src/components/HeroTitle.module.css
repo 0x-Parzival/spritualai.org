@@ -1,0 +1,125 @@
+/* HeroTitle.module.css */
+
+.container {
+    max-width: 100vw;
+    margin: 0 auto;
+    padding: 5vh 15px 5vh;
+    position: relative;
+    text-align: center;
+    min-height: auto;
+    pointer-events: none;
+    z-index: 15;
+    overflow-x: hidden;
+}
+
+/* Re-enable pointer events for possible interactions */
+.neon {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+}
+
+.title {
+    position: relative;
+}
+
+.title h1 {
+    font-family: monospace;
+    /* Explicitly set monospace if not global */
+    font-size: clamp(40px, 8vw, 72px);
+    /* Original size maintained */
+    font-weight: bolder;
+    text-transform: uppercase;
+    letter-spacing: clamp(1px, 1vw, 3px);
+    color: transparent;
+    text-shadow: 0 0px 30px #00bcd4;
+    -webkit-text-stroke: max(1px, 0.02em) #00bcd4;
+    white-space: nowrap;
+    padding: 0 5px;
+    margin: 0;
+    line-height: 1;
+}
+
+.title h1:nth-child(2) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(180deg,
+            rgba(145, 84, 255, 1) 0%,
+            rgba(0, 180, 255, 1) 33%,
+            rgba(0, 220, 140, 1) 66%,
+            rgba(250, 230, 80, 1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 0;
+    animation: wave 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        clip-path: polygon(0% 25%, 15% 20%, 30% 25%, 45% 35%, 60% 40%, 75% 35%, 90% 30%, 100% 25%, 100% 100%, 0% 100%);
+    }
+
+    50% {
+        clip-path: polygon(0% 40%, 15% 45%, 30% 40%, 45% 30%, 60% 25%, 75% 30%, 90% 35%, 100% 40%, 100% 100%, 0% 100%);
+    }
+}
+
+.subtitleLotusContainer {
+    margin-top: 1rem;
+}
+
+.subtitleText {
+    font-size: 1.2rem;
+    text-transform: none;
+    letter-spacing: 0.05em;
+    margin-top: 1rem;
+    color: #4fd1c5;
+}
+
+.subheadingText {
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0.03em;
+    margin-top: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.infoText {
+    font-size: 0.9rem;
+    color: rgba(0, 188, 212, 0.9);
+    margin-top: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+}
+
+@media (max-width: 768px) {
+    .subtitleText {
+        font-size: clamp(10px, 4vw, 0.85rem);
+        white-space: nowrap;
+        margin-top: 0.5rem;
+    }
+
+    .subheadingText {
+        font-size: clamp(8px, 3.2vw, 0.65rem);
+        white-space: nowrap;
+        margin-top: 0.25rem;
+    }
+
+    .infoText {
+        font-size: clamp(7px, 2.8vw, 0.55rem);
+        white-space: nowrap;
+        margin-top: 0.5rem;
+    }
+}

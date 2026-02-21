@@ -63,7 +63,6 @@ export default function MobileHomeV2() {
         tl1.to(`${lotusSelector} .segmR`, {
             scale: .5,
             rotate: 0,
-            mixBlendMode: 'darken',
             duration: 4,
             ease: 'sine.inOut',
         })
@@ -77,7 +76,6 @@ export default function MobileHomeV2() {
         tl2.to(`${lotusSelector} .segmL`, {
             scale: .5,
             rotate: 0,
-            mixBlendMode: 'darken',
             duration: 4,
             ease: 'sine.inOut'
         })
@@ -131,7 +129,12 @@ export default function MobileHomeV2() {
                         </div>
                     </div>
                 </div>
-                <div className={styles.subtitle}>YOUR FIRST STEP TOWARDS TRANSFORMATION</div>
+                <div className={styles.subtitle} style={{ textTransform: 'none', fontSize: '1rem', color: '#4fd1c5', textAlign: 'center' }}>
+                    Design your identity with intelligence.
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)', marginTop: '8px', textAlign: 'center', width: '85%', fontWeight: '300', letterSpacing: '0.5px' }}>
+                    AI-powered identity systems for people who think differently.
+                </div>
             </header>
 
             {/* 🔮 Center Content */}

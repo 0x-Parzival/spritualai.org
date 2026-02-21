@@ -1,0 +1,240 @@
+/* Scoped variables for Neon Lotus */
+.neon-lotus-wrapper {
+    --nl-bg1: #070812;
+    --nl-bg2: #0b1022;
+    --nl-neon1: #ff3cf5;
+    --nl-neon2: #35f8ff;
+    --nl-neon3: #b8ff5a;
+    --nl-speed: 1800ms;
+    /* bloom speed */
+}
+
+/* Container to mimic the 'body' background and centering from the snippet */
+.neon-lotus-result {
+    position: absolute;
+    /* Changed from fixed to absolute to fit in parent if needed, or fixed to cover */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(1200px 700px at 50% 20%, rgba(53, 248, 255, 0.12), transparent 55%),
+        radial-gradient(900px 600px at 50% 80%, rgba(255, 60, 245, 0.10), transparent 60%),
+        linear-gradient(180deg, var(--nl-bg1), var(--nl-bg2));
+    overflow: hidden;
+    perspective: 1000px;
+    user-select: none;
+    z-index: 10;
+    /* Adjust transparency/layering as needed */
+}
+
+.nl-hint {
+    position: absolute;
+    /* fixed in snippet, absolute here to stay in container */
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .55);
+    pointer-events: none;
+}
+
+.nl-stage {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    display: grid;
+    place-items: center;
+    transform-style: preserve-3d;
+}
+
+.nl-stage::before {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background:
+        radial-gradient(circle at 50% 60%, rgba(255, 60, 245, .18), transparent 55%),
+        radial-gradient(circle at 50% 60%, rgba(53, 248, 255, .16), transparent 60%);
+    filter: blur(14px);
+    transform: translateZ(-60px);
+    pointer-events: none;
+}
+
+/* wrapper */
+.nl-lotusWrap {
+    width: 220px;
+    height: 220px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(70deg);
+    animation: nl-spin 20s linear infinite;
+    cursor: pointer;
+    outline: none;
+
+    --nl-open: 1;
+    /* 1 open, 0 closed */
+}
+
+.nl-lotusWrap.closed {
+    --nl-open: 0;
+}
+
+/* glow pulse */
+.nl-lotusWrap::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 60, 245, .18), transparent 60%);
+    filter: blur(12px);
+    opacity: .8;
+    transform: translateZ(-40px);
+    animation: nl-pulse 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.nl-lotus {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+}
+
+/* ring list centered properly */
+ul.nl-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transform-style: preserve-3d;
+}
+
+li.nl-petal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+
+    /* anchor rotation at the petal's bottom tip */
+    transform-origin: center bottom;
+
+    /* rotate first, then fold/open */
+    transform:
+        translate(-50%, -50%) rotateZ(var(--rz)) rotateX(calc(var(--baseX) * var(--nl-open))) rotateY(calc(var(--baseY) * var(--nl-open)));
+    will-change: transform;
+}
+
+svg.nl-petalSvg {
+    display: block;
+    height: auto;
+    transform-origin: center top;
+    /* closed => folded; open => nearly flat */
+    transform: rotateX(calc(var(--svgTilt) * (1 - var(--nl-open))));
+    transition: transform var(--nl-speed) cubic-bezier(0, .75, .25, 1);
+    filter:
+        drop-shadow(0 0 8px rgba(255, 60, 245, .35)) drop-shadow(0 0 10px rgba(53, 248, 255, .25));
+    will-change: transform;
+}
+
+.nl-petalPath {
+    fill: url(#neonGrad);
+    /* relies on SVG defs in the component */
+    stroke: rgba(255, 255, 255, .18);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+}
+
+/* center orb */
+.nl-core {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateZ(0px);
+    background: radial-gradient(circle at 30% 30%,
+            rgba(255, 255, 255, .7),
+            rgba(255, 60, 245, .25) 35%,
+            rgba(53, 248, 255, .2) 70%,
+            rgba(0, 0, 0, 0) 72%);
+    box-shadow:
+        0 0 18px rgba(255, 60, 245, .45),
+        0 0 22px rgba(53, 248, 255, .35);
+    pointer-events: none;
+}
+
+/* ring configs */
+.nl-ring.r1 {
+    --size: 72px;
+    --lift: 18px;
+    --baseX: 15deg;
+    --baseY: 5deg;
+    --svgTilt: 75deg;
+}
+
+.nl-ring.r2 {
+    --size: 60px;
+    --lift: 15px;
+    --baseX: 30deg;
+    --baseY: 5deg;
+    --svgTilt: 60deg;
+}
+
+.nl-ring.r3 {
+    --size: 48px;
+    --lift: 12px;
+    --baseX: 60deg;
+    --baseY: 5deg;
+    --svgTilt: 30deg;
+}
+
+/* apply size per ring */
+.nl-ring .nl-petalSvg {
+    width: var(--size);
+}
+
+/* stagger bloom per ring */
+.nl-ring.r1 .nl-petalSvg {
+    transition-delay: 0ms;
+}
+
+.nl-ring.r2 .nl-petalSvg {
+    transition-delay: 140ms;
+}
+
+.nl-ring.r3 .nl-petalSvg {
+    transition-delay: 280ms;
+}
+
+@keyframes nl-spin {
+    from {
+        transform: rotateX(70deg) rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateX(70deg) rotateZ(360deg);
+    }
+}
+
+@keyframes nl-pulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: .95;
+    }
+}

@@ -4,6 +4,7 @@ import React from "react";
 import { useState } from "react";
 import { notFound, useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import UnicornScene from "unicornstudio-react/next";
 import { productsData } from "../../../../data/products";
 import { mbtiThemes } from "../../../../data/themes";
 import { Product } from "../../../../data/types";
@@ -1097,6 +1098,12 @@ export default function ProductPage() {
 
         return (
             <div className="product-page layout-intp-curiosity" style={{ position: 'relative' }}>{jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
+                {/* 🦄 Unicorn Studio Background for INTP second-brain */}
+                {slug === 'second-brain' && (
+                    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
+                        <UnicornScene projectId="KlXQdwev7jAGG9TcNfm7" />
+                    </div>
+                )}
                 <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 100 }}>
                     <Link href={`/MBTI/personality/${mbtiType.toLowerCase()}.html`} style={{
                         color: '#64748b', textDecoration: 'none',

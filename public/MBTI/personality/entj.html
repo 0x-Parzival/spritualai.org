@@ -188,9 +188,16 @@
 </head>
 
 <body class="theme-purple">
-  <!-- WebGL Background -->
-  <canvas id="webgl-canvas"></canvas>
-  <script type="module" src="webgl-background.js"></script>
+  <!-- Unicorn Studio Background -->
+  <div data-us-project="kAKdnokgmjY5rOZ4oGtN"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -1;"></div>
+  <script src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js"></script>
+  <script>
+    UnicornStudio.init().then((scenes) => {
+      // Optional: Do something with the scene instance
+      console.log("Unicorn Studio initialized", scenes);
+    });
+  </script>
 
   <!-- Back Button -->
   <a href="/MBTI" class="back-button">
@@ -204,26 +211,28 @@
 
   <div class="container">
     <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
-      <img src="/images/logo.png" alt="Spiritual AI Logo" style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
+      <img src="/images/logo.png" alt="Spiritual AI Logo"
+        style="width: 60px; height: auto; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));">
     </div>
 
     <div class="mbti-hero-visual">
 
 
       <header class="mbti-header">
-      <div class="mbti-title long">
-        <h1>ENTJ</h1>
-        <h1>ENTJ</h1>
-      </div>
-      <p class="mbti-subtitle">The Commander</p>
-    </header>
+        <div class="mbti-title long">
+          <h1>ENTJ</h1>
+          <h1>ENTJ</h1>
+        </div>
+        <p class="mbti-subtitle">The Commander</p>
+      </header>
 
       <div class="hero-bg-container">
         <canvas id="header-canvas" class="hero-bg"></canvas>
       </div>
       <img src="../HOVER/ENTJ.png" alt="ENTJ Character" class="hero-character">
 
-      <div class="scroll-indicator" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
+      <div class="scroll-indicator"
+        onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
@@ -239,7 +248,7 @@
           by themes such as bold, obsidian, gold, imperial, structural, sleek skyscrapers, high-contrast, commanding
           perspective.</p>
         <p>This premium view highlights the strengths and deeper psychological triggers associated with this type,
-          specifically curated for the The Commander mind.</p>
+          specifically curated for The Commander mind.</p>
       </div>
     </section>
 
@@ -259,7 +268,7 @@
     <section class="section">
       <h2 class="section-title">Growth Path</h2>
       <div class="section-content">
-        <p>For the The Commander, growth is not about changing who you are, but refining your natural edges. It often
+        <p>For The Commander, growth is not about changing who you are, but refining your natural edges. It often
           involves mastering mechanisms like: <strong>Algorithmic Leverage. Replace middle management with automation
             and AI agents that never sleep or complain.</strong>.</p>
         <p>By leaning into your psychological triggers rather than fighting them, you can achieve a state of flow that
@@ -344,7 +353,7 @@
     </section>
 
   </div>
-<script src="header-shader.js"></script>
+  <script src="header-shader.js"></script>
 </body>
 
 </html>

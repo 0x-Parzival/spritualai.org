@@ -1,0 +1,261 @@
+/* NavButtons.module.css */
+
+/* Navigation Buttons */
+.creatorSection,
+.contactSection {
+    position: fixed;
+    top: 10px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 25px;
+    /* Solid dark blue background - no transparency */
+    background: #0f172a;
+    /* Teal border */
+    border: 2px solid #4fd1c5;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    opacity: 0.67;
+    transition: all 0.3s ease;
+    /* Reduced by 33% */
+    transform: scale(0.45);
+    transform-origin: top;
+    text-decoration: none;
+    /* For link */
+}
+
+.creatorSection {
+    left: 10px;
+    transform-origin: top left;
+}
+
+.contactSection {
+    right: 10px;
+    transform-origin: top right;
+}
+
+.contactSectionButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+}
+
+.creatorSection:hover,
+.contactSection:hover {
+    transform: translateY(1px) scale(0.45);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    /* Slightly lighter blue on hover */
+    background: #1e293b;
+    /* Brighter teal border on hover */
+    border-color: #4fd1c5;
+}
+
+/* Navigation Button Text */
+.navLinkContrast {
+    color: #fff !important;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.75px;
+    text-shadow: 0 0 10px rgba(79, 209, 197, 0.7);
+    transition: all 0.3s ease;
+    text-decoration: none !important;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.creatorSection:hover .navLinkContrast,
+.contactSection:hover .navLinkContrast {
+    color: #4fd1c5 !important;
+    text-shadow: 0 0 12px rgba(79, 209, 197, 0.8);
+}
+
+/* Button Icons - image wrapper handled by Next/Image usually */
+.iconWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    /* purple-500/50 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contactIconWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid rgba(6, 182, 212, 0.5);
+    /* cyan-500/50 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconImage {
+    object-fit: cover;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 5px rgba(79, 209, 197, 0.3));
+}
+
+.creatorSection:hover .iconImage,
+.contactSection:hover .iconImage {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(79, 209, 197, 0.6));
+}
+
+/* Sidebar Styles */
+.sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebarOverlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.contactSidebarPanel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    /* Hidden off-screen */
+    width: 350px;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    border-left: 1px solid rgba(79, 209, 197, 0.3);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+    z-index: 2001;
+    transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.contactSidebarPanel.active {
+    right: 0;
+}
+
+.sidebarHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.sidebarHeader h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #4fd1c5;
+    margin: 0;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    line-height: 1;
+}
+
+.closeBtn:hover {
+    color: #fff;
+}
+
+.sidebarContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contactLink {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.contactLink:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-5px);
+    border-color: rgba(79, 209, 197, 0.3);
+}
+
+.linkIcon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.linkDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.linkLabel {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+.linkValue {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Specific Link overrides */
+.contactLink.whatsapp:hover {
+    background: rgba(37, 211, 102, 0.1);
+    border-color: #25D366;
+}
+
+.contactLink.discord:hover {
+    background: rgba(88, 101, 242, 0.1);
+    border-color: #5865F2;
+}
+
+.contactLink.instagram:hover {
+    background: rgba(225, 48, 108, 0.1);
+    border-color: #e1306c;
+}
