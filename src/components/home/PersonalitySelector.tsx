@@ -36,7 +36,7 @@ export default function PersonalitySelector() {
                 {personalityData.map((p) => (
                     <Link
                         key={p.type}
-                        href={`/${p.type.toLowerCase()}`}
+                        href={`/MBTI/personality/${p.type.toLowerCase()}.html`}
                         className={`${styles.card} ${p.cat}`}
                     >
                         <div className={styles.cardBg}></div>
