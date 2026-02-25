@@ -238,6 +238,7 @@ export default function ThankYouPage() {
 
                         let neighGroups = new Set<Group>();
                         let repr = currGroup.values().next().value;
+                        if (!repr) break;
                         Hexagon.dneighbors.forEach((dk) => {
                             let ng = new Group(repr.kx + dk.dx, repr.ky + dk.dy);
                             if (ng.size == 0) return;
