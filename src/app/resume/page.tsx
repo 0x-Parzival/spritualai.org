@@ -22,7 +22,7 @@ const ResumePage = () => {
                         Senior AI/ML Engineer | NLU & Conversational AI Specialist | Full-Stack Architect
                     </div>
                     <div className={styles.contactInfo}>
-                        <a href="mailto:keshav.baliyan@spiritualai.store">keshav.baliyan@spiritualai.store</a> |
+                        <a href="mailto:admin@spiritualai.store">admin@spiritualai.store</a> |
                         <span>+91 7457852306</span> |
                         <a href="https://in.linkedin.com/in/keshav-baliyan-749188245" target="_blank">LinkedIn</a> |
                         <a href="https://github.com/0x-Parzival" target="_blank">GitHub</a> |
@@ -57,10 +57,10 @@ const ResumePage = () => {
                         </div>
                         <div className={styles.description}>
                             <ul>
-                                <li>Architected and deployed a production-scale Conversational AI platform leveraging LLMs and a complex RAG pipeline using **Qdrant** and **LlamaIndex**.</li>
+                                <li>Architected and deployed a production-scale Conversational AI platform leveraging LLMs and a complex RAG pipeline using <strong>Qdrant</strong> and <strong>LlamaIndex</strong>.</li>
                                 <li>Implemented multi-provider LLM orchestration with automated fallbacks and ensemble routing, increasing system reliability by 99.9%.</li>
-                                <li>Optimized inference latency by 40% using **TensorRT** and **Quantization (INT8)**, enabling real-time 3D interaction at 60 FPS on low-power devices.</li>
-                                <li>Integrated semantic search and context management using **FAISS**, resulting in a 35% improvement in response relevance and a 25% increase in user retention.</li>
+                                <li>Optimized inference latency by 40% using <strong>TensorRT</strong> and <strong>Quantization (INT8)</strong>, enabling real-time 3D interaction at 60 FPS on low-power devices.</li>
+                                <li>Integrated semantic search and context management using <strong>FAISS</strong>, resulting in a 35% improvement in response relevance and a 25% increase in user retention.</li>
                             </ul>
                         </div>
                     </div>
@@ -74,8 +74,8 @@ const ResumePage = () => {
                             <ul>
                                 <li>Developed a high-performance computer vision system for real-time gesture-to-command translation using MediaPipe and custom PyTorch models.</li>
                                 <li>Achieved 97.5% accuracy in complex gesture recognition through advanced data augmentation and transformer-based attention mechanisms.</li>
-                                <li>Selected for **IIT Delhi Startup Expo 2024** for pioneering work in non-tactile human-computer interaction and multimodal NLU.</li>
-                                <li>Converted models to **ONNX** format for cross-platform deployment, reducing CPU overhead by 50%.</li>
+                                <li>Selected for <strong>IIT Delhi Startup Expo 2024</strong> for pioneering work in non-tactile human-computer interaction and multimodal NLU.</li>
+                                <li>Converted models to <strong>ONNX</strong> format for cross-platform deployment, reducing CPU overhead by 50%.</li>
                             </ul>
                         </div>
                     </div>
@@ -103,7 +103,7 @@ const ResumePage = () => {
                             <ul>
                                 <li>Architected an AI-first desktop environment with integrated local LLMs for system-level automation and natural language shell interaction.</li>
                                 <li>Developed a custom prompt engineering framework for system task execution, achieving 90% success in complex multi-step workflows.</li>
-                                <li>Optimized local model inference using **llama.cpp** and hardware acceleration, enabling smooth performance on consumer hardware.</li>
+                                <li>Optimized local model inference using <strong>llama.cpp</strong> and hardware acceleration, enabling smooth performance on consumer hardware.</li>
                             </ul>
                         </div>
                     </div>
