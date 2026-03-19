@@ -160,31 +160,15 @@ void main() {
     // But passing original nodeColor is fine for now
     
     // Sentient Breathing: Slower, deeper, more organic
-    // 0.5 frequency = ~12s cycle (too slow?) -> try 0.4 for deep meditative state
-    // Added 0.85 base + 0.15 variation -> range 0.7 to 1.0
-    float breathe = sin(uTime * 0.5 + distanceFromRoot * 0.2) * 0.1 + 0.9;
+    float breathe = sin(uTime * 0.7 + distanceFromRoot * 0.15) * 0.15 + 0.85;
     float baseSize = nodeSize * breathe;
-    float pulseSize = baseSize * (1.0 + vPulseIntensity * 0.5); // Reduced pulse size expansion (4.0 -> 0.5) to prevent "blooming orbs"
-    
+    float pulseSize = baseSize * (1.0 + vPulseIntensity * 2.5); 
     
     // Ambient flicker
-    float n_noise = snoise(vec3(vPosition * 0.1 + uTime * 0.1));
-    vGlow = 0.5 + 0.5 * sin(uTime * 0.3 + distanceFromRoot * 0.1 + n_noise * 2.0);
-    
-    
+    vGlow = 0.5 + 0.5 * sin(uTime * 0.5 + distanceFromRoot * 0.2);
     
     vec4 mvPosition = modelViewMatrix * vec4(modifiedPosition, 1.0);
     gl_PointSize = pulseSize * uBaseNodeSize * (1000.0 / -mvPosition.z);
-    
-    // Adjusted size for base/stem (nodeType 2) - reduced to match petals
-    if (nodeType > 1.5) {
-        gl_PointSize *= 0.7; // Reduced significantly (1.1 -> 0.7) to match red particles
-    } else {
-        // Also slightly reduce lower petals based on height/distance if needed
-        // For now, let's keep petals consistent but maybe slightly smaller at bottom
-        float heightFactor = smoothstep(0.0, 10.0, modifiedPosition.y + 2.0); // Map -2..8 to 0..1
-        gl_PointSize *= (0.9 + 0.2 * heightFactor); // Reduced base size (1.0 -> 0.9)
-    }
     
     gl_Position = projectionMatrix * mvPosition;
 }`,
@@ -210,7 +194,7 @@ void main() {
     float glow2 = 1.0 - smoothstep(0.0, 1.0, dist);
     float glowStrength = pow(glow1, 1.2) + glow2 * 0.3;
     
-    float breatheColor = 0.5 + 0.1 * sin(uTime * 0.6 + vDistanceFromRoot * 0.25);
+    float breatheColor = 0.9 + 0.1 * sin(uTime * 0.6 + vDistanceFromRoot * 0.25);
     
     vec3 targetColor = vColor;
     
@@ -247,35 +231,31 @@ void main() {
         }
     }
 
-    vec3 baseColor = targetColor * breatheColor * 0.038; // Reduced for petals
+    vec3 baseColor = targetColor * breatheColor * 0.15; // Increased from 0.038 to 0.15 for better color visibility
     if (abs(vNodeType - 3.0) < 0.1) {
-        baseColor = vColor * (0.4 + 0.2 * vGlow); // Reduced brightness for Goddess nodes
+        baseColor = vColor * (0.15 + 0.05 * vGlow); // Further reduced for Goddess
     }
     
     vec3 finalColor = baseColor;
     
-    vec3 purplePulseColor = vec3(0.24, 0.0, 0.4); // Reduced brightness by 60% (0.6->0.24, 1.0->0.4)
     if (vPulseIntensity > 0.0) {
-        // Reduced brightness boost, but INCREASED color mix to make it "purple"
-        finalColor = mix(baseColor, purplePulseColor, vPulseIntensity * 0.4); // slightly boosted mix for color visibility
-        // REMOVED additive brightness boost to fix visibility issue
-    if (abs(vNodeType - 3.0) < 0.1) {
-        finalColor = vColor * (0.4 + 0.2 * vGlow); // Reduced brightness for Goddess nodes (was 0.8 + 0.3)
-    } 
-        // glowStrength *= (1.0 + vPulseIntensity * 0.006); 
+        vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.4);
+        finalColor = mix(baseColor, pulseColor, vPulseIntensity * 0.8);
+        finalColor *= (1.0 + vPulseIntensity * 1.2);
+        glowStrength *= (1.0 + vPulseIntensity);
     }
     
     float coreBrightness = smoothstep(0.4, 0.0, dist);
-    finalColor += vec3(1.0) * coreBrightness * 0.02; // Drastically reduced core brightness (0.1 -> 0.02)
+    finalColor += vec3(1.0) * coreBrightness * 0.05; // Reduced from 0.3 to 0.05 to prevent washing out colors
     
-    float alpha = glowStrength * (0.6 - 0.3 * dist); 
+    float alpha = glowStrength * (0.95 - 0.3 * dist); 
     float camDistance = length(vPosition - cameraPosition);
-    float distanceFade = smoothstep(200.0, 30.0, camDistance);
+    float distanceFade = smoothstep(100.0, 15.0, camDistance);
     
     // Disable distance fade for stem/base
     if (vNodeType > 1.5) {
         distanceFade = 1.0;
-        finalColor *= 0.45; // Adjusted brightness (0.38 -> 0.45) for smaller size
+        finalColor *= 0.3; // Reduced from 0.45 to 0.3 for better contrast
         // Revert "Solid" alpha to match red region style (Soft Sprite)
         // alpha = 1.0; 
         alpha = glowStrength * (0.8 - 0.2 * dist); // Slightly stronger core than petals but still soft edge
@@ -283,14 +263,14 @@ void main() {
         // Gradient darkening for lower petals (Red/Orange) to match "lower area" request
         // Map Y from approx -2 to 10. 
         float heightBias = smoothstep(-5.0, 5.0, vPosition.y);
-        finalColor *= (0.45 + 0.19 * heightBias); // Reduced by 20% (0.56 -> 0.45, 0.24 -> 0.19)
+        finalColor *= (0.6 + 0.4 * heightBias); // Adjusted multiplier for new baseColor scale
         
         // Standard soft alpha for petals
-        alpha = glowStrength * (0.6 - 0.3 * dist); 
+        alpha = glowStrength * (0.95 - 0.3 * dist); 
     }
 
-    if (vNodeType > 0.5) {
-        finalColor *= 0.67; // Reduced by 20% (0.84 -> 0.67)
+    if (vNodeType > 0.5 && vNodeType < 2.5) { // Only for petals/leaves, not Goddess (3.0)
+        finalColor *= 1.1; 
         alpha *= 0.9;
     }
     
@@ -308,7 +288,7 @@ void main() {
         }
     }
     
-    finalColor *= (1.0 + vGlow * 0.05); // Reduced glow flicker
+    finalColor *= (1.0 + vGlow * 0.1); // Reduced glow flicker
     gl_FragColor = vec4(finalColor, alpha * distanceFade);
 }`
 };
@@ -408,7 +388,7 @@ varying float vNodeType;
 varying float vDistanceFromRoot;
 
 void main() {
-    float breatheColor = 0.5 + 0.1 * sin(uTime * 0.6 + vDistanceFromRoot * 0.25);
+    float breatheColor = 0.9 + 0.1 * sin(uTime * 0.6 + vDistanceFromRoot * 0.25);
     
     vec3 targetColor = vColor;
     
@@ -446,14 +426,13 @@ void main() {
     vec3 finalColor = baseColor;
     float glowStrength = 1.0;
 
-    vec3 purplePulse = vec3(0.24, 0.0, 0.4); // Reduced brightness by 60%
     if (vPulseIntensity > 0.0) {
-        // Mix color but remove additive brightness boost
-        finalColor = mix(baseColor, purplePulse, vPulseIntensity * 0.4); 
+        vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.3);
+        finalColor = mix(baseColor, pulseColor * 1.2, vPulseIntensity * 0.7);
     }
     
     float camDistance = length(vPosition - cameraPosition);
-    float distanceFade = smoothstep(200.0, 30.0, camDistance);
+    float distanceFade = smoothstep(100.0, 15.0, camDistance);
     
     // Detect if this is a cyan base/stem line vs petal line
     float greenness = vColor.g / max(vColor.r + vColor.b, 0.01);
@@ -466,7 +445,7 @@ void main() {
         finalColor = baseColor; // Reset to base color
     }
 
-    finalColor *= (1.0 + vGlow * 0.05);
+    finalColor *= (1.0 + vGlow * 0.1);
     
     // Base alpha for lines
     float alpha = 0.5 * distanceFade * glowStrength;
@@ -699,7 +678,7 @@ export default function LotusGod() {
         composer.addPass(new RenderPass(scene, camera));
         const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            0.3, 0.4, 0.85
+            0.15, 0.4, 0.85
         );
         composer.addPass(bloomPass);
         composer.addPass(new OutputPass());
@@ -729,7 +708,7 @@ export default function LotusGod() {
                 ]
             },
             uPulseSpeed: { value: 18.0 },
-            uBaseNodeSize: { value: 1.0 },
+            uBaseNodeSize: { value: 0.6 },
             uBloom: { value: 0.0 },
             uGoddessAppear: { value: 0.0 },
             uClickCount: { value: 0.0 }, // Initialize new uniform
@@ -1004,7 +983,7 @@ export default function LotusGod() {
                 });
 
                 // Customize goddess material
-                goddessMaterial.uniforms.uBaseNodeSize.value = 1.2; // Slightly larger points
+                goddessMaterial.uniforms.uBaseNodeSize.value = 0.8; // Slightly larger points (reduced from 1.2 to 0.8)
 
                 goddessNodesMesh = new THREE.Points(geometry, goddessMaterial);
                 goddessNodesMesh.scale.set(0, 0, 0); // Start hidden

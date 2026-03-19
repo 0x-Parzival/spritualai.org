@@ -131,6 +131,7 @@ import { CurrencyProvider } from "@/context/CurrencyContext";
 import { AuthProvider } from "@/context/AuthContext";
 import InstallPrompt from "@/components/InstallPrompt";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import CursorArrow from "@/components/CursorArrow";
 
 export default function RootLayout({
   children,
@@ -166,6 +167,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
         />
+        <CursorArrow />
         <CurrencyProvider>
           <AuthProvider>
             <main className="flex-grow">

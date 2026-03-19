@@ -8,6 +8,7 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
     const [closed, setClosed] = useState(false);
     const [isBursting, setIsBursting] = useState(false);
     const [isBubbleVisible, setIsBubbleVisible] = useState(true);
+    const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
 
     React.useEffect(() => {
@@ -34,10 +35,32 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
         return () => window.removeEventListener('click', handleGlobalClick);
     }, [isBubbleVisible, isBursting]);
 
+    React.useEffect(() => {
+        const lotusWrap = document.getElementById('lotus');
+        if (!lotusWrap) return;
+
+        let requestId: number;
+        const handleScroll = () => {
+            requestId = requestAnimationFrame(() => {
+                const sy = window.scrollY;
+                // Rotate immediately upon scroll
+                const deg = sy * 0.15;
+                // PRESERVE rotateX(70deg)
+                lotusWrap.style.transform = `rotateX(70deg) rotateZ(${deg}deg)`;
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            cancelAnimationFrame(requestId);
+        };
+    }, []);
+
     const toggle = () => {
         router.push('/lotus-god');
-        // if (typeof forceClose === 'boolean') return; // Controlled mode
-        // setClosed(!closed);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -78,13 +101,15 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
             </svg>
 
             <div
-                className={`${styles.lotusWrap} ${closed ? styles.closed : ''}`}
+                className={`${styles.lotusWrap} ${closed ? styles.closed : ''} ${isHovered ? styles.hovered : ''}`}
                 id="lotus"
                 tabIndex={0}
                 role="button"
                 aria-label="Toggle lotus bloom"
                 onClick={toggle}
                 onKeyDown={handleKeyDown}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 <div className={styles.core}></div>
                 <div className={styles.lotus} id="lotusRings">
@@ -140,9 +165,9 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
 
             {isBubbleVisible && (
                 <div className={`${styles.lotusSubtext} ${isBursting ? styles.bursting : styles.readyToBurst}`}>
-                    <p>Tap on the lotus</p>
-                    <p>To enter gently through a short guided ritual</p>
-                    <p>Those who complete it receive a gift.</p>
+                    <p>Enter Through Intention</p>
+                    <p>A short guided ritual to activate your blueprint.</p>
+                    <p>Those who complete it unlock a private insight.</p>
                 </div>
             )}
         </div>

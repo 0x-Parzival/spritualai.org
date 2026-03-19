@@ -84,10 +84,15 @@ const MissionSection = ({ text }: MissionSectionProps) => {
 
 export default function MissionStatement() {
     return (
-        <>
-            <MissionSection text="At Spiritual AI, we revolutionize your journey by" />
-            <MissionSection text="categorizing users into 16 distinct personality types" />
-            <MissionSection text="unlocking tailored paths to consciousness evolution" />
-        </>
+        <div className={styles.wrapper}>
+            <span className={styles.eyebrow}>Cognitive Blueprint System</span>
+            <MissionSection text="Discover Your Personality Architecture" />
+            <p className={styles.description}>
+                After answering 4 simple questions, we classify you into one of 16 cognitive types — each with its own growth path, tools, and digital systems.
+            </p>
+            <p className={styles.emphasis}>
+                No generic advice.<br />Only what fits your mind.
+            </p>
+        </div>
     );
 }

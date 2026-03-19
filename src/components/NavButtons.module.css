@@ -4,7 +4,7 @@
 .creatorSection,
 .contactSection {
     position: fixed;
-    top: 10px;
+    top: 20px;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -16,22 +16,22 @@
     /* Teal border */
     border: 2px solid #4fd1c5;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    opacity: 0.67;
+    opacity: 0.9;
     transition: all 0.3s ease;
-    /* Reduced by 33% */
-    transform: scale(0.45);
+    /* Doubled from 0.45 */
+    transform: scale(0.9);
     transform-origin: top;
     text-decoration: none;
     /* For link */
 }
 
 .creatorSection {
-    left: 10px;
+    left: 20px;
     transform-origin: top left;
 }
 
 .contactSection {
-    right: 10px;
+    right: 20px;
     transform-origin: top right;
 }
 
@@ -48,7 +48,7 @@
 
 .creatorSection:hover,
 .contactSection:hover {
-    transform: translateY(1px) scale(0.45);
+    transform: translateY(1px) scale(0.9);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
     /* Slightly lighter blue on hover */
     background: #1e293b;

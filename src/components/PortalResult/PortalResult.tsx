@@ -395,7 +395,7 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
         e.stopPropagation();
         if (confirm('Start over?')) {
             localStorage.removeItem('quiz_progress');
-            window.location.reload();
+            router.push('/');
         }
     };
 

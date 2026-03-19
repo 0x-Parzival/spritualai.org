@@ -7,12 +7,14 @@ export interface QuizQuestion {
         value: 'I' | 'S' | 'T' | 'J';
         description: string;
         icon: string;
+        image?: string;
     };
     optionB: {
         text: string;
         value: 'E' | 'N' | 'F' | 'P';
         description: string;
         icon: string;
+        image?: string;
     };
     affirmation: string;
 }
@@ -26,13 +28,15 @@ export const quizQuestions: QuizQuestion[] = [
             text: 'When I\'m alone, I feel like myself again.',
             value: 'I',
             description: "Silence doesn't feel empty — it gives my thoughts depth and clarity.",
-            icon: 'User'
+            icon: 'User',
+            image: '/images/quiz/traits/introversion_neon_1772144748570.png'
         },
         optionB: {
             text: 'Being around people or action energizes me.',
             value: 'E',
             description: "I discover who I am while engaging, responding, and moving with the world.",
-            icon: 'Users'
+            icon: 'Users',
+            image: '/images/quiz/traits/extraversion_neon_1772144767320.png'
         },
         affirmation: 'That makes sense.'
     },
@@ -44,13 +48,15 @@ export const quizQuestions: QuizQuestion[] = [
             text: 'I trust what I can see, touch, and experience right now.',
             value: 'S',
             description: "Ideas matter most when they work in real life.",
-            icon: 'Eye'
+            icon: 'Eye',
+            image: '/images/quiz/traits/sensing_neon_1772144782849.png'
         },
         optionB: {
             text: 'I naturally look for meaning, patterns, and what\'s coming next.',
             value: 'N',
             description: "I often sense things before they fully happen.",
-            icon: 'Sparkles'
+            icon: 'Sparkles',
+            image: '/images/quiz/traits/intuition_neon_1772144801174.png'
         },
         affirmation: 'I see that in you.'
     },
@@ -62,13 +68,15 @@ export const quizQuestions: QuizQuestion[] = [
             text: 'I make decisions by stepping back and analyzing.',
             value: 'T',
             description: "Clarity and fairness matter more than comfort.",
-            icon: 'Brain'
+            icon: 'Brain',
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png'
         },
         optionB: {
             text: 'I decide by considering values and emotional impact.',
             value: 'F',
             description: "What feels aligned matters more than cold logic.",
-            icon: 'Heart'
+            icon: 'Heart',
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
         },
         affirmation: 'That tracks.'
     },
@@ -80,13 +88,15 @@ export const quizQuestions: QuizQuestion[] = [
             text: 'I feel at ease when things are clear and decided.',
             value: 'J',
             description: "Structure gives me mental peace.",
-            icon: 'ListChecks'
+            icon: 'ListChecks',
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
         },
         optionB: {
             text: 'I feel free when options stay open.',
             value: 'P',
             description: "Too much planning drains my energy.",
-            icon: 'Compass'
+            icon: 'Compass',
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
         },
         affirmation: 'That resonates.'
     }

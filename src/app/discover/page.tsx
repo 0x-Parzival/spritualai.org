@@ -173,17 +173,35 @@ export default function DiscoverPage() {
 
                 <div className={styles.intro}>
                     <h1 className={styles.heading}>
-                        There are no right answers here.
+                        Unlock Your Personality Architecture.
                     </h1>
                     <p className={styles.subtext}>
-                        Only what feels true — even if you've never said it out loud.
+                        This 4-question alignment quiz identifies your cognitive blueprint and unlocks your personalized realm.
                     </p>
-                    <p className={styles.microCopy}>
-                        This is not a personality label.<br />
-                        It's a snapshot of how your mind prefers to operate right now.
-                    </p>
+                    <div style={{ 
+                        background: 'rgba(255,255,255,0.05)', 
+                        border: '1px solid rgba(255,255,255,0.1)', 
+                        borderRadius: '16px', 
+                        padding: '24px',
+                        marginBottom: '32px',
+                        textAlign: 'left',
+                        maxWidth: '500px'
+                    }}>
+                        <p style={{ color: '#00ffa3', fontWeight: 800, fontSize: '0.9rem', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>What happens next:</p>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <li style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', display: 'flex', gap: '10px' }}>
+                                <span style={{ color: '#00ffa3' }}>01.</span> You enter your unique personality realm.
+                            </li>
+                            <li style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', display: 'flex', gap: '10px' }}>
+                                <span style={{ color: '#00ffa3' }}>02.</span> Chat with an AI that understands your specific mental framework.
+                            </li>
+                            <li style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', display: 'flex', gap: '10px' }}>
+                                <span style={{ color: '#00ffa3' }}>03.</span> Receive hyper-personalized digital products via WhatsApp/Email in 24h.
+                            </li>
+                        </ul>
+                    </div>
                     <button className={styles.beginButton} onClick={handleBegin}>
-                        Begin
+                        Begin Assessment
                     </button>
                     <a href="/" className={styles.exitLink}>
                         Not ready? Come back anytime
@@ -251,12 +269,25 @@ export default function DiscoverPage() {
                         onClick={() => handleOptionSelect('A')}
                     >
                         <div className={styles.optionContent}>
-                            <div className={styles.optionTitle}>
-                                {currentQuestion.optionA.text}
+                            <div className={styles.optionTextWrapper}>
+                                <div className={styles.optionTitle}>
+                                    {currentQuestion.optionA.text}
+                                </div>
+                                <div className={styles.optionDescription}>
+                                    {currentQuestion.optionA.description}
+                                </div>
                             </div>
-                            <div className={styles.optionDescription}>
-                                {currentQuestion.optionA.description}
-                            </div>
+                            {currentQuestion.optionA.image && (
+                                <div className={styles.optionImageContainer}>
+                                    <Image
+                                        src={currentQuestion.optionA.image}
+                                        alt={currentQuestion.optionA.text}
+                                        width={400}
+                                        height={400}
+                                        className={styles.optionImage}
+                                    />
+                                </div>
+                            )}
                         </div>
                         {currentQuestion.optionA.icon && IconMap[currentQuestion.optionA.icon] && (
                             <div className={styles.optionIcon}>
@@ -273,12 +304,25 @@ export default function DiscoverPage() {
                         onClick={() => handleOptionSelect('B')}
                     >
                         <div className={styles.optionContent}>
-                            <div className={styles.optionTitle}>
-                                {currentQuestion.optionB.text}
+                            <div className={styles.optionTextWrapper}>
+                                <div className={styles.optionTitle}>
+                                    {currentQuestion.optionB.text}
+                                </div>
+                                <div className={styles.optionDescription}>
+                                    {currentQuestion.optionB.description}
+                                </div>
                             </div>
-                            <div className={styles.optionDescription}>
-                                {currentQuestion.optionB.description}
-                            </div>
+                            {currentQuestion.optionB.image && (
+                                <div className={styles.optionImageContainer}>
+                                    <Image
+                                        src={currentQuestion.optionB.image}
+                                        alt={currentQuestion.optionB.text}
+                                        width={400}
+                                        height={400}
+                                        className={styles.optionImage}
+                                    />
+                                </div>
+                            )}
                         </div>
                         {currentQuestion.optionB.icon && IconMap[currentQuestion.optionB.icon] && (
                             <div className={styles.optionIcon}>

@@ -128,6 +128,13 @@
 
 .optionContent {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.optionTextWrapper {
+    flex: 1;
 }
 
 .optionIcon {
@@ -197,6 +204,27 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+.optionImageContainer {
+    width: 200px;
+    height: 150px;
+    flex-shrink: 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.optionImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.option:hover .optionImage {
+    transform: scale(1.05);
+}
+
 .affirmation {
     text-align: center;
     font-size: 0.875rem;
@@ -260,6 +288,18 @@
 
     .option {
         padding: 1.5rem;
+    }
+
+    .optionContent {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .optionImageContainer {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
     }
 
     .optionTitle {

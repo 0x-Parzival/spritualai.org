@@ -4,11 +4,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 4% 80px;
+    padding: 0 6vw clamp(60px, 10vh, 120px);
     position: relative;
     z-index: 10;
     pointer-events: none;
-    margin-top: 36px;
+    margin-top: clamp(16px, 4vh, 48px);
     /* Moved down by 96px (1 inch) from the previous -60px */
 }
 
@@ -62,7 +62,7 @@
     transform: translate(-50%, -50%);
     width: 100%;
     text-align: center;
-    background: #000000;
+    background: transparent;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -87,40 +87,42 @@
 .subtext {
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 500;
     max-width: 600px;
     margin: 0 auto;
 }
 
 .grid {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1500px;
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: clamp(12px, 2vw, 24px);
     pointer-events: auto;
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1600px) {
     .grid {
-        grid-template-columns: repeat(4, 1fr);
+        max-width: 1700px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 520px) {
     .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: 12px;
     }
 }
 
 .card {
     position: relative;
-    height: 120px;
+    height: clamp(160px, 16vw, 220px);
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: white;
+    color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     overflow: visible;
     transition: all 0.3s ease;
 }
@@ -180,23 +182,23 @@
 }
 
 .card:hover .textContent {
-    transform: translateX(-30px);
+    transform: translateX(-clamp(10px, 2vw, 26px));
 }
 
 .typeCode {
     font-family: 'Orbitron', sans-serif;
     font-weight: 900;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    letter-spacing: 1.6px;
     color: rgba(255, 255, 255, 0.9);
 }
 
 .roleLabel {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.9px;
 }
 
 .card:hover .typeCode {
@@ -206,9 +208,9 @@
 
 .characterImg {
     position: absolute;
-    right: 0px;
+    right: -6px;
     bottom: -10px;
-    height: 160%;
+    height: 165%;
     width: auto;
     object-fit: contain;
     z-index: 5;
@@ -217,6 +219,20 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     pointer-events: none;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 520px) {
+    .card {
+        height: 150px;
+    }
+
+    .card:hover .textContent {
+        transform: translateX(-10px);
+    }
+
+    .characterImg {
+        height: 150%;
+    }
 }
 
 .card:hover .characterImg {

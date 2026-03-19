@@ -20,20 +20,19 @@ export default function FallingMan({ mouseX, mouseY }: FallingManProps) {
         restDelta: 0.001
     });
 
-    // Scale: Remains 1.0 for the first inch (96px), then halves every inch after
-    const scale = useTransform(
-        smoothScrollY,
-        [0, 96, 192, 288, 384, 480],
-        [1.0, 1.0, 0.5, 0.25, 0.125, 0.0625]
-    );
+    // Fall downwards: As user scrolls 50 -> 1000px, man falls from above towards the lotus.
+    const fallY = useTransform(smoothScrollY, [50, 1000], ["-100vh", "90vh"]);
 
-    // Rotation: Rotate by 10 degrees after one inch of downward movement
-    const rotationDeg = useTransform(smoothScrollY, [0, 96], [0, 10]);
+    // Scale: Shrink as it falls
+    const scale = useTransform(smoothScrollY, [50, 800, 1000], [1.2, 0.8, 0.0]);
 
-    // Opacity: Slow fade out over 2000px
-    const opacity = useTransform(smoothScrollY, [0, 2000], [1, 0]);
+    // Rotation: Spin gently
+    const rotationDeg = useTransform(smoothScrollY, [50, 1000], [0, 30]);
 
-    // Parallax effect: little bit motion based on cursor
+    // Opacity: Appear at 50, disappear at 1000
+    const opacity = useTransform(smoothScrollY, [50, 150, 900, 1000], [0, 1, 1, 0]);
+
+    // Parallax effect
     const xOffset = useTransform(mouseX, (x: number) => x * 20);
     const yOffset = useTransform(mouseY, (y: number) => y * 20);
 
@@ -41,15 +40,15 @@ export default function FallingMan({ mouseX, mouseY }: FallingManProps) {
         <motion.div
             style={{
                 position: 'fixed',
-                top: 'calc(50% - 57px)',
+                top: 0,
                 left: '50%',
                 x: '-50%',
-                y: '-50%',
+                y: fallY, 
                 translateX: xOffset,
                 translateY: yOffset,
                 scale,
                 rotate: rotationDeg,
-                zIndex: 30,
+                zIndex: 40,
                 opacity,
                 pointerEvents: 'none',
                 willChange: 'transform, opacity',

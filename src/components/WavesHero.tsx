@@ -36,31 +36,56 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 } }:
                 y="0px"
                 width="100%"
                 height="100%"
-                viewBox="0 0 1600 900"
-                preserveAspectRatio="xMidYMax slice"
+                viewBox="0 0 1600 3000"
+                preserveAspectRatio="xMidYMin slice"
                 style={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
                     display: 'block',
-                    // Background removed as requested
                 }}
             >
                 <defs>
-                    <linearGradient id="bg">
-                        <stop offset="0%" style={{ stopColor: 'rgba(130, 158, 249, 1)' }}></stop>
-                        <stop offset="50%" style={{ stopColor: 'rgba(76, 190, 255, 1)' }}></stop>
-                        <stop offset="100%" style={{ stopColor: 'rgba(115, 209, 72, 1)' }}></stop>
+                    <linearGradient id="waveBackGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#ff3cf5', stopOpacity: 1 }}></stop>
+                        <stop offset="20%" style={{ stopColor: '#b8ff5a', stopOpacity: 1 }}></stop>
+                        <stop offset="50%" style={{ stopColor: '#240046', stopOpacity: 1 }}></stop>
+                        <stop offset="100%" style={{ stopColor: '#1a1a2e', stopOpacity: 0 }}></stop>
+                    </linearGradient>
+                    <linearGradient id="waveMidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#35f8ff', stopOpacity: 1 }}></stop>
+                        <stop offset="20%" style={{ stopColor: '#ff3cf5', stopOpacity: 1 }}></stop>
+                        <stop offset="50%" style={{ stopColor: '#240046', stopOpacity: 1 }}></stop>
+                        <stop offset="100%" style={{ stopColor: '#1a1a2e', stopOpacity: 0 }}></stop>
+                    </linearGradient>
+                    <linearGradient id="waveFrontGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 1 }}></stop>
+                        <stop offset="15%" style={{ stopColor: '#35f8ff', stopOpacity: 1 }}></stop>
+                        <stop offset="30%" style={{ stopColor: '#ff3cf5', stopOpacity: 1 }}></stop>
+                        <stop offset="45%" style={{ stopColor: '#b8ff5a', stopOpacity: 1 }}></stop>
+                        <stop offset="100%" style={{ stopColor: '#240046', stopOpacity: 0 }}></stop>
                     </linearGradient>
                     <path
-                        id="wave"
-                        fill="url(#bg)"
-                        d="M-363.852,502.589c0,0,236.988-41.997,505.475,0
-        s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859s493.475,48.368,716.963-4.995v560.106H-363.852V502.589z"
+                        id="waveBack"
+                        fill="url(#waveBackGradient)"
+                        d="M-363.852,458c0,0,236.988-41.997,505.475,0
+        s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859s493.475,48.368,716.963-4.995v2542H-363.852V458z"
+                    />
+                    <path
+                        id="waveMid"
+                        fill="url(#waveMidGradient)"
+                        d="M-363.852,458c0,0,236.988-41.997,505.475,0
+        s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859s493.475,48.368,716.963-4.995v2542H-363.852V458z"
+                    />
+                    <path
+                        id="waveFront"
+                        fill="url(#waveFrontGradient)"
+                        d="M-363.852,458c0,0,236.988-41.997,505.475,0
+        s371.981,38.998,575.971,0s293.985-39.278,505.474,5.859s493.475,48.368,716.963-4.995v2542H-363.852V458z"
                     />
                 </defs>
                 <g>
-                    <use xlinkHref="#wave" opacity=".3">
+                    <use xlinkHref="#waveBack" opacity=".24">
                         <animateTransform
                             attributeName="transform"
                             attributeType="XML"
@@ -73,7 +98,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 } }:
                             repeatCount="indefinite"
                         />
                     </use>
-                    <use xlinkHref="#wave" opacity=".6">
+                    <use xlinkHref="#waveMid" opacity=".42">
                         <animateTransform
                             attributeName="transform"
                             attributeType="XML"
@@ -86,7 +111,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 } }:
                             repeatCount="indefinite"
                         />
                     </use>
-                    <use xlinkHref="#wave" opacity=".9">
+                    <use xlinkHref="#waveFront" opacity=".58">
                         <animateTransform
                             attributeName="transform"
                             attributeType="XML"

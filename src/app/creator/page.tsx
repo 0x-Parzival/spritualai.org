@@ -155,32 +155,35 @@ const CreatorPage = () => {
                     vec4 sh = -step(h, vec4(0.0));
                     vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
                     vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-                    vec3 p0 = vec3(a0.xy,h.x);
-                    vec3 p1 = vec3(a0.zw,h.y);
-                    vec3 p2 = vec3(a1.xy,h.z);
-                    vec3 p3 = vec3(a1.zw,h.w);
-                    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-                    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-                    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-                    m = m * m;
-                    return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+                    // Simpler, faster pseudo-noise
+                float noise(vec3 p) {
+                    return fract(sin(dot(p, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
                 }
+
                 void main() {
                     vColor = color;
                     float explodeAmount = uExplode * 35.0;
-                    float turbulence = snoise(position * 0.4 + randomDir * 2.0 + time * 0.8) * 10.0 * uExplode;
+                    
+                    // Simple sine-based turbulence for performance
+                    float turbulence = sin(time + position.x * 0.5 + position.y * 0.5) * uExplode * 2.0;
+                    
                     vec3 explodedPos = position + randomDir * (explodeAmount + turbulence);
                     vec3 mixedPos = mix(position, explodedPos, uExplode);
+                    
                     vec4 projectedVertex = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
                     vec2 screenPos = projectedVertex.xy / projectedVertex.w;
                     float mouseDist = distance(screenPos, uMouse);
                     float mouseEffect = 1.0 - smoothstep(0.0, 0.25, mouseDist);
                     vMouseEffect = mouseEffect;
-                    float noiseFrequency = 0.4;
-                    float noiseAmplitude = (0.8 + mouseEffect * 3.5) * (1.0 - uExplode);
-                    vec3 noiseInput = mixedPos * noiseFrequency + time * 0.5;
-                    vec3 displacement = vec3(snoise(noiseInput), snoise(noiseInput + vec3(10.0)), snoise(noiseInput + vec3(20.0)));
-                    vec3 finalPos = mixedPos + displacement * noiseAmplitude;
+                    
+                    // Simplified displacement
+                    vec3 displacement = vec3(
+                        sin(time + position.x * 0.4),
+                        sin(time * 0.8 + position.y * 0.4),
+                        sin(time * 1.2 + position.z * 0.4)
+                    ) * (0.5 + mouseEffect * 2.0) * (1.0 - uExplode);
+                    
+                    vec3 finalPos = mixedPos + displacement;
                     float pulse = sin(time + length(position)) * 0.1 + 1.0;
                     vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
                     vDistance = -mvPosition.z;
@@ -262,9 +265,9 @@ const CreatorPage = () => {
             composer.addPass(bloomPass);
 
             // Objects
-            coreSphere = createSpiralSphere(THREE, 5, 40000);
-            orbitRings = createOrbitRings(THREE, 7.5, 8, 0.6);
-            starfield = createStarfield(THREE, 10000, 50000);
+            coreSphere = createSpiralSphere(THREE, 5, 5000); // Reduced from 10k
+            orbitRings = createOrbitRings(THREE, 7.5, 3, 0.3); // Reduced from 4 rings
+            starfield = createStarfield(THREE, 1000, 10000); // Reduced from 2k
 
             mainGroup = new THREE.Group();
             mainGroup.add(coreSphere);
@@ -329,7 +332,7 @@ const CreatorPage = () => {
         const createOrbitRings = (THREE: any, radius: number, count: number, thickness: number) => {
             const group = new THREE.Group();
             for (let i = 0; i < count; i++) {
-                const particleCount = 4000;
+                const particleCount = 1500; // Reduced from 4000
                 const ringGeometry = new THREE.BufferGeometry();
                 const positions = new Float32Array(particleCount * 3);
                 const colors = new Float32Array(particleCount * 3);
@@ -459,9 +462,18 @@ const CreatorPage = () => {
             return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
         }
 
+        let lastTime = 0;
+        const fpsInterval = 1000 / 30; // Throttle to 30 FPS for stability
+
         const animate = () => {
             frameId = requestAnimationFrame(animate);
             if (!clock) return;
+
+            const currentTime = performance.now();
+            const elapsed = currentTime - lastTime;
+
+            if (elapsed < fpsInterval) return;
+            lastTime = currentTime - (elapsed % fpsInterval);
 
             const elapsedTime = clock.getElapsedTime();
 

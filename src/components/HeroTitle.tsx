@@ -15,11 +15,8 @@ export default function HeroTitle() {
                             The Evolution of Consciousness, Powered by Intelligence.
                         </h2>
                         <h3 className={styles.subheadingText}>
-                            Upgrade Your Consciousness. Activate Your Higher Self.
+                            your first step towards transformation
                         </h3>
-                        <p className={styles.infoText}>
-                            Personalized AI Paths • Instant Insights • Free Gift on Completion
-                        </p>
                     </div>
                 </div>
             </div>
