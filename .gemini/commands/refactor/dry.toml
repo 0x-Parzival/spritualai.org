@@ -1,0 +1,7 @@
+description = "Analyze code for DRY (Don't Repeat Yourself) violations and propose a refactor."
+prompt = """
+Analyze the following code for DRY violations: {{args}}.
+- Identify duplicated logic or hardcoded values.
+- Propose a refactor to abstract common parts into functions or constants.
+- Ensure the refactored code remains readable and maintainable.
+"""

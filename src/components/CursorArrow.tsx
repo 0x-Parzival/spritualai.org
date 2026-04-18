@@ -9,7 +9,7 @@ interface CursorArrowProps {
 }
 
 export default function CursorArrow({
-    targetSelector = '[data-cursor-target]',
+    targetSelector = '.cta-message-box',
 }: CursorArrowProps) {
     const arrowPathRef = useRef<SVGPathElement>(null);
     const arrowHeadRef = useRef<SVGPathElement>(null);
@@ -45,7 +45,15 @@ export default function CursorArrow({
         const maxShocks = 12;
 
         const findTargetButton = () => {
-            const elements = document.querySelectorAll(config.targetSelector);
+            let selector = config.targetSelector;
+            
+            // If quiz is finished, prioritize the specific personality button
+            const personalityResult = document.body.getAttribute('data-personality-result');
+            if (personalityResult) {
+                selector = `[data-personality-type="${personalityResult}"]`;
+            }
+
+            const elements = document.querySelectorAll(selector);
             for (let element of elements) {
                 const rect = element.getBoundingClientRect();
                 if (rect.width > 0 && rect.height > 0) {
@@ -89,16 +97,29 @@ export default function CursorArrow({
             const centerY = top + (bottom - top) / 2;
 
             let targetX, targetY;
-            const horizontalDistance = Math.min(Math.abs(mouseX - left), Math.abs(mouseX - right));
-            const verticalDistance = Math.min(Math.abs(mouseY - top), Math.abs(mouseY - bottom));
+            
+            // Border hit-point logic
+            // Calculate distance to each side
+            const distL = Math.abs(mouseX - left);
+            const distR = Math.abs(mouseX - right);
+            const distT = Math.abs(mouseY - top);
+            const distB = Math.abs(mouseY - bottom);
+            const minDist = Math.min(distL, distR, distT, distB);
 
-            if (horizontalDistance < verticalDistance) {
-                targetX = mouseX < centerX ? left : right;
-                targetY = Math.max(top + 5, Math.min(bottom - 5, mouseY));
+            if (minDist === distL) {
+                targetX = left;
+                targetY = Math.max(top, Math.min(bottom, mouseY));
+            } else if (minDist === distR) {
+                targetX = right;
+                targetY = Math.max(top, Math.min(bottom, mouseY));
+            } else if (minDist === distT) {
+                targetX = Math.max(left, Math.min(right, mouseX));
+                targetY = top;
             } else {
-                targetX = Math.max(left + 5, Math.min(right - 5, mouseX));
-                targetY = mouseY < centerY ? top : bottom;
+                targetX = Math.max(left, Math.min(right, mouseX));
+                targetY = bottom;
             }
+            
             return { x: targetX, y: targetY };
         };
 
@@ -139,6 +160,7 @@ export default function CursorArrow({
             const wh = window.innerHeight;
             const isOnPage1 = sy < wh;
             const isOnPage2 = sy >= wh && sy < wh * 2;
+            const personalityResult = document.body.getAttribute('data-personality-result');
 
             // 1. SHOCKS CANVAS
             const ctx = shocksCanvasRef.current?.getContext('2d');
@@ -182,12 +204,22 @@ export default function CursorArrow({
             let targetY = mouseY;
             let showButtonArrow = false;
 
+            // Clear cache if result changes to ensure we re-find the button
+            if (personalityResult && !targetButton?.hasAttribute('data-personality-type')) {
+                isButtonFound = false;
+            }
+
             if (!isButtonFound) findTargetButton();
             if (isButtonFound && updateButtonRect()) {
                 const buttonTarget = calculateTargetPosition();
                 targetX = buttonTarget.x;
                 targetY = buttonTarget.y;
                 showButtonArrow = true;
+
+                // If mouse is below the bottom of the message box, hide it
+                if (buttonRect && mouseY > buttonRect.bottom + 5) {
+                    showButtonArrow = false;
+                }
             }
 
             const deltaX = targetX - currentPointerX;
@@ -196,8 +228,8 @@ export default function CursorArrow({
             currentPointerY += deltaY * config.easeSpeed;
 
             if (arrowPathRef.current && arrowHeadRef.current) {
-                if (isOnPage1) {
-                    const pathData = createWavyPath(mouseX, mouseY, currentPointerX, currentPointerY, true);
+                if (showButtonArrow && (isOnPage1 || (isOnPage2 && personalityResult))) {
+                    const pathData = createWavyPath(mouseX, mouseY, currentPointerX, currentPointerY, !isOnPage2);
                     arrowPathRef.current.setAttribute('d', pathData);
                     
                     const angle = Math.atan2(currentPointerY - mouseY, currentPointerX - mouseX);
@@ -212,7 +244,7 @@ export default function CursorArrow({
                     
                     arrowHeadRef.current.setAttribute('d', `M${currentPointerX},${currentPointerY} L${h1x},${h1y} L${backX},${backY} L${h2x},${h2y} Z`);
                     
-                    const finalOpacity = showButtonArrow ? config.activeOpacity : config.dimmedOpacity;
+                    const finalOpacity = config.activeOpacity;
                     arrowPathRef.current.style.opacity = String(finalOpacity);
                     arrowHeadRef.current.style.opacity = String(finalOpacity);
                 } else {

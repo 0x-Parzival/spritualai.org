@@ -23,82 +23,82 @@ export const quizQuestions: QuizQuestion[] = [
     {
         id: 1,
         dimension: 'EI',
-        question: 'Energy Orientation',
+        question: 'When you are emotionally depleted after a long week, your instinct is to...',
         optionA: {
-            text: 'When I\'m alone, I feel like myself again.',
+            text: 'Withdraw into my sanctuary to process in silence.',
             value: 'I',
-            description: "Silence doesn't feel empty — it gives my thoughts depth and clarity.",
+            description: "You require an internal void to untangle the world.",
             icon: 'User',
             image: '/images/quiz/traits/introversion_neon_1772144748570.png'
         },
         optionB: {
-            text: 'Being around people or action energizes me.',
+            text: 'Seek out kinetic environments and external energy.',
             value: 'E',
-            description: "I discover who I am while engaging, responding, and moving with the world.",
+            description: "You require external friction to feel alive and present.",
             icon: 'Users',
             image: '/images/quiz/traits/extraversion_neon_1772144767320.png'
         },
-        affirmation: 'That makes sense.'
+        affirmation: 'System updating blueprint...'
     },
     {
         id: 2,
         dimension: 'SN',
-        question: 'Perception Style',
+        question: 'When learning a complex new skill, you naturally look for...',
         optionA: {
-            text: 'I trust what I can see, touch, and experience right now.',
+            text: 'Concrete steps, historical precedents, and tangible proof.',
             value: 'S',
-            description: "Ideas matter most when they work in real life.",
+            description: "You trust what can be measured and verified in reality.",
             icon: 'Eye',
             image: '/images/quiz/traits/sensing_neon_1772144782849.png'
         },
         optionB: {
-            text: 'I naturally look for meaning, patterns, and what\'s coming next.',
+            text: 'Underlying patterns, abstract theories, and future potential.',
             value: 'N',
-            description: "I often sense things before they fully happen.",
+            description: "You trust what exists in the spaces between the facts.",
             icon: 'Sparkles',
             image: '/images/quiz/traits/intuition_neon_1772144801174.png'
         },
-        affirmation: 'I see that in you.'
+        affirmation: 'Cognitive layer mapped.'
     },
     {
         id: 3,
         dimension: 'TF',
-        question: 'Decision Core',
+        question: 'During a high-stakes disagreement, you ultimately defer to...',
         optionA: {
-            text: 'I make decisions by stepping back and analyzing.',
+            text: 'Objective truth, regardless of how uncomfortable it is.',
             value: 'T',
-            description: "Clarity and fairness matter more than comfort.",
+            description: "Logic is your absolute anchor.",
             icon: 'Brain',
             image: '/images/quiz/traits/thinking_neon_1772144827200.png'
         },
         optionB: {
-            text: 'I decide by considering values and emotional impact.',
+            text: 'Relational harmony and the emotional impact on others.',
             value: 'F',
-            description: "What feels aligned matters more than cold logic.",
+            description: "Empathy is your absolute anchor.",
             icon: 'Heart',
-            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png'
         },
-        affirmation: 'That tracks.'
+        affirmation: 'Decision matrix confirmed.'
     },
     {
         id: 4,
         dimension: 'JP',
-        question: 'Life Structure',
+        question: 'To feel a sense of control over your life, you need...',
         optionA: {
-            text: 'I feel at ease when things are clear and decided.',
+            text: 'Decisive structure, finalized plans, and closed loops.',
             value: 'J',
-            description: "Structure gives me mental peace.",
+            description: "You architect reality through order.",
             icon: 'ListChecks',
-            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png'
         },
         optionB: {
-            text: 'I feel free when options stay open.',
+            text: 'Open options, fluid adaptability, and spontaneous flow.',
             value: 'P',
-            description: "Too much planning drains my energy.",
+            description: "You architect reality through adaptation.",
             icon: 'Compass',
-            image: '/images/quiz/traits/thinking_neon_1772144827200.png' // TODO: Placeholder, replace when quota resets
+            image: '/images/quiz/traits/thinking_neon_1772144827200.png'
         },
-        affirmation: 'That resonates.'
+        affirmation: 'Subconscious pattern locked.'
     }
 ];
 

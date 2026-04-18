@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export default function StarfieldHero() {
+export default function StarfieldHero({ boost = false }: { boost?: boolean }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -93,7 +93,9 @@ export default function StarfieldHero() {
             // Clear with transparency to show Layer 1
             context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-            speed += (targetSpeed - speed) * 0.01;
+            const activeBoost = boost || targetSpeed === BOOST_SPEED;
+            const currentTarget = activeBoost ? BOOST_SPEED : DEFAULT_SPEED;
+            speed += (currentTarget - speed) * (activeBoost ? 0.05 : 0.01);
 
             let p: Particle;
             let cx, cy;

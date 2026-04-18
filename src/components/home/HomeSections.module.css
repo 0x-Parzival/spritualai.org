@@ -383,6 +383,37 @@
     width: 100%;
 }
 
+@media (max-width: 900px) {
+    .protocolContainer {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bigQuizBtn {
+        height: 80px;
+    }
+
+    .gradientFlowBtn {
+        font-size: clamp(0.75rem, 2.5vw, 1rem);
+        padding: 14px 20px;
+    }
+
+    .sectionTitle {
+        font-size: clamp(1.8rem, 6vw, 3rem);
+    }
+
+    .section {
+        padding: 60px 5%;
+    }
+
+    .loka2Layout {
+        gap: 40px;
+    }
+}
+
 .protocolStep {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -418,6 +449,13 @@
     text-decoration: none;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@media (max-width: 768px) {
+    .bigQuizBtn {
+        height: 80px;
+        max-width: 100%;
+    }
 }
 
 .bigQuizBtn:hover {

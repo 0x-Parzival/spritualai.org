@@ -1452,14 +1452,15 @@ export default function LotusGod() {
                 bottom: '30px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                color: 'rgba(255, 255, 255, 0.3)',
-                fontSize: '0.8rem',
+                color: 'rgba(255, 255, 255, 0.5)',
+                fontSize: '0.9rem',
                 fontFamily: 'Orbitron, sans-serif',
                 letterSpacing: '2px',
                 pointerEvents: 'none',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                textShadow: '0 0 10px rgba(0, 229, 255, 0.5)'
             }}>
-                33 pulses complete the circuit
+                Tap 33 times for a surprise
             </div>
 
             {/* Onboarding Overlay */}
@@ -1494,7 +1495,7 @@ export default function LotusGod() {
                         marginBottom: '40px',
                         animation: 'fadeIn 2.5s ease-out'
                     }}>
-                        Send 33 pulses of attention. Each pulse strengthens the being.
+                        Tap the lotus 33 times to awaken it and unlock a hidden surprise.
                     </p>
 
                     <div style={{
@@ -1663,7 +1664,7 @@ export default function LotusGod() {
                 pointerEvents: 'none'
             }}>
                 <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 500, letterSpacing: '2px' }}>The Lotus</h1>
-                <p style={{ margin: '5px 0 0', fontSize: '0.8rem', opacity: 0.8 }}>Responds to attention</p>
+                <p style={{ margin: '5px 0 0', fontSize: '0.8rem', opacity: 0.8 }}>Responds to attention (Tap 33 times)</p>
             </div>
 
             <a href="/" style={{

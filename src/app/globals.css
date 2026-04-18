@@ -43,8 +43,14 @@ body,
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: visible;
   background: black;
+}
+
+@media (max-width: 768px) {
+  html, body, #root {
+    background-color: #000 !important;
+  }
 }
 
 h1,

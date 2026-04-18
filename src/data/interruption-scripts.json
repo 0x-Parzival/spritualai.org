@@ -1,0 +1,223 @@
+{
+  "INTJ": {
+    "activationScript": "When you notice [pattern], ask: 'What logical flaw does this assumption contain?'",
+    "successScript": "Great! That logical gap is where the pattern loses power.",
+    "failureScript": "This pattern is still active. Let’s try: 'What data contradicts this?'",
+    "weeklyProgression": [
+      "Day 3: Identify 1 pattern.",
+      "Day 7: Challenge it with logic.",
+      "Day 14: Replace with a new assumption."
+    ],
+    "pattern": "Logical avoidance of emotional truths.",
+    "strength": "Systematic problem-solving.",
+    "growthEdge": "Embracing emotional intelligence."
+  },
+  "INTP": {
+    "activationScript": "When you notice overthinking, ask: 'What’s the simplest possible solution?'",
+    "successScript": "Perfect! Simplicity is the key to breaking the cycle.",
+    "failureScript": "The pattern is still active. Try: 'What’s the most efficient path?'",
+    "weeklyProgression": [
+      "Day 3: Notice overthinking patterns.",
+      "Day 7: Apply the simplest solution.",
+      "Day 14: Automate decision-making."
+    ],
+    "pattern": "Analytical paralysis.",
+    "strength": "Innovative problem-solving.",
+    "growthEdge": "Balancing analysis with intuition."
+  },
+  "INFJ": {
+    "activationScript": "When you feel overwhelmed, ask: 'What’s the core value here?'",
+    "successScript": "Beautiful. Focusing on values shifts the energy.",
+    "failureScript": "This pattern is still running. Let’s try: 'What’s the deeper meaning?'",
+    "weeklyProgression": [
+      "Day 3: Identify emotional triggers.",
+      "Day 7: Connect to core values.",
+      "Day 14: Align actions with values."
+    ],
+    "pattern": "Idealistic emotional suppression.",
+    "strength": "Deep empathy and insight.",
+    "growthEdge": "Grounding ideals in reality."
+  },
+  "INFP": {
+    "activationScript": "When you feel [emotion], tell yourself: 'This is a story. What’s the ending I want?'",
+    "successScript": "Beautiful. That story shift is where transformation begins.",
+    "failureScript": "This story is still running. Let’s rewrite it: 'What’s a happier ending?'",
+    "weeklyProgression": [
+      "Day 3: Name the emotion.",
+      "Day 7: Write a new ending.",
+      "Day 14: Live it for 10 minutes."
+    ],
+    "pattern": "Story-based emotional suppression.",
+    "strength": "Empathic storytelling.",
+    "growthEdge": "Balancing idealism with pragmatism."
+  },
+  "INTJ": {
+    "activationScript": "When you notice avoidance, ask: 'What logical flaw does this assumption contain?'",
+    "successScript": "Great! That logical gap is where the pattern loses power.",
+    "failureScript": "The pattern is still active. Let’s try: 'What data contradicts this?'",
+    "weeklyProgression": [
+      "Day 3: Identify 1 pattern.",
+      "Day 7: Challenge it with logic.",
+      "Day 14: Replace with a new assumption."
+    ],
+    "pattern": "Logical avoidance of emotional truths.",
+    "strength": "Systematic problem-solving.",
+    "growthEdge": "Embracing emotional intelligence."
+  },
+  "ISTJ": {
+    "activationScript": "When you feel resistance, ask: 'What’s one small step I can take now?'",
+    "successScript": "Excellent! Small steps rewire the brain faster than willpower.",
+    "failureScript": "The pattern is still in control. Try: 'What’s the next tiny action?'",
+    "weeklyProgression": [
+      "Day 3: Notice resistance patterns.",
+      "Day 7: Take one small step.",
+      "Day 14: Build momentum."
+    ],
+    "pattern": "Rigid routine avoidance.",
+    "strength": "Reliability and discipline.",
+    "growthEdge": "Adapting to change gracefully."
+  },
+  "ISFJ": {
+    "activationScript": "When you feel the urge to please, pause and ask: 'Is this for them or for me?'",
+    "successScript": "Perfect! Self-awareness is the first step to freedom.",
+    "failureScript": "The pattern is still active. Try: 'What do I truly need?'",
+    "weeklyProgression": [
+      "Day 3: Notice people-pleasing moments.",
+      "Day 7: Ask for your needs.",
+      "Day 14: Set one boundary."
+    ],
+    "pattern": "People-pleasing avoidance.",
+    "strength": "Loyalty and care for others.",
+    "growthEdge": "Prioritizing self-care."
+  },
+  "ISTP": {
+    "activationScript": "When [pattern] activates, do one physical thing (e.g., clap, jump) to break the cycle.",
+    "successScript": "Perfect! Physical action rewires the brain faster than willpower.",
+    "failureScript": "The pattern is still in control. Try: 'Move your body now.'",
+    "weeklyProgression": [
+      "Day 3: Notice the pattern.",
+      "Day 7: Add a physical break.",
+      "Day 14: Make it automatic."
+    ],
+    "pattern": "Action-driven pattern avoidance.",
+    "strength": "Adaptive and resourceful.",
+    "growthEdge": "Deepening reflective awareness."
+  },
+  "ISFP": {
+    "activationScript": "When you feel [emotion], ask: 'What’s one small thing I can do to honor this feeling?'",
+    "successScript": "Beautiful! Honoring feelings creates space for transformation.",
+    "failureScript": "This feeling is still suppressed. Try: 'What’s a safe way to express this?'",
+    "weeklyProgression": [
+      "Day 3: Notice suppressed emotions.",
+      "Day 7: Honor one feeling.",
+      "Day 14: Create a ritual."
+    ],
+    "pattern": "Sensory-based emotional avoidance.",
+    "strength": "Authentic and present.",
+    "growthEdge": "Channeling emotions into action."
+  },
+  "ESTP": {
+    "activationScript": "When [pattern] activates, do one physical thing (e.g., clap, jump) to break the cycle.",
+    "successScript": "Perfect! Physical action rewires the brain faster than willpower.",
+    "failureScript": "The pattern is still in control. Try: 'Move your body now.'",
+    "weeklyProgression": [
+      "Day 3: Notice the pattern.",
+      "Day 7: Add a physical break.",
+      "Day 14: Make it automatic."
+    ],
+    "pattern": "Action-driven pattern avoidance.",
+    "strength": "Adaptive and resourceful.",
+    "growthEdge": "Deepening reflective awareness."
+  },
+  "ESFP": {
+    "activationScript": "When you feel [emotion], ask: 'What’s one fun way to express this?'",
+    "successScript": "Amazing! Expression is the fastest path to transformation.",
+    "failureScript": "This emotion is still trapped. Try: 'What’s a playful way to release it?'",
+    "weeklyProgression": [
+      "Day 3: Notice suppressed emotions.",
+      "Day 7: Express one feeling creatively.",
+      "Day 14: Make it a habit."
+    ],
+    "pattern": "Sensory-based emotional avoidance.",
+    "strength": "Vibrant and energetic.",
+    "growthEdge": "Balancing spontaneity with depth."
+  },
+  "ESTJ": {
+    "activationScript": "When you feel resistance, ask: 'What’s the most efficient way to handle this?'",
+    "successScript": "Excellent! Efficiency is the key to breaking the cycle.",
+    "failureScript": "The pattern is still active. Try: 'What’s the fastest solution?'",
+    "weeklyProgression": [
+      "Day 3: Notice resistance patterns.",
+      "Day 7: Apply efficiency.",
+      "Day 14: Optimize your approach."
+    ],
+    "pattern": "Control-driven avoidance.",
+    "strength": "Organized and decisive.",
+    "growthEdge": "Flexibility and adaptability."
+  },
+  "ENFJ": {
+    "activationScript": "When you feel overwhelmed, ask: 'What’s the most important thing right now?'",
+    "successScript": "Beautiful! Focus is the path to clarity.",
+    "failureScript": "This pattern is still running. Try: 'What’s the priority?'",
+    "weeklyProgression": [
+      "Day 3: Notice overwhelm triggers.",
+      "Day 7: Focus on priorities.",
+      "Day 14: Delegate or simplify."
+    ],
+    "pattern": "Empathic overwhelm.",
+    "strength": "Charismatic and inspiring.",
+    "growthEdge": "Setting boundaries gracefully."
+  },
+  "ENFP": {
+    "activationScript": "When you feel [emotion], tell yourself: 'This is a story. What’s the ending I want?'",
+    "successScript": "Beautiful! Story shifts create transformation.",
+    "failureScript": "This story is still running. Let’s rewrite it: 'What’s a happier ending?'",
+    "weeklyProgression": [
+      "Day 3: Name the emotion.",
+      "Day 7: Write a new ending.",
+      "Day 14: Live it for 10 minutes."
+    ],
+    "pattern": "Story-based emotional suppression.",
+    "strength": "Inspiring and creative.",
+    "growthEdge": "Balancing idealism with action."
+  },
+  "ENTJ": {
+    "activationScript": "When you notice avoidance, ask: 'What’s the strategic advantage here?'",
+    "successScript": "Great! Strategy is the key to breaking the cycle.",
+    "failureScript": "The pattern is still active. Try: 'What’s the data?'",
+    "weeklyProgression": [
+      "Day 3: Identify avoidance patterns.",
+      "Day 7: Apply strategy.",
+      "Day 14: Execute the plan."
+    ],
+    "pattern": "Strategic avoidance.",
+    "strength": "Visionary and decisive.",
+    "growthEdge": "Collaborating with others."
+  },
+  "ENTP": {
+    "activationScript": "When you notice overthinking, ask: 'What’s the most interesting possibility?'",
+    "successScript": "Perfect! Curiosity breaks the cycle.",
+    "failureScript": "The pattern is still active. Try: 'What’s the next idea?'",
+    "weeklyProgression": [
+      "Day 3: Notice overthinking.",
+      "Day 7: Explore possibilities.",
+      "Day 14: Choose one path."
+    ],
+    "pattern": "Ideation paralysis.",
+    "strength": "Innovative and insightful.",
+    "growthEdge": "Focusing on execution."
+  },
+  "ESFJ": {
+    "activationScript": "When you feel the urge to please, pause and ask: 'Is this for them or for me?'",
+    "successScript": "Perfect! Self-awareness is the first step to freedom.",
+    "failureScript": "The pattern is still active. Try: 'What do I truly need?'",
+    "weeklyProgression": [
+      "Day 3: Notice people-pleasing moments.",
+      "Day 7: Ask for your needs.",
+      "Day 14: Set one boundary."
+    ],
+    "pattern": "People-pleasing avoidance.",
+    "strength": "Loyal and caring.",
+    "growthEdge": "Prioritizing self-care."
+  }
+}

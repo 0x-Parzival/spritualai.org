@@ -1,15 +1,25 @@
-/* Cleaned up CSS for Lotus Component */
-
 .stage {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    height: 420px;
+    position: fixed;
+    bottom: calc(-34px - var(--lotus-offset, 0px));
+    left: 50%;
+    transform: translateX(-50%) translateY(0.5cm);
+    width: 500px;
+    height: 500px;
     display: grid;
     place-items: center;
     transform-style: preserve-3d;
     perspective: 1000px;
-    margin: 0 auto;
+    z-index: 100;
+    pointer-events: none;
+    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 640px) {
+    .stage {
+        width: 320px;
+        height: 320px;
+        transform: translateX(-50%) translateY(0.5cm) scale(0.65);
+    }
 }
 
 .stage::before {
@@ -19,94 +29,83 @@
     background:
         radial-gradient(circle at 50% 60%, rgba(255, 60, 245, .18), transparent 55%),
         radial-gradient(circle at 50% 60%, rgba(53, 248, 255, .16), transparent 60%);
-    filter: blur(14px);
+    filter: blur(16px);
     transform: translateZ(-60px);
     pointer-events: none;
 }
 
-/* wrapper */
+.lightWash {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 800px;
+    background: radial-gradient(ellipse at bottom, rgba(53, 248, 255, 0.12), rgba(255, 60, 245, 0.05) 40%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+.awarenessRing {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(53,248,255,0);
+    box-shadow: 0 0 0 rgba(53,248,255,0);
+    transform: translateZ(-20px);
+    pointer-events: none;
+    transition: border-color 1s ease, box-shadow 1s ease;
+}
+.a1 { width: 290px; height: 290px; }
+.a2 { width: 360px; height: 360px; transition-delay: 0.18s; }
+.alive {
+    border-color: rgba(53,248,255,0.15);
+    box-shadow: 0 0 35px rgba(53,248,255,0.05);
+}
+
 .lotusWrap {
-    width: 220px;
-    height: 220px;
+    width: 220px; height: 220px;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(70deg);
     cursor: pointer;
     outline: none;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
+    pointer-events: auto;
     --open: 1;
-    /* 1 open, 0 closed */
+    z-index: 2;
 }
+.lotusWrap.closed { --open: 0; }
 
-.lotusWrap.closed {
-    --open: 0;
-}
-
-.lotusWrap:hover::after,
-.lotusWrap.hovered::after {
-    filter: blur(25px);
-    opacity: 1;
-    transform: translateZ(-30px) scale(1.3);
-    background: radial-gradient(circle at 50% 50%, rgba(53, 248, 255, 0.6), rgba(255, 60, 245, 0.5) 50%, transparent 75%);
-    box-shadow: 0 0 60px rgba(53, 248, 255, 0.7), 0 0 120px rgba(255, 60, 245, 0.5);
-}
-
-.lotusWrap:hover .petalSvg,
-.lotusWrap.hovered .petalSvg {
-    filter: 
-        drop-shadow(0 0 12px rgba(255, 60, 245, 0.6)) 
-        drop-shadow(0 0 15px rgba(53, 248, 255, 0.5));
-}
-
-/* glow pulse */
 .lotusWrap::after {
     content: "";
     position: absolute;
     inset: -14px;
     border-radius: 18px;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 60, 245, .18), transparent 60%);
+    background: radial-gradient(circle at 50% 50%, rgba(255,60,245,.18), transparent 60%);
     filter: blur(12px);
-    opacity: .8;
+    opacity: .6;
     transform: translateZ(-40px);
-    animation: pulse 2.8s ease-in-out infinite;
     pointer-events: none;
 }
 
-.lotus {
-    position: absolute;
-    inset: 0;
-    transform-style: preserve-3d;
-}
+.lotus { position: absolute; inset: 0; transform-style: preserve-3d; }
 
-/* ring list centered properly */
 .ring {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
+    top: 50%; left: 50%;
+    width: 100%; height: 100%;
     transform: translate(-50%, -50%);
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     list-style: none;
     transform-style: preserve-3d;
 }
 
 .petal {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
     transform-style: preserve-3d;
-
-    /* anchor rotation at the petal's bottom tip */
     transform-origin: center bottom;
-
-    /* rotate first, then fold/open */
-    transform:
-        translate(-50%, -50%) rotateZ(var(--rz)) rotateX(calc(var(--baseX) * var(--open))) rotateY(calc(var(--baseY) * var(--open)));
     will-change: transform;
 }
 
@@ -114,12 +113,21 @@
     display: block;
     height: auto;
     transform-origin: center top;
-    /* closed => folded; open => nearly flat */
-    transform: rotateX(calc(var(--svgTilt) * (1 - var(--open))));
-    transition: transform var(--speed) cubic-bezier(0, .75, .25, 1);
+    will-change: transform, filter;
+    pointer-events: visibleFill;
     filter:
-        drop-shadow(0 0 8px rgba(255, 60, 245, .35)) drop-shadow(0 0 10px rgba(53, 248, 255, .25));
-    will-change: transform;
+        drop-shadow(0 0 8px rgba(255,60,245,.35))
+        drop-shadow(0 0 10px rgba(53,248,255,.25));
+    transition:
+        transform var(--speed) cubic-bezier(0,.75,.25,1),
+        filter 0.3s ease;
+}
+
+.petalSvg.hovered {
+    filter:
+        drop-shadow(0 0 16px rgba(255,255,255,.75))
+        drop-shadow(0 0 22px rgba(53,248,255,.8))
+        drop-shadow(0 0 30px rgba(255,60,245,.6));
 }
 
 .petalPath {
@@ -127,245 +135,150 @@
     stroke: rgba(255, 255, 255, .18);
     stroke-width: 1.2;
     vector-effect: non-scaling-stroke;
+    transition: stroke 0.3s ease, stroke-width 0.3s ease, fill 0.3s ease;
+}
+.petalSvg.hovered .petalPath {
+    fill: url(#neonGradHot);
+    stroke: rgba(255, 255, 255, .6);
+    stroke-width: 2;
 }
 
-/* center orb */
 .core {
     position: absolute;
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) translateZ(0px);
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
     background: radial-gradient(circle at 30% 30%,
-            rgba(255, 255, 255, .7),
-            rgba(255, 60, 245, .25) 35%,
-            rgba(53, 248, 255, .2) 70%,
-            rgba(0, 0, 0, 0) 72%);
-    box-shadow:
-        0 0 18px rgba(255, 60, 245, .45),
-        0 0 22px rgba(53, 248, 255, .35);
+      rgba(255,255,255,.75),
+      rgba(255,60,245,.28) 35%,
+      rgba(53,248,255,.22) 70%,
+      rgba(0,0,0,0) 72%);
+    box-shadow: 0 0 18px rgba(255,60,245,.45), 0 0 22px rgba(53,248,255,.35);
     pointer-events: none;
+    will-change: transform, box-shadow;
 }
 
-/* ring configs */
-.r1 {
-    --size: 72px;
-    --lift: 18px;
-    --baseX: 15deg;
-    --baseY: 5deg;
-    --svgTilt: 75deg;
-}
-
-.r2 {
-    --size: 60px;
-    --lift: 15px;
-    --baseX: 30deg;
-    --baseY: 5deg;
-    --svgTilt: 60deg;
-}
-
-.r3 {
-    --size: 48px;
-    --lift: 12px;
-    --baseX: 60deg;
-    --baseY: 5deg;
-    --svgTilt: 30deg;
-}
-
-/* apply size per ring */
-.ring .petalSvg {
-    width: var(--size);
-}
-
-/* stagger bloom per ring */
-.r1 .petalSvg {
-    transition-delay: 0ms;
-}
-
-.r2 .petalSvg {
-    transition-delay: 140ms;
-}
-
-.r3 .petalSvg {
-    transition-delay: 280ms;
-}
-
-@keyframes spin {
-    from {
-        transform: rotateX(70deg) rotateZ(0deg);
-    }
-
-    to {
-        transform: rotateX(70deg) rotateZ(360deg);
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: .55;
-    }
-
-    50% {
-        opacity: .95;
-    }
-}
-
-.lotusSubtext {
+.shimmer {
     position: absolute;
-    top: 50%;
-    left: calc(100% + 10px);
-    transform: translateY(-50%);
-    width: 200px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    width: 10px; height: 10px;
+    transform: translate(-50%,-50%) scale(1);
+    background: transparent;
+    pointer-events: none;
+    opacity: 0;
+    border: 1px solid rgba(53,248,255,0.75);
+}
+.shimmer2 {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    width: 10px; height: 10px;
+    transform: translate(-50%,-50%) scale(1);
+    background: transparent;
+    pointer-events: none;
+    opacity: 0;
+    border: 1px solid rgba(255,60,245,0.75);
+}
+
+.r1 { --size: 72px; --baseX: 15deg; --baseY: 5deg; --svgTilt: 75deg; }
+.r2 { --size: 60px; --baseX: 30deg; --baseY: 5deg; --svgTilt: 60deg; }
+.r3 { --size: 48px; --baseX: 60deg; --baseY: 5deg; --svgTilt: 30deg; }
+
+.ring .petalSvg { width: var(--size); }
+.r1 .petalSvg { transition-delay: 0ms; }
+.r2 .petalSvg { transition-delay: 140ms; }
+.r3 .petalSvg { transition-delay: 280ms; }
+
+.hint {
+    position: fixed;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+    transition: opacity 1.4s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+}
+.fade { opacity: 0; }
+
+.lotusMessage {
+    position: fixed;
+    bottom: calc(var(--lotus-offset, 0px) + 200px + 1cm); /* Moved 1cm upward */
+    left: calc(50% + 200px); 
+    width: 240px;
+    padding: 0; /* Removed padding */
+    background: none; /* No background */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
     color: #ffffff;
     font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    line-height: 1.4;
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.6;
     text-align: left;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    z-index: 100;
-    pointer-events: none;
+    box-shadow: none;
+    z-index: 3000;
+    pointer-events: auto;
+    animation: floatVertical 4s ease-in-out infinite;
 }
 
-@media (max-width: 768px) {
-    .lotusSubtext {
-        left: auto;
-        right: auto;
-        top: calc(100% + 20px);
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90vw;
-        max-width: 320px;
-        text-align: center;
-    }
-
-    .lotusSubtext::after {
-        display: none;
-        /* Hide tail on mobile since it's now below */
-    }
+@keyframes floatVertical {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
 }
 
-/* Bubble tail */
-.lotusSubtext::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    transform: translateY(-50%);
-    border-width: 10px;
-    border-style: solid;
-    border-color: transparent rgba(255, 255, 255, 0.05) transparent transparent;
+.readyToBurst { 
+    animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatVertical 4s ease-in-out infinite 0.6s;
 }
 
-.readyToBurst {
-    animation: float 3s ease-in-out infinite;
-    opacity: 1;
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
-.bursting {
-    animation: burst 0.5s forwards cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(-50%) translateX(0);
-    }
-
-    50% {
-        transform: translateY(-50%) translateX(-10px);
-    }
-}
+.bursting { animation: burst 0.5s forwards cubic-bezier(0.19, 1, 0.22, 1); }
 
 @keyframes burst {
-    0% {
-        transform: translateY(-50%) scale(1);
-        opacity: 1;
-        filter: blur(0px);
-    }
-
-    100% {
-        transform: translateY(-50%) scale(1.5);
-        opacity: 0;
-        filter: blur(10px);
-    }
-}
-
-.lotusSubtext p {
-    margin: 0;
-}
-
-.lotusSubtext p:not(:last-child) {
-    margin-bottom: 8px;
+    0% { transform: translateX(-50%) scale(1); opacity: 1; filter: blur(0px); }
+    100% { transform: translateX(-50%) scale(1.5); opacity: 0; filter: blur(10px); }
 }
 
 .stemContainer {
     position: absolute;
-    top: calc(50% + 15px);
-    /* Start from bottom of core orb */
+    top: 50%; /* Start from center of lotus */
     left: 50%;
     transform: translateX(-50%);
     width: 260px;
-    height: 1300vh;
-    z-index: -1;
-    /* Behind petals but core glow will cover the joint */
+    height: 150vh; /* Extra long to ensure it hits the bottom */
+    z-index: 1;
     pointer-events: none;
     display: flex;
     justify-content: center;
-    opacity: 0.8;
+    opacity: 0.6; /* Slightly more subtle */
 }
 
-.stemSvg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-}
-
+.stemSvg { width: 100%; height: 100%; overflow: visible; }
 .stemLine {
-    stroke: rgba(184, 90, 255, 1);
-    stroke-width: 3;
+    stroke: #ff3cf5; /* Theme Magenta */
+    stroke-width: 2;
     stroke-linecap: round;
-    filter:
-        drop-shadow(0 0 10px rgba(255, 60, 245, 0.8)) drop-shadow(0 0 20px rgba(184, 90, 255, 0.4));
+    filter: drop-shadow(0 0 8px rgba(255, 60, 245, 0.6));
     animation: stemPulse 4s ease-in-out infinite, stemLiquid 10s ease-in-out infinite;
 }
 
 @keyframes stemPulse {
-
-    0%,
-    100% {
-        opacity: 0.5;
-        stroke-width: 2.5;
-    }
-
-    50% {
-        opacity: 1;
-        stroke-width: 4;
-    }
+    0%, 100% { opacity: 0.5; stroke-width: 2.5; }
+    50% { opacity: 1; stroke-width: 4; }
 }
 
 @keyframes stemLiquid {
-
-    0%,
-    100% {
-        transform: translateX(0) scaleX(1);
-    }
-
-    25% {
-        transform: translateX(8px) scaleX(1.05);
-    }
-
-    75% {
-        transform: translateX(-8px) scaleX(1.1);
-    }
+    0%, 100% { transform: translateX(0) scaleX(1); }
+    25% { transform: translateX(8px) scaleX(1.05); }
+    75% { transform: translateX(-8px) scaleX(1.1); }
 }

@@ -1,0 +1,8 @@
+description = "Generate documentation for a file or directory."
+prompt = """
+Generate comprehensive documentation for: {{args}}.
+- Include a high-level summary.
+- Document exported functions, classes, and types.
+- Provide usage examples.
+- Use JSDoc format for code comments.
+"""

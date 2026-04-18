@@ -1,0 +1,129 @@
+.container {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 242, 255, 0.05) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.card {
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(40px);
+  border-radius: 40px;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 242, 255, 0.05) inset;
+  position: relative;
+  z-index: 10;
+}
+
+.lotus {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px #00f2ff;
+}
+
+.title {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  background: linear-gradient(to bottom, #fff, #00f2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 40px;
+}
+
+.grid {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.7rem;
+  color: #00f2ff;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.8;
+}
+
+.value {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.hash {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  word-break: break-all;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0, 242, 255, 0.2), transparent);
+  margin: 40px 0;
+}
+
+.signature {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.footer {
+  margin-top: 40px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  border-color: #00f2ff;
+  background: rgba(0, 242, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+}

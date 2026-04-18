@@ -6,10 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 const PetalShape = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
     <svg viewBox="0 0 72 200" className={className} style={style}>
         <path
-            d="M0,100 C0,66.6666667 12,33.3333333 36,0
-               C60,33.3333333 72,66.6666667 72,100
-               C72,133.333333 60,166.666667 36,200
-               C12,166.666667 0,133.333333 0,100 Z"
+            d="M0,100 C0,66.6666667 12,33.3333333 36,0 C60,33.3333333 72,66.6666667 72,100 C72,133.333333 60,166.666667 36,200 C12,166.666667 0,133.333333 0,100 Z"
             fill="currentColor"
         />
     </svg>

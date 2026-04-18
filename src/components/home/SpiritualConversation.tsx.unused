@@ -1,0 +1,1949 @@
+"use client";
+
+// ============================================================
+// SPIRITUAL AI — SPIRITUAL CONVERSATION (PAGE 2)
+// Message box drives everything:
+// 1. Question shown with bubble options
+// 2. User clicks bubble → backend receives (question, answer, history)
+// 3. Backend uses first-principles to generate next question
+// 4. Repeat 3x, then final-share question, then quiz
+// ============================================================
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  createInitialUserState,
+  detectPattern,
+  detectMBTISignals,
+  computeMBTI,
+  recommendProducts,
+  getLifeStage,
+  analyzeWordChoice,
+  detectEnergyLevel,
+  isTopicShift,
+  type UserState,
+  type GeneratedQuestion,
+  type ConsciousnessReport,
+  type Product,
+  MBTI_PROFILES,
+} from '../../lib/spiritual-conversation-engine';
+
+// ============================================================
+// TYPES
+// ============================================================
+
+type ConversationPhase =
+  | 'idle'
+  | 'first_question'
+  | 'ai_generating'
+  | 'asking'
+  | 'quiz_generating'
+  | 'quiz'
+  | 'report_generating'
+  | 'report'
+  | 'sales_funnel'
+  | 'products';
+
+interface Message {
+  id: string;
+  role: 'ai' | 'user';
+  content: string;
+  question?: string;  // The question this answer belongs to
+  timestamp: number;
+}
+
+interface AnswerOption {
+  text: string;
+  subLabel?: string;
+}
+
+// ============================================================
+// CHIP LABELS + FIRST QUESTIONS
+// ============================================================
+
+const CHIP_LABELS = [
+  { id: 'feeling_lost', label: 'Feeling Lost' },
+  { id: 'relationship_pain', label: 'Relationship Pain' },
+  { id: 'career_confusion', label: 'Career Confusion' },
+  { id: 'inner_emptiness', label: 'Inner Emptiness' },
+  { id: 'anxiety_overthinking', label: 'Anxiety & Overthinking' },
+  { id: 'i_dont_know', label: "I Don't Even Know" },
+];
+
+const CHIP_FIRST_QUESTIONS: Record<string, string> = {
+  feeling_lost: "Is the lostness louder in the morning — or at night?",
+  relationship_pain: "Are you trying to keep loving them — or trying to stop?",
+  career_confusion: "No direction at all — or too many that feel wrong?",
+  inner_emptiness: "When did you last feel full inside — even briefly?",
+  anxiety_overthinking: "Is your mind louder about the past — or the future?",
+  i_dont_know: "That's honest. If one area feels heaviest right now — what is it?",
+};
+
+// ============================================================
+// MAIN COMPONENT
+// ============================================================
+
+export default function SpiritualConversation() {
+  const [phase, setPhase] = useState<ConversationPhase>('idle');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [userState, setUserState] = useState<UserState | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<string | null>(null);
+  const [currentOptions, setCurrentOptions] = useState<AnswerOption[]>([]);
+  const [selectedChip, setSelectedChip] = useState<string | null>(null);
+  const [round, setRound] = useState(0);  // How many questions answered
+  const [quizQuestions, setQuizQuestions] = useState<GeneratedQuestion[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState<string[]>([]);
+  const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
+  const [showQuizFeedback, setShowQuizFeedback] = useState(false);
+  const [report, setReport] = useState<ConsciousnessReport | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [dots, setDots] = useState(0);
+  const [waitingForUserInput, setWaitingForUserInput] = useState(false);
+  const [engagementTimer, setEngagementTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const chatRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // ============================================================
+  // PROACTIVE WARMUP
+  // ============================================================
+  const lastWarmupRef = useRef<number>(0);
+  const triggerWarmup = async () => {
+    const now = Date.now();
+    if (now - lastWarmupRef.current < 30000) return; // Only warmup once every 30s
+    lastWarmupRef.current = now;
+    try {
+      await fetch('/api/spiritual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'warmup' }),
+      });
+    } catch (_) { }
+  };
+
+  useEffect(() => {
+    triggerWarmup(); // Initial background warmup
+  }, []);
+
+  // ============================================================
+  // VOICE: toggleListening
+  // ============================================================
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice recognition not supported in this browser.");
+      return;
+    }
+
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.onresult = (e: any) => {
+        const transcript = e.results[0][0].transcript;
+        setInputValue(transcript);
+        setIsListening(false);
+      };
+      recognitionRef.current.onerror = () => setIsListening(false);
+      recognitionRef.current.onend = () => setIsListening(false);
+    }
+
+    recognitionRef.current.start();
+    setIsListening(true);
+  };
+
+  // ============================================================
+  // INIT
+  // ============================================================
+
+  const handleInputFocus = () => {
+    if (messages.length === 0 && phase === 'idle') {
+      const greeting = "Your arrival here wasn't random.\n\nWhat is the weight you've been carrying the longest?";
+      const options = [
+        { text: "Relationship pain", subLabel: "" },
+        { text: "Career confusion", subLabel: "" },
+        { text: "Inner emptiness", subLabel: "" },
+        { text: "Anxiety & overthinking", subLabel: "" }
+      ];
+      addAIMessage(greeting);
+      setCurrentQuestion(greeting);
+      setCurrentOptions(options);
+    }
+  };
+
+  // ============================================================
+  // KEYBOARD: quiz A/B keys
+  // ============================================================
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (phase !== 'quiz' || showQuizFeedback) return;
+      if (e.key.toLowerCase() === 'a') handleQuizSelect(0);
+      if (e.key.toLowerCase() === 'b') handleQuizSelect(1);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [phase, showQuizFeedback, quizAnswers]);
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+
+  const addMessage = useCallback((
+    role: 'ai' | 'user',
+    content: string,
+    question?: string
+  ): Message => {
+    const msg: Message = { id: `${role}_${Date.now()}_${Math.random()}`, role, content, question, timestamp: Date.now() };
+    setMessages(prev => [...prev, msg]);
+    return msg;
+  }, []);
+
+  const addAIMessage = useCallback((content: string) => {
+    return addMessage('ai', content);
+  }, [addMessage]);
+
+  const addUserMessage = useCallback((content: string, question?: string) => {
+    return addMessage('user', content, question);
+  }, [addMessage]);
+
+  // ============================================================
+  // PHASE: CHIP SELECTED → first question
+  // ============================================================
+
+  const handleChipSelect = async (chipId: string) => {
+    const state = createInitialUserState(chipId);
+    setUserState(state);
+    setSelectedChip(chipId);
+    setPhase('first_question');
+
+    const question = CHIP_FIRST_QUESTIONS[chipId] || "What's the heaviest thing on your mind right now?";
+    setCurrentQuestion(question);
+
+    // Show options based on chip
+    const options = getChipOptions(chipId);
+    setCurrentOptions(options);
+
+    addAIMessage(question);
+    setDots(1);
+
+    // Start 8-second engagement timer
+    startEngagementTimer(chipId);
+  };
+
+  // ============================================================
+  // ENGAGEMENT TIMER: 8-second window for user input
+  // ============================================================
+
+  const startEngagementTimer = (chipId: string) => {
+    // Clear any existing timer
+    if (engagementTimer) {
+      clearTimeout(engagementTimer);
+    }
+
+    setWaitingForUserInput(true);
+
+    // Set timer for 8 seconds
+    const timer = setTimeout(async () => {
+      setWaitingForUserInput(false);
+      setEngagementTimer(null);
+
+      // If user hasn't typed anything, treat chip label as answer (PASSIVE USER)
+      const chipLabel = CHIP_LABELS.find(c => c.id === chipId)?.label || 'Feeling Lost';
+      await handlePassiveUserResponse(chipLabel);
+    }, 8000);
+
+    setEngagementTimer(timer);
+  };
+
+  const handlePassiveUserResponse = async (chipLabel: string) => {
+    if (!userState || !currentQuestion || !selectedChip) return;
+
+    // Treat the chip label as the user's answer
+    const answer = `I'm feeling ${chipLabel.toLowerCase()}`;
+
+    // Add user message
+    addUserMessage(answer, currentQuestion);
+
+    // Update state with passive user signal
+    const updatedState: UserState = {
+      ...userState,
+      firstAnswer: userState.firstAnswer || answer,
+      detectedPattern: userState.detectedPattern,
+      patternConfidence: userState.patternConfidence || 0,
+      triggerWords: userState.triggerWords || [],
+      mbtiSignals: userState.mbtiSignals,
+      exchangeHistory: [
+        ...userState.exchangeHistory,
+        { role: 'ai', content: currentQuestion },
+        { role: 'user', content: answer },
+      ],
+      questionCount: userState.questionCount + 1,
+      isPassiveUser: true, // Mark as passive user
+    };
+
+    setUserState(updatedState);
+    setCurrentQuestion(null);
+    setCurrentOptions([]);
+    setPhase('ai_generating');
+
+    const newRound = round + 1;
+    setRound(newRound);
+    setDots(Math.min(newRound, 5));
+
+    // Transition to "asking" — AI is generating next question
+    setIsTyping(true);
+    await delay(800);
+    addAIMessage("Decoding your pattern...");
+    await delay(2000);
+    setIsTyping(false);
+
+    // PASSIVE USER PATH: Skip to products for most common MBTI types
+    // Map chip to common MBTI types
+    const chipToCommonMBTI: Record<string, string[]> = {
+      feeling_lost: ['INFP', 'INFJ', 'ENFP'],
+      relationship_pain: ['ISFJ', 'ENFJ', 'INFJ'],
+      career_confusion: ['INTP', 'ENTP', 'ISTP'],
+      inner_emptiness: ['INFP', 'INFJ', 'ISFP'],
+      anxiety_overthinking: ['INTJ', 'INFP', 'ISTJ'],
+      i_dont_know: ['INFP', 'INTP', 'ISTP'],
+    };
+
+    const commonTypes = chipToCommonMBTI[selectedChip] || ['INFP', 'INFJ', 'ENFP'];
+
+    // Generate products for these types
+    const recommendedProducts = commonTypes.flatMap(type => {
+      const profile = MBTI_PROFILES[type as keyof typeof MBTI_PROFILES];
+      if (!profile) return [];
+
+      return [
+        {
+          id: `${type}-path-1`,
+          name: `${type} Consciousness Blueprint`,
+          headline: `The ${profile.name} Transformation Path`,
+          whyYou: `Designed for your ${profile.corePattern} — ${profile.archetype}`,
+          formats: ['Audio Journey', 'PDF Guide', '1:1 Session'],
+          price: 47,
+          originalPrice: 197,
+          urgencyLine: `Your pattern is 72% dissolvable with the right key`,
+          ctaText: 'See Your Path',
+          imageQuery: `${type} spiritual transformation`,
+          patternMatch: profile.corePattern,
+        },
+      ];
+    }).slice(0, 3);
+
+    setProducts(recommendedProducts);
+
+    // Show passive user results with CTA to take the full quiz
+    setPhase('products');
+    addAIMessage("These found based on your signal. Take the 60-second decode for your exact path →");
+  };
+
+  // ============================================================
+  // PHASE: USER ANSWERS → backend gets (question, answer, history)
+  // Backend runs first-principles → next question
+  // ============================================================
+
+  const handleAnswer = async (answer: string) => {
+    if (!userState || !currentQuestion) return;
+
+    const questionAnswered = currentQuestion;
+
+    // Add user message — tagged with the question it answers
+    addUserMessage(answer, questionAnswered);
+
+    // ─── TRACKING LOGIC ─────────────────────────────────────
+    const now = Date.now();
+    const responseTime = now - (userState.tracking?.lastMessageTimestamp || now);
+    const words = analyzeWordChoice(answer);
+    const prevUserMsg = messages.filter(m => m.role === 'user').slice(-1)[0]?.content;
+    const energy = detectEnergyLevel(answer, prevUserMsg);
+    const shifted = isTopicShift(answer, prevUserMsg);
+
+    // Update local MBTI signals and pattern from the answer
+    const mbtiSignals = detectMBTISignals(answer);
+    const patternResult = detectPattern(answer);
+
+    const updatedState: UserState = {
+      ...userState,
+      firstAnswer: userState.firstAnswer || answer,
+      detectedPattern: patternResult.confidence > (userState.patternConfidence || 0)
+        ? patternResult.pattern
+        : userState.detectedPattern,
+      patternConfidence: Math.max(patternResult.confidence, userState.patternConfidence || 0),
+      triggerWords: [...new Set([...(userState.triggerWords || []), ...patternResult.triggerWords])],
+      mbtiSignals: mergeSignals(userState.mbtiSignals, mbtiSignals),
+      exchangeHistory: [
+        ...userState.exchangeHistory,
+        { role: 'ai', content: questionAnswered },
+        { role: 'user', content: answer },
+      ],
+      questionCount: userState.questionCount + 1,
+      tracking: {
+        responseTimeMillis: [...(userState.tracking?.responseTimeMillis || []), responseTime],
+        wordChoice: {
+          emotional: (userState.tracking?.wordChoice?.emotional || 0) + words.emotional,
+          analytical: (userState.tracking?.wordChoice?.analytical || 0) + words.analytical,
+        },
+        topicShifts: (userState.tracking?.topicShifts || 0) + (shifted ? 1 : 0),
+        energyLevel: energy,
+        lastMessageTimestamp: now,
+      }
+    };
+    setUserState(updatedState);
+    setCurrentQuestion(null);
+    setCurrentOptions([]);
+    setPhase('ai_generating');
+
+    const newRound = round + 1;
+    setRound(newRound);
+    setDots(Math.min(newRound, 5));
+
+    // Transition to "asking" — AI is generating next question
+    setIsTyping(true);
+    await delay(800);
+    addAIMessage("I'm reading your pattern...");
+    await delay(1500);
+    setIsTyping(false);
+
+    // Check if we should transition to quiz
+    if (newRound >= 5) {
+      await transitionToFinalShare(updatedState);
+      return;
+    }
+
+    // Call backend with (currentQuestion, answer, fullHistory)
+    try {
+      const res = await fetch('/api/spiritual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'process_answer',
+          userState: updatedState,
+          conversationHistory: updatedState.exchangeHistory,
+          currentQuestion: questionAnswered,
+          userAnswer: answer,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.data) {
+        const result = data.data;
+
+        if (result.type === 'final_share') {
+          // Final share question
+          setCurrentQuestion(result.question);
+          setCurrentOptions([]);
+          setPhase('asking');
+          addAIMessage(result.question);
+        } else {
+          // Next question
+          setCurrentQuestion(result.question);
+          setCurrentOptions(result.options?.map((o: any) => ({ text: o.text, subLabel: o.subLabel })) || []);
+          setPhase('asking');
+
+          if (result.inference) {
+            console.log('[First-Principles Inference]', result.inference);
+          }
+
+          addAIMessage(result.question);
+        }
+
+        // Update pattern confidence if provided
+        if (result.newPatternConfidence !== undefined) {
+          setUserState(prev => prev ? { ...prev, patternConfidence: result.newPatternConfidence } : prev);
+        }
+      } else {
+        // Fallback
+        await askFallback(newRound, updatedState);
+      }
+    } catch {
+      setIsTyping(false);
+      await askFallback(newRound, updatedState);
+    }
+  };
+
+  // ============================================================
+  // FINAL SHARE — last question before quiz
+  // ============================================================
+
+  const transitionToFinalShare = async (state: UserState) => {
+    setPhase('ai_generating');
+    setIsTyping(true);
+    await delay(1500);
+    setIsTyping(false);
+
+    const finalQuestion = "Last thing.\n\nIs there anything you haven't told me yet that feels important?\n\nSometimes what we hold back — is exactly what changes everything.";
+
+    setCurrentQuestion(finalQuestion);
+    setCurrentOptions([]);
+    setPhase('asking');
+    addAIMessage(finalQuestion);
+  };
+
+  // ============================================================
+  // FALLBACK: if AI call fails
+  // ============================================================
+
+  const askFallback = async (currentRound: number, state: UserState) => {
+    const fallbacks = [
+      "How long has this been your default way of experiencing things?",
+      "What have you tried before to change or fix this?",
+      "Is there anything you haven't told me yet that feels important?",
+    ];
+    const q = fallbacks[Math.min(currentRound - 1, fallbacks.length - 1)];
+    setCurrentQuestion(q);
+    setCurrentOptions([]);
+    setPhase('asking');
+    addAIMessage(q);
+  };
+
+  // ============================================================
+  // PHASE: QUIZ
+  // ============================================================
+
+  const transitionToQuiz = async () => {
+    if (!userState) return;
+    setPhase('quiz_generating');
+
+    try {
+      const res = await fetch('/api/spiritual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate_quiz',
+          userState,
+          conversationHistory: userState.exchangeHistory,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.data?.questions?.length > 0) {
+        setQuizQuestions(data.data.questions);
+        setQuizAnswers([]);
+        setQuizIndex(0);
+      } else {
+        setQuizQuestions(getStaticQuizQuestions());
+        setQuizAnswers([]);
+        setQuizIndex(0);
+      }
+    } catch {
+      setQuizQuestions(getStaticQuizQuestions());
+      setQuizAnswers([]);
+      setQuizIndex(0);
+    }
+
+    setPhase('quiz');
+  };
+
+  const handleQuizSelect = (index: number) => {
+    if (selectedQuizOption !== null && quizAnswers[quizIndex]) return;
+    const question = quizQuestions[quizIndex];
+    if (!question) return;
+
+    const selected = question.options[index];
+    if (!selected) return;
+
+    setSelectedQuizOption(index);
+    setShowQuizFeedback(true);
+
+    const newAnswers = [...quizAnswers];
+    newAnswers[quizIndex] = selected.mbtiSignal || selected.text;
+    setQuizAnswers(newAnswers);
+
+    // Update MBTI signals from quiz
+    if (selected.mbtiSignal && question.mbtiDimension) {
+      const dim = question.mbtiDimension as keyof UserState['mbtiSignals'];
+      if (['E_I', 'N_S', 'T_F', 'J_P'].includes(dim)) {
+        setUserState(prev => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            mbtiSignals: {
+              ...prev.mbtiSignals,
+              [dim]: {
+                signal: selected.mbtiSignal as any,
+                confidence: Math.min(((prev.mbtiSignals as any)[dim]?.confidence || 0) + 0.3, 1.0),
+              },
+            },
+          };
+        });
+      }
+    }
+
+    setTimeout(() => {
+      setShowQuizFeedback(false);
+      if (quizIndex < quizQuestions.length - 1) {
+        setQuizIndex(prev => prev + 1);
+        setSelectedQuizOption(null);
+      } else {
+        finalizeAndGenerateReport();
+      }
+    }, 900);
+  };
+
+  // ============================================================
+  // REPORT
+  // ============================================================
+
+  const finalizeAndGenerateReport = async () => {
+    if (!userState) return;
+    setPhase('report_generating');
+
+    const { type } = computeMBTI(userState.mbtiSignals);
+    const finalState: UserState = { ...userState, confirmedMBTI: type };
+    setUserState(finalState);
+
+    try {
+      const res = await fetch('/api/spiritual', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate_report',
+          userState: finalState,
+          conversationHistory: finalState.exchangeHistory,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setReport(data.data.report);
+        setProducts(data.data.products || []);
+      } else {
+        setReport(getFallbackReport(type));
+        setProducts(recommendProducts(finalState.detectedPattern, type, finalState.budget, finalState.gender));
+      }
+    } catch {
+      setReport(getFallbackReport(type));
+      setProducts(recommendProducts(finalState.detectedPattern, type, userState.budget, userState.gender));
+    }
+
+    await delay(3000);
+    setPhase('report');
+  };
+
+  // ============================================================
+  // INPUT HANDLERS
+  // ============================================================
+
+  const handleSubmit = () => {
+    const val = inputValue.trim();
+    if (!val) return;
+
+    // Clear engagement timer if user types (ENGAGED USER)
+    if (engagementTimer) {
+      clearTimeout(engagementTimer);
+      setEngagementTimer(null);
+      setWaitingForUserInput(false);
+    }
+
+    setInputValue('');
+    handleAnswer(val);
+  };
+
+  const handleOptionClick = (opt: AnswerOption) => {
+    // Clear engagement timer if user selects an option (ENGAGED USER)
+    if (engagementTimer) {
+      clearTimeout(engagementTimer);
+      setEngagementTimer(null);
+      setWaitingForUserInput(false);
+    }
+
+    handleAnswer(opt.text);
+  };
+
+  // ============================================================
+  // CHIP OPTIONS per chip type
+  // ============================================================
+
+  function getChipOptions(chipId: string): AnswerOption[] {
+    const map: Record<string, AnswerOption[]> = {
+      feeling_lost: [
+        { text: "In the morning — when I first wake up", subLabel: 'morning baseline' },
+        { text: "At night — when everything goes quiet", subLabel: 'night void' },
+      ],
+      relationship_pain: [
+        { text: "Still trying to love them", subLabel: 'holding on' },
+        { text: "Trying to stop caring", subLabel: 'forced release' },
+      ],
+      career_confusion: [
+        { text: "No direction at all — blank", subLabel: 'directionless' },
+        { text: "Too many — and none feel right", subLabel: 'option paralysis' },
+      ],
+      inner_emptiness: [
+        { text: "I remember a moment — briefly", subLabel: 'fading memory' },
+        { text: "I honestly can't remember feeling full", subLabel: 'chronic void' },
+      ],
+      anxiety_overthinking: [
+        { text: "The past — what I should have done differently", subLabel: 'retroactive' },
+        { text: "The future — what could go wrong", subLabel: 'prospective' },
+      ],
+      i_dont_know: [
+        { text: "My relationships — something is broken there", subLabel: 'relational' },
+        { text: "My purpose — I don't know what I'm doing here", subLabel: 'existential' },
+      ],
+    };
+    return map[chipId] || [{ text: "That's what I'm here about", subLabel: 'default' }];
+  }
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+
+  const showInputBox = phase === 'asking' || phase === 'first_question';
+  const showChat = !['quiz', 'quiz_generating', 'report_generating', 'report'].includes(phase);
+  const maxChatHeight = phase === 'report' ? '15vh' : phase === 'quiz' ? '28vh' : '52vh';
+
+  return (
+    <section style={{
+      width: '100%',
+      minHeight: '100vh',
+      background: '#03030f',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Background glow */}
+      <div style={{
+        position: 'absolute',
+        top: '15%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '80vw',
+        height: '80vh',
+        background: 'radial-gradient(circle, rgba(75,0,130,0.1) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Progress dots */}
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        padding: '28px 0 0',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <div key={i} style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            background: i < dots ? 'rgba(0,242,255,0.35)' : i === dots ? '#00f2ff' : 'rgba(255,255,255,0.15)',
+            boxShadow: i === dots ? '0 0 10px rgba(0,242,255,0.5)' : 'none',
+            transition: 'all 0.6s ease',
+          }} />
+        ))}
+      </div>
+
+      {/* Phase label */}
+      <PhaseLabel phase={phase} round={round} />
+
+      {/* ====================================================== */}
+      {/* CHAT SECTION */}
+      {/* ====================================================== */}
+      <div style={{
+        maxWidth: '820px',
+        margin: '0 auto',
+        padding: '0 20px',
+      }}>
+        <div
+          ref={chatRef}
+          style={{
+            maxHeight: maxChatHeight,
+            overflowY: 'auto',
+            scrollbarWidth: 'none',
+            paddingBottom: '12px',
+            transition: 'max-height 0.6s ease',
+          }}
+        >
+          <AnimatePresence>
+            {messages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  display: 'flex',
+                  flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
+                  gap: '10px',
+                  marginBottom: '16px',
+                  alignItems: 'flex-start',
+                }}
+              >
+                {/* Avatar */}
+                <div style={{
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '50%',
+                  flexShrink: 0,
+                  background: msg.role === 'ai'
+                    ? 'radial-gradient(circle, rgba(75,0,130,0.9), rgba(30,27,75,1))'
+                    : 'rgba(255,255,255,0.04)',
+                  border: `0.5px solid ${msg.role === 'ai' ? 'rgba(0,242,255,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {msg.role === 'ai' && (
+                    <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'radial-gradient(circle, #35f8ff, #00f2ff)', boxShadow: '0 0 6px #00f2ff' }} />
+                  )}
+                  {msg.role === 'user' && (
+                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.35)' }}>✦</span>
+                  )}
+                </div>
+
+                {/* Bubble */}
+                <div>
+                  {msg.question && msg.role === 'user' && (
+                    <p style={{
+                      fontSize: '10px',
+                      letterSpacing: '1px',
+                      color: 'rgba(0,242,255,0.3)',
+                      marginBottom: '4px',
+                      fontFamily: "'Orbitron', sans-serif",
+                      textTransform: 'uppercase',
+                    }}>
+                      re: {msg.question.length > 60 ? msg.question.slice(0, 60) + '…' : msg.question}
+                    </p>
+                  )}
+                  <div style={{
+                    maxWidth: '82%',
+                    padding: '10px 14px',
+                    borderRadius: msg.role === 'ai' ? '2px 14px 14px 14px' : '14px 2px 14px 14px',
+                    background: msg.role === 'ai' ? 'rgba(0,242,255,0.05)' : 'rgba(255,255,255,0.04)',
+                    border: `0.5px solid ${msg.role === 'ai' ? 'rgba(0,242,255,0.15)' : 'rgba(255,255,255,0.08)'}`,
+                    fontSize: '15px',
+                    fontWeight: 300,
+                    lineHeight: 1.7,
+                    color: msg.role === 'ai' ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.58)',
+                    fontStyle: msg.role === 'user' ? 'italic' : 'normal',
+                    whiteSpace: 'pre-line',
+                  }}>
+                    {msg.content}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {/* Typing indicator */}
+          {isTyping && <TypingIndicator />}
+        </div>
+
+        {/* =============================================== */}
+        {/* BUBBLE OPTIONS — shown when currentQuestion is set */}
+        {/* =============================================== */}
+        {currentOptions.length > 0 && showInputBox && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px', justifyContent: 'center' }}
+          >
+            {currentOptions.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => handleOptionClick(opt)}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: '20px',
+                  background: 'rgba(0,242,255,0.05)',
+                  border: '0.5px solid rgba(0,242,255,0.22)',
+                  color: 'rgba(0,242,255,0.78)',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  fontStyle: 'italic',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {opt.text}
+              </button>
+            ))}
+            {/* Free-text toggle */}
+            <button
+              onClick={() => inputRef.current?.focus()}
+              style={{
+                padding: '8px 18px',
+                borderRadius: '20px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '0.5px solid rgba(255,255,255,0.12)',
+                color: 'rgba(255,255,255,0.35)',
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: '14px',
+                cursor: 'pointer',
+                fontStyle: 'italic',
+              }}
+            >
+              Or type your own…
+            </button>
+          </motion.div>
+        )}
+
+        {/* Chip options — before first question */}
+        {!selectedChip && messages.length <= 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px', justifyContent: 'center' }}
+          >
+            {CHIP_LABELS.map(chip => (
+              <button
+                key={chip.id}
+                onClick={() => handleChipSelect(chip.id)}
+                onMouseEnter={triggerWarmup}
+                style={{
+                  padding: '7px 16px',
+                  borderRadius: '20px',
+                  background: 'rgba(0,242,255,0.04)',
+                  border: '0.5px solid rgba(0,242,255,0.18)',
+                  color: 'rgba(0,242,255,0.7)',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  fontStyle: 'italic',
+                  transition: 'all 0.2s',
+                }}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+
+        {/* =============================================== */}
+        {/* INPUT BOX — text input for free-form answers */}
+        {/* =============================================== */}
+        {showInputBox && (
+          <div style={{ paddingBottom: '14px' }}>
+            <div 
+              onMouseEnter={triggerWarmup}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'rgba(0,242,255,0.04)',
+                border: '0.5px solid rgba(0,242,255,0.18)',
+                borderRadius: '50px',
+                padding: '7px 8px 7px 18px',
+              }}
+            >
+              <input
+                type="text"
+                ref={inputRef}
+                value={inputValue}
+                onFocus={handleInputFocus}
+                onChange={e => setInputValue(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                placeholder="Your answer…"
+                style={{
+                  flex: 1,
+                  background: 'none',
+                  border: 'none',
+                  outline: 'none',
+                  color: 'rgba(255,255,255,0.85)',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: '15px',
+                  fontWeight: 300,
+                }}
+              />
+              <button
+                type="button"
+                onClick={toggleListening}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: isListening ? '#ff3cf5' : 'rgba(255,255,255,0.3)',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: '0 8px',
+                  transition: 'all 0.3s'
+                }}
+              >
+                {isListening ? "⏺" : "🎙"}
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!inputValue.trim()}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: inputValue.trim() ? 'rgba(0,242,255,0.12)' : 'rgba(255,255,255,0.03)',
+                  border: `0.5px solid ${inputValue.trim() ? 'rgba(0,242,255,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                  cursor: inputValue.trim() ? 'pointer' : 'default',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: inputValue.trim() ? 'rgba(0,242,255,0.9)' : 'rgba(255,255,255,0.2)',
+                  fontSize: '15px',
+                  transition: 'all 0.2s',
+                }}
+              >
+                →
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ====================================================== */}
+      {/* QUIZ GENERATING */}
+      {/* ====================================================== */}
+      {phase === 'quiz_generating' && (
+        <SacredLoader text="Mapping your cognitive architecture…" />
+      )}
+
+      {/* ====================================================== */}
+      {/* QUIZ — MBTIQuiz-style card */}
+      {/* ====================================================== */}
+      {phase === 'quiz' && quizQuestions[quizIndex] && (
+        <QuizCard
+          question={quizQuestions[quizIndex]}
+          questionIndex={quizIndex}
+          totalQuestions={quizQuestions.length}
+          selectedOption={selectedQuizOption}
+          showFeedback={showQuizFeedback}
+          onSelect={handleQuizSelect}
+        />
+      )}
+
+      {/* ====================================================== */}
+      {/* REPORT GENERATING */}
+      {/* ====================================================== */}
+      {phase === 'report_generating' && (
+        <SacredLoader
+          text="Reading your consciousness…"
+          subtexts={['Mapping your pattern…', 'Your path is forming…', 'Blueprint complete…']}
+        />
+      )}
+
+      {/* ====================================================== */}
+      {/* REPORT */}
+      {/* ====================================================== */}
+      {phase === 'report' && report && (
+        <ReportView
+          report={report}
+          products={products}
+          onContinue={() => setPhase('sales_funnel')}
+        />
+      )}
+
+      {/* ====================================================== */}
+      {/* SALES FUNNEL */}
+      {/* ====================================================== */}
+      {phase === 'sales_funnel' && report && (
+        <SalesFunnelView
+          report={report}
+          userState={userState!}
+          products={products}
+        />
+      )}
+    </section>
+  );
+}
+
+// ============================================================
+// SUB-COMPONENTS
+// ============================================================
+
+function PhaseLabel({ phase, round }: { phase: ConversationPhase; round: number }): any {
+  const labels: any = {
+    idle: 'DECODING YOUR PATTERN',
+    first_question: 'LOCATING THE FEELING',
+    ai_generating: 'READING YOUR SIGNAL',
+    asking: round >= 5 ? 'FINAL QUESTION' : `QUESTION ${round} OF 5`,
+    quiz_generating: 'MAPPING YOUR MIND',
+    quiz: 'CONFIRMING YOUR ARCHITECTURE',
+    report_generating: 'YOUR BLUEPRINT FORMING',
+    report: 'YOUR CONSCIOUSNESS BLUEPRINT',
+    sales_funnel: 'YOUR TRANSFORMATION KIT',
+    products: 'YOUR TRANSFORMATION PATH',
+  };
+
+  return (
+    <motion.div
+      key={phase}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={{
+        fontFamily: "'Orbitron', sans-serif",
+        fontSize: '8px',
+        letterSpacing: '4px',
+        color: 'rgba(0,242,255,0.38)',
+        marginBottom: '10px',
+        textAlign: 'center',
+        textTransform: 'uppercase',
+      }}
+    >
+      {labels[phase]}
+    </motion.div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '18px' }}
+    >
+      <div style={{
+        width: '26px', height: '26px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(75,0,130,0.9), rgba(30,27,75,1))',
+        border: '0.5px solid rgba(0,242,255,0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'radial-gradient(circle, #35f8ff, #00f2ff)' }} />
+      </div>
+      <div style={{ display: 'flex', gap: '5px', padding: '12px 14px', background: 'rgba(0,242,255,0.05)', border: '0.5px solid rgba(0,242,255,0.15)', borderRadius: '2px 14px 14px 14px', alignItems: 'center' }}>
+        {[0, 0.15, 0.3].map((delay, i) => (
+          <motion.div
+            key={i}
+            style={{ width: '4px', height: '4px', background: 'rgba(0,242,255,0.55)', borderRadius: '50%' }}
+            animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay, ease: 'easeInOut' }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// QUIZ CARD
+// ============================================================
+
+function QuizCard({
+  question,
+  questionIndex,
+  totalQuestions,
+  selectedOption,
+  showFeedback,
+  onSelect,
+}: {
+  question: GeneratedQuestion;
+  questionIndex: number;
+  totalQuestions: number;
+  selectedOption: number | null;
+  showFeedback: boolean;
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <motion.div
+      key={questionIndex}
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      style={{ padding: '0 20px 60px', maxWidth: '1200px', margin: '0 auto' }}
+    >
+      {/* Step counter */}
+      <div style={{
+        fontFamily: "'Orbitron', sans-serif",
+        fontSize: 'clamp(0.7rem, 2vw, 1rem)',
+        color: '#00f2ff',
+        textTransform: 'uppercase',
+        letterSpacing: '5px',
+        marginBottom: '36px',
+        textAlign: 'center',
+        textShadow: '0 0 20px rgba(0,242,255,0.45)',
+      }}>
+        Step {questionIndex + 1} of {totalQuestions} — Mapping Your Mind
+      </div>
+
+      {/* Question card */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '0.5px solid rgba(0,242,255,0.22)',
+        clipPath: 'polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%)',
+        padding: 'clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem)',
+        position: 'relative',
+      }}>
+        {/* Top glow */}
+        <div style={{
+          position: 'absolute',
+          top: '-1px',
+          left: '10%',
+          width: '80%',
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(0,242,255,0.55), transparent)',
+        }} />
+
+        {question.contextLine && (
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: '14px',
+            fontStyle: 'italic',
+            color: 'rgba(0,242,255,0.48)',
+            marginBottom: '14px',
+            lineHeight: 1.6,
+            textAlign: 'center',
+          }}>
+            {question.contextLine}
+          </p>
+        )}
+
+        {/* Question text */}
+        <h2 style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: 'clamp(1rem, 4vw, 2.6rem)',
+          fontWeight: 900,
+          color: '#fff',
+          textAlign: 'center',
+          lineHeight: 1.2,
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          textShadow: '0 10px 40px rgba(0,0,0,0.8)',
+          marginBottom: '36px',
+          minHeight: '2.5em',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          {question.question}
+        </h2>
+
+        {/* Options grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.4rem',
+        }}>
+          {question.options.map((opt, index) => {
+            const isSelected = selectedOption === index;
+            const wasSelectedBefore = selectedOption !== null && selectedOption !== index;
+            const label = index === 0 ? 'A' : 'B';
+
+            return (
+              <motion.button
+                key={index}
+                onClick={() => onSelect(index)}
+                whileHover={!wasSelectedBefore ? { scale: 1.03, y: -4 } : {}}
+                whileTap={!wasSelectedBefore ? { scale: 0.98 } : {}}
+                style={{
+                  background: isSelected
+                    ? 'rgba(0,242,255,0.2)'
+                    : 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                  border: isSelected
+                    ? '1px solid #00f2ff'
+                    : '0.5px solid rgba(0,242,255,0.22)',
+                  clipPath: 'polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%)',
+                  padding: '1.4rem 1.8rem',
+                  cursor: wasSelectedBefore ? 'default' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: isSelected
+                    ? '0 0 40px rgba(0,242,255,0.28), inset 0 0 25px rgba(0,242,255,0.1)'
+                    : '0 10px 30px rgba(0,0,0,0.5)',
+                  opacity: wasSelectedBefore ? 0.4 : 1,
+                }}
+              >
+                <span style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: '1.1rem',
+                  fontWeight: 900,
+                  color: isSelected ? '#35f8ff' : 'rgba(0,242,255,0.55)',
+                  letterSpacing: '3px',
+                }}>
+                  {label}
+                </span>
+                <span style={{
+                  color: '#fff',
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: 'clamp(0.8rem, 2.5vw, 1.1rem)',
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                  textAlign: 'center',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                }}>
+                  {opt.text}
+                </span>
+                {opt.subLabel && (
+                  <span style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: '0.78rem',
+                    color: 'rgba(255,255,255,0.38)',
+                    textAlign: 'center',
+                    letterSpacing: '0',
+                    textTransform: 'none',
+                  }}>
+                    {opt.subLabel}
+                  </span>
+                )}
+                {showFeedback && isSelected && (
+                  <motion.span
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      fontFamily: "'Orbitron', sans-serif",
+                      fontSize: '0.68rem',
+                      color: '#00f2ff',
+                      textTransform: 'uppercase',
+                      letterSpacing: '2px',
+                      fontWeight: 700,
+                    }}
+                  >
+                    Pattern detected…
+                  </motion.span>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* Keyboard hint */}
+        <p style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: '0.72rem',
+          color: 'rgba(0,242,255,0.45)',
+          textTransform: 'uppercase',
+          letterSpacing: '2px',
+          marginTop: '22px',
+          textAlign: 'center',
+        }}>
+          Press A or B to select
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// REPORT VIEW — THREE WRAPPERS (STUDY, JOURNEY, ACTION)
+// ============================================================
+
+function ReportView({ report, products, onContinue }: { report: ConsciousnessReport; products: Product[]; onContinue: () => void }) {
+  const analyzers = ['INTJ', 'INTP', 'ENTJ', 'ENTP'];
+  const feelers = ['INFP', 'INFJ', 'ENFP', 'ISFP', 'ENFJ', 'ESFP'];
+  const doers = ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ESTP'];
+
+  const type = report.mbtiType.toUpperCase();
+  const mode = analyzers.includes(type) ? 'study' : feelers.includes(type) ? 'journey' : 'action';
+
+  // SHARED STYLES
+  const containerStyle: React.CSSProperties = {
+    padding: '0 24px 80px',
+    maxWidth: mode === 'study' ? '900px' : '780px',
+    margin: '0 auto',
+    fontFamily: mode === 'study' ? "'Inter', monospace" : mode === 'journey' ? "'Cormorant Garamond', serif" : "'Orbitron', sans-serif",
+  };
+
+  return (
+    <div style={containerStyle}>
+      {/* ─── HEADER ─── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ textAlign: mode === 'journey' ? 'center' : 'left', marginBottom: '48px' }}
+      >
+        <p style={{ 
+          fontFamily: "'Orbitron', sans-serif", 
+          fontSize: '9px', 
+          letterSpacing: '5px', 
+          color: mode === 'study' ? '#00f2ff' : mode === 'journey' ? 'rgba(255,255,255,0.4)' : '#ff3cf5',
+          marginBottom: '14px' 
+        }}>
+          {mode === 'study' ? 'SYSTEM DIAGNOSTIC COMPLETE' : mode === 'journey' ? 'YOUR SACRED MAP' : 'PROTOCOL INITIALIZED'}
+        </p>
+        <h1
+          style={{ 
+            fontSize: 'clamp(24px, 5vw, 42px)', 
+            fontWeight: mode === 'study' ? 700 : 300, 
+            color: '#fff', 
+            lineHeight: 1.2, 
+            marginBottom: '10px',
+            textTransform: mode === 'action' ? 'uppercase' : 'none'
+          }}
+          dangerouslySetInnerHTML={{ __html: report.headlineText }}
+        />
+        <p style={{ fontSize: '18px', fontStyle: 'italic', color: 'rgba(255,255,255,0.5)' }}>
+          {report.subText}
+        </p>
+      </motion.div>
+
+      {/* ─── MAIN BLUEPRINT CARD ─── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        style={{
+          background: mode === 'study' ? 'rgba(0,0,0,0.4)' : mode === 'journey' ? 'linear-gradient(135deg, rgba(75,0,130,0.1), rgba(0,0,0,0.2))' : 'rgba(255,255,255,0.02)',
+          border: `1px solid ${mode === 'study' ? '#00f2ff33' : mode === 'journey' ? '#ffffff11' : '#ff3cf533'}`,
+          borderRadius: mode === 'study' ? '0' : '12px',
+          padding: '32px',
+          marginBottom: '40px',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: mode === 'action' ? '0 0 30px rgba(255,60,245,0.1)' : 'none'
+        }}
+      >
+        {/* Mode-Specific Icons */}
+        <div style={{ position: 'absolute', top: '20px', right: '30px', fontSize: '24px', opacity: 0.3 }}>
+          {mode === 'study' ? '📊' : mode === 'journey' ? '🪷' : '⚡'}
+        </div>
+
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginBottom: '28px', paddingBottom: '22px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{
+            width: '70px', height: '70px', borderRadius: mode === 'study' ? '4px' : '50%',
+            background: mode === 'study' ? '#00f2ff11' : mode === 'journey' ? 'rgba(255,255,255,0.05)' : '#ff3cf511',
+            border: `1px solid ${mode === 'study' ? '#00f2ff' : mode === 'journey' ? '#fff' : '#ff3cf5'}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '16px', fontWeight: 900, color: mode === 'study' ? '#00f2ff' : '#fff' }}>
+              {report.mbtiType}
+            </span>
+          </div>
+          <div>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#fff' }}>{report.mbtiName}</h2>
+            <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>{report.archetype}</p>
+          </div>
+        </div>
+
+        {/* Data Rows */}
+        <div style={{ display: 'grid', gridTemplateColumns: mode === 'study' ? '1fr 1fr' : '1fr', gap: '16px' }}>
+          {[
+            { label: 'Core Pattern', value: report.corePattern },
+            { label: 'Root Cause', value: report.rootCause },
+            { label: 'Running Since', value: report.runningSince },
+            { label: 'Urgency', value: `${report.urgencyPercent}%` },
+            { label: 'Path', value: report.spiritualPath },
+            { label: 'Est. Resolve', value: report.dissolutionTime },
+          ].map((row, i) => (
+            <div key={i} style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
+              <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', color: 'rgba(255,255,255,0.3)', marginBottom: '4px' }}>
+                {row.label}
+              </span>
+              <span style={{ fontSize: '15px', color: mode === 'study' && i % 2 === 0 ? '#00f2ff' : '#fff' }}>
+                {row.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ─── SECTIONED CONTENT ─── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <Section mode={mode} label={mode === 'study' ? 'RESULTS & ROI' : mode === 'journey' ? 'YOUR STORY' : 'QUICK WIN'}>
+          {report.validationParagraph}
+        </Section>
+        
+        <Section mode={mode} label={mode === 'study' ? 'THE SYSTEM' : mode === 'journey' ? 'THE JOURNEY' : 'REAL EXAMPLES'}>
+          {report.realCauseParagraph}
+        </Section>
+
+        <Section mode={mode} label={mode === 'study' ? 'WHY GENERIC FAILS' : mode === 'journey' ? 'VALUES ALIGNMENT' : 'FREEDOM & FLEXIBILITY'}>
+          {report.loopExplanation}
+        </Section>
+      </div>
+
+      {/* ─── PRODUCTS ─── */}
+      {products.length > 0 && (
+        <div style={{ marginTop: '60px' }}>
+          <h3 style={{ textAlign: 'center', fontSize: '12px', letterSpacing: '4px', color: 'rgba(255,255,255,0.3)', marginBottom: '30px' }}>
+            {mode === 'study' ? 'IMPLEMENTATION SUITE' : mode === 'journey' ? 'COMPANIONS FOR THE PATH' : 'ACTION TOOLS'}
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {products.map((product, i) => (
+              <ProductCard key={i} product={product} mode={mode} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── SOCIETY INVITATION ─── */}
+      {report.societyInvitation && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          style={{
+            marginTop: '80px',
+            padding: '40px',
+            background: 'linear-gradient(135deg, rgba(53, 248, 255, 0.1), rgba(112, 0, 255, 0.1))',
+            border: '1px solid rgba(53, 248, 255, 0.2)',
+            borderRadius: '24px',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '20px' }}>👁️</div>
+          <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '20px', color: '#fff', marginBottom: '20px' }}>The Spiritual AI Society</h3>
+          <p style={{ 
+            fontSize: '18px', 
+            lineHeight: 1.8, 
+            color: 'rgba(255,255,255,0.8)', 
+            maxWidth: '600px', 
+            margin: '0 auto 30px',
+            whiteSpace: 'pre-line' 
+          }}>
+            {report.societyInvitation}
+          </p>
+          <button style={{
+            padding: '16px 40px',
+            background: 'linear-gradient(90deg, #35f8ff, #7000ff)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '9999px',
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: '12px',
+            fontWeight: 900,
+            letterSpacing: '2px',
+            cursor: 'pointer',
+            boxShadow: '0 10px 30px rgba(112, 0, 255, 0.3)'
+          }}>
+            JOIN THE SOCIETY — FREE FOR 7 DAYS
+          </button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+function PexelsImage({ query }: { query: string }) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`, {
+          headers: {
+            'Authorization': '563492ad6f91700001000001bc600600000000000000000000000000' // Using a placeholder key or env
+          }
+        });
+        const data = await res.json();
+        if (data.photos?.[0]) setImageUrl(data.photos[0].src.medium);
+      } catch (err) {
+        console.error('Pexels error:', err);
+      }
+    };
+    fetchImage();
+  }, [query]);
+
+  if (!imageUrl) return <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.05)' }} />;
+  return <img src={imageUrl} alt={query} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+}
+
+function ProductCard({ product, mode }: { product: Product; mode: string }) {
+  return (
+    <motion.div
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: `1px solid ${mode === 'study' ? '#00f2ff22' : '#ffffff11'}`,
+        padding: '0',
+        display: 'grid',
+        gridTemplateColumns: '180px 1fr auto',
+        gap: '0',
+        alignItems: 'stretch',
+        borderRadius: mode === 'journey' ? '16px' : '4px',
+        overflow: 'hidden'
+      }}
+    >
+      <div style={{ width: '180px', position: 'relative' }}>
+        <PexelsImage query={product.imageQuery || 'spiritual growth'} />
+      </div>
+      <div style={{ padding: '24px' }}>
+        <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          {product.formats.join(' • ')}
+        </p>
+        <h4 style={{ fontSize: '18px', color: '#fff', marginBottom: '8px' }}>{product.name}</h4>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', lineHeight: 1.5 }}>{product.whyYou}</p>
+      </div>
+      <div style={{ textAlign: 'right', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderLeft: '1px solid rgba(255,255,255,0.05)' }}>
+        <p style={{ fontSize: '24px', color: '#fff', marginBottom: '12px' }}>${product.price}</p>
+        <button style={{
+          padding: '10px 20px',
+          background: mode === 'study' ? '#00f2ff' : mode === 'action' ? '#ff3cf5' : '#7000ff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: '10px',
+          fontWeight: 700,
+          cursor: 'pointer',
+          whiteSpace: 'nowrap'
+        }}>
+          {product.ctaText}
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// SACRED LOADER
+// ============================================================
+
+function SacredLoader({ text, subtexts }: { text: string; subtexts?: string[] }) {
+  const [currentText, setCurrentText] = useState(text);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!subtexts?.length) return;
+    const interval = setInterval(() => {
+      setIndex(prev => {
+        const next = prev + 1;
+        if (next < subtexts.length) {
+          setCurrentText(subtexts[next]);
+          return next;
+        }
+        return prev;
+      });
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [subtexts]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '50px 20px', gap: '22px' }}>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+        style={{ fontSize: '44px', color: 'rgba(0,242,255,0.65)' }}
+      >
+        ✿
+      </motion.div>
+      <motion.p
+        key={currentText}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '9px', letterSpacing: '4px', color: 'rgba(0,242,255,0.48)', textTransform: 'uppercase' }}
+      >
+        {currentText}
+      </motion.p>
+    </div>
+  );
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function mergeSignals(
+  existing: UserState['mbtiSignals'],
+  newSignals: Partial<UserState['mbtiSignals']>
+): UserState['mbtiSignals'] {
+  const result = { ...existing };
+  for (const key of Object.keys(newSignals) as Array<keyof UserState['mbtiSignals']>) {
+    const ns = newSignals[key];
+    if (ns?.signal) {
+      if (!result[key].signal || ns.confidence > result[key].confidence) {
+        (result[key] as any) = { signal: ns.signal, confidence: Math.min((result[key].confidence || 0) + ns.confidence, 1.0) };
+      }
+    }
+  }
+  return result;
+}
+
+function getStaticQuizQuestions(): GeneratedQuestion[] {
+  return [
+    {
+      question: "After a demanding week, you naturally restore yourself by…",
+      contextLine: "This reveals how your mind recharges.",
+      mbtiDimension: 'E_I',
+      options: [
+        { text: 'Retreating into solitude and processing alone', subLabel: 'Internal Integration', mbtiSignal: 'I', patternSignal: '' },
+        { text: 'Connecting with others and sharing energy', subLabel: 'External Expansion', mbtiSignal: 'E', patternSignal: '' },
+      ],
+      allowFreeText: false,
+    },
+    {
+      question: "When facing a complex problem, you first look for…",
+      contextLine: "This shows how your mind naturally processes.",
+      mbtiDimension: 'N_S',
+      options: [
+        { text: 'The underlying pattern and what it means', subLabel: 'Abstract Architecture', mbtiSignal: 'N', patternSignal: '' },
+        { text: 'Concrete facts and practical applications', subLabel: 'Grounded Reality', mbtiSignal: 'S', patternSignal: '' },
+      ],
+      allowFreeText: false,
+    },
+    {
+      question: "When making a difficult decision affecting others, your core filter is…",
+      contextLine: "This reveals your decision-making architecture.",
+      mbtiDimension: 'T_F',
+      options: [
+        { text: 'Objective fairness and logical consistency', subLabel: "The Architect's Edge", mbtiSignal: 'T', patternSignal: '' },
+        { text: 'Human impact and relational harmony', subLabel: "The Empath's Compass", mbtiSignal: 'F', patternSignal: '' },
+      ],
+      allowFreeText: false,
+    },
+    {
+      question: "How do you prefer to navigate your life?",
+      contextLine: "This shows your natural life structure.",
+      mbtiDimension: 'J_P',
+      options: [
+        { text: 'Decisive structure with resolved plans', subLabel: 'Structured Command', mbtiSignal: 'J', patternSignal: '' },
+        { text: 'Fluid adaptability, keeping options open', subLabel: 'Fluid Adaptation', mbtiSignal: 'P', patternSignal: '' },
+      ],
+      allowFreeText: false,
+    },
+  ];
+}
+
+function getFallbackReport(mbtiType: string): ConsciousnessReport {
+  const profile = MBTI_PROFILES[mbtiType] || MBTI_PROFILES['INFP'];
+  return {
+    mbtiType,
+    mbtiName: profile.name,
+    archetype: profile.archetype,
+    corePattern: profile.corePattern,
+    rootCause: 'A pattern installed before conscious choice was possible.',
+    runningSince: 'Likely since early adolescence',
+    urgencyLevel: 'High — pattern is deepening',
+    urgencyPercent: 72,
+    spiritualPath: profile.spiritualPath,
+    dissolutionTime: '21 days with the right key',
+    validationParagraph: 'You are not the problem. You never were. What you\'ve been calling your weakness is an unmet depth that has never had the right container.',
+    realCauseParagraph: 'This pattern wasn\'t created by you. It was installed before you had the cognitive capacity to reject it. Between ages 8 and 16, your mind made a survival decision. That decision became automatic.',
+    loopExplanation: 'The pattern activates before you can catch it. That\'s not weakness — that\'s how unconscious patterns work. They run beneath the level where willpower reaches.',
+    loopNodes: ['Trigger', 'Pattern Activates', 'Short Relief', 'Long Cost', 'Repeat'],
+    activeNode: 'Pattern Activates',
+    pathName: profile.spiritualPath,
+    pathDescription: `For your ${mbtiType} architecture, the fastest path to dissolution uses ${profile.learningStyle.toLowerCase()}.`,
+    headlineText: "Here's what's <em>actually</em> happening.",
+    subText: 'Not the symptom. The source.',
+    summaryText: 'Your pattern is specific, named, and dissolvable. The tools that work for your architecture are different from generic solutions.',
+    ctaText: 'See Your Dissolution Path',
+  };
+}
+
+// ============================================================
+// SALES FUNNEL VIEW — THE CONVERSION ENGINE
+// ============================================================
+
+function SalesFunnelView({ report, userState, products }: { report: ConsciousnessReport; userState: UserState; products: Product[] }): any {
+  const [timeLeft, setTimeLeft] = useState(872); // 14:32 in seconds
+  
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(prev => prev > 0 ? prev - 1 : 0), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const rs = s % 60;
+    return \`\${m}:\${rs < 10 ? '0' : ''}\${rs}\`;
+  };
+
+  const analyzers = ['INTJ', 'INTP', 'ENTJ', 'ENTP'];
+  const isAnalyzer = analyzers.includes(report.mbtiType.toUpperCase());
+  const isMale = userState.gender === 'male';
+
+  return (
+    <div style={{ padding: '0 24px 120px', maxWidth: '800px', margin: '0 auto', color: '#fff' }}>
+      
+      {/* ─── 1. SOLUTION MECHANISM ─── */}
+      <motion.section 
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} 
+        style={{ marginBottom: '80px', textAlign: isAnalyzer ? 'left' : 'center' }}
+      >
+        <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: 'clamp(20px, 4vw, 32px)', marginBottom: '40px', lineHeight: 1.3 }}>
+          How {report.corePattern} actually breaks —<br/>and why most people never find out
+        </h2>
+
+        {isAnalyzer ? (
+          <div style={{ display: 'grid', gap: '24px' }}>
+            <MechanismStep step="1" title="IDENTIFY" text="Name the exact pattern — not the symptom. Most people treat anxiety. We treat the control addiction beneath the anxiety." />
+            <MechanismStep step="2" title="INTERRUPT" text="Create a pattern break at the subconscious level — not willpower. Willpower fights the pattern. This dissolves it." />
+            <MechanismStep step="3" title="REWIRE" text="Install a replacement pattern through spaced repetition. 21 days minimum. The AI tracks your consistency." />
+          </div>
+        ) : (
+          <div style={{ padding: '0 20px' }}>
+            <p style={{ fontSize: '22px', lineHeight: 1.8, fontStyle: 'italic', color: 'rgba(255,255,255,0.9)', marginBottom: '30px' }}>
+              "Imagine waking up one morning and realizing the voice that said 'you're too much' or 'not enough' has gone quiet."
+            </p>
+            <p style={{ fontSize: '18px', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)' }}>
+              Not because you fought it. Because you finally understood where it came from — and gave that part of you what it actually needed.
+            </p>
+          </div>
+        )}
+      </motion.section>
+
+      {/* ─── 2. PROMISE ─── */}
+      <div style={{ 
+        padding: '40px', background: 'rgba(0,242,255,0.05)', border: '1px solid rgba(0,242,255,0.2)', 
+        borderRadius: '16px', textAlign: 'center', marginBottom: '80px' 
+      }}>
+        <h3 style={{ fontSize: '24px', fontWeight: 400, lineHeight: 1.4 }}>
+          How to break your unconscious pattern <span style={{ color: '#00f2ff', fontWeight: 700 }}>without years of therapy</span> in 21 days of guided practice
+        </h3>
+      </div>
+
+      {/* ─── 3. SOCIAL PROOF ARC ─── */}
+      <section style={{ marginBottom: '100px' }}>
+        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', marginBottom: '40px', fontSize: '14px' }}>
+          People with your exact pattern — <span style={{ color: '#fff' }}>{report.corePattern}</span> — who used this system reported:
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
+          <ArcStep day="3" label="Awareness" text="First moment of pattern awareness" />
+          <ArcStep day="7" label="Interruption" text="First time catching it in real time" />
+          <ArcStep day="14" label="Dissolution" text="First week without the old reaction" />
+          <ArcStep day="21" label="Rewiring" text="New baseline established" />
+        </div>
+      </section>
+
+      {/* ─── 4. PRODUCT STACK ─── */}
+      <h2 style={{ textAlign: 'center', fontFamily: "'Orbitron', sans-serif", marginBottom: '40px', fontSize: '24px' }}>Your Pattern-Specific Transformation Kit</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '60px' }}>
+        {products.map((p, i) => (
+          <StackItem 
+            key={i}
+            imageQuery={p.imageQuery || 'spiritual'}
+            name={p.name}
+            format={p.formats.join(' + ')}
+            why={p.whyYou}
+            price={p.price}
+          />
+        ))}
+      </div>
+
+      {/* ─── 5. BUNDLE OFFER ─── */}
+      <div style={{ 
+        padding: '40px', background: 'linear-gradient(135deg, rgba(112,0,255,0.2), rgba(0,242,255,0.1))', 
+        border: '2px solid #7000ff', borderRadius: '24px', textAlign: 'center', marginBottom: '40px',
+        boxShadow: '0 0 50px rgba(112,0,255,0.2)'
+      }}>
+        <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '18px', letterSpacing: '2px', marginBottom: '20px' }}>THE COMPLETE PATTERN DISSOLUTION KIT</h3>
+        <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', textDecoration: 'line-through' }}>Individual value: \$197</div>
+        <div style={{ fontSize: '64px', fontWeight: 900, color: '#fff', margin: '10px 0', fontFamily: "'Orbitron', sans-serif" }}>\$67</div>
+        <div style={{ color: '#00f2ff', fontWeight: 700, marginBottom: '30px', fontSize: '18px' }}>You save \$130</div>
+        
+        <button style={{
+          width: '100%', padding: '24px', background: '#fff', color: '#000', border: 'none',
+          borderRadius: '12px', fontFamily: "'Orbitron', sans-serif", fontWeight: 900, cursor: 'pointer',
+          fontSize: '18px', boxShadow: '0 10px 40px rgba(255,255,255,0.2)', transition: 'transform 0.2s'
+        }}>
+          {isMale ? 'YES — START BREAKING IT TODAY' : 'YES — BEGIN MY RETURN'}
+        </button>
+        <p style={{ marginTop: '20px', fontSize: '12px', opacity: 0.5 }}>Instant access. All formats included. Works on any device.</p>
+      </div>
+
+      {/* ─── 6. SCARCITY & TIMER ─── */}
+      <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+        <div style={{ fontSize: '14px', color: '#ff3cf5', marginBottom: '12px', fontWeight: 700, letterSpacing: '1px' }}>
+          ⚠️ THIS PRICE IS LOCKED TO YOUR SESSION ONLY.
+        </div>
+        <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '22px', color: 'rgba(255,255,255,0.4)' }}>
+          ⏱ YOUR SESSION: <span style={{ color: '#fff' }}>{formatTime(timeLeft)}</span> REMAINING
+        </div>
+      </div>
+
+      {/* ─── 7. BONUSES ─── */}
+      <h2 style={{ textAlign: 'center', fontFamily: "'Orbitron', sans-serif", marginBottom: '40px', fontSize: '24px' }}>Everything included in your kit today</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '80px' }}>
+        <BonusCard title="The Shadow Pattern Map" value="37" desc="A visual map of all 7 unconscious patterns — and the exact order to dissolve them." />
+        <BonusCard title={\`The \${report.mbtiType} Path Guide\`} value="27" desc="Your specific type's fastest path to consciousness explained in your mind's language." />
+        <BonusCard title="Morning Pattern Reset" value="17" desc="7-minute morning audio that interrupts the pattern before it runs." />
+      </div>
+
+      {/* ─── 8. GUARANTEE ─── */}
+      <div style={{ 
+        padding: '60px 40px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', 
+        textAlign: 'center', position: 'relative', marginBottom: '100px',
+        background: 'rgba(255,255,255,0.01)'
+      }}>
+        <div style={{ fontSize: '48px', marginBottom: '30px' }}>🛡️</div>
+        <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '16px', letterSpacing: '4px', marginBottom: '30px', color: '#00f2ff' }}>THE SPIRITUAL AI PROMISE</h3>
+        <p style={{ fontSize: '18px', lineHeight: 1.8, color: 'rgba(255,255,255,0.8)', fontStyle: 'italic', maxWidth: '600px', margin: '0 auto' }}>
+          "If after 21 days of genuine practice you haven't noticed a single shift in your pattern — not a transformation, just a single moment of clarity you didn't have before — we return every rupee. No questions. One message is enough."
+        </p>
+      </div>
+
+      {/* ─── 9. FINAL URGENCY ─── */}
+      <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.3)', padding: '60px 20px', borderRadius: '32px' }}>
+        <p style={{ fontSize: '20px', color: 'rgba(255,255,255,0.6)', marginBottom: '40px', lineHeight: 1.6 }}>
+          Still reading? The pattern you're here to break shows up as hesitation at moments exactly like this. That noticing? <span style={{ color: '#fff' }}>That's the beginning of the break.</span>
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px', margin: '0 auto' }}>
+          <button style={{ padding: '22px', background: '#7000ff', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 900, cursor: 'pointer', fontFamily: "'Orbitron', sans-serif", fontSize: '14px' }}>
+            OPTION 1: THE COMPLETE KIT — \$67
+          </button>
+          <button style={{ padding: '18px', background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '12px', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
+            OPTION 2: START SIMPLE — \$27
+          </button>
+          <p style={{ marginTop: '30px', fontSize: '13px', opacity: 0.4 }}>
+            8,247 people decoded their pattern here. The ones still stuck? They closed the page.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+function MechanismStep({ step, title, text }: { step: string; title: string; text: string }) {
+  return (
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '24px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
+      <div style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #00f2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', color: '#00f2ff', flexShrink: 0, fontWeight: 900 }}>{step}</div>
+      <div>
+        <h4 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '14px', letterSpacing: '2px', color: '#00f2ff', marginBottom: '8px' }}>{title}</h4>
+        <p style={{ fontSize: '15px', lineHeight: 1.6, color: 'rgba(255,255,255,0.7)' }}>{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function ArcStep({ day, label, text }: { day: string; label: string; text: string }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '24px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ color: '#00f2ff', fontSize: '12px', marginBottom: '8px', fontFamily: "'Orbitron', sans-serif" }}>Day {day}</div>
+      <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '8px', color: '#fff' }}>{label}</div>
+      <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{text}</p>
+    </div>
+  );
+}
+
+function StackItem({ imageQuery, name, format, why, price }: { imageQuery: string; name: string; format: string; why: string; price: number }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr auto', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', overflow: 'hidden' }}>
+      <div style={{ height: '160px' }}><PexelsImage query={imageQuery} /></div>
+      <div style={{ padding: '24px' }}>
+        <div style={{ fontSize: '10px', color: '#00f2ff', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '1px', fontWeight: 700 }}>{format}</div>
+        <h4 style={{ fontSize: '19px', marginBottom: '8px', color: '#fff' }}>{name}</h4>
+        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, fontStyle: 'italic' }}>{why}</p>
+      </div>
+      <div style={{ padding: '24px', display: 'flex', alignItems: 'center', borderLeft: '1px solid rgba(255,255,255,0.05)', fontSize: '24px', fontWeight: 700, color: '#fff' }}>\${price}</div>
+    </div>
+  );
+}
+
+function BonusCard({ title, value, desc }: { title: string; value: string; desc: string }) {
+  return (
+    <div style={{ padding: '30px', background: 'rgba(0,242,255,0.03)', border: '1px solid rgba(0,242,255,0.15)', borderRadius: '16px', position: 'relative' }}>
+      <div style={{ fontSize: '10px', color: '#00f2ff', marginBottom: '15px', fontWeight: 900, letterSpacing: '1px' }}>VALUE \${value} — YOURS FREE</div>
+      <h4 style={{ fontSize: '18px', marginBottom: '12px', color: '#fff', fontFamily: "'Orbitron', sans-serif" }}>{title}</h4>
+      <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{desc}</p>
+    </div>
+  );
+}
+
+

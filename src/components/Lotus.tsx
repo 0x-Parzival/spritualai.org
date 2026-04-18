@@ -1,150 +1,413 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Lotus.module.css';
 
-export default function Lotus({ forceClose }: { forceClose?: boolean }) {
-    const [closed, setClosed] = useState(false);
-    const [isBursting, setIsBursting] = useState(false);
-    const [isBubbleVisible, setIsBubbleVisible] = useState(true);
-    const [isHovered, setIsHovered] = useState(false);
+interface LotusProps {
+    quizMode?: boolean;
+    lotusOffset?: number;
+}
+
+const RINGS_CONFIG = [
+    { cls: 'r1', count: 12 },
+    { cls: 'r2', count: 10 },
+    { cls: 'r3', count: 9 },
+];
+
+const PETAL_PATH = 'M0,100 C0,66.6666667 12,33.3333333 36,0 C60,33.3333333 72,66.6666667 72,100 C72,133.333333 60,166.666667 36,200 C12,166.666667 0,133.333333 0,100 Z';
+
+export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps) {
     const router = useRouter();
+    const [closed, setClosed] = useState(false);
+    const [isBubbleVisible, setIsBubbleVisible] = useState(false);
+    const [hintFade, setHintFade] = useState(false);
+    
+    // Refs for animation values (high frequency updates)
+    const containerRef = useRef<HTMLDivElement>(null);
+    const lotusWrapRef = useRef<HTMLDivElement>(null);
+    const coreRef = useRef<HTMLDivElement>(null);
+    const shimRef = useRef<HTMLDivElement>(null);
+    const shim2Ref = useRef<HTMLDivElement>(null);
+    const ring1Ref = useRef<HTMLDivElement>(null);
+    const ring2Ref = useRef<HTMLDivElement>(null);
+    const hintRef = useRef<HTMLDivElement>(null);
+    
+    const petalsRef = useRef<any[]>([]);
+    const stateRef = useRef({
+        spinAngle: 0,
+        aliveTime: 0,
+        bPhase: 0,
+        gPhase: Math.random() * Math.PI * 2,
+        proximity: 0,
+        awareness: 0,
+        mousePos: { x: 0, y: 0 },
+        thoughtTimer: 2000 + Math.random() * 4500,
+        globalTimer: 4000 + Math.random() * 6000,
+        lastTs: 0,
+        shimBusy: false,
+        shim2Busy: false
+    });
 
-    React.useEffect(() => {
-        if (typeof forceClose === 'boolean') {
-            setClosed(forceClose);
-        }
-    }, [forceClose]);
-
-    React.useEffect(() => {
-        const handleGlobalClick = () => {
-            if (isBubbleVisible && !isBursting) {
-                setIsBursting(true);
-                // Animation duration should match CSS
-                setTimeout(() => {
-                    setIsBubbleVisible(false);
-                    setIsBursting(false);
-                }, 500);
-            }
-        };
-
-        if (isBubbleVisible) {
-            window.addEventListener('click', handleGlobalClick);
-        }
-        return () => window.removeEventListener('click', handleGlobalClick);
-    }, [isBubbleVisible, isBursting]);
-
-    React.useEffect(() => {
-        const lotusWrap = document.getElementById('lotus');
-        if (!lotusWrap) return;
-
-        let requestId: number;
-        const handleScroll = () => {
-            requestId = requestAnimationFrame(() => {
-                const sy = window.scrollY;
-                // Rotate immediately upon scroll
-                const deg = sy * 0.15;
-                // PRESERVE rotateX(70deg)
-                lotusWrap.style.transform = `rotateX(70deg) rotateZ(${deg}deg)`;
-            });
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-
+    useEffect(() => {
+        const hintTimer = setTimeout(() => setHintFade(true), 7000);
+        const bubbleTimer = setTimeout(() => setIsBubbleVisible(true), 33000);
         return () => {
-            window.removeEventListener('scroll', handleScroll);
-            cancelAnimationFrame(requestId);
+            clearTimeout(hintTimer);
+            clearTimeout(bubbleTimer);
         };
     }, []);
 
-    const toggle = () => {
-        router.push('/lotus-god');
+    // Math helpers
+    const breathNoise = (t: number) => Math.sin(t) * 0.50 + Math.sin(t * 1.73) * 0.30 + Math.sin(t * 3.11) * 0.20;
+    const heartbeat = (t: number) => 0.60 + Math.sin(t * 1.30) * 0.22 + Math.sin(t * 2.93 + 1.10) * 0.12 + Math.sin(t * 5.27 + 2.30) * 0.06;
+
+    const emitRipple = (big = true) => {
+        const s = stateRef.current;
+        if (big && s.shimBusy) return;
+        if (!big && s.shim2Busy) return;
+        if (big) s.shimBusy = true; else s.shim2Busy = true;
+        
+        const el = big ? shimRef.current : shim2Ref.current;
+        if (!el) return;
+
+        const dur = big ? 2200 : 1500;
+        const sc = big ? 24 : 13;
+        
+        el.style.transition = 'none';
+        el.style.opacity = big ? '0.85' : '0.55';
+        el.style.transform = 'translate(-50%,-50%) scale(1)';
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                el.style.transition = `transform ${dur}ms cubic-bezier(0,.5,.4,1), opacity ${dur}ms ease-out`;
+                el.style.transform = `translate(-50%,-50%) scale(${sc})`;
+                el.style.opacity = '0';
+                setTimeout(() => { if (big) s.shimBusy = false; else s.shim2Busy = false; }, dur + 100);
+            });
+        });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            toggle();
+    const triggerWave = (originIdx: number, magnitude = 1.0) => {
+        const total = petalsRef.current.length;
+        petalsRef.current.forEach((p, i) => {
+            const dist = Math.min(Math.abs(i - originIdx), total - Math.abs(i - originIdx));
+            setTimeout(() => {
+                if (p) p.waveLift = Math.max(p.waveLift, magnitude * (1 - dist / (total * 0.5)));
+            }, dist * 55);
+        });
+    };
+
+    const startPetalEvent = (p: any) => {
+        const roll = Math.random();
+        if (roll < 0.25) { p.eventType = 'flutter'; p.eventDur = 500 + Math.random() * 700; p.eventMag = 3 + Math.random() * 5; }
+        else if (roll < 0.48) { p.eventType = 'surge'; p.eventDur = 1100 + Math.random() * 900; p.eventMag = 1; }
+        else if (roll < 0.66) { p.eventType = 'shy'; p.eventDur = 800 + Math.random() * 600; p.eventMag = 1; }
+        else if (roll < 0.82) { p.eventType = 'spiral'; p.eventDur = 1500 + Math.random() * 1000; p.eventMag = 1; }
+        else { p.eventType = 'breathhold'; p.eventDur = 350 + Math.random() * 500; p.eventMag = 1; }
+        p.eventT = 0;
+    };
+
+    const petalEventDelta = (p: any) => {
+        const t = p.eventT;
+        const bell = Math.sin(t * Math.PI);
+        switch (p.eventType) {
+            case 'flutter': return Math.sin(t * Math.PI * 16) * p.eventMag * (1 - t) * (1 - t);
+            case 'surge': return bell * 14;
+            case 'shy': return -bell * 8;
+            case 'spiral': return Math.sin(t * Math.PI * 4) * bell * 6;
+            case 'breathhold': return (t < 0.4 ? t / 0.4 : 1 - (t - 0.4) / 0.6) * 3;
+            default: return 0;
         }
     };
 
-    const ringsConfig = [
-        { cls: styles.r1, count: 12 },
-        { cls: styles.r2, count: 10 },
-        { cls: styles.r3, count: 9 },
-    ];
+    const triggerGlobalEvent = () => {
+        const roll = Math.random();
+        const petals = petalsRef.current;
+        if (roll < 0.35) {
+            triggerWave(Math.floor(Math.random() * petals.length), 0.7 + Math.random() * 0.4);
+            emitRipple(true);
+        } else if (roll < 0.60) {
+            emitRipple(true);
+            setTimeout(() => emitRipple(false), 280);
+        } else if (roll < 0.80) {
+            petals.forEach(p => { if (p) p.waveLift = 0.6 + Math.random() * 0.4; });
+            setTimeout(() => emitRipple(false), 200);
+        } else {
+            const picks = [...petals].sort(() => 0.5 - Math.random()).slice(0, 3 + Math.floor(Math.random() * 3));
+            picks.forEach((p, i) => setTimeout(() => {
+                if (p) { p.eventType = 'flutter'; p.eventDur = 600; p.eventMag = 4; p.eventT = 0; }
+            }, i * 180));
+        }
+        stateRef.current.globalTimer = 3500 + Math.random() * 7000;
+    };
 
-    // CSS variables for neon colors defined here to apply to the SVG defs and component
+    const toggle = (e: React.MouseEvent | React.KeyboardEvent) => {
+        e.stopPropagation();
+        setClosed(!closed);
+        const s = stateRef.current;
+        if (coreRef.current) {
+            coreRef.current.style.boxShadow = !closed
+                ? '0 0 8px rgba(255,60,245,.2), 0 0 10px rgba(53,248,255,.15)'
+                : '0 0 55px rgba(255,60,245,.95), 0 0 65px rgba(53,248,255,.8)';
+            setTimeout(() => { if (coreRef.current) coreRef.current.style.boxShadow = ''; }, 750);
+        }
+        if (closed) { // If it was closed and we are opening it
+            setTimeout(() => emitRipple(true), 400);
+            setTimeout(() => triggerGlobalEvent(), 900);
+            setTimeout(() => triggerWave(0, 1.0), 1200);
+        } else {
+            // Navigate if clicked when open
+            router.push('/lotus-god');
+        }
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            const r = containerRef.current?.getBoundingClientRect();
+            if (!r) return;
+            const cx = r.left + r.width / 2;
+            const cy = r.top + r.height / 2;
+            stateRef.current.proximity = Math.max(0, 1 - Math.hypot(e.clientX - cx, e.clientY - cy) / 300);
+            stateRef.current.mousePos = { 
+                x: (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2),
+                y: (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2)
+            };
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+    useEffect(() => {
+        let frameId: number;
+        const s = stateRef.current;
+
+        const loop = (ts: number) => {
+            if (!s.lastTs) s.lastTs = ts;
+            const dt = Math.min(ts - s.lastTs, 50);
+            s.lastTs = ts;
+            s.aliveTime += dt;
+
+            // Breath
+            s.bPhase += (0.00060 + 0.00009 * Math.sin(s.aliveTime * 0.00016)) * dt;
+            const breathVal = breathNoise(s.bPhase);
+            const breathScale = 1 + breathVal * 0.022;
+
+            // Awareness
+            s.awareness += (s.proximity - s.awareness) * 0.04;
+            if (ring1Ref.current) ring1Ref.current.classList.toggle(styles.alive, s.awareness > 0.18);
+            if (ring2Ref.current) ring2Ref.current.classList.toggle(styles.alive, s.awareness > 0.18);
+
+            // Spin & Dynamic Tilt
+            s.spinAngle += (0.006 + s.awareness * 0.003) * dt * 0.06;
+            const baseTiltX = 70 - s.awareness * 5;
+            const cursorTiltX = baseTiltX + (s.mousePos.y * 4); // Halved sensitivity
+            const cursorTiltY = s.mousePos.x * 6; // Halved sensitivity
+
+            if (lotusWrapRef.current) {
+                lotusWrapRef.current.style.transform = `rotateX(${cursorTiltX}deg) rotateY(${cursorTiltY}deg) rotateZ(${s.spinAngle}deg)`;
+            }
+
+            // Core Heartbeat
+            s.gPhase += 0.0013 * dt;
+            const gv = heartbeat(s.gPhase);
+            const gb = s.awareness * 14;
+            if (coreRef.current) {
+                coreRef.current.style.boxShadow =
+                    `0 0 ${(14 + gv * 11 + gb).toFixed(1)}px rgba(255,60,245,${(0.28 + gv * 0.28).toFixed(2)}),` +
+                    `0 0 ${(18 + gv * 14 + gb).toFixed(1)}px rgba(53,248,255,${(0.22 + gv * 0.22).toFixed(2)})`;
+                coreRef.current.style.transform = `translate(-50%,-50%) scale(${(1 + gv * 0.09 + s.awareness * 0.12).toFixed(4)})`;
+            }
+
+            // Thought ripple
+            s.thoughtTimer -= dt;
+            if (s.thoughtTimer <= 0) {
+                emitRipple(Math.random() > 0.45);
+                s.thoughtTimer = 2500 + Math.random() * 5500;
+            }
+
+            // Global event
+            s.globalTimer -= dt;
+            if (s.globalTimer <= 0) triggerGlobalEvent();
+
+            // Petals
+            petalsRef.current.forEach(p => {
+                if (!p) return;
+                p.trembleTimer -= dt;
+                if (p.trembleTimer <= 0) {
+                    p.trembleGoal = (Math.random() - 0.5) * 4.2;
+                    p.trembleTimer = 500 + Math.random() * 3200;
+                }
+                p.tremble += (p.trembleGoal - p.tremble) * 0.030;
+                p.trembleGoal *= 0.993;
+                p.hoverLift += (p.hoverGoal - p.hoverLift) * 0.10;
+                p.waveLift *= 0.91;
+                p.eventTimer -= dt;
+                let evDelta = 0;
+                if (p.eventType) {
+                    p.eventT += dt / p.eventDur;
+                    if (p.eventT >= 1) {
+                        p.eventType = null;
+                        p.eventTimer = 800 + Math.random() * 7000;
+                    } else {
+                        evDelta = petalEventDelta(p);
+                    }
+                } else if (p.eventTimer <= 0) {
+                    startPetalEvent(p);
+                }
+
+                const ps = breathScale + Math.sin(s.bPhase + p.phase) * 0.008;
+                const extraX = p.hoverLift * 9 + p.waveLift * 13 + evDelta;
+                const trZ = p.tremble.toFixed(3);
+                const isOpen = closed ? 0 : 1;
+
+                p.el.style.transform =
+                    `translate(-50%,-50%)` +
+                    ` rotateZ(calc(${p.baseAngle}deg + ${trZ}deg))` +
+                    ` rotateX(calc(var(--baseX) * ${isOpen} + ${extraX.toFixed(3)}deg))` +
+                    ` rotateY(calc(var(--baseY) * ${isOpen}))` +
+                    ` scaleX(${ps.toFixed(4)})`;
+
+                const svgTiltBase = `rotateX(calc(var(--svgTilt) * (1 - ${isOpen})))`;
+                const svgScale = 1 + p.hoverLift * 0.09;
+                p.svg.style.transform = `${svgTiltBase} scale(${svgScale.toFixed(4)})`;
+            });
+
+            frameId = requestAnimationFrame(loop);
+        };
+
+        frameId = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(frameId);
+    }, [closed]);
+
     const cssVars = {
-        '--bg1': '#070812',
-        '--bg2': '#0b1022',
-        '--neon1': '#ff3cf5',
-        '--neon2': '#35f8ff',
-        '--neon3': '#b8ff5a',
-        '--speed': '1800ms',
+        '--lotus-offset': `${lotusOffset}px`,
+        '--speed': '1800ms'
     } as React.CSSProperties;
 
     return (
-        <div style={cssVars} className={styles.stage}>
-            {/* hidden gradient defs */}
+        <div style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease' }} className={styles.stage} ref={containerRef}>
+            <div className={styles.lightWash}></div>
             <svg width="0" height="0" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
                 <defs>
                     <radialGradient id="neonGrad" cx="50%" cy="10%" r="110%">
                         <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
-                        <stop offset="35%" stopColor="var(--neon2)" stopOpacity="0.55" />
-                        <stop offset="70%" stopColor="var(--neon1)" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="var(--neon3)" stopOpacity="0.25" />
+                        <stop offset="35%" stopColor="#35f8ff" stopOpacity="0.55" />
+                        <stop offset="70%" stopColor="#ff3cf5" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#ff3cf5" stopOpacity="0" />
+                    </radialGradient>
+                    <radialGradient id="neonGradHot" cx="50%" cy="10%" r="110%">
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                        <stop offset="35%" stopColor="#35f8ff" stopOpacity="0.85" />
+                        <stop offset="70%" stopColor="#ff3cf5" stopOpacity="0.75" />
+                        <stop offset="100%" stopColor="#ff3cf5" stopOpacity="0.2" />
                     </radialGradient>
                 </defs>
             </svg>
 
-            <div
-                className={`${styles.lotusWrap} ${closed ? styles.closed : ''} ${isHovered ? styles.hovered : ''}`}
-                id="lotus"
+            <div className={`${styles.awarenessRing} ${styles.a1}`} ref={ring1Ref}></div>
+            <div className={`${styles.awarenessRing} ${styles.a2}`} ref={ring2Ref}></div>
+
+            <div 
+                className={`${styles.lotusWrap} ${closed ? styles.closed : ''}`} 
+                ref={lotusWrapRef} 
+                onClick={toggle}
                 tabIndex={0}
                 role="button"
                 aria-label="Toggle lotus bloom"
-                onClick={toggle}
-                onKeyDown={handleKeyDown}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggle(e);
+                    }
+                }}
             >
-                <div className={styles.core}></div>
-                <div className={styles.lotus} id="lotusRings">
-                    {ringsConfig.map((ring, rIndex) => {
+                <div className={styles.core} ref={coreRef}></div>
+                <div className={styles.shimmer} ref={shimRef}></div>
+                <div className={styles.shimmer2} ref={shim2Ref}></div>
+                <div className={styles.lotus}>
+                    {RINGS_CONFIG.map((ring, rIndex) => {
                         const step = 360 / ring.count;
                         return (
-                            <ul key={rIndex} className={`${styles.ring} ${ring.cls}`}>
+                            <ul key={rIndex} className={`${styles.ring} ${styles[ring.cls]}`}>
                                 {Array.from({ length: ring.count }).map((_, i) => {
-                                    const rz = (i + 1) * step;
+                                    const baseAngle = (i + 1) * step;
                                     return (
-                                        <li
-                                            key={i}
+                                        <li 
+                                            key={i} 
                                             className={styles.petal}
-                                            style={{ '--rz': `${rz}deg` } as React.CSSProperties}
+                                            ref={(el) => {
+                                                if (el) {
+                                                    const existing = petalsRef.current.find(p => p.el === el);
+                                                    if (!existing) {
+                                                        const svg = el.querySelector('svg');
+                                                        const path = el.querySelector('path');
+                                                        petalsRef.current.push({
+                                                            el,
+                                                            svg,
+                                                            path,
+                                                            baseAngle,
+                                                            phase: Math.random() * Math.PI * 2,
+                                                            tremble: 0,
+                                                            trembleGoal: 0,
+                                                            trembleTimer: 400 + Math.random() * 3000,
+                                                            hoverLift: 0,
+                                                            hoverGoal: 0,
+                                                            hovered: false,
+                                                            waveLift: 0,
+                                                            eventTimer: 800 + i * 120 + Math.random() * 5000,
+                                                            eventType: null,
+                                                            eventT: 0,
+                                                            eventDur: 0,
+                                                            eventMag: 0
+                                                        });
+                                                    }
+                                                }
+                                            }}
                                         >
-                                            <svg className={styles.petalSvg} viewBox="0 0 72 200" aria-hidden="true">
-                                                <path
-                                                    className={styles.petalPath}
-                                                    d="M0,100 C0,66.6666667 12,33.3333333 36,0
-                             C60,33.3333333 72,66.6666667 72,100
-                             C72,133.333333 60,166.666667 36,200
-                             C12,166.666667 0,133.333333 0,100 Z"
-                                                ></path>
+                                            <svg 
+                                                className={styles.petalSvg} 
+                                                viewBox="0 0 72 200" 
+                                                aria-hidden="true"
+                                                onMouseEnter={(e) => {
+                                                    const p = petalsRef.current.find(petal => petal.svg === e.currentTarget);
+                                                    if (p && !p.hovered) {
+                                                        p.hovered = true;
+                                                        p.hoverGoal = 1;
+                                                        p.svg.classList.add(styles.hovered);
+                                                        p.path.setAttribute('fill', 'url(#neonGradHot)');
+                                                        emitRipple(false);
+                                                        triggerWave(petalsRef.current.indexOf(p), 0.4);
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    const p = petalsRef.current.find(petal => petal.svg === e.currentTarget);
+                                                    if (p) {
+                                                        p.hovered = false;
+                                                        p.hoverGoal = 0;
+                                                        p.svg.classList.remove(styles.hovered);
+                                                        p.path.setAttribute('fill', 'url(#neonGrad)');
+                                                    }
+                                                }}
+                                            >
+                                                <path className={styles.petalPath} d={PETAL_PATH}></path>
                                             </svg>
                                         </li>
                                     );
                                 })}
                             </ul>
                         );
-                    })}
-                </div>
-            </div>
+                        })}
+                        </div>
+                        </div>
 
-            <div className={styles.stemContainer}>
-                <svg className={styles.stemSvg} preserveAspectRatio="none" viewBox="0 0 200 1000">
+                        {isBubbleVisible && (
+                            <div className={`${styles.lotusMessage} ${styles.readyToBurst}`}>
+                                <p><strong>The lotus holds a secret.</strong></p>
+                                <p>Those who seek, find.</p>
+                            </div>
+                        )}
+                        <div className={styles.stemContainer}>                <svg className={styles.stemSvg} preserveAspectRatio="none" viewBox="0 0 200 1000">
                     <defs>
                         <filter id="stemWater" x="-50%" y="-10%" width="200%" height="120%">
                             <feTurbulence type="fractalNoise" baseFrequency="0.05 0.1" numOctaves="2" result="noise">
@@ -153,7 +416,6 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
                             <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" />
                         </filter>
                     </defs>
-                    {/* Programmatic-looking wavy path */}
                     <path
                         d="M 100,0 C 115,50 85,100 100,150 S 115,250 100,300 S 85,400 100,450 S 115,550 100,600 S 85,700 100,750 S 115,850 100,900 S 85,950 100,1000"
                         className={styles.stemLine}
@@ -163,13 +425,9 @@ export default function Lotus({ forceClose }: { forceClose?: boolean }) {
                 </svg>
             </div>
 
-            {isBubbleVisible && (
-                <div className={`${styles.lotusSubtext} ${isBursting ? styles.bursting : styles.readyToBurst}`}>
-                    <p>Enter Through Intention</p>
-                    <p>A short guided ritual to activate your blueprint.</p>
-                    <p>Those who complete it unlock a private insight.</p>
-                </div>
-            )}
+            <div className={`${styles.hint} ${hintFade ? styles.fade : ''}`} ref={hintRef}>
+                Hover a petal &nbsp;·&nbsp; Click to open &nbsp;·&nbsp; Feel it breathe
+            </div>
         </div>
     );
 }

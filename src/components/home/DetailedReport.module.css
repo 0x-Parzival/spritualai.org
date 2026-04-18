@@ -1,0 +1,230 @@
+.reportContainer {
+    width: 100%;
+    min-height: 100vh;
+    padding: 120px 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+}
+
+.reportContent {
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 60px;
+}
+
+.reportHeader {
+    width: 100%;
+    margin-bottom: 80px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 40px;
+}
+
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.blueprintTitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    letter-spacing: 8px;
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.metadataRow {
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: #00f2ff;
+    letter-spacing: 3px;
+}
+
+.urgencySection {
+    text-align: right;
+}
+
+.urgencyLabel {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+}
+
+.urgencyBar {
+    width: 250px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.urgencyFill {
+    height: 100%;
+    background: #ff00ea;
+    box-shadow: 0 0 20px #ff00ea;
+}
+
+.sectionsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    width: 100%;
+}
+
+.textSection {
+    margin-bottom: 100px;
+}
+
+.smallHeading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 5px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.smallHeading::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.pretextBody {
+    color: #fff;
+    font-weight: 300;
+}
+
+.fullWidthSection {
+    grid-column: 1 / -1;
+    margin: 60px 0;
+}
+
+.loopVisual {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.loopItem {
+    text-align: center;
+    flex: 1;
+}
+
+.loopLabel {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    color: #00f2ff;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.loopValue {
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.loopArrow {
+    font-size: 2rem;
+    color: #ff00ea;
+    padding: 0 20px;
+}
+
+.productsHeader {
+    text-align: center;
+    margin: 120px 0 60px;
+}
+
+.productsTitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 10px;
+    color: #fff;
+}
+
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    width: 100%;
+}
+
+.productCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    transition: all 0.4s ease;
+}
+
+.productCard:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #00f2ff;
+    transform: translateY(-10px);
+}
+
+.prodName {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.prodPrice {
+    font-size: 1.5rem;
+    color: #ff00ea;
+    margin-bottom: 30px;
+}
+
+.prodCta {
+    width: 100%;
+    padding: 15px;
+    background: #fff;
+    color: #000;
+    border: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 1024px) {
+    .sectionsGrid {
+        grid-template-columns: 1fr;
+    }
+    .reportContent {
+        padding: 0 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .headerTop {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+    .loopVisual {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .loopArrow {
+        transform: rotate(90deg);
+    }
+    .productsGrid {
+        grid-template-columns: 1fr;
+    }
+}

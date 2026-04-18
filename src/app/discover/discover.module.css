@@ -9,7 +9,9 @@
     overflow: hidden;
 }
 
-/* Intro Screen */
+@import '../antigravity.css';
+
+/* ── BASE CONTAINER (PRESERVED) ── */
 .intro {
     max-width: 600px;
     text-align: center;
@@ -422,4 +424,62 @@
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.4);
     color: white;
+}
+
+/* ── ANTIGRAVITY OPTION HOVER (Pages 5-6) ── */
+.option.quizOptionHover {
+    transition:
+        transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1),
+        box-shadow 0.4s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+.option.quizOptionHover:hover {
+    transform: translateY(-12px) rotateX(2deg);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(124, 77, 255, 0.15),
+        0 0 60px rgba(0, 242, 255, 0.05),
+        inset 0 0 50px rgba(255, 255, 255, 0.04);
+    border-color: rgba(0, 242, 255, 0.35);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.beginButton.antigravHover {
+    transition:
+        transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+        box-shadow 0.4s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+.beginButton.antigravHover:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow:
+        0 15px 40px rgba(0, 229, 255, 0.25),
+        0 0 30px rgba(6, 182, 212, 0.15);
+    border-color: rgba(6, 182, 212, 0.9);
+    background: rgba(6, 182, 212, 0.1);
+}
+
+/* ── INTRO ENTRY ANIMATION ── */
+.intro {
+    animation: entryRise 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.intro > * {
+    opacity: 0;
+    animation: entryRise 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.intro > *:nth-child(1) { animation-delay: 0.1s; }
+.intro > *:nth-child(2) { animation-delay: 0.25s; }
+.intro > *:nth-child(3) { animation-delay: 0.4s; }
+.intro > *:nth-child(4) { animation-delay: 0.55s; }
+.intro > *:nth-child(5) { animation-delay: 0.7s; }
+
+/* ── QUESTION CARD LEVITATION ── */
+.questionContainer {
+    animation: entryRise 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }

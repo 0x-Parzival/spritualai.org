@@ -1,0 +1,432 @@
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  z-index: 200;
+}
+
+.blueprintCard {
+  max-width: 1400px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(30px);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 60px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 242, 255, 0.05) inset;
+  transition: filter 0.8s ease;
+}
+
+@media (max-width: 1440px) {
+  .blueprintCard {
+    max-width: 95%;
+  }
+}
+
+.blurred {
+  filter: blur(40px) grayscale(0.5);
+  pointer-events: none;
+  user-select: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.originBadge {
+  display: inline-block;
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.6rem;
+  color: #00f2ff;
+  border: 1px solid rgba(0, 242, 255, 0.3);
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+.title {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  line-height: 1.2;
+  margin-bottom: 10px;
+  background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.7));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.architecture {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.patternName {
+  margin-top: 15px;
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 1px;
+}
+
+.patternName span {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-color: rgba(0, 242, 255, 0.3);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.sectionTitle {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.9rem;
+  color: #00f2ff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+
+.sectionBody {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 300;
+}
+
+.sectionBody p {
+  margin-bottom: 1rem;
+}
+
+.sectionDivider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  margin-top: 15px;
+}
+
+.futureEchoBox {
+  margin-top: 40px;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(0, 242, 255, 0.05), transparent);
+  border-radius: 25px;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.futureEchoBox::before {
+  content: "2033";
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  font-size: 6rem;
+  font-family: var(--font-orbitron), sans-serif;
+  color: rgba(0, 242, 255, 0.03);
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.echoTitle {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 1rem;
+  color: #00f2ff;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+.echoContent {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #fff;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.footer {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.csnBox {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 15px;
+}
+
+.csnLabel {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.csnValue {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.verifyLink {
+  font-size: 0.75rem;
+  color: #00f2ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 242, 255, 0.3);
+  padding-bottom: 2px;
+  transition: all 0.3s ease;
+}
+
+.verifyLink:hover {
+  border-bottom-color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+}
+
+.shareCardContainer {
+  margin: 40px 0;
+  perspective: 1000px;
+}
+
+.shareCard {
+  background: linear-gradient(135deg, #0a0a14 0%, #1a1a2e 100%);
+  border: 1px solid rgba(53, 248, 255, 0.3);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.shareCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(53, 248, 255, 0.1), transparent 70%);
+  pointer-events: none;
+}
+
+.shareCSNLabel {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 0.7rem;
+  color: #35f8ff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.shareCSNValue {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(53, 248, 255, 0.3);
+}
+
+.shareIdentity {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.shareSubtext {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 30px;
+}
+
+.shareActions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.shareBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.shareBtn:hover {
+  background: rgba(53, 248, 255, 0.1);
+  border-color: #35f8ff;
+  transform: translateY(-2px);
+}
+
+.solutionsBtn {
+  width: 100%;
+  padding: 18px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+.solutionsBtn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+}
+
+/* REVENUE LAYERS */
+.revenueGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 60px;
+  width: 100%;
+}
+
+.productCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(53, 248, 255, 0.2);
+  border-radius: 24px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.productCard:hover {
+  transform: translateY(-10px);
+  border-color: rgba(53, 248, 255, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.premiumBadge {
+  position: absolute;
+  top: 20px;
+  right: -30px;
+  background: #35f8ff;
+  color: #000;
+  padding: 5px 40px;
+  font-size: 0.6rem;
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: 700;
+  transform: rotate(45deg);
+  letter-spacing: 1px;
+}
+
+.productTitle {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.productPrice {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #35f8ff;
+  margin-bottom: 20px;
+}
+
+.productPrice span {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px;
+  flex-grow: 1;
+}
+
+.featureItem {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.featureItem::before {
+  content: "→";
+  color: #35f8ff;
+}
+
+.buyBtn {
+  width: 100%;
+  padding: 16px;
+  background: #35f8ff;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.buyBtn:hover {
+  background: #fff;
+  box-shadow: 0 0 20px rgba(53, 248, 255, 0.4);
+}
+
+.secondaryCard {
+  border-color: rgba(183, 110, 121, 0.3);
+}
+
+.secondaryCard .productPrice {
+  color: #B76E79;
+}
+
+.secondaryCard .buyBtn {
+  background: #B76E79;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .blueprintCard {
+    padding: 25px;
+    border-radius: 25px;
+  }
+  
+  .title {
+    font-size: 1.6rem;
+  }
+}

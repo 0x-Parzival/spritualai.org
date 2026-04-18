@@ -1,0 +1,127 @@
+.container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    z-index: 25; /* Same as Lotus */
+    pointer-events: none;
+}
+
+.processSteps {
+    display: flex;
+    align-items: flex-end; /* Align the bottom of the pills */
+    justify-content: center;
+    gap: 1rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.55rem, 0.75vw, 0.75rem);
+    text-transform: uppercase;
+}
+
+.stepContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.iconWrapper {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    width: 28px;
+    height: 28px;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 12px rgba(53, 248, 255, 0.4));
+    transition: transform 0.3s ease;
+}
+
+.stepContainer:hover .icon {
+    transform: scale(1.1);
+}
+
+.particles {
+    position: absolute;
+    inset: -10px;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #35f8ff;
+    border-radius: 50%;
+    opacity: 0;
+    filter: blur(1px);
+    animation: floatParticle 3s infinite ease-in-out;
+}
+
+.particle:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { top: 50%; right: 10%; animation-delay: 1s; }
+.particle:nth-child(3) { bottom: 20%; left: 40%; animation-delay: 2s; }
+
+@keyframes floatParticle {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+    50% { transform: translateY(-15px) scale(1.5); opacity: 0.6; }
+}
+
+.processStep {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+}
+
+.stepArrow {
+    color: #35f8ff;
+    font-size: 1.2em;
+    opacity: 0.6;
+    text-shadow: 0 0 8px rgba(53, 248, 255, 0.5);
+    margin-bottom: 8px; /* Align arrow vertically with the text inside the pills */
+}
+
+@media (max-width: 640px) {
+    .processSteps {
+        flex-direction: row;
+        gap: 6px;
+        width: 100%;
+        align-items: flex-start;
+    }
+    
+    .stepContainer {
+        gap: 2px;
+        flex: 1;
+    }
+
+    .stepArrow {
+        transform: rotate(0deg);
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .processStep {
+        font-size: 7px;
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .icon {
+        width: 16px;
+        height: 16px;
+    }
+}

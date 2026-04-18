@@ -1,0 +1,295 @@
+/* BlueprintReport.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  color: #fff;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  z-index: 200;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+@media (max-width: 1200px) {
+  .contentWrapper {
+    max-width: 95%;
+  }
+}
+
+.mirrorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.headline {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(124, 77, 255, 0.2);
+  text-align: center;
+}
+
+.blueprintCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 10px 40px rgba(0, 229, 255, 0.08),
+    0 0 30px rgba(124, 77, 255, 0.06);
+  position: relative;
+}
+
+.blueprintCard::before {
+  content: 'YOUR CONSCIOUSNESS BLUEPRINT';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #050505;
+  padding: 0 16px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  color: #00e5ff;
+  letter-spacing: 2px;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 20px;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+.blueprintGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+.blueprintLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.blueprintValue {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.paragraph {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 20px;
+}
+
+.highlight {
+  color: #00e5ff;
+  font-weight: 600;
+  text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+}
+
+.damagingAdmission {
+  background: rgba(255, 0, 234, 0.04);
+  border-left: 4px solid rgba(255, 0, 234, 0.5);
+  padding: 24px;
+  margin: 40px 0;
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 0 30px rgba(255, 0, 234, 0.05);
+}
+
+.sectionTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 40px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 20px;
+  text-shadow: 0 0 20px rgba(124, 77, 255, 0.3);
+}
+
+.productCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: all 0.4s ease;
+}
+
+.productCard:hover {
+  transform: translateY(-10px);
+  border-color: rgba(124, 77, 255, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.productHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 20px;
+}
+
+.productName {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.productFormat {
+  background: rgba(0, 229, 255, 0.08);
+  color: #00e5ff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.featureItem {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.featureIcon {
+  color: #00e5ff;
+}
+
+.priceDisplay {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.2rem;
+}
+
+.newPrice {
+  color: #ff00ea;
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.bundleBox {
+  background: linear-gradient(135deg, rgba(112, 0, 255, 0.08), rgba(255, 0, 234, 0.06));
+  border: 1px solid rgba(255, 0, 234, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaButton {
+  background: linear-gradient(135deg, #7000ff, #ff00ea);
+  color: white;
+  border: none;
+  padding: 20px 40px;
+  font-size: 1.2rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  border-radius: 9999px;
+  cursor: pointer;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(255, 0, 234, 0.3);
+}
+
+.ctaButton:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(255, 0, 234, 0.4);
+}
+
+.guaranteeBox {
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  margin: 40px 0;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.secondaryCta {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 30px;
+  font-size: 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondaryCta:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(124, 77, 255, 0.4);
+}
+
+.tertiaryCta {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 16px 30px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .headline { font-size: 1.6rem; }
+  .contentWrapper { padding: 60px 16px; gap: 60px; }
+  .blueprintCard { padding: 30px 20px; }
+  .blueprintGrid { grid-template-columns: 1fr; gap: 12px; }
+  .paragraph { font-size: 1rem; line-height: 1.7; }
+  .sectionTitle { font-size: 1.4rem; }
+  .productCard { padding: 24px 18px; }
+  .ctaButton { padding: 16px 30px; font-size: 1rem; }
+  .newPrice { font-size: 1.6rem; }
+}

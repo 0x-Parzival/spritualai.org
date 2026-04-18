@@ -125,11 +125,36 @@ const softwareSchema = {
   }
 };
 
+const quizSchema = {
+  "@context": "https://schema.org",
+  "@type": "Quiz",
+  "name": "Spiritual AI Consciousness Blueprint Diagnostic",
+  "description": "An interactive diagnostic tool to discover your subconscious psychological patterns and find the spiritual path tailored to your MBTI personality type.",
+  "about": {
+    "@type": "Thing",
+    "name": "MBTI and Spiritual Development"
+  },
+  "educationalAlignment": [
+    {
+      "@type": "AlignmentObject",
+      "alignmentType": "educationalSubject",
+      "targetName": "Psychology and Spirituality"
+    }
+  ],
+  "hasPart": [
+    {
+      "@type": "Question",
+      "name": "Cognitive processing and subconscious patterns"
+    }
+  ]
+};
+
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { AuthProvider } from "@/context/AuthContext";
 import InstallPrompt from "@/components/InstallPrompt";
+import WitnessReturns from "@/components/WitnessReturns";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import CursorArrow from "@/components/CursorArrow";
 
@@ -167,13 +192,18 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
         />
+        <Script
+          id="quiz-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(quizSchema) }}
+        />
         <CursorArrow />
         <CurrencyProvider>
           <AuthProvider>
             <main className="flex-grow">
               {children}
             </main>
-            <InstallPrompt />
+            <WitnessReturns />
             <ServiceWorkerRegister />
           </AuthProvider>
         </CurrencyProvider>

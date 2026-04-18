@@ -1,0 +1,113 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 20px;
+}
+
+.modal {
+  background: #0a0a0a;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 40px;
+  padding: 50px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 100px rgba(0, 242, 255, 0.1);
+}
+
+.title {
+  font-family: var(--font-orbitron), sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.ratingGroup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.ratingBtn {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-orbitron), sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ratingBtn:hover, .ratingBtn.active {
+  background: #00f2ff;
+  color: #000;
+  border-color: #00f2ff;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+}
+
+.textArea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  min-height: 120px;
+  margin-bottom: 30px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.textArea:focus {
+  border-color: rgba(0, 242, 255, 0.5);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 18px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitBtn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.closeBtn {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

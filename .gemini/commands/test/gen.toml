@@ -1,0 +1,8 @@
+description = "Generate unit tests for a file"
+prompt = """
+Generate unit tests for the following file: {{args}}.
+- Ensure you cover all edge cases.
+- Follow the existing testing style in the project.
+- Use the appropriate testing library (e.g., Jest, Vitest, React Testing Library).
+- Mock external dependencies like Supabase or Google Generative AI where necessary.
+"""

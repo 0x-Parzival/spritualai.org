@@ -30,10 +30,23 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const initCurrency = async () => {
+        const fetchWithTimeout = async (url: string, options = {}, timeout = 3000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
             try {
-                // 1. Detect location
-                const locRes = await fetch('https://ipapi.co/json/');
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(id);
+                return response;
+            } catch (e) {
+                clearTimeout(id);
+                throw e;
+            }
+        };
+
+        const initCurrency = async () => {
+            // 1. Detect location
+            try {
+                const locRes = await fetchWithTimeout('https://ipapi.co/json/');
                 if (locRes.ok) {
                     const locData = await locRes.json();
                     setCountryCode(locData.country_code);
@@ -44,25 +57,26 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
                         setCurrency('GBP');
                     } else if (['AT', 'BE', 'CY', 'EE', 'FI', 'FR', 'DE', 'GR', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PT', 'SK', 'SI', 'ES'].includes(locData.country_code)) {
                         setCurrency('EUR');
-                    } else {
-                        setCurrency('USD');
                     }
                 }
+            } catch (error) {
+                console.warn("Location detection blocked or failed, using default currency.");
+            }
 
-                // 2. Fetch fresh rates (free API)
-                const rateRes = await fetch('https://open.er-api.com/v6/latest/USD');
+            // 2. Fetch fresh rates (free API)
+            try {
+                const rateRes = await fetchWithTimeout('https://open.er-api.com/v6/latest/USD');
                 if (rateRes.ok) {
                     const rateData = await rateRes.json();
                     setExchangeRates(rateData.rates);
                 }
             } catch (error) {
-                console.error("Currency init failed, using fallbacks", error);
+                console.warn("Exchange rate fetch failed, using fallback rates.");
             } finally {
                 setLoading(false);
             }
         };
 
-        // Check cache or run init
         initCurrency();
     }, []);
 
