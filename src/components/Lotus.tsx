@@ -9,6 +9,7 @@ interface LotusProps {
     quizMode?: boolean;
     lotusOffset?: number;
     isChatActive?: boolean;
+    forceClose?: boolean;
 }
 
 const RINGS_CONFIG = [
@@ -19,12 +20,16 @@ const RINGS_CONFIG = [
 
 const PETAL_PATH = 'M0,100 C0,66.6666667 12,33.3333333 36,0 C60,33.3333333 72,66.6666667 72,100 C72,133.333333 60,166.666667 36,200 C12,166.666667 0,133.333333 0,100 Z';
 
-export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive = false }: LotusProps) {
+export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive = false, forceClose = false }: LotusProps) {
     const router = useRouter();
-    const [closed, setClosed] = useState(false);
+    const [closed, setClosed] = useState(forceClose);
     const [isBubbleVisible, setIsBubbleVisible] = useState(false);
     const [hintFade, setHintFade] = useState(false);
     const [page, setPage] = useState(1);
+
+    useEffect(() => {
+        if (forceClose) setClosed(true);
+    }, [forceClose]);
 
     useEffect(() => {
         const handleScroll = () => {
