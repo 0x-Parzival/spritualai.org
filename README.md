@@ -1,7 +1,7 @@
 # Spiritual AI Website www.spiritualai.store
  
 ## Project Setup.
-
+ 
 1. **Install nvm** (Node Version Manager) if you don't have it:
    ```bash 
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
