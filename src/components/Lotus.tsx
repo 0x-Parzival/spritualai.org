@@ -452,7 +452,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                         d="M 100,0 C 85,50 115,100 100,150 S 85,250 100,300 S 115,400 100,450 S 85,550 100,600 S 115,700 100,750 S 85,850 100,900 S 115,950 100,1000"
                         className={styles.stemLine}
                         style={{ 
-                            opacity: page === 3 ? 0.9 : 0.3,
+                            opacity: page === 3 ? 0.9 : 0,
                             stroke: '#35f8ff',
                             transition: 'opacity 0.8s ease'
                         }}
