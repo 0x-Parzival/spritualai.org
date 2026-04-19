@@ -24,6 +24,19 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
     const [closed, setClosed] = useState(false);
     const [isBubbleVisible, setIsBubbleVisible] = useState(false);
     const [hintFade, setHintFade] = useState(false);
+    const [page, setPage] = useState(1);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const sy = window.scrollY;
+            const wh = window.innerHeight;
+            if (sy < wh * 0.8) setPage(1);
+            else if (sy < wh * 1.8) setPage(2);
+            else setPage(3);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
     
     // Refs for animation values (high frequency updates)
     const containerRef = useRef<HTMLDivElement>(null);
@@ -427,9 +440,22 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                             <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" />
                         </filter>
                     </defs>
+                    {/* Primary Thread (Magenta) */}
                     <path
                         d="M 100,0 C 115,50 85,100 100,150 S 115,250 100,300 S 85,400 100,450 S 115,550 100,600 S 85,700 100,750 S 115,850 100,900 S 85,950 100,1000"
                         className={styles.stemLine}
+                        filter="url(#stemWater)"
+                        fill="none"
+                    />
+                    {/* Secondary Thread (Cyan) - Visible primarily on Page 3 */}
+                    <path
+                        d="M 100,0 C 85,50 115,100 100,150 S 85,250 100,300 S 115,400 100,450 S 85,550 100,600 S 115,700 100,750 S 85,850 100,900 S 115,950 100,1000"
+                        className={styles.stemLine}
+                        style={{ 
+                            opacity: page === 3 ? 0.9 : 0.3,
+                            stroke: '#35f8ff',
+                            transition: 'opacity 0.8s ease'
+                        }}
                         filter="url(#stemWater)"
                         fill="none"
                     />
