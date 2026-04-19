@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './HeroTitle.module.css';
 import SocialProofTicker from './SocialProofTicker';
 import ProcessDiagram from './ProcessDiagram';
+import PretextWrapper from './home/PretextWrapper';
 
 export default function HeroTitle({ isGlassActive = false, className = '', style = {} }: { isGlassActive?: boolean, className?: string, style?: React.CSSProperties }) {
     return (
@@ -39,20 +40,35 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                         zIndex: 80,
                         filter: isGlassActive ? 'blur(15px)' : 'none',
                         opacity: isGlassActive ? 0.4 : 1,
-                        transition: 'all 0.5s ease'
+                        transition: 'all 0.5s ease',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center'
                     }}>
-                        <h2 className={styles.subtitleText}>
-                            The Evolution of Consciousness, Powered by Intelligence.
-                        </h2>
-                        <h3 className={styles.subheadingText}>
-                            The only system decoding you through astrology, analytical psychology, and MBTI architecture.
-                        </h3>
+                        <PretextWrapper 
+                            text="The Evolution of Consciousness, Powered by Intelligence."
+                            font="400 1.2rem 'Orbitron', sans-serif"
+                            width={1000}
+                            centerExclusion={true}
+                            className={styles.subtitleText}
+                        />
+                        <PretextWrapper 
+                            text="The only system decoding you through astrology, analytical psychology, and MBTI architecture."
+                            font="300 1.1rem 'Inter', sans-serif"
+                            width={800}
+                            centerExclusion={true}
+                            className={styles.subheadingText}
+                        />
                         <div style={{ marginTop: '1.5rem', width: '100%' }}>
                             <ProcessDiagram />
                         </div>
-                        <p className={styles.infoText} style={{ marginTop: '1rem', opacity: 0.6, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-                            If you don't notice a real shift in how you see yourself within 21 days — full refund. No questions, no conditions. We only win when you do.
-                        </p>
+                        <PretextWrapper 
+                            text="If you don't notice a real shift in how you see yourself within 21 days — full refund. No questions, no conditions. We only win when you do."
+                            font="300 0.8rem 'Inter', sans-serif"
+                            width={600}
+                            centerExclusion={true}
+                            className={styles.infoText}
+                        />
                     </div>
                 </div>
             </div>

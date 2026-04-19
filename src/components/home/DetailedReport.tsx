@@ -113,6 +113,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                                 lineHeight={32}
                                 width={idx % 2 === 0 ? (containerWidth / 2) - 40 : (containerWidth / 2) - 40}
                                 className={styles.pretextBody}
+                                centerExclusion={true}
                             />
                         </motion.section>
                     ))}

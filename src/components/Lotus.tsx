@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './Lotus.module.css';
+import PretextWrapper from './home/PretextWrapper';
 
 interface LotusProps {
     quizMode?: boolean;
@@ -394,15 +395,17 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                                     );
                                 })}
                             </ul>
-                        );
-                        })}
                         </div>
                         </div>
 
                         {isBubbleVisible && (
                             <div className={`${styles.lotusMessage} ${styles.readyToBurst}`}>
-                                <p><strong>The lotus holds a secret.</strong></p>
-                                <p>Those who seek, find.</p>
+                                <PretextWrapper 
+                                    text="The lotus holds a secret. Those who seek, find."
+                                    font="300 0.9rem 'Inter', sans-serif"
+                                    width={240}
+                                    centerExclusion={false} // Bubble already avoids center via CSS positioning
+                                />
                             </div>
                         )}
 
