@@ -158,8 +158,9 @@ export default function CursorArrow({
         const animate = () => {
             const sy = window.scrollY;
             const wh = window.innerHeight;
-            const isOnPage1 = sy < wh;
-            const isOnPage2 = sy >= wh && sy < wh * 2;
+            const isOnPage1 = sy < wh * 0.8;
+            const isOnPage2 = sy >= wh * 0.8 && sy < wh * 1.8;
+            const isOnPage3 = sy >= wh * 1.8;
             const personalityResult = document.body.getAttribute('data-personality-result');
 
             // 1. SHOCKS CANVAS
@@ -209,6 +210,9 @@ export default function CursorArrow({
                 isButtonFound = false;
             }
 
+            // Periodically re-find target to handle multi-instance (like Page 1 vs Page 3)
+            if (performance.now() % 100 < 20) isButtonFound = false;
+
             if (!isButtonFound) findTargetButton();
             if (isButtonFound && updateButtonRect()) {
                 const buttonTarget = calculateTargetPosition();
@@ -216,8 +220,8 @@ export default function CursorArrow({
                 targetY = buttonTarget.y;
                 showButtonArrow = true;
 
-                // If mouse is below the bottom of the message box, hide it
-                if (buttonRect && mouseY > buttonRect.bottom + 5) {
+                // Hide arrow if mouse is too far below the target
+                if (buttonRect && mouseY > buttonRect.bottom + 10) {
                     showButtonArrow = false;
                 }
             }
@@ -228,8 +232,10 @@ export default function CursorArrow({
             currentPointerY += deltaY * config.easeSpeed;
 
             if (arrowPathRef.current && arrowHeadRef.current) {
-                if (showButtonArrow && (isOnPage1 || (isOnPage2 && personalityResult))) {
-                    const pathData = createWavyPath(mouseX, mouseY, currentPointerX, currentPointerY, !isOnPage2);
+                const shouldShow = isOnPage1 || (isOnPage2 && personalityResult) || isOnPage3;
+                
+                if (showButtonArrow && shouldShow) {
+                    const pathData = createWavyPath(mouseX, mouseY, currentPointerX, currentPointerY, isOnPage1 || isOnPage3);
                     arrowPathRef.current.setAttribute('d', pathData);
                     
                     const angle = Math.atan2(currentPointerY - mouseY, currentPointerX - mouseX);
