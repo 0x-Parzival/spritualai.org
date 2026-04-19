@@ -166,7 +166,7 @@ export default function SpiritualAI() {
                     <div style={{
                         position: 'absolute', bottom: '0', left: 0, width: '100%',
                         display: 'flex', justifyContent: 'center', pointerEvents: 'none',
-                        zIndex: 5000
+                        zIndex: 7000 // Higher than Lotus (6000)
                     }}>
                         <HeroCTA 
                             onGlassChange={setIsGlassActive} 
@@ -218,7 +218,7 @@ export default function SpiritualAI() {
                     <div style={{
                         position: 'absolute', bottom: '2vh', left: 0, width: '100%',
                         display: 'flex', justifyContent: 'center', pointerEvents: 'none',
-                        zIndex: 5000 // Above everything
+                        zIndex: 7000 // Higher than Lotus (6000)
                     }}>
                         <HeroCTA 
                             onGlassChange={setIsGlassActive} 

@@ -1095,13 +1095,7 @@ export default function HeroCTA({
                                 <motion.div key={idx} className={`${styles.messageRow} ${msg.role === 'ai' ? styles.aiRow : styles.userRow}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: (idx + 1) / messages.length, y: 0 }}>
                                     <div className={`${styles.chatBubble} ${msg.role === 'ai' ? styles.aiBubble : styles.userBubble}`}>
                                         {msg.role === 'ai' && msg.contextLine && <div style={{ fontSize: '0.8rem', opacity: 0.7, fontStyle: 'italic', marginBottom: '8px', color: '#00f2ff' }}>{msg.contextLine}</div>}
-                                        <PretextWrapper 
-                                            text={msg.content}
-                                            font="300 1.05rem 'Inter', sans-serif"
-                                            lineHeight={24}
-                                            width={400}
-                                            centerExclusion={true}
-                                        />
+                                        {msg.content}
                                     </div>
                                     {msg.role === 'ai' && msg.options && idx === messages.length - 1 && !isTyping && !sacredPause && !isConvoComplete && (
                                         <div className={styles.optionBubbles}>{msg.options.map((opt, oi) => <button key={oi} className={styles.optionBubble} onClick={() => handleOptionClick(opt.text)}>{opt.text}</button>)}</div>

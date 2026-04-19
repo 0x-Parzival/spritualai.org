@@ -10,6 +10,8 @@ interface PretextWrapperProps {
   width?: number;
   className?: string;
   centerExclusion?: boolean;
+  align?: 'left' | 'center' | 'right';
+  style?: React.CSSProperties;
 }
 
 export default function PretextWrapper({
@@ -18,7 +20,9 @@ export default function PretextWrapper({
   lineHeight = 32,
   width = 800,
   className = '',
-  centerExclusion = false
+  centerExclusion = false,
+  align = 'center',
+  style = {}
 }: PretextWrapperProps) {
   const [lines, setLines] = useState<any[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -110,11 +114,14 @@ export default function PretextWrapper({
       className={className} 
       style={{ 
         position: 'relative', 
-        height: (lines.length / (centerExclusion ? 1.5 : 1)) * lineHeight, // Approximate height
+        height: lines.length * lineHeight, // Use full height to prevent clipping
         width: '100%', 
         maxWidth: width,
         font: font,
-        margin: '0 auto'
+        margin: align === 'center' ? '0 auto' : '0',
+        minHeight: lineHeight,
+        textAlign: align,
+        ...style
       }}
     >
       {lines.map((line, index) => (
@@ -126,8 +133,11 @@ export default function PretextWrapper({
             left: line.left ?? 0,
             width: line.width,
             whiteSpace: 'nowrap',
-            transition: 'all 0.1s linear', // Fast transition for scroll sync
-            pointerEvents: 'none'
+            transition: 'all 0.15s ease-out', // Smoother transition
+            pointerEvents: 'none',
+            color: 'inherit',
+            display: 'flex',
+            justifyContent: align === 'center' ? 'center' : (align === 'right' ? 'flex-end' : 'flex-start')
           }}
         >
           {line.text}

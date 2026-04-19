@@ -47,15 +47,15 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                     }}>
                         <PretextWrapper 
                             text="The Evolution of Consciousness, Powered by Intelligence."
-                            font="400 1.2rem 'Orbitron', sans-serif"
-                            width={800}
+                            font="300 clamp(10px, 1vw, 15.4px) 'Inter', sans-serif"
+                            width={1200}
                             centerExclusion={true}
                             className={styles.subtitleText}
                         />
                         <PretextWrapper 
                             text="The only system decoding you through astrology, analytical psychology, and MBTI architecture."
-                            font="300 1.1rem 'Inter', sans-serif"
-                            width={700}
+                            font="400 clamp(12px, 1.5vw, 20px) 'Inter', sans-serif"
+                            width={1100}
                             centerExclusion={true}
                             className={styles.subheadingText}
                         />
@@ -65,9 +65,10 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                         <PretextWrapper 
                             text="If you don't notice a real shift in how you see yourself within 21 days — full refund. No questions, no conditions. We only win when you do."
                             font="300 0.8rem 'Inter', sans-serif"
-                            width={500}
+                            width={1000}
                             centerExclusion={true}
                             className={styles.infoText}
+                            style={{ marginTop: '1rem', opacity: 0.6, letterSpacing: '0.05em' }}
                         />
                     </div>
                 </div>

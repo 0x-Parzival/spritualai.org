@@ -30,11 +30,14 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
         const handleScroll = () => {
             const sy = window.scrollY;
             const wh = window.innerHeight;
+            // Page 3 officially starts at 200vh. 
+            // Using 1.9vh as a safe threshold to account for the -2vh pullup.
             if (sy < wh * 0.8) setPage(1);
-            else if (sy < wh * 1.8) setPage(2);
+            else if (sy < wh * 1.9) setPage(2);
             else setPage(3);
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Trigger immediately on mount
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     
@@ -414,16 +417,16 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
             </div>
 
             {isBubbleVisible && (
-                            <div className={`${styles.lotusMessage} ${styles.readyToBurst}`}>
+                <div className={`${styles.lotusMessage} ${styles.readyToBurst}`}>
                                 <PretextWrapper 
-                                    text="The lotus holds a secret. Those who seek, find."
+                                    text={"The lotus holds a secret.\nThose who seek, find."}
                                     font="300 0.9rem 'Inter', sans-serif"
                                     width={240}
-                                    centerExclusion={false} // Bubble already avoids center via CSS positioning
+                                    centerExclusion={false}
+                                    style={{ fontWeight: 300, lineHeight: 1.6 }}
                                 />
-                            </div>
-                        )}
-
+                </div>
+            )}
             <div className={`${styles.hint} ${hintFade ? styles.fade : ''}`} ref={hintRef}>
                 Hover a petal &nbsp;·&nbsp; Click to open &nbsp;·&nbsp; Feel it breathe
             </div>
@@ -452,6 +455,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                         d="M 100,0 C 85,50 115,100 100,150 S 85,250 100,300 S 115,400 100,450 S 85,550 100,600 S 115,700 100,750 S 85,850 100,900 S 115,950 100,1000"
                         className={styles.stemLine}
                         style={{ 
+                            display: page === 3 ? 'block' : 'none',
                             opacity: page === 3 ? 0.9 : 0,
                             stroke: '#35f8ff',
                             transition: 'opacity 0.8s ease'

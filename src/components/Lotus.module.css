@@ -255,7 +255,7 @@
     transform: translateX(-50%) translateY(0.5cm);
     width: 500px;
     height: 500px;
-    z-index: 2000; /* Above Waves/Content but behind HeroCTA (5000) */
+    z-index: 4000; /* Above Sections (3150) but behind HeroCTA (5000) */
     pointer-events: none;
     transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
