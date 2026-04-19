@@ -79,7 +79,7 @@ export default function SpiritualAI() {
     return (
         <main style={{ 
             position: 'relative', 
-            height: isChatActive ? '100vh' : '300vh', 
+            height: isChatActive ? '100vh' : '298vh', 
             background: '#0a0a1a',
             overflowX: 'clip',
             overflowY: isChatActive ? 'hidden' : 'clip'
