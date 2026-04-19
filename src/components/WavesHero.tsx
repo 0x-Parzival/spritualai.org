@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform } from 'framer-motion';
+import { motion, useTransform, useMotionValue } from 'framer-motion';
 
 interface WavesHeroProps {
     mouseX?: any;
@@ -10,9 +10,12 @@ interface WavesHeroProps {
 }
 
 export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, variant = 'default' }: WavesHeroProps) {
-    // Parallax effect for waves
-    const xBase = mouseX ? mouseX : { get: () => mousePos.x, set: () => { } };
-    const yBase = mouseY ? mouseY : { get: () => mousePos.y, set: () => { } };
+    // Parallax effect for waves - fallback to constant MotionValue if props are missing
+    const fallbackX = useMotionValue(mousePos.x);
+    const fallbackY = useMotionValue(mousePos.y);
+    
+    const xBase = mouseX || fallbackX;
+    const yBase = mouseY || fallbackY;
 
     const xOffset = useTransform(xBase as any, (x: number) => x * 10);
     const yOffset = useTransform(yBase as any, (y: number) => y * 10);
@@ -37,9 +40,9 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             front: ['#888888', '#555555', '#333333', '#111111', '#000000'],
         },
         black: {
-            back: ['rgba(0, 0, 0, 0.95)', 'rgba(20, 20, 20, 0.9)', 'rgba(40, 40, 40, 0.85)'],
-            mid: ['rgba(10, 10, 10, 0.95)', 'rgba(30, 30, 30, 0.9)', 'rgba(50, 50, 50, 0.85)'],
-            front: ['rgba(20, 20, 20, 0.95)', 'rgba(40, 40, 40, 0.9)', 'rgba(60, 60, 60, 0.85)'],
+            back: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
+            mid: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
+            front: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
         },
         spiritual: {
             back: [themeColors.magenta, themeColors.cyan, themeColors.white],
@@ -109,8 +112,19 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         <stop offset="100%" style={{ stopColor: activeColors.front[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
                     <path id={`waveShape-${variant}`} d={pathD} />
+                    {variant === 'black' && (
+                        <mask id="fadeMask">
+                            <rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradient)" />
+                            <linearGradient id="maskGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor="white" stopOpacity="1" />
+                                <stop offset="60%" stopColor="white" stopOpacity="1" />
+                                <stop offset="85%" stopColor="white" stopOpacity="0.5" />
+                                <stop offset="100%" stopColor="white" stopOpacity="0" />
+                            </linearGradient>
+                        </mask>
+                    )}
                 </defs>
-                <g>
+                <g mask={variant === 'black' ? 'url(#fadeMask)' : undefined}>
                     <use xlinkHref={`#waveShape-${variant}`} fill={`url(#waveBackGradient-${variant})`} opacity=".24">
                         <animateTransform
                             attributeName="transform"

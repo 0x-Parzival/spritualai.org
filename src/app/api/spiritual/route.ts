@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true });
 
       case 'process_answer':
-        return await processAnswer(req, userState, conversationHistory, currentQuestion, userAnswer);
+        return await processAnswer(req, body, userState, conversationHistory, currentQuestion, userAnswer);
 
       case 'parse_ai_paste':
         return await parseAIPaste(userAnswer);
@@ -320,6 +320,7 @@ function formatConversation(history: any[]): string {
 // ============================================================
 async function processAnswer(
   req: NextRequest,
+  body: any,
   userState: any,
   conversationHistory: any[],
   currentQuestion: string | null,
@@ -328,6 +329,12 @@ async function processAnswer(
   const round = conversationHistory.filter(h => h.role === 'user').length + 1;
   const now = Date.now();
   const lastTs = userState.tracking?.lastMessageTimestamp || now;
+
+  // ─── REAL-TIME AWARENESS DATA ──────────────────────────────
+  // These may be sent via pre-warm (action: warmup)
+  const partialInput = body?.partialInput || "";
+  const hasDeleted = body?.hasDeleted || false;
+  const responseTimeMillis = body?.responseTimeMillis || (now - lastTs);
   
   // ─── ENGAGEMENT SCORE CALCULATION ─────────────────────────
   const wordCount = userAnswer.trim().split(/\s+/).length;
@@ -335,18 +342,22 @@ async function processAnswer(
   const emotionalCount = emotionalKeywords.filter(w => userAnswer.toLowerCase().includes(w)).length;
   
   // ─── LINGUISTIC & HESITATION ANALYSIS ────────────────────
-  const responseTimeMillis = now - lastTs;
-  const isHighHesitation = responseTimeMillis > 25000 && wordCount < 15;
+  const isHighHesitation = responseTimeMillis > 25000 && hasDeleted;
   const linguisticFlags = analyzeLinguistics(userAnswer);
   
   let hesitationPrompt = "";
   if (isHighHesitation) {
-    hesitationPrompt = `DELETED DRAFT DETECTED: It took the user ${Math.floor(responseTimeMillis/1000)} seconds to type ${wordCount} words. Their brain gave them the truth in 2 seconds, and they spent the rest of the time sanitizing it. MANDATE: Call this out directly. Ask them exactly what thought they deleted before typing this.`;
+    hesitationPrompt = `GENTLE OBSERVATION: I noticed you typed something and then deleted it before sending this. It feels like you might have been searching for the 'safe' thing to say. Ask them what that first, raw thought was, but do it very kindly.`;
+  }
+
+  let partialInputPrompt = "";
+  if (partialInput && partialInput.length > 10) {
+    partialInputPrompt = `REAL-TIME AWARENESS: As they were typing, they explored this thought: "${partialInput}". Use this to understand their true direction, even if they edited it out.`;
   }
 
   let linguisticPrompt = "";
   if (linguisticFlags.length > 0) {
-    linguisticPrompt = `NEURO-LINGUISTIC FINGERPRINT DETECTED: ${linguisticFlags.join(' | ')}. MANDATE: Confront this language choice directly. Point out how they structure their sentence to avoid the truth.`;
+    linguisticPrompt = `GENTLE MIRROR: I noticed a specific pattern in how you phrased this (${linguisticFlags.join(' | ')}). Gently point this out to them—for example, if they used 'you' instead of 'I', ask them how it would feel to say it as 'I'. Be their friend, not their critic.`;
   }
 
   const wordWeight = Math.min(wordCount, 60);
@@ -363,46 +374,44 @@ async function processAnswer(
   
   // ─── DYNAMIC MODE INSTRUCTIONS ────────────────────────────
   const modeInstructions = {
-    DEEP: "USER IS HIGHLY ENGAGED. Go one layer deeper immediately. Target the core identity, secondary gain, and root cause.",
-    MAINTAIN: "USER IS MODERATELY ENGAGED. Stay at this depth, rephrase their truth to show you're tracking.",
-    REENTRY: "USER IS DEFLECTING OR DISENGAGED. USE A SOMATIC INTERRUPTION: Command them to stop typing, look away from the screen, and locate the physical sensation (stomach, throat, chest) trying to protect them."
+    DEEP: "USER IS OPEN AND READY. Speak with depth and wisdom, like a grandfather sharing a secret. Go for the heart of the pattern.",
+    MAINTAIN: "USER IS SHARING COMFORTABLY. Stay warm and simple. Use their own words to show you're right there with them.",
+    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. Ask a simple, grounded question about where they feel this in their body or just one word for the feeling."
   }[questionMode];
 
   const missingDataPoints = [];
-  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Details");
-  if (!userState.corePattern) missingDataPoints.push("Core Pattern");
-  if (!userState.rootCause) missingDataPoints.push("Root Cause");
-  if (!userState.confirmedMBTI) missingDataPoints.push("MBTI Type");
+  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("When and where you were born");
+  if (!userState.corePattern) missingDataPoints.push("The specific pattern holding you back");
+  if (!userState.rootCause) missingDataPoints.push("Where this all started");
+  if (!userState.confirmedMBTI) missingDataPoints.push("How your mind naturally works");
 
   const dataCollectionHeader = `
 ═══════════════════════════════════════════
-MODE: ${questionMode} | ROUND ${round} OF 5
+MODE: COMPASSIONATE MIRROR
 ═══════════════════════════════════════════
-ENGAGEMENT STATUS: ${modeInstructions}
-UNLOCKED FIELDS NEEDED: ${missingDataPoints.join(', ')}.
-${hesitationPrompt ? `\n🔥 ${hesitationPrompt}` : ""}
-${linguisticPrompt ? `\n🔥 ${linguisticPrompt}` : ""}
+WE ARE HELPING THEM SEE: ${missingDataPoints.join(', ')}.
+${hesitationPrompt ? `\n🌸 ${hesitationPrompt}` : ""}
+${linguisticPrompt ? `\n🌸 ${linguisticPrompt}` : ""}
+${partialInputPrompt ? `\n🌸 ${partialInputPrompt}` : ""}
 
 YOUR MANDATE:
-1. ANTI-REPETITION: DO NOT repeat questions, themes, or Completion Leads.
-2. OPTIONS MANDATORY: You MUST provide exactly 2 to 4 interactive "options". Never provide only one option.
-3. USE THE 8 LAWS: Rotate techniques (Bypass, Contradiction, Inverse, Somatic Pause, etc.) to deepen the decoding.
-4. ADAPT TO MODE: ${modeInstructions}
-5. 75% CONFIDENCE RULE: After this, score confidence. If avg > 75, set "type": "final_share".
+1. DYNAMIC PROGRESS: Score your current confidence in their pattern (0-100). Be bold early if you see clear signals to show them it's working.
+2. MATCH THEIR LEVEL: If they use simple words, you use simple words. If they are deep, you be deep. 
+3. 2-4 OPTIONS: Always provide kind, easy-to-click options.
+4. INTERNAL ONLY: Use your techniques SILENTLY. Never name them.
+5. 75% CONFIDENCE RULE: If your raw confidence avg > 75, set "type": "final_share" NOW.
 `;
 
   const contextHeader = isExternal ? `
 ═══════════════════════════════════════════
-SPECIAL CONTEXT: MASTER COGNITIVE ARCHITECT
+SPECIAL CONTEXT: A PREVIOUS REFLECTION
 ═══════════════════════════════════════════
-The user has provided a report from an external Master Cognitive Architect AI.
-Current Extracted Data Summary: ${JSON.stringify(userState.report)}
-MISSING FRAGMENTS: ${userState.missingFields?.join(', ') || 'All'}
+The user has shared a reflection from another guide.
+Current understanding: ${JSON.stringify(userState.report)}
+MISSING PIECES: ${userState.missingFields?.join(', ') || 'fragments'}.
 
 YOUR MISSION:
-You are "The Architect" acting as the closer. The external AI has identified the core, but some fragments are missing.
-1. FOCUS ONLY ON MISSING FIELDS.
-2. USE THE 6 LAWS to get high-quality data.
+Gently help them fill in the missing pieces so they can see their full picture.
 ` : dataCollectionHeader;
 
   const PATTERNS_CONTEXT = `
@@ -477,6 +486,17 @@ ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
   }
   
   parsed.updatedTracking = { engagementScore, isFatigued, lastMessageTimestamp: now };
+  
+  // ─── DYNAMIC PACING CURVE ──────────────────────────────────
+  // We translate raw AI confidence into a front-loaded display progress.
+  // Using a power curve (x^0.6) to ensure faster movement at the start.
+  // We provide a small floor per round so it doesn't stay at 0.
+  const floorProgress = Math.min(round * 12, 90);
+  const rawConfidence = Math.max(parsed.decodingProgress || 0, floorProgress);
+  const displayProgress = Math.min(100, Math.round(100 * Math.pow(rawConfidence / 100, 0.6)));
+  
+  parsed.decodingProgress = parsed.type === 'final_share' ? 100 : displayProgress;
+
   return NextResponse.json({ success: true, data: parsed });
 }
 

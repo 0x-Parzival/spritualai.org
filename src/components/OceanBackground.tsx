@@ -15,11 +15,8 @@ export default function OceanBackground() {
     // Dynamic Gradient based on scroll depth
     const backgroundGradient = useTransform(
         scrollYProgress,
-        [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-        [
-            '#0a0a1a', '#1a103d', '#2d1b4e', '#3b1054', '#0a1f33', 
-            '#051c2c', '#001524', '#000c14', '#00080d', '#000407', '#000000'
-        ]
+        [0, 1],
+        ['#0a0a1a', '#0a0a1a']
     );
 
     useEffect(() => {

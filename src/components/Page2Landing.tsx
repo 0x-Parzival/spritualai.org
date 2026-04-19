@@ -1,10 +1,35 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import styles from './Page2Landing.module.css';
 
+const SIGNATURE_ARCHITECTURES = [
+  { id: "01", title: "The Theoretical Titan", description: "Generates brilliant ideas but creates complexity to avoid launching them." },
+  { id: "02", title: "The Sovereign in Exile", description: "Knows its worth but waits for external permission that never comes." },
+  { id: "03", title: "The Sacred Giver", description: "Deeply compassionate but gives so much that their own identity vanishes." },
+  { id: "05", title: "The Analytical Ghost", description: "Solves every problem except the one that would make them happy." },
+  { id: "06", title: "The Untethered Visionary", description: "A vision that could change everything, but stays theoretical to avoid judgment." },
+  { id: "07", title: "The Chaos Catalyst", description: "Installs chaos the moment things get too peaceful or successful." },
+  { id: "08", title: "The Logic Shield", description: "Uses logic as a shield to avoid feeling the weight of their own existence." },
+  { id: "09", title: "The Underperformer", description: "Possesses elite skills but performs at 20% to avoid the burden of greatness." },
+  { id: "10", title: "The Pattern Prophet", description: "Expert at identifying everyone else's patterns while staying blind to their own." },
+  { id: "11", title: "The Chronic Student", description: "Constantly preparing, never arriving. The loop of one more course." },
+];
+
 export default function Page2Landing() {
+  const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set((e.clientX / window.innerWidth) - 0.5);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX]);
+
+  const translateX = useTransform(mouseX, (x) => x * -200);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
@@ -25,7 +50,6 @@ export default function Page2Landing() {
           viewport={{ once: true }}
           className={styles.contentCenter}
         >
-          <div className={styles.frameworkBadge}>THE 7 UNCONSCIOUS ARCHITECTURES</div>
           <h2 className={styles.headline}>
             "The reason nothing has worked has nothing to do with effort."
           </h2>
@@ -39,9 +63,10 @@ export default function Page2Landing() {
       </section>
 
       {/* SECTION 2 — THE CONCRETE EXAMPLE (THE SKEPTIC'S BRIDGE) */}
-      <section className={styles.section}>
+      <section className={styles.section} style={{ width: '100vw', maxWidth: 'none', overflowX: 'hidden', left: 0, alignItems: 'flex-start' }}>
         <motion.p 
           className={styles.preExampleText}
+          style={{ width: '100%', textAlign: 'center' }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -49,53 +74,23 @@ export default function Page2Landing() {
         >
           You may already know your pattern. You just don't have a name for it yet.
         </motion.p>
-        <motion.div
-          className={styles.exampleCard}
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-        >          <div className={styles.exampleLabel}>Signature Architecture #04</div>
-          <h3 className={styles.exampleTitle}>The Invisible Architect</h3>
-          <p className={styles.exampleDescription}>
-            A mind that builds complex systems and success for everyone else while systematically dismantling its own.
-          </p>
-          <div className={styles.exampleImpact}>
-            Result: High external achievement + Deep internal exhaustion.
+        
+        <motion.div className={styles.marqueeSection} style={{ x: translateX, left: 0 }}>
+          <div className={styles.marqueeTrack}>
+            {[...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES].map((arch, i) => (
+              <motion.div 
+                key={i} 
+                className={styles.smallExampleCard}
+                whileHover={{ scale: 1.05, y: -10, zIndex: 100 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              >
+                <div className={styles.smallLabel}>Signature Architecture #{arch.id}</div>
+                <h4 className={styles.smallTitle}>{arch.title}</h4>
+                <p className={styles.smallDescription}>{arch.description}</p>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
-      </section>
-
-      {/* SECTION 3 — THE 3-STEP FLOW */}
-      <section className={styles.section}>
-        <div className={styles.mechanismGrid}>
-          <div className={styles.mechanismItem}>
-            <span className={styles.stepNum}>01</span>
-            <h3>IDENTIFY</h3>
-            <p>We name the specific cognitive loop running your life.</p>
-          </div>
-          <div className={styles.mechanismItem}>
-            <span className={styles.stepNum}>02</span>
-            <h3>MATCH</h3>
-            <p>We pair your architecture with tools you actually respond to.</p>
-          </div>
-          <div className={styles.mechanismItem}>
-            <span className={styles.stepNum}>03</span>
-            <h3>DISSOLVE</h3>
-            <p>21 days of precision practice to clear the source code.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4 — SOCIAL PROOF OF SCALE */}
-      <section className={styles.section}>
-        <div className={styles.socialProof}>
-          <div className={styles.scaleCounter}>47,000+</div>
-          <p className={styles.scaleText}>Patterns decoded this month across 12 countries.</p>
-          <div className={styles.liveSignal}>
-            <span className={styles.pulseDot}></span>
-            <span>342 people currently decoding their architecture</span>
-          </div>
-        </div>
       </section>
 
       {/* SECTION 5 — THE INVITATION (Absolute Bottom) */}

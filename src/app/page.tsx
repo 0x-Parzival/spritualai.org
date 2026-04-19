@@ -79,11 +79,10 @@ export default function SpiritualAI() {
     return (
         <main style={{ 
             position: 'relative', 
-            minHeight: '400vh', 
-            background: '#000',
+            height: isChatActive ? '100vh' : '300vh', 
+            background: '#0a0a1a',
             overflowX: 'clip',
-            overflowY: isChatActive ? 'hidden' : 'auto',
-            height: isChatActive ? '100vh' : 'auto'
+            overflowY: isChatActive ? 'hidden' : 'clip'
         }}>
             {/* Nav Buttons (Absolute at top) */}
             <AnimatePresence>
@@ -111,39 +110,52 @@ export default function SpiritualAI() {
             
             <InfinitePetals />
 
-            {/* Background Waves */}
+            {/* Background Waves Layer 1: Colorful (Page 1 & 2) */}
             <div style={{
                 position: 'absolute',
-                top: 'calc(65vh + 3.04cm)', 
+                top: 'calc(48vh + 3.04cm)', 
                 left: 0,
                 width: '100%',
-                height: '400vh', 
+                height: '152vh', 
                 zIndex: 2, 
                 pointerEvents: 'none',
                 opacity: 0.77,
-                overflow: 'visible'
+                overflow: 'hidden'
             }}>
-                <WavesHero mouseX={mouseX} mouseY={mouseY} variant="spiritual" />
+                <WavesHero variant="spiritual" />
             </div>
 
-            {/* Fish Tank (Page 2 Context) */}
-            <div style={{ 
-                position: 'absolute', 
-                top: '100vh', 
-                left: 0, 
-                width: '100%', 
-                height: '100vh', 
-                zIndex: 5, 
+            {/* Background Waves Layer 2: Matte Black (Ends at P2) */}
+            <div style={{
+                position: 'absolute',
+                top: 'calc(148vh + 7.04cm - 2cm)', 
+                left: 0,
+                width: '100%',
+                height: 'calc(152vh - 7.04cm)', 
+                zIndex: 6, 
                 pointerEvents: 'none',
-                opacity: 0.6
+                opacity: 1, 
+                overflow: 'visible' 
             }}>
-                <FishTank />
+                <WavesHero variant="black" />
             </div>
 
             {/* CONTENT SECTIONS */}
-            <div style={{ position: 'relative', zIndex: 1000, overflow: 'visible' }}>
+            <div style={{ position: 'relative', overflow: 'visible' }}>
+                {/* Transition Overlay to bring background forward over waves */}
+                <div style={{
+                    position: 'absolute',
+                    top: '180vh',
+                    left: 0,
+                    width: '100%',
+                    height: '22vh',
+                    background: 'linear-gradient(to bottom, transparent, #0a0a1a)',
+                    zIndex: 120, 
+                    pointerEvents: 'none'
+                }} />
+
                 {/* PAGE 1: AI INTERACTION */}
-                <section style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
+                <section style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: 3100 }}>
                     <AnimatePresence>
                         {!isChatActive && (
                             <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
@@ -153,7 +165,8 @@ export default function SpiritualAI() {
                     </AnimatePresence>
                     <div style={{
                         position: 'absolute', bottom: '0', left: 0, width: '100%',
-                        display: 'flex', justifyContent: 'center', pointerEvents: 'none'
+                        display: 'flex', justifyContent: 'center', pointerEvents: 'none',
+                        zIndex: 5000
                     }}>
                         <HeroCTA 
                             onGlassChange={setIsGlassActive} 
@@ -166,12 +179,55 @@ export default function SpiritualAI() {
                 </section>
 
                 {/* PAGE 2: REPORT / LANDING */}
-                <section id="report-section" style={{ minHeight: '100vh' }}>
+                <section id="report-section" style={{ minHeight: '100vh', background: 'transparent', position: 'relative', zIndex: 3200 }}>
                     {!finalState ? (
                         <Page2Landing />
                     ) : (
                         <FullBlueprint userState={finalState} />
                     )}
+                </section>
+
+                {/* PAGE 3: EXTRA CONTEXT */}
+                <section style={{ 
+                    height: '100vh', 
+                    background: '#0a0a1a',
+                    position: 'relative',
+                    zIndex: 3150,
+                    overflow: 'hidden'
+                }}>
+                    {/* Stars for Page 3 */}
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', opacity: 0.33 }}>
+                        <StarfieldHero boost={!!finalState} />
+                    </div>
+
+                    {/* Background Waves Layer 3: Colorful (Page 3 Foreground) - Moved inside to manage stacking */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '60vh', 
+                        zIndex: 100, 
+                        pointerEvents: 'none',
+                        opacity: 0.77,
+                    }}>
+                        <WavesHero variant="spiritual" />
+                    </div>
+
+                    <div style={{
+                        position: 'absolute', bottom: '2vh', left: 0, width: '100%',
+                        display: 'flex', justifyContent: 'center', pointerEvents: 'none',
+                        zIndex: 5000 // Above everything
+                    }}>
+                        <HeroCTA 
+                            onGlassChange={setIsGlassActive} 
+                            onRoundChange={setChatRound} 
+                            onComplete={handleChatComplete}
+                            onChatActive={setIsChatActive}
+                            onGeneratingReport={setIsGeneratingReport}
+                            hidePopup={true}
+                        />
+                    </div>
                 </section>
             </div>
 

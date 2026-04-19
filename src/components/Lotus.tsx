@@ -289,16 +289,16 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
             <svg width="0" height="0" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
                 <defs>
                     <radialGradient id="neonGrad" cx="50%" cy="10%" r="110%">
-                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
-                        <stop offset="35%" stopColor="#35f8ff" stopOpacity="0.55" />
-                        <stop offset="70%" stopColor="#ff3cf5" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#ff3cf5" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                        <stop offset="30%" stopColor="#35f8ff" stopOpacity="0.85" />
+                        <stop offset="70%" stopColor="#ff00ea" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#7000ff" stopOpacity="0" />
                     </radialGradient>
                     <radialGradient id="neonGradHot" cx="50%" cy="10%" r="110%">
-                        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                        <stop offset="35%" stopColor="#35f8ff" stopOpacity="0.85" />
-                        <stop offset="70%" stopColor="#ff3cf5" stopOpacity="0.75" />
-                        <stop offset="100%" stopColor="#ff3cf5" stopOpacity="0.2" />
+                        <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                        <stop offset="25%" stopColor="#35f8ff" stopOpacity="1" />
+                        <stop offset="65%" stopColor="#ff00ea" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#7000ff" stopOpacity="0.5" />
                     </radialGradient>
                 </defs>
             </svg>

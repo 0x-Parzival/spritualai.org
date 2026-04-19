@@ -331,19 +331,33 @@ export default function HeroCTA({
     onRoundChange,
     onComplete,
     onChatActive,
-    onGeneratingReport
+    onGeneratingReport,
+    hidePopup = false
 }: { 
     onGlassChange?: (active: boolean) => void,
     onRoundChange?: (round: number) => void,
     onComplete?: (state: any) => void,
     onChatActive?: (active: boolean) => void,
-    onGeneratingReport?: (active: boolean) => void
+    onGeneratingReport?: (active: boolean) => void,
+    hidePopup?: boolean
 }) {
     const router = useRouter();
 
     const originalText = "Your pattern brought you here. Which loop are we breaking tonight?";
     const [ctaText, setCtaText] = useState(originalText);
     const [inputValue, setInputValue] = useState("");
+    const lastValueRef = useRef("");
+    const hasDeletedRef = useRef(false);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        if (val.length < lastValueRef.current.length && lastValueRef.current.length > 5) {
+            hasDeletedRef.current = true;
+        }
+        lastValueRef.current = val;
+        setInputValue(val);
+    };
+
     const [isListening, setIsListening] = useState(false);
     const [decodedCount, setDecodedCount] = useState(8247);
 
@@ -402,21 +416,23 @@ export default function HeroCTA({
 
     // Pre-warm next question while user types
     useEffect(() => {
-        if (!showChat || isTyping || inputValue.length < 10) return;
+        if (!showChat || isTyping || inputValue.length < 5) return;
         
         const prewarmTimer = setTimeout(async () => {
             try {
-                // Send a silent pre-warm request to keep the LPU active
+                // Send real-time awareness data to the API
                 fetch('/api/spiritual', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         action: 'warmup',
-                        partialInput: inputValue 
+                        partialInput: inputValue,
+                        hasDeleted: hasDeletedRef.current,
+                        responseTimeMillis: Date.now() - lastActivityRef.current
                     }),
                 });
             } catch (_) {}
-        }, 1500);
+        }, 1200);
 
         return () => clearTimeout(prewarmTimer);
     }, [inputValue, showChat, isTyping]);
@@ -650,11 +666,20 @@ export default function HeroCTA({
                 const parsed = extractJSONFromStream(fullText);
                 if (parsed && parsed.question) {
                     setCurrentAiResponse(parsed);
-                    const updatedState = { ...state };
-                    if (parsed.updatedTracking) updatedState.tracking = { ...updatedState.tracking, ...parsed.updatedTracking };
-                    if (parsed.inferredMBTI) updatedState.confirmedMBTI = parsed.inferredMBTI;
-                    if (parsed.decodingProgress !== undefined) updatedState.decodingProgress = parsed.decodingProgress;
-                    setUserState(updatedState);
+                    
+                    const nextRound = qCount + 1;
+                    // Dynamic Pacing Curve: translates raw confidence into front-loaded progress
+                    const rawFloor = Math.min(nextRound * 12, 90);
+                    const raw = Math.max(parsed.decodingProgress || 0, rawFloor);
+                    const finalProgress = parsed.type === 'final_share' ? 100 : Math.min(100, Math.round(100 * Math.pow(raw / 100, 0.6)));
+
+                    setUserState(prev => {
+                        const updated = { ...prev };
+                        if (parsed.updatedTracking) updated.tracking = { ...updated.tracking, ...parsed.updatedTracking };
+                        if (parsed.inferredMBTI) updated.confirmedMBTI = parsed.inferredMBTI;
+                        updated.decodingProgress = finalProgress;
+                        return updated;
+                    });
 
                     setMessages(prev => {
                         const n = [...prev];
@@ -673,7 +698,7 @@ export default function HeroCTA({
                         setShowDatePicker(true);
                     }
                     setConversationHistory([...history, { role: 'ai', content: parsed.question || fullText }]);
-                    setRound(qCount + 1);
+                    setRound(nextRound);
                 } else {
                     const fallbackBank = [
                         { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "It's too heavy to name", subLabel: "Overwhelm pattern" }] },
@@ -699,9 +724,20 @@ export default function HeroCTA({
                 const data = await res.json();
                 if (data.success && data.data) {
                     const aiData = data.data;
+                    const nextRound = qCount + 1;
+
+                    setUserState(prev => {
+                        const updated = { ...prev, ...aiData };
+                        if (aiData.decodingProgress === undefined) {
+                            const rawFloor = Math.min(nextRound * 12, 90);
+                            updated.decodingProgress = Math.round(100 * Math.pow(rawFloor / 100, 0.6));
+                        }
+                        return updated;
+                    });
+
                     setMessages(prev => [...prev, { role: 'ai', content: aiData.question || aiData, options: aiData.options, contextLine: aiData.contextLine }]);
-                    setConversationHistory([...history, { role: 'user', content: userAnswer }, { role: 'ai', content: aiData.question || aiData }]);
-                    setRound(qCount + 1);
+                    setConversationHistory([...history, { role: 'ai', content: aiData.question || aiData }]);
+                    setRound(nextRound);
                 }
             }
         } catch (err) {
@@ -1002,7 +1038,7 @@ export default function HeroCTA({
                 )}
 
                 <AnimatePresence>
-                    {showPromptPopup && (
+                    {showPromptPopup && !hidePopup && (
                         <motion.div className={styles.promptPopup} initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}>
                             <button className={styles.closePopup} onClick={() => setShowPromptPopup(false)}>✕</button>
                             <h2 className={styles.popupTitle}>Unlock Your Blueprint</h2>
@@ -1103,9 +1139,8 @@ export default function HeroCTA({
                             }}>OK</button>
                         </div>
                     ) : isConvoComplete ? (<div style={{ flex: 1, display: 'flex', alignItems: 'center' }}><SacredStatus /></div>) : (
-                        <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
-                    )}
-                    <div className={styles.neuralStatus}>
+                      <input ref={inputRef} type="text" value={inputValue} onChange={handleInputChange} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
+                    )}                    <div className={styles.neuralStatus}>
                         {canShowCalendar && (<button type="button" className={styles.micButton} onClick={() => setShowDatePicker(!showDatePicker)} style={{ borderColor: showDatePicker ? '#00f2ff' : 'rgba(255,255,255,0.2)', background: showDatePicker ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)' }}><Calendar size={18} /></button>)}
                         {engineReady && !inputValue && (<span className={styles.neuralText}>NEURAL LINK READY</span>)}
                         <button type="button" className={`${styles.micButton} ${isLiveMode ? styles.liveActive : ''}`} onClick={() => { if (isLiveMode) { setIsLiveMode(false); window.speechSynthesis.cancel(); } else { setIsLiveMode(true); if (showChat && currentQuestion) speakText(currentQuestion); } }} title="Live Vocal Interaction"><Radio size={18} /></button>
