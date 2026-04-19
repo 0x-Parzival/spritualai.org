@@ -1,5 +1,5 @@
 # Spiritual AI Website www.spiritualai.store
-
+ 
 ## Project Setup.
 
 1. **Install nvm** (Node Version Manager) if you don't have it:
