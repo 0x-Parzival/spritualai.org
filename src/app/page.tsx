@@ -148,7 +148,7 @@ export default function SpiritualAI() {
                     top: '180vh',
                     left: 0,
                     width: '100%',
-                    height: '22vh',
+                    height: '18vh', // Adjusted from 22vh to end at 198vh
                     background: 'linear-gradient(to bottom, transparent, #0a0a1a)',
                     zIndex: 120, 
                     pointerEvents: 'none'
@@ -193,7 +193,8 @@ export default function SpiritualAI() {
                     background: '#0a0a1a',
                     position: 'relative',
                     zIndex: 3150,
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    marginTop: '-2vh' // Pull up to touch the bottom of invitation container
                 }}>
                     {/* Stars for Page 3 */}
                     <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', opacity: 0.33 }}>
