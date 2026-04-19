@@ -395,10 +395,12 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                                     );
                                 })}
                             </ul>
-                        </div>
-                        </div>
+                        );
+                    })}
+                </div>
+            </div>
 
-                        {isBubbleVisible && (
+            {isBubbleVisible && (
                             <div className={`${styles.lotusMessage} ${styles.readyToBurst}`}>
                                 <PretextWrapper 
                                     text="The lotus holds a secret. Those who seek, find."
