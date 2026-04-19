@@ -328,12 +328,29 @@
 .aiBubble { background: rgba(10, 10, 20, 0.8); border: 1px solid rgba(0, 242, 255, 0.2); color: #e0f2f1; }
 .userBubble { background: #000; border: 1px solid rgba(112, 0, 255, 0.3); color: #fff; }
 
-.optionBubbles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+.optionsMarqueeContainer {
+    width: 100%;
+    overflow: hidden;
     margin-top: 15px;
+    position: relative;
     pointer-events: auto;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.optionsMarqueeTrack {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    animation: optionsMarquee 40s linear infinite;
+}
+
+@keyframes optionsMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.optionsMarqueeTrack:hover {
+    animation-play-state: paused;
 }
 
 .optionBubble {
@@ -346,6 +363,7 @@
     font-family: 'Inter', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .closeChatBtn {

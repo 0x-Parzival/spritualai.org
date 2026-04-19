@@ -376,7 +376,7 @@ async function processAnswer(
   const modeInstructions = {
     DEEP: "USER IS OPEN AND READY. Speak with depth and wisdom, like a grandfather sharing a secret. Go for the heart of the pattern.",
     MAINTAIN: "USER IS SHARING COMFORTABLY. Stay warm and simple. Use their own words to show you're right there with them.",
-    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. Ask a simple, grounded question about where they feel this in their body or just one word for the feeling."
+    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. Ask a simple, grounded question about what they believe is the single biggest obstacle right now."
   }[questionMode];
 
   const missingDataPoints = [];
@@ -395,11 +395,12 @@ ${linguisticPrompt ? `\n🌸 ${linguisticPrompt}` : ""}
 ${partialInputPrompt ? `\n🌸 ${partialInputPrompt}` : ""}
 
 YOUR MANDATE:
-1. DYNAMIC PROGRESS: Score your current confidence in their pattern (0-100). Be bold early if you see clear signals to show them it's working.
-2. MATCH THEIR LEVEL: If they use simple words, you use simple words. If they are deep, you be deep. 
-3. 2-4 OPTIONS: Always provide kind, easy-to-click options.
-4. INTERNAL ONLY: Use your techniques SILENTLY. Never name them.
-5. 75% CONFIDENCE RULE: If your raw confidence avg > 75, set "type": "final_share" NOW.
+1. DATA ACQUISITION: Your primary goal is to confidently identify the 6 core pillars of their Blueprint (MBTI, Identity, Core Pattern, Root Cause, Cost of Inaction, and Spiritual Path).
+2. OPTIMIZED INQUIRY: Each question should be surgically designed to fill the remaining gaps in the least amount of turns.
+3. DYNAMIC PROGRESS: Set "decodingProgress" strictly based on data acquisition (roughly 16% per confidently identified pillar).
+4. 2 OPTIONS: Always provide exactly 2 kind, easy-to-click options.
+5. INTERNAL ONLY: Use your techniques SILENTLY. Never name them.
+6. 75% CONFIDENCE RULE: If all pillars are identified or your average confidence > 75%, set "type": "final_share" NOW.
 `;
 
   const contextHeader = isExternal ? `
@@ -469,9 +470,9 @@ ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
   const parsed = extractJSON(text);
   if (!parsed || !parsed.question) {
     const fallbackBank = [
-        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "It's too heavy to name", subLabel: "Overwhelm pattern" }] },
-        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "It's my fault", subLabel: "Responsibility loop" }, { text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }] },
-        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Bitter", subLabel: "Resentment" }, { text: "Metallic", subLabel: "Fear" }, { text: "Empty", subLabel: "Dissociation" }] }
+        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "Something else entirely", subLabel: "Direct truth" }] },
+        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }, { text: "Something else entirely", subLabel: "Direct truth" }] },
+        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Empty", subLabel: "Dissociation" }, { text: "Something else entirely", subLabel: "Direct truth" }] }
     ];
     const selected = fallbackBank[Math.floor(Math.random() * fallbackBank.length)];
     return NextResponse.json({ 
@@ -479,7 +480,7 @@ ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
       data: { 
         question: selected.q, 
         type: 'question', 
-        options: [...selected.opts, { text: "Something else entirely", subLabel: "Direct truth" }],
+        options: selected.opts,
         decodingProgress: userState.decodingProgress || 10
       } 
     });
@@ -487,13 +488,12 @@ ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
   
   parsed.updatedTracking = { engagementScore, isFatigued, lastMessageTimestamp: now };
   
-  // ─── DYNAMIC PACING CURVE ──────────────────────────────────
-  // We translate raw AI confidence into a front-loaded display progress.
-  // Using a power curve (x^0.6) to ensure faster movement at the start.
-  // We provide a small floor per round so it doesn't stay at 0.
-  const floorProgress = Math.min(round * 12, 90);
-  const rawConfidence = Math.max(parsed.decodingProgress || 0, floorProgress);
-  const displayProgress = Math.min(100, Math.round(100 * Math.pow(rawConfidence / 100, 0.6)));
+  // ─── DATA-DRIVEN PROGRESS ──────────────────────────────────
+  // We use the AI's estimate of data acquisition (6 pillars).
+  // We provide a small floor per round (10%) to ensure perceived movement.
+  const floorProgress = Math.min(round * 10, 90);
+  const rawDataScore = parsed.decodingProgress || 0;
+  const displayProgress = Math.min(95, Math.max(rawDataScore, floorProgress));
   
   parsed.decodingProgress = parsed.type === 'final_share' ? 100 : displayProgress;
 

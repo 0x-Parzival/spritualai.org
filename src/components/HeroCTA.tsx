@@ -503,11 +503,16 @@ export default function HeroCTA({
 
             const greeting = "Which of these feels most like your life right now?";
             const greetingOptions = [
-                { text: "I keep starting things I don't finish", subLabel: "Avoidance pattern" },
-                { text: "I finish things but they don't satisfy me", subLabel: "Achievement-emptiness loop" },
-                { text: "I know what I want but can't make myself do it", subLabel: "Self-sabotage pattern" },
-                { text: "I don't know what I want anymore", subLabel: "Identity dissolution" },
-                { text: "Something else entirely", subLabel: "Deep inquiry" }
+                { text: "I feel stuck, and I don't know why.", subLabel: "Core blockage" },
+                { text: "Something feels missing, but I can't name it.", subLabel: "Void awareness" },
+                { text: "I don't know who I really am anymore.", subLabel: "Identity shift" },
+                { text: "I keep repeating the same patterns.", subLabel: "Loop detection" },
+                { text: "I sense there's more to life than this.", subLabel: "Existential pull" },
+                { text: "I feel deeply misunderstood by everyone.", subLabel: "Isolation pattern" },
+                { text: "I'm going through a major life change.", subLabel: "Transition state" },
+                { text: "My mind won't stop overthinking.", subLabel: "Cognitive loop" },
+                { text: "I've lost my sense of direction.", subLabel: "Path dissolution" },
+                { text: "I'm searching for something I can't explain.", subLabel: "Inner search" }
             ];
 
             setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
@@ -669,10 +674,10 @@ export default function HeroCTA({
                     setCurrentAiResponse(parsed);
                     
                     const nextRound = qCount + 1;
-                    // Dynamic Pacing Curve: translates raw confidence into front-loaded progress
-                    const rawFloor = Math.min(nextRound * 12, 90);
-                    const raw = Math.max(parsed.decodingProgress || 0, rawFloor);
-                    const finalProgress = parsed.type === 'final_share' ? 100 : Math.min(100, Math.round(100 * Math.pow(raw / 100, 0.6)));
+                    // Data-Driven Progress: AI's score with a per-round floor
+                    const floorProgress = Math.min(nextRound * 10, 90);
+                    const rawDataScore = parsed.decodingProgress || 0;
+                    const finalProgress = parsed.type === 'final_share' ? 100 : Math.min(95, Math.max(rawDataScore, floorProgress));
 
                     setUserState(prev => {
                         const updated = { ...prev };
@@ -730,8 +735,8 @@ export default function HeroCTA({
                     setUserState(prev => {
                         const updated = { ...prev, ...aiData };
                         if (aiData.decodingProgress === undefined) {
-                            const rawFloor = Math.min(nextRound * 12, 90);
-                            updated.decodingProgress = Math.round(100 * Math.pow(rawFloor / 100, 0.6));
+                            const roundContribution = Math.min(nextRound * 12, 85);
+                            updated.decodingProgress = Math.min(95, roundContribution);
                         }
                         return updated;
                     });
@@ -749,7 +754,7 @@ export default function HeroCTA({
                 if (n.length > 0 && n[n.length - 1].role === 'ai' && !n[n.length - 1].content) {
                     n.pop();
                 }
-                return [...n, { role: 'ai', content: "Disturbance in the neural link. Reconnecting..." }];
+                return [...n, { role: 'ai', content: "Something went wrong. Let's try again." }];
             });
         } finally { setIsTyping(false); }
     };
@@ -1098,7 +1103,19 @@ export default function HeroCTA({
                                         {msg.content}
                                     </div>
                                     {msg.role === 'ai' && msg.options && idx === messages.length - 1 && !isTyping && !sacredPause && !isConvoComplete && (
-                                        <div className={styles.optionBubbles}>{msg.options.map((opt, oi) => <button key={oi} className={styles.optionBubble} onClick={() => handleOptionClick(opt.text)}>{opt.text}</button>)}</div>
+                                        <div className={styles.optionsMarqueeContainer}>
+                                            <div className={styles.optionsMarqueeTrack}>
+                                                {[...msg.options, ...msg.options].map((opt, oi) => (
+                                                    <button 
+                                                        key={oi} 
+                                                        className={styles.optionBubble} 
+                                                        onClick={() => handleOptionClick(opt.text)}
+                                                    >
+                                                        {opt.text}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
                                     )}
                                 </motion.div>
                             ))}
@@ -1118,7 +1135,12 @@ export default function HeroCTA({
                 </AnimatePresence>
 
                 {!isTransitioning && (
-                    <form className={`${styles.gradientFlowBtn} cta-message-box`} onSubmit={handleSubmit} style={{ position: 'relative', pointerEvents: 'auto', zIndex: 2000 }}>
+                    <form 
+                        className={`${styles.gradientFlowBtn} cta-message-box`} 
+                        onSubmit={handleSubmit} 
+                        onClick={() => { if (!showChat) handleInputFocus(); }}
+                        style={{ position: 'relative', pointerEvents: 'auto', zIndex: 2000 }}
+                    >
                     <AudioVisualizer isActive={isListening} />
                     <div className={styles.inputLeftIcon}><img src="/images/logo.png" alt="Logo" /></div>
                     {showDatePicker ? (
@@ -1143,7 +1165,6 @@ export default function HeroCTA({
                       <input ref={inputRef} type="text" value={inputValue} onChange={handleInputChange} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
                     )}                    <div className={styles.neuralStatus}>
                         {canShowCalendar && (<button type="button" className={styles.micButton} onClick={() => setShowDatePicker(!showDatePicker)} style={{ borderColor: showDatePicker ? '#00f2ff' : 'rgba(255,255,255,0.2)', background: showDatePicker ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)' }}><Calendar size={18} /></button>)}
-                        {engineReady && !inputValue && (<span className={styles.neuralText}>NEURAL LINK READY</span>)}
                         <button type="button" className={`${styles.micButton} ${isLiveMode ? styles.liveActive : ''}`} onClick={() => { if (isLiveMode) { setIsLiveMode(false); window.speechSynthesis.cancel(); } else { setIsLiveMode(true); if (showChat && currentQuestion) speakText(currentQuestion); } }} title="Live Vocal Interaction"><Radio size={18} /></button>
                         <button type="button" className={`${styles.micButton} ${isListening ? styles.micActive : ''}`} onClick={toggleListening}><Mic size={18} /></button>
                     </div>
