@@ -1099,7 +1099,7 @@ export default function HeroCTA({
                                             text={msg.content}
                                             font="300 1.05rem 'Inter', sans-serif"
                                             lineHeight={24}
-                                            width={500}
+                                            width={400}
                                             centerExclusion={true}
                                         />
                                     </div>

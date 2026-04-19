@@ -111,7 +111,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                                 text={section.content || ""}
                                 font="300 1.1rem 'Inter', sans-serif"
                                 lineHeight={32}
-                                width={idx % 2 === 0 ? (containerWidth / 2) - 40 : (containerWidth / 2) - 40}
+                                width={containerWidth}
                                 className={styles.pretextBody}
                                 centerExclusion={true}
                             />
