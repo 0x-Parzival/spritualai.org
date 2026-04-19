@@ -541,7 +541,7 @@ async function generateReport(
           success: true, 
           data: { 
               report: getFallbackReport(userState.confirmedMBTI || 'INFP'),
-              products: recommendProducts(userState.confirmedMBTI || 'INFP', userState.budget || 'mid')
+              products: recommendProducts(null, userState.confirmedMBTI || 'INFP', userState.budget || 'mid', userState.gender || 'unknown')
           } 
       });
   }

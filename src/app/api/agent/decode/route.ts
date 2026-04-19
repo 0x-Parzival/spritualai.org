@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     // Recommend the perfect digital product based on the decoded MBTI and budget
     const inferredMBTI = parsedReport.report?.header?.architecture?.split(' ')[0] || 'INFP';
-    const products = recommendProducts(inferredMBTI, budget || 'mid');
+    const products = recommendProducts(null, inferredMBTI, budget || 'mid', 'unknown');
 
     // Return the final payload to the external AI Agent
     return NextResponse.json({
