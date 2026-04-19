@@ -45,7 +45,7 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                             The Evolution of Consciousness, Powered by Intelligence.
                         </h2>
                         <h3 className={styles.subheadingText}>
-                            The only system decoding you through Vedic, analytical psychology, and MBTI architecture.
+                            The only system decoding you through astrology, analytical psychology, and MBTI architecture.
                         </h3>
                         <div style={{ marginTop: '1.5rem', width: '100%' }}>
                             <ProcessDiagram />

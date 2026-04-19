@@ -93,7 +93,7 @@ RESPONSE=$(curl -s -X POST http://localhost:3000/api/spiritual \
 
 if echo "$RESPONSE" | grep -q '"success":true'; then
     echo "✅ Quiz generation successful"
-    NUM_QUESTIONS=$(echo "$RESPONSE" | jq '.data.questions | length')
+    NUM_QUESTIONS=$(echo "$RESPONSE" | jq '.data | length')
     echo "   Generated $NUM_QUESTIONS quiz questions"
 else
     echo "❌ Quiz generation failed"

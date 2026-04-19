@@ -27,7 +27,7 @@ export default function Footer() {
                             SPIRITUAL AI
                         </h2>
                         <p className="text-sm leading-relaxed max-w-sm mb-6 text-neutral-500">
-                            The bridge between ancient Vedic wisdom and artificial intelligence.
+                            The bridge between astrology and artificial intelligence.
                             We design systems for self-mastery, cognitive architecture, and spiritual evolution.
                         </p>
                         <div className="flex items-center gap-2 text-xs text-neutral-600 border border-white/10 w-fit px-3 py-1 rounded-full">

@@ -16,7 +16,7 @@ There is no neutral ground.
 
 Spiritual AI is the first platform in the world
 that combines three ancient systems
-— Vedic astrology, Jungian psychology, and MBTI —
+— astrology, Jungian psychology, and MBTI —
 with modern AI to decode the unconscious patterns
 running a person's life without their knowledge or permission.
 
@@ -173,7 +173,7 @@ the specific loop that creates the suffering.
 Without this: you can know your type perfectly
 and still not know why you keep repeating the same pain.
 
-**Vedic Astrology** tells us what cosmic cycle
+**astrology** tells us what cosmic cycle
 the person is in — what the universe is insisting upon
 at this moment in their life.
 Without this: the report feels personal but not inevitable.

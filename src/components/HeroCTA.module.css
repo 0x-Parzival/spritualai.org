@@ -7,7 +7,7 @@
     justify-content: flex-end;
     position: relative;
     width: 100%;
-    z-index: 250; 
+    z-index: 3000; 
     pointer-events: none;
 }
 
@@ -47,7 +47,7 @@
     width: calc(100vw - 76px); 
     position: relative;
     pointer-events: auto !important;
-    z-index: 500; 
+    z-index: 1000; 
     margin-bottom: 25px;
 }
 
@@ -157,6 +157,7 @@
     position: relative;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
     pointer-events: auto !important;
+    z-index: 2000; /* Higher than chatThread (900) and other layers */
 }
 
 .inputLeftIcon {
@@ -225,13 +226,13 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    padding: 30px 20px 180px; 
+    padding: 30px 20px 220px; /* Increased bottom padding from 180px to 220px */
     background: transparent;
     display: flex;
     flex-direction: column;
     gap: 30px;
     pointer-events: auto;
-    z-index: 300; 
+    z-index: 900; 
     overflow-y: auto;
     scrollbar-width: none;
 }
@@ -240,11 +241,60 @@
 
 .decodingProgressContainer {
     position: sticky;
-    top: 0;
+    top: -30px;
+    left: 0;
     width: 100%;
-    padding: 20px 0 30px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent);
-    z-index: 450;
+    padding: 30px 0 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.95) 60%, transparent);
+    z-index: 1000;
+    margin-bottom: 20px;
+}
+
+.progressLabel {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: rgba(0, 242, 255, 0.8);
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.progressBarTrack {
+    width: 100%;
+    height: 8px; /* Slightly thicker for better water effect */
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px; /* Circular edges */
+    overflow: hidden;
+    position: relative;
+    border: none; /* Removed borders */
+}
+
+.progressBarFill {
+    height: 100%;
+    background: #00f2ff; /* Solid sea cyan */
+    border-radius: 20px;
+    transition: width 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.progressBarFill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: waterShimmer 2s infinite;
+}
+
+@keyframes waterShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .chatHeaderTitle {
@@ -298,8 +348,8 @@
 
 .closeChatBtn {
     position: fixed;
-    top: 30px;
-    right: 30px; /* Moved to right top corner */
+    top: 68px; /* Moved 1cm downward from 30px */
+    right: 30px; 
     width: 44px;
     height: 44px;
     background: rgba(0, 0, 0, 0.5);
@@ -311,7 +361,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 600;
+    z-index: 2100; /* Increased to be above progress bar (1000) and message box (2000) */
     transition: all 0.3s ease;
 }
 
@@ -322,81 +372,79 @@
     position: absolute; 
     top: calc(-55vh - 4.5cm); 
     right: -0.5cm;
-    width: 320px; 
+    width: 260px; 
     height: auto;
-    min-height: 320px;
     background: rgba(0, 0, 0, 0.95); 
     backdrop-filter: blur(30px);
     border: 1.5px solid rgba(53, 248, 255, 0.35); 
-    border-radius: 1.5rem;
-    padding: 35px;
+    border-radius: 1.25rem;
+    padding: 24px;
     z-index: 2000;
     text-align: center;
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     pointer-events: auto;
 }
 
-.closePopup { position: absolute; top: 20px; right: 20px; background: none; border: none; color: rgba(255, 255, 255, 0.3); cursor: pointer; font-size: 1.2rem; }
+.closePopup { position: absolute; top: 12px; right: 12px; background: none; border: none; color: rgba(255, 255, 255, 0.3); cursor: pointer; font-size: 1rem; }
 .closePopup:hover { color: #fff; }
 
 .popupTitle {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 1.1rem;
-    font-weight: 300;
+    font-size: 1rem;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     color: #fff;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .popupText {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 300;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.8;
-    margin-bottom: 20px;
-    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
     text-align: left;
-    padding-left: 10px;
     width: 100%;
 }
 
 .copyMainBtn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: linear-gradient(90deg, #8b535d 0%, #2a054a 50%, #25c8d4 100%);
     color: #fff;
     border: none;
-    border-radius: 0.75rem;
+    border-radius: 0.6rem;
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    font-size: 0.65rem;
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .platformGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 10px;
     width: 100%;
 }
 
 .platformBtn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s ease;

@@ -14,16 +14,32 @@ import {
   PATTERNS,
   detectPattern,
   calculateProblemWorth,
-  getLifeStageData
+  getLifeStageData,
+  analyzeLinguistics
 } from '@/lib/spiritual-conversation-engine';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.1-8b-instant';
+const GROQ_WHISPER_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
+
+const MODELS = {
+  // Layer 1 — Groq primary
+  question:   "llama-3.1-8b-instant",      // fast exchanges
+  report:     "llama-3.3-70b-versatile",   // deep report gen
+  voice:      "whisper-large-v3-turbo",    // voice transcription
+
+  // Layer 2 — Gemini failover (Fixed: 1.5-flash is decommissioned)
+  failover1:  "gemini-2.0-flash",          
+
+  // Layer 3 — Local Ollama (Upgraded: 256K context)
+  failover2:  "gemma4:27b",               
+};
+
+const WHISPER_MODEL = MODELS.voice;
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434/api/chat';
-const OLLAMA_MODEL = 'gemma4:31b-cloud';
+const OLLAMA_MODEL = MODELS.failover2;
 const GOOGLE_AI_STUDIO_KEY = process.env.GOOGLE_AI_STUDIO_KEY;
-const GOOGLE_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const GOOGLE_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODELS.failover1}:generateContent`;
 
 // ─── Origin Point Helpers ─────────────────────────────────────
 function generateCSN() {
@@ -99,6 +115,32 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
+    const contentType = req.headers.get('content-type') || '';
+
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData();
+      const file = formData.get('file') as File;
+      if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+
+      const groqFormData = new FormData();
+      groqFormData.append('file', file);
+      groqFormData.append('model', WHISPER_MODEL);
+
+      const res = await fetch(GROQ_WHISPER_URL, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
+        body: groqFormData
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+        return NextResponse.json({ error: 'Whisper failed', details: err }, { status: res.status });
+      }
+
+      const data = await res.json();
+      return NextResponse.json({ success: true, text: data.text });
+    }
+
     const body = await req.json();
     const { action, userState, conversationHistory, currentQuestion, userAnswer } = body;
 
@@ -108,7 +150,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true });
 
       case 'process_answer':
-        return await processAnswer(userState, conversationHistory, currentQuestion, userAnswer);
+        return await processAnswer(req, userState, conversationHistory, currentQuestion, userAnswer);
 
       case 'parse_ai_paste':
         return await parseAIPaste(userAnswer);
@@ -131,7 +173,7 @@ export async function POST(req: NextRequest) {
 // GROQ HELPER
 // ============================================================
 
-async function groqChat(systemPrompt: string, userMessage: string, retries = 2, model = GROQ_MODEL): Promise<string> {
+async function groqChat(systemPrompt: string, userMessage: string, retries = 2, model = MODELS.question): Promise<string> {
   if (!GROQ_API_KEY) return localOllamaChat(systemPrompt, userMessage, model);
 
   try {
@@ -142,7 +184,8 @@ async function groqChat(systemPrompt: string, userMessage: string, retries = 2, 
         model: model,
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
         temperature: 0.7,
-        max_tokens: 1500,
+        max_tokens: 120,
+        response_format: { type: 'json_object' }
       }),
     });
 
@@ -159,7 +202,7 @@ async function groqChat(systemPrompt: string, userMessage: string, retries = 2, 
 }
 
 // ─── STREAMING HELPER ───────────────────────────────────────
-async function groqStream(systemPrompt: string, userMessage: string, model = GROQ_MODEL) {
+async function groqStream(systemPrompt: string, userMessage: string, model = MODELS.question) {
     const response = await fetch(GROQ_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
@@ -168,6 +211,8 @@ async function groqStream(systemPrompt: string, userMessage: string, model = GRO
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
             stream: true,
             temperature: 0.7,
+            max_tokens: 120,
+            response_format: { type: 'json_object' }
         }),
     });
 
@@ -185,9 +230,10 @@ async function groqStream(systemPrompt: string, userMessage: string, model = GRO
                 const chunk = decoder.decode(value);
                 const lines = chunk.split('\n').filter(l => l.trim() !== '');
                 for (const line of lines) {
-                    if (line.includes('[DONE]')) continue;
+                    const cleanLine = line.replace('data: ', '').trim();
+                    if (cleanLine === '[DONE]') continue;
                     try {
-                        const json = JSON.parse(line.replace('data: ', ''));
+                        const json = JSON.parse(cleanLine);
                         const text = json.choices[0]?.delta?.content || '';
                         if (text) controller.enqueue(encoder.encode(text));
                     } catch (e) {}
@@ -248,9 +294,15 @@ function extractJSON(text: string): any {
       const lastMatch = matches[matches.length - 1];
       try {
         return JSON.parse(lastMatch.replace(/```json|```/g, '').trim());
-      } catch (e) {
-        return null;
-      }
+      } catch (e) {}
+    }
+    
+    // Fallback: If it's malformed JSON, try to extract just the question
+    if (cleanText.includes('"question"')) {
+        const qMatch = cleanText.match(/"question"\s*:?\s*"?([^",}]+)/);
+        if (qMatch && qMatch[1]) {
+            return { question: qMatch[1].trim(), options: [], type: "question", contextLine: "" };
+        }
     }
     return null;
   }
@@ -259,7 +311,7 @@ function extractJSON(text: string): any {
 function formatConversation(history: any[]): string {
   if (!history || history.length === 0) return '(no previous exchanges)';
   return history
-    .map((h) => `  [${h.role.toUpperCase()}]: ${h.content}`)
+    .map((h, i) => `  [ROUND ${Math.floor(i/2) + 1} - ${h.role.toUpperCase()}]: ${h.content}`)
     .join('\n');
 }
 
@@ -267,6 +319,7 @@ function formatConversation(history: any[]): string {
 // ACTION: PROCESS ANSWER
 // ============================================================
 async function processAnswer(
+  req: NextRequest,
   userState: any,
   conversationHistory: any[],
   currentQuestion: string | null,
@@ -275,57 +328,126 @@ async function processAnswer(
   const round = conversationHistory.filter(h => h.role === 'user').length + 1;
   const now = Date.now();
   const lastTs = userState.tracking?.lastMessageTimestamp || now;
-  const responseTime = now - lastTs;
   
-  let engagementScore = userState.tracking?.engagementScore || 100;
-  const wordCount = userAnswer.split(/\s+/).length;
-  if (wordCount > 20) engagementScore += 5;
-  if (wordCount < 5) engagementScore -= 10;
-  engagementScore = Math.max(0, Math.min(100, engagementScore));
+  // ─── ENGAGEMENT SCORE CALCULATION ─────────────────────────
+  const wordCount = userAnswer.trim().split(/\s+/).length;
+  const emotionalKeywords = ['feel', 'hurt', 'sad', 'happy', 'love', 'pain', 'heart', 'soul', 'empty', 'lonely', 'anxiety', 'fear', 'joy', 'scared', 'tired'];
+  const emotionalCount = emotionalKeywords.filter(w => userAnswer.toLowerCase().includes(w)).length;
+  
+  // ─── LINGUISTIC & HESITATION ANALYSIS ────────────────────
+  const responseTimeMillis = now - lastTs;
+  const isHighHesitation = responseTimeMillis > 25000 && wordCount < 15;
+  const linguisticFlags = analyzeLinguistics(userAnswer);
+  
+  let hesitationPrompt = "";
+  if (isHighHesitation) {
+    hesitationPrompt = `DELETED DRAFT DETECTED: It took the user ${Math.floor(responseTimeMillis/1000)} seconds to type ${wordCount} words. Their brain gave them the truth in 2 seconds, and they spent the rest of the time sanitizing it. MANDATE: Call this out directly. Ask them exactly what thought they deleted before typing this.`;
+  }
 
-  const isFatigued = engagementScore < 40 || round >= (userState.sessionConfig?.maxQuestions || 10);
+  let linguisticPrompt = "";
+  if (linguisticFlags.length > 0) {
+    linguisticPrompt = `NEURO-LINGUISTIC FINGERPRINT DETECTED: ${linguisticFlags.join(' | ')}. MANDATE: Confront this language choice directly. Point out how they structure their sentence to avoid the truth.`;
+  }
+
+  const wordWeight = Math.min(wordCount, 60);
+  const emotionalWeight = Math.min(emotionalCount * 10, 40);
+  const engagementScore = wordWeight + emotionalWeight;
+
+  const questionMode = 
+    engagementScore > 70 ? 'DEEP' :
+    engagementScore > 30 ? 'MAINTAIN' : 
+    'REENTRY';
+
+  const isFatigued = engagementScore < 20 && round >= 5;
   const isExternal = !!userState.isExternalReport;
-  const missingFields = userState.missingFields || [];
+  
+  // ─── DYNAMIC MODE INSTRUCTIONS ────────────────────────────
+  const modeInstructions = {
+    DEEP: "USER IS HIGHLY ENGAGED. Go one layer deeper immediately. Target the core identity, secondary gain, and root cause.",
+    MAINTAIN: "USER IS MODERATELY ENGAGED. Stay at this depth, rephrase their truth to show you're tracking.",
+    REENTRY: "USER IS DEFLECTING OR DISENGAGED. USE A SOMATIC INTERRUPTION: Command them to stop typing, look away from the screen, and locate the physical sensation (stomach, throat, chest) trying to protect them."
+  }[questionMode];
 
-  const systemPrompt = SPIRITUAL_IDENTITY_RULES + `
+  const missingDataPoints = [];
+  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Details");
+  if (!userState.corePattern) missingDataPoints.push("Core Pattern");
+  if (!userState.rootCause) missingDataPoints.push("Root Cause");
+  if (!userState.confirmedMBTI) missingDataPoints.push("MBTI Type");
 
-${isExternal ? `
+  const dataCollectionHeader = `
+═══════════════════════════════════════════
+MODE: ${questionMode} | ROUND ${round} OF 5
+═══════════════════════════════════════════
+ENGAGEMENT STATUS: ${modeInstructions}
+UNLOCKED FIELDS NEEDED: ${missingDataPoints.join(', ')}.
+${hesitationPrompt ? `\n🔥 ${hesitationPrompt}` : ""}
+${linguisticPrompt ? `\n🔥 ${linguisticPrompt}` : ""}
+
+YOUR MANDATE:
+1. ANTI-REPETITION: DO NOT repeat questions, themes, or Completion Leads.
+2. OPTIONS MANDATORY: You MUST provide exactly 2 to 4 interactive "options". Never provide only one option.
+3. USE THE 8 LAWS: Rotate techniques (Bypass, Contradiction, Inverse, Somatic Pause, etc.) to deepen the decoding.
+4. ADAPT TO MODE: ${modeInstructions}
+5. 75% CONFIDENCE RULE: After this, score confidence. If avg > 75, set "type": "final_share".
+`;
+
+  const contextHeader = isExternal ? `
 ═══════════════════════════════════════════
 SPECIAL CONTEXT: MASTER COGNITIVE ARCHITECT
 ═══════════════════════════════════════════
 The user has provided a report from an external Master Cognitive Architect AI.
 Current Extracted Data Summary: ${JSON.stringify(userState.report)}
-MISSING FRAGMENTS: ${missingFields.join(', ')}
+MISSING FRAGMENTS: ${userState.missingFields?.join(', ') || 'All'}
 
 YOUR MISSION:
 You are "The Architect" acting as the closer. The external AI has identified the core, but some fragments are missing.
-1. FOCUS ONLY ON MISSING FIELDS: Ask questions to fill in: ${missingFields.join(', ')}.
-2. NO PRODUCTS: Do not mention any product names or shop links yet.
-3. ACKNOWLEDGE: Briefly acknowledge their input and how it relates to the cognitive architecture.
-4. STOP OPTION: If you sense the user is done or they selected a "Finish" option, transition to "final_share".
-` : ''}
+1. FOCUS ONLY ON MISSING FIELDS.
+2. USE THE 6 LAWS to get high-quality data.
+` : dataCollectionHeader;
 
-YOUR PSYCHOLOGIST STRATEGY:
-1. THE BRIDGE: Reflect their answer ("${userAnswer}").
-2. NO GENERIC QUESTIONS: Each question must feel like a logical consequence of their answer.
-3. OUTPUT FORMAT — JSON ONLY:
-{
-  "contextLine": "...",
-  "question": "...",
-  "options": [{"text": "...", "subLabel": "..."}],
-  "type": "question"
-}
+  const PATTERNS_CONTEXT = `
+═══════════════════════════════════════════
+PSYCHOLOGICAL SIGNALS FOR INITIAL CHOICES
+═══════════════════════════════════════════
+- "I keep starting things I don't finish": Avoidance pattern, fear of completion, fear of being truly judged.
+- "I finish things but they don't satisfy me": Achievement-emptiness loop, external validation seeker, identity not connected to success.
+- "I know what I want but can't make myself do it": Self-sabotage pattern, secondary gain (the pattern protects something unnamed).
+- "I don't know what I want anymore": Identity dissolution, deep existential layer shift, burnout or post-achievement depression.
 `;
+
+  const systemPrompt = SPIRITUAL_IDENTITY_RULES + contextHeader + PATTERNS_CONTEXT + 
+    `
+STRICT OUTPUT FORMAT:
+Return ONLY a valid JSON object. NEVER output raw text outside the JSON.
+REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress".
+
+{
+  "contextLine": "Mirror their exact words back as the bridge. No affirmations.",
+  "question": "Apply one of the 6 Laws of Architectural Inquiry here.",
+  "options": [
+    {"text": "Option 1 (reveals pattern A)", "subLabel": "..."}, 
+    {"text": "Option 2 (reveals pattern B)", "subLabel": "..."}, 
+    {"text": "Something else entirely", "subLabel": "Describe your own truth"}
+  ],
+  "type": "question" | "final_share",
+  "decodingProgress": number (0-100, representing your average confidence across the 4 core fields)
+} ` + "}";
 
   const userMessage = `Conversation History:
 ${formatConversation(conversationHistory)}
 User's latest answer: ${userAnswer}
 ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
 
-  // Check for streaming header
+  // ─── STREAMING RESPONSE (Primary) ──────────────────────────
   if (req.headers.get('accept') === 'text/event-stream') {
-    const stream = await groqStream(systemPrompt, userMessage);
-    return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' } });
+    const stream = await groqStream(systemPrompt, userMessage, MODELS.question);
+    return new Response(stream, { 
+      headers: { 
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+      } 
+    });
   }
 
   let text: string;
@@ -336,7 +458,23 @@ ${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
   }
 
   const parsed = extractJSON(text);
-  if (!parsed) return NextResponse.json({ success: true, data: { question: "I'm tracking. How has this impacted your daily peace?", type: 'question', options: [] } });
+  if (!parsed || !parsed.question) {
+    const fallbackBank = [
+        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "It's too heavy to name", subLabel: "Overwhelm pattern" }] },
+        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "It's my fault", subLabel: "Responsibility loop" }, { text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }] },
+        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Bitter", subLabel: "Resentment" }, { text: "Metallic", subLabel: "Fear" }, { text: "Empty", subLabel: "Dissociation" }] }
+    ];
+    const selected = fallbackBank[Math.floor(Math.random() * fallbackBank.length)];
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        question: selected.q, 
+        type: 'question', 
+        options: [...selected.opts, { text: "Something else entirely", subLabel: "Direct truth" }],
+        decodingProgress: userState.decodingProgress || 10
+      } 
+    });
+  }
   
   parsed.updatedTracking = { engagementScore, isFatigued, lastMessageTimestamp: now };
   return NextResponse.json({ success: true, data: parsed });
@@ -349,27 +487,44 @@ async function generateReport(
   userState: any,
   conversationHistory: any[]
 ) {
-  const systemPrompt = SPIRITUAL_IDENTITY_RULES + `
-YOUR TASK: GENERATE FULL CONSCIOUSNESS BLUEPRINT.
-NO PLACEHOLDERS. NO "MISSING". Use all conversation context to build the report.
-OUTPUT FORMAT: JSON ONLY.
-{
-  "report": {
-    "header": { "architecture": "...", "patternName": "...", "urgencyPercent": 85 },
-    "sections": [
-       { "id": "mirror", "title": "The Mirror", "content": "... (Every report includes your Consciousness Identity — a precise name for how your mind is uniquely wired. Nobody else has the same one.)" },
-       { "id": "root", "title": "The Root", "content": "..." },
-       { "id": "loop", "title": "The Loop", "content": "..." },
-       { "id": "path", "title": "The Path", "content": "..." }
-    ]
-  },
-  "products": [...]
-}
-`;
+  const systemPrompt = SPIRITUAL_IDENTITY_RULES + 
+    "\n\n" +
+    "═══════════════════════════════════════════\n" +
+    "MODE: ARCHITECTURAL BRUTALISM (REPORT GEN)\n" +
+    "═══════════════════════════════════════════\n" +
+    "YOUR TASK: GENERATE A CONSCIOUSNESS BLUEPRINT.\n" +
+    "MANDATORY: YOU MUST FILL EVERY SINGLE FIELD. NO 'UNKNOWN'. NO 'NULL'.\n" +
+    "If information is missing, infer the most likely pattern from the user's analytical framing and word choices.\n\n" +
+    "OUTPUT FORMAT: JSON ONLY.\n\n" +
+    "{\n" +
+    "  \"report\": {\n" +
+    "    \"header\": { \"architecture\": \"MBTI / Cosmic Axis\", \"patternName\": \"VISCERAL IDENTITY NAME\", \"urgencyPercent\": 95 },\n" +
+    "    \"mirror\": \"Hold up the mirror. Name the shadow pattern directly.\",\n" +
+    "    \"root\": \"The childhood installation / root cause.\",\n" +
+    "    \"loop\": { \"trigger\": \"...\", \"copingMechanism\": \"...\", \"cost\": \"...\", \"reset\": \"...\" },\n" +
+    "    \"cosmicConfirmation\": \"How their astrology confirms this peek moment.\",\n" +
+    "    \"costSection\": \"The brutal price of inaction.\",\n" +
+    "    \"path\": \"One precise actionable shift.\"\n" +
+    "  },\n" +
+    "  \"products\": [\n" +
+    "    { \"name\": \"...\", \"description\": \"...\", \"price\": \"...\", \"link\": \"...\" }\n" +
+    "  ]\n" +
+    "}";
 
   const userMessage = `History: ${formatConversation(conversationHistory)}`;
-  let text = await groqChat(systemPrompt, userMessage);
+  let text = await groqChat(systemPrompt, userMessage, 2, MODELS.report);
   const parsed = extractJSON(text);
+  
+  if (!parsed || !parsed.report) {
+      // Emergency fallback for report generation
+      return NextResponse.json({ 
+          success: true, 
+          data: { 
+              report: getFallbackReport(userState.confirmedMBTI || 'INFP'),
+              products: recommendProducts(userState.confirmedMBTI || 'INFP', userState.budget || 'mid')
+          } 
+      });
+  }
   
   const csn = generateCSN();
   const hash = generateVerificationHash({ ...parsed, sessionId: userState.session_id });

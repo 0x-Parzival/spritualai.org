@@ -7,6 +7,7 @@ import styles from './Lotus.module.css';
 interface LotusProps {
     quizMode?: boolean;
     lotusOffset?: number;
+    isChatActive?: boolean;
 }
 
 const RINGS_CONFIG = [
@@ -17,7 +18,7 @@ const RINGS_CONFIG = [
 
 const PETAL_PATH = 'M0,100 C0,66.6666667 12,33.3333333 36,0 C60,33.3333333 72,66.6666667 72,100 C72,133.333333 60,166.666667 36,200 C12,166.666667 0,133.333333 0,100 Z';
 
-export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps) {
+export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive = false }: LotusProps) {
     const router = useRouter();
     const [closed, setClosed] = useState(false);
     const [isBubbleVisible, setIsBubbleVisible] = useState(false);
@@ -143,22 +144,15 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
     };
 
     const toggle = (e: React.MouseEvent | React.KeyboardEvent) => {
+        if (isChatActive) return;
         e.stopPropagation();
-        setClosed(!closed);
+        // Navigate immediately as requested
+        router.push('/lotus-god');
+        
+        // Keep the visual feedback for the click moment
         const s = stateRef.current;
         if (coreRef.current) {
-            coreRef.current.style.boxShadow = !closed
-                ? '0 0 8px rgba(255,60,245,.2), 0 0 10px rgba(53,248,255,.15)'
-                : '0 0 55px rgba(255,60,245,.95), 0 0 65px rgba(53,248,255,.8)';
-            setTimeout(() => { if (coreRef.current) coreRef.current.style.boxShadow = ''; }, 750);
-        }
-        if (closed) { // If it was closed and we are opening it
-            setTimeout(() => emitRipple(true), 400);
-            setTimeout(() => triggerGlobalEvent(), 900);
-            setTimeout(() => triggerWave(0, 1.0), 1200);
-        } else {
-            // Navigate if clicked when open
-            router.push('/lotus-god');
+            coreRef.current.style.boxShadow = '0 0 55px rgba(255,60,245,.95), 0 0 65px rgba(53,248,255,.8)';
         }
     };
 
@@ -168,7 +162,8 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
             if (!r) return;
             const cx = r.left + r.width / 2;
             const cy = r.top + r.height / 2;
-            stateRef.current.proximity = Math.max(0, 1 - Math.hypot(e.clientX - cx, e.clientY - cy) / 300);
+            // Increased radius from 300 to 600 for 'early' detection
+            stateRef.current.proximity = Math.max(0, 1 - Math.hypot(e.clientX - cx, e.clientY - cy) / 600);
             stateRef.current.mousePos = { 
                 x: (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2),
                 y: (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2)
@@ -198,11 +193,11 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
             if (ring1Ref.current) ring1Ref.current.classList.toggle(styles.alive, s.awareness > 0.18);
             if (ring2Ref.current) ring2Ref.current.classList.toggle(styles.alive, s.awareness > 0.18);
 
-            // Spin & Dynamic Tilt
-            s.spinAngle += (0.006 + s.awareness * 0.003) * dt * 0.06;
+            // Spin & Dynamic Tilt - Visible slow rotation
+            s.spinAngle += (0.4 + s.awareness * 0.2) * (dt / 16.6);
             const baseTiltX = 70 - s.awareness * 5;
-            const cursorTiltX = baseTiltX + (s.mousePos.y * 4); // Halved sensitivity
-            const cursorTiltY = s.mousePos.x * 6; // Halved sensitivity
+            const cursorTiltX = baseTiltX + (s.mousePos.y * 4);
+            const cursorTiltY = s.mousePos.x * 6;
 
             if (lotusWrapRef.current) {
                 lotusWrapRef.current.style.transform = `rotateX(${cursorTiltX}deg) rotateY(${cursorTiltY}deg) rotateZ(${s.spinAngle}deg)`;
@@ -235,41 +230,43 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
                 if (!p) return;
                 p.trembleTimer -= dt;
                 if (p.trembleTimer <= 0) {
-                    p.trembleGoal = (Math.random() - 0.5) * 4.2;
+                    p.trembleGoal = (Math.random() - 0.5) * 1.5; // Reduced tremble (4.2 -> 1.5)
                     p.trembleTimer = 500 + Math.random() * 3200;
                 }
-                p.tremble += (p.trembleGoal - p.tremble) * 0.030;
-                p.trembleGoal *= 0.993;
-                p.hoverLift += (p.hoverGoal - p.hoverLift) * 0.10;
-                p.waveLift *= 0.91;
+                p.tremble = 0; // Completely disable lateral tremble
+                p.hoverLift += (p.hoverGoal - p.hoverLift) * 0.06;
+                p.waveLift *= 0.85;
+                if (p.waveLift < 0.001) p.waveLift = 0;
+                
                 p.eventTimer -= dt;
-                let evDelta = 0;
                 if (p.eventType) {
                     p.eventT += dt / p.eventDur;
                     if (p.eventT >= 1) {
                         p.eventType = null;
                         p.eventTimer = 800 + Math.random() * 7000;
-                    } else {
-                        evDelta = petalEventDelta(p);
                     }
                 } else if (p.eventTimer <= 0) {
                     startPetalEvent(p);
                 }
 
                 const ps = breathScale + Math.sin(s.bPhase + p.phase) * 0.008;
-                const extraX = p.hoverLift * 9 + p.waveLift * 13 + evDelta;
-                const trZ = p.tremble.toFixed(3);
+                const extraX = 0; // Hard disabled horizontal wiggle
+                let riseZ = p.hoverLift * 15 + p.waveLift * 15; // Reduced multipliers (30/35 -> 15/15)
+                const MAX_RISE = 25; // Tightened limit (50 -> 25)
+                if (riseZ > MAX_RISE) riseZ = MAX_RISE;
+                
+                const trZ = 0; // Hard disabled wobble
                 const isOpen = closed ? 0 : 1;
 
                 p.el.style.transform =
-                    `translate(-50%,-50%)` +
+                    `translate3d(-50%, -50%, ${riseZ.toFixed(2)}px)` +
                     ` rotateZ(calc(${p.baseAngle}deg + ${trZ}deg))` +
                     ` rotateX(calc(var(--baseX) * ${isOpen} + ${extraX.toFixed(3)}deg))` +
                     ` rotateY(calc(var(--baseY) * ${isOpen}))` +
                     ` scaleX(${ps.toFixed(4)})`;
 
                 const svgTiltBase = `rotateX(calc(var(--svgTilt) * (1 - ${isOpen})))`;
-                const svgScale = 1 + p.hoverLift * 0.09;
+                const svgScale = 1 + p.hoverLift * 0.04;
                 p.svg.style.transform = `${svgTiltBase} scale(${svgScale.toFixed(4)})`;
             });
 
@@ -286,6 +283,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
     } as React.CSSProperties;
 
     return (
+        <>
         <div style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease' }} className={styles.stage} ref={containerRef}>
             <div className={styles.lightWash}></div>
             <svg width="0" height="0" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
@@ -377,7 +375,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
                                                         p.svg.classList.add(styles.hovered);
                                                         p.path.setAttribute('fill', 'url(#neonGradHot)');
                                                         emitRipple(false);
-                                                        triggerWave(petalsRef.current.indexOf(p), 0.4);
+                                                        triggerWave(petalsRef.current.indexOf(p), 0.2); // Reduced from 0.4
                                                     }
                                                 }}
                                                 onMouseLeave={(e) => {
@@ -407,7 +405,15 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
                                 <p>Those who seek, find.</p>
                             </div>
                         )}
-                        <div className={styles.stemContainer}>                <svg className={styles.stemSvg} preserveAspectRatio="none" viewBox="0 0 200 1000">
+
+            <div className={`${styles.hint} ${hintFade ? styles.fade : ''}`} ref={hintRef}>
+                Hover a petal &nbsp;·&nbsp; Click to open &nbsp;·&nbsp; Feel it breathe
+            </div>
+        </div>
+
+        <div className={styles.stemWrapper} style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease' }}>
+            <div className={styles.stemContainer}>
+                <svg className={styles.stemSvg} preserveAspectRatio="none" viewBox="0 0 200 1000">
                     <defs>
                         <filter id="stemWater" x="-50%" y="-10%" width="200%" height="120%">
                             <feTurbulence type="fractalNoise" baseFrequency="0.05 0.1" numOctaves="2" result="noise">
@@ -424,10 +430,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0 }: LotusProps)
                     />
                 </svg>
             </div>
-
-            <div className={`${styles.hint} ${hintFade ? styles.fade : ''}`} ref={hintRef}>
-                Hover a petal &nbsp;·&nbsp; Click to open &nbsp;·&nbsp; Feel it breathe
-            </div>
         </div>
+        </>
     );
 }

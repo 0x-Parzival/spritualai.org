@@ -41,6 +41,20 @@ export default function SpiritualAI() {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [mouseX, mouseY]);
 
+    useEffect(() => {
+        if (isChatActive) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+        };
+    }, [isChatActive]);
+
     const handleChatComplete = (state: any) => {
         setFinalState(state);
     };
@@ -67,7 +81,9 @@ export default function SpiritualAI() {
             position: 'relative', 
             minHeight: '400vh', 
             background: '#000',
-            overflowX: 'clip'
+            overflowX: 'clip',
+            overflowY: isChatActive ? 'hidden' : 'auto',
+            height: isChatActive ? '100vh' : 'auto'
         }}>
             {/* Nav Buttons (Absolute at top) */}
             <AnimatePresence>
@@ -125,7 +141,7 @@ export default function SpiritualAI() {
             </div>
 
             {/* CONTENT SECTIONS */}
-            <div style={{ position: 'relative', zIndex: 150, overflow: 'visible' }}>
+            <div style={{ position: 'relative', zIndex: 1000, overflow: 'visible' }}>
                 {/* PAGE 1: AI INTERACTION */}
                 <section style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
                     <AnimatePresence>
@@ -137,7 +153,7 @@ export default function SpiritualAI() {
                     </AnimatePresence>
                     <div style={{
                         position: 'absolute', bottom: '0', left: 0, width: '100%',
-                        display: 'flex', justifyContent: 'center', pointerEvents: 'auto'
+                        display: 'flex', justifyContent: 'center', pointerEvents: 'none'
                     }}>
                         <HeroCTA 
                             onGlassChange={setIsGlassActive} 
@@ -161,7 +177,7 @@ export default function SpiritualAI() {
 
             {/* Fixed Floating Elements */}
             <FallingMan mouseX={mouseX} mouseY={mouseY} />
-            <Lotus quizMode={isChatActive} lotusOffset={lotusOffset} />
+            <Lotus quizMode={isChatActive} lotusOffset={lotusOffset} isChatActive={isChatActive} />
         </main>
     );
 }

@@ -42,6 +42,7 @@ export interface UserState {
   // Pattern detection
   detectedPattern: string | null;
   patternConfidence: number;
+  decodingProgress: number; // 0 to 100
   unconsciousPatterns: string[];
   triggerWords: string[];
 
@@ -72,6 +73,8 @@ export interface UserState {
     engagementScore: number; // 0 to 100
     isFatigued: boolean;
     sessionStartTime: number;
+    hesitationDetected?: boolean;
+    linguisticFlags?: string[];
   };
 
   // Session Config
@@ -84,6 +87,28 @@ export interface UserState {
   // Output
   report: ConsciousnessReport | null;
   recommendedProducts: Product[];
+}
+
+export function analyzeLinguistics(text: string): string[] {
+  const flags: string[] = [];
+  const lowerText = text.toLowerCase();
+
+  // Distancing
+  if (/\b(you|one)\b.*\b(feel|think|know)\b/.test(lowerText) && !lowerText.includes('i feel')) {
+    flags.push("DISTANCING (Using 'you/one' instead of 'I' to avoid owning the feeling)");
+  }
+  
+  // Absolutes
+  if (/\b(always|never|impossible|everyone|nobody|ruined)\b/.test(lowerText)) {
+    flags.push("ABSOLUTES (Rigid, black-and-white cognitive distortion)");
+  }
+
+  // Passive / External Locus
+  if (/\b(made me|happened to me|forces me|can't help it)\b/.test(lowerText)) {
+    flags.push("EXTERNAL LOCUS (Speaking as if life happens TO them, lacking agency)");
+  }
+
+  return flags;
 }
 
 export interface GeneratedQuestion {
@@ -357,7 +382,6 @@ export const MBTI_PROFILES: Record<string, {
 // ============================================================
 // PATTERNS
 // ============================================================
-
 export const PATTERNS: Record<string, {
   name: string;
   triggers: string[];
@@ -368,6 +392,56 @@ export const PATTERNS: Record<string, {
   rootCause: string;
   runningSince: string;
 }> = {
+  sovereign_in_exile: {
+    name: "The Sovereign in Exile",
+    triggers: ["almost ready", "needs more research", "one more iteration", "not quite there", "waiting for permission"],
+    product: "advanced_shadow",
+    path: "Karma Yoga (Direct Action)",
+    societyAngle: "Your brilliance is a cage if you never commit. Release the vision.",
+    urgencyBoost: 5,
+    rootCause: "Parental comparison installed a belief that value is relative and must be proven before action.",
+    runningSince: "Childhood",
+  },
+  avoidance_loop: {
+    name: "Avoidance Pattern",
+    triggers: ["don't finish", "starting things", "fear of completion", "not ready", "unfinished"],
+    product: "perfectionism_blueprint",
+    path: "Jnana Yoga track",
+    societyAngle: "Completion is the death of the ego's safety. Finish to be free.",
+    urgencyBoost: 2,
+    rootCause: "Fear of being truly judged when a project is finally complete.",
+    runningSince: "Likely age 12–16",
+  },
+  achievement_emptiness: {
+    name: "Achievement-Emptiness Loop",
+    triggers: ["don't satisfy me", "now what", "validation seeker", "meaningless success", "empty win"],
+    product: "abundance_audio",
+    path: "Bhakti Yoga track",
+    societyAngle: "Success without soul is the ultimate failure.",
+    urgencyBoost: 3,
+    rootCause: "Identity connected to external validation rather than internal truth.",
+    runningSince: "Likely age 10–14",
+  },
+  self_sabotage: {
+    name: "Self-Sabotage Pattern",
+    triggers: ["can't make myself", "know what i want", "holding back", "resisting", "secondary gain"],
+    product: "shadow_work_journal",
+    path: "Karma Yoga track",
+    societyAngle: "Your resistance is protecting a version of you that no longer exists.",
+    urgencyBoost: 4,
+    rootCause: "The pattern protects a hidden secondary gain (safety, attention, or invisibility).",
+    runningSince: "Likely age 7–12",
+  },
+  identity_dissolution: {
+    name: "Identity Dissolution",
+    triggers: ["don't know what i want", "who am i", "lost entirely", "existential", "burnout"],
+    product: "advanced_shadow",
+    path: "Raja Yoga track",
+    societyAngle: "The void is not the end. It is the beginning of the real you.",
+    urgencyBoost: 5,
+    rootCause: "Post-achievement depression or burnout leading to a deep existential layer shift.",
+    runningSince: "Recent activation (last 1-3 years)",
+  },
   victim_loop: {
     name: "Victim Loop",
     triggers: ["always happens to me", "nothing works", "why me", "unfair", "stuck forever"],

@@ -230,6 +230,7 @@ const DEFAULT_USER_STATE: UserState = {
     confirmedMBTI: null,
     detectedPattern: null,
     patternConfidence: 0,
+    decodingProgress: 0,
     unconsciousPatterns: [],
     triggerWords: [],
     budget: 'unknown',
@@ -379,22 +380,46 @@ export default function HeroCTA({
     
     useEffect(() => {
         if (isTyping) {
-            const statuses = [
-                "ISOLATING COGNITIVE BIAS...",
-                "MAPPING RECURSIVE LOOPS...",
-                "STRATIFYING MBTI LAYERS...",
-                "DECODING ARCHITECTURE..."
-            ];
+            const statusMap: Record<number, string[]> = {
+                0: ["ISOLATING COGNITIVE BIAS...", "MAPPING RECURSIVE LOOPS..."],
+                1: ["CALIBRATING ASTROLOGY...", "DECODING BIRTH COORDINATES..."],
+                2: ["ANALYZING DEFENSE ARCHITECTURE...", "TARGETING ROOT AGE..."],
+                3: ["UNCOVERING SECONDARY GAIN...", "EXPOSING HIDDEN PROFITS..."],
+                4: ["VISUALIZING IDENTITY ATTACHMENT...", "PREPARING FINAL BLUEPRINT..."],
+                5: ["ETCHING CONSCIOUSNESS DATA...", "DECODING FINAL ARCHITECTURE..."]
+            };
+            const statuses = statusMap[round] || statusMap[0];
             let i = 0;
             const interval = setInterval(() => {
                 setThinkingStatus(statuses[i % statuses.length]);
                 i++;
-            }, 800);
+            }, 1000);
             return () => clearInterval(interval);
         } else {
             setThinkingStatus("Thinking");
         }
-    }, [isTyping]);
+    }, [isTyping, round]);
+
+    // Pre-warm next question while user types
+    useEffect(() => {
+        if (!showChat || isTyping || inputValue.length < 10) return;
+        
+        const prewarmTimer = setTimeout(async () => {
+            try {
+                // Send a silent pre-warm request to keep the LPU active
+                fetch('/api/spiritual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'warmup',
+                        partialInput: inputValue 
+                    }),
+                });
+            } catch (_) {}
+        }, 1500);
+
+        return () => clearTimeout(prewarmTimer);
+    }, [inputValue, showChat, isTyping]);
 
     useEffect(() => {
         if (showChat || isConvoComplete || showPromptPopup) return;
@@ -459,9 +484,16 @@ export default function HeroCTA({
                 setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
             }
 
-            const greeting = "Your pattern brought you here. Which loop are we breaking tonight?";
+            const greeting = "Which of these feels most like your life right now?";
+            const greetingOptions = [
+                { text: "I keep starting things I don't finish", subLabel: "Avoidance pattern" },
+                { text: "I finish things but they don't satisfy me", subLabel: "Achievement-emptiness loop" },
+                { text: "I know what I want but can't make myself do it", subLabel: "Self-sabotage pattern" },
+                { text: "I don't know what I want anymore", subLabel: "Identity dissolution" },
+                { text: "Something else entirely", subLabel: "Deep inquiry" }
+            ];
 
-            setMessages([{ role: 'ai', content: "" }]);
+            setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
             setShowChat(true);
             setCurrentQuestion(greeting);
             setConversationHistory([{ role: 'ai', content: greeting }]);
@@ -485,6 +517,48 @@ export default function HeroCTA({
     const recognitionRef = useRef<any>(null);
     const chatThreadRef = useRef<HTMLDivElement>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Use a ref to keep state/props accessible to the global listener without changing dependency array size
+    const listenerStateRef = useRef({ showChat, sacredPause, isTyping, onGlassChange, onChatActive });
+    useEffect(() => {
+        listenerStateRef.current = { showChat, sacredPause, isTyping, onGlassChange, onChatActive };
+    }, [showChat, sacredPause, isTyping, onGlassChange, onChatActive]);
+
+    // Global key listener to auto-focus input when user types
+    useEffect(() => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            const { showChat: currentShowChat, sacredPause, isTyping, onGlassChange, onChatActive } = listenerStateRef.current;
+            
+            if (!sacredPause && 
+                !isTyping && 
+                document.activeElement?.tagName !== 'INPUT' && 
+                document.activeElement?.tagName !== 'TEXTAREA' &&
+                !e.metaKey && !e.ctrlKey && !e.altKey &&
+                e.key.length === 1) {
+                
+                // If chat isn't open, open it
+                if (!currentShowChat) {
+                    setShowChat(true);
+                    if (onGlassChange) onGlassChange(true);
+                    if (onChatActive) onChatActive(true);
+                }
+                
+                // Manually focus and append the key so it's not lost
+                inputRef.current?.focus();
+                // We use a small timeout to let the state update if showChat was just toggled
+                setTimeout(() => {
+                    if (inputRef.current) {
+                        inputRef.current.focus();
+                        setInputValue(prev => (prev + e.key));
+                    }
+                }, 10);
+            }
+        };
+
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, []);
 
     useEffect(() => {
         if (showChat && chatThreadRef.current) {
@@ -551,57 +625,121 @@ export default function HeroCTA({
                     if (done) break;
                     const chunk = decoder.decode(value);
                     fullText += chunk;
+                    
+                    let displayContent = fullText;
+                    if (fullText.includes('"question"')) {
+                        // More robust regex: handles missing quotes or colons after "question"
+                        // 1. Look for "question" followed by optional colon/whitespace
+                        // 2. Look for optional starting quote
+                        // 3. Capture everything until a closing quote OR a comma OR a closing brace OR end of string
+                        const qMatch = fullText.match(/"question"\s*:?\s*"?([^",}]+)/);
+                        if (qMatch && qMatch[1] !== undefined) {
+                            displayContent = qMatch[1].trim();
+                        }
+                    } else if (fullText.trim().startsWith('{')) {
+                        displayContent = "...";
+                    }
+
                     setMessages(prev => {
                         const n = [...prev];
-                        if (n.length > 0) n[n.length - 1].content = fullText;
+                        if (n.length > 0) n[n.length - 1].content = displayContent;
                         return n;
                     });
                 }
 
                 const parsed = extractJSONFromStream(fullText);
-                if (parsed) {
+                if (parsed && parsed.question) {
                     setCurrentAiResponse(parsed);
                     const updatedState = { ...state };
                     if (parsed.updatedTracking) updatedState.tracking = { ...updatedState.tracking, ...parsed.updatedTracking };
                     if (parsed.inferredMBTI) updatedState.confirmedMBTI = parsed.inferredMBTI;
+                    if (parsed.decodingProgress !== undefined) updatedState.decodingProgress = parsed.decodingProgress;
                     setUserState(updatedState);
 
                     setMessages(prev => {
                         const n = [...prev];
                         if (n.length > 0) {
                             n[n.length - 1].content = parsed.question || fullText;
-                            n[n.length - 1].options = parsed.options;
-                            n[n.length - 1].contextLine = parsed.contextLine;
+                            n[n.length - 1].options = parsed.options || [];
+                            n[n.length - 1].contextLine = parsed.contextLine || "";
                         }
                         return n;
                     });
                     
                     const lowerQ = (parsed.question || "").toLowerCase();
-                    const needsDOB = (lowerQ.includes('date of birth') || lowerQ.includes('born on')) && !state.birthDate;
-                    if (needsDOB) setCanShowCalendar(true);
-                    setConversationHistory([...history, { role: 'user', content: userAnswer }, { role: 'ai', content: parsed.question || fullText }]);
+                    const needsDOB = (lowerQ.includes('date of birth') || lowerQ.includes('born on') || lowerQ.includes('birth details')) && !state.birthDate;
+                    if (needsDOB) {
+                        setCanShowCalendar(true);
+                        setShowDatePicker(true);
+                    }
+                    setConversationHistory([...history, { role: 'ai', content: parsed.question || fullText }]);
+                    setRound(qCount + 1);
+                } else {
+                    const fallbackBank = [
+                        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "It's too heavy to name", subLabel: "Overwhelm pattern" }] },
+                        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "It's my fault", subLabel: "Responsibility loop" }, { text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }] },
+                        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Bitter", subLabel: "Resentment" }, { text: "Metallic", subLabel: "Fear" }, { text: "Empty", subLabel: "Dissociation" }] }
+                    ];
+                    const selected = fallbackBank[Math.floor(Math.random() * fallbackBank.length)];
+                    const fallbackQ = selected.q;
+                    const fallbackOptions = [...selected.opts, { text: "Something else entirely", subLabel: "Direct truth" }];
+                    
+                    setMessages(prev => {
+                        const n = [...prev];
+                        if (n.length > 0) {
+                            n[n.length - 1].content = fallbackQ;
+                            n[n.length - 1].options = fallbackOptions;
+                        }
+                        return n;
+                    });
+                    setConversationHistory([...history, { role: 'ai', content: fallbackQ }]);
                     setRound(qCount + 1);
                 }
             } else {
                 const data = await res.json();
                 if (data.success && data.data) {
                     const aiData = data.data;
-                    setMessages(prev => [...prev, { role: 'ai', content: aiData.question, options: aiData.options, contextLine: aiData.contextLine }]);
-                    setConversationHistory([...history, { role: 'user', content: userAnswer }, { role: 'ai', content: aiData.question }]);
+                    setMessages(prev => [...prev, { role: 'ai', content: aiData.question || aiData, options: aiData.options, contextLine: aiData.contextLine }]);
+                    setConversationHistory([...history, { role: 'user', content: userAnswer }, { role: 'ai', content: aiData.question || aiData }]);
                     setRound(qCount + 1);
                 }
             }
         } catch (err) {
             console.error('AI error:', err);
-            setMessages(prev => [...prev, { role: 'ai', content: "Disturbance in the neural link." }]);
+            setMessages(prev => {
+                const n = [...prev];
+                // Remove the empty AI message if it exists
+                if (n.length > 0 && n[n.length - 1].role === 'ai' && !n[n.length - 1].content) {
+                    n.pop();
+                }
+                return [...n, { role: 'ai', content: "Disturbance in the neural link. Reconnecting..." }];
+            });
         } finally { setIsTyping(false); }
     };
 
     const extractJSONFromStream = (text: string) => {
+        if (!text) return null;
         try {
-            const matches = text.match(/\{[\s\S]*\}/g);
-            if (matches) return JSON.parse(matches[matches.length - 1]);
-        } catch (e) {}
+            // First try pure parse
+            return JSON.parse(text);
+        } catch (e) {
+            try {
+                // Try to find JSON block
+                const matches = text.match(/\{[\s\S]*\}/g);
+                if (matches) {
+                    return JSON.parse(matches[matches.length - 1]);
+                }
+            } catch (e2) {}
+            
+            // If it's still failing but looks like it tried to be JSON,
+            // let's try to manually extract the question to save the UX
+            if (text.includes('"question"')) {
+                const qMatch = text.match(/"question"\s*:?\s*"?([^",}]+)/);
+                if (qMatch && qMatch[1]) {
+                    return { question: qMatch[1].trim() };
+                }
+            }
+        }
         return null;
     };
 
@@ -710,8 +848,11 @@ export default function HeroCTA({
                 await new Promise(r => setTimeout(r, 10));
             }
         }
-        await sendToAI(text, newState.chipSelected, newState, conversationHistory, round);
-        if (currentAiResponse?.type === 'final_share') setTimeout(() => triggerSacredPause(newState, [...conversationHistory, { role: 'user', content: text }]), 1500);
+        const updatedHistory = [...conversationHistory, { role: 'user', content: text }];
+        await sendToAI(text, newState.chipSelected, newState, updatedHistory, round);
+        if (userState.decodingProgress >= 100 || currentAiResponse?.type === 'final_share') {
+            setTimeout(() => triggerSacredPause(newState, updatedHistory), 1500);
+        }
     };
 
     const handleOptionClick = async (optionText: string) => {
@@ -721,13 +862,17 @@ export default function HeroCTA({
         const tracked = updateStateWithTracking(optionText, userState);
         setUserState(tracked);
         
+        const updatedHistory = [...conversationHistory, { role: 'user', content: optionText }];
+
         if (optionText === "Finish Report Now") {
-            setTimeout(() => triggerSacredPause(tracked, [...conversationHistory, { role: 'user', content: optionText }]), 1000);
+            setTimeout(() => triggerSacredPause(tracked, updatedHistory), 1000);
             return;
         }
 
-        await sendToAI(optionText, tracked.chipSelected, tracked, conversationHistory, round);
-        if (currentAiResponse?.type === 'final_share') setTimeout(() => triggerSacredPause(tracked, [...conversationHistory, { role: 'user', content: optionText }]), 1500);
+        await sendToAI(optionText, tracked.chipSelected, tracked, updatedHistory, round);
+        if (userState.decodingProgress >= 100 || currentAiResponse?.type === 'final_share') {
+            setTimeout(() => triggerSacredPause(tracked, updatedHistory), 1500);
+        }
     };
 
     const handleStruggleClick = async (struggle: string) => {
@@ -757,20 +902,56 @@ export default function HeroCTA({
         }, struggle.length * 40 + 300);
     };
 
-    const toggleListening = () => {
-        if (isListening) { recognitionRef.current?.stop(); setIsListening(false); return; }
-        const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        if (!SR) { alert("Unsupported."); return; }
-        if (!recognitionRef.current) {
-            recognitionRef.current = new SR(); recognitionRef.current.continuous = true; recognitionRef.current.interimResults = true;
-            recognitionRef.current.onresult = (e: any) => {
-                let f = ''; for (let i = e.resultIndex; i < e.results.length; ++i) if (e.results[i].isFinal) f += e.results[i][0].transcript;
-                if (f) setInputValue(p => p + " " + f);
-            };
-            recognitionRef.current.onerror = () => setIsListening(false);
-            recognitionRef.current.onend = () => { if (isListening) setIsListening(false); };
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
+
+    const toggleListening = async () => {
+        if (isListening) {
+            mediaRecorderRef.current?.stop();
+            setIsListening(false);
+            return;
         }
-        recognitionRef.current.start(); setIsListening(true); maybePlaySound();
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            audioChunksRef.current = [];
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const formData = new FormData();
+                formData.append('file', audioBlob, 'speech.webm');
+
+                setIsTyping(true);
+                try {
+                    const res = await fetch('/api/spiritual', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.success && data.text) {
+                        setInputValue(prev => (prev + " " + data.text).trim());
+                    }
+                } catch (err) {
+                    console.error("Transcription failed", err);
+                } finally {
+                    setIsTyping(false);
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            };
+
+            mediaRecorder.start();
+            setIsListening(true);
+            maybePlaySound();
+        } catch (err) {
+            console.error("Mic access failed", err);
+            alert("Microphone access is required for voice interaction.");
+        }
     };
 
     const speakText = (text: string) => {
@@ -861,16 +1042,15 @@ export default function HeroCTA({
                             <div className={styles.decodingProgressContainer}>
                                 <div className={styles.progressLabel}>
                                     <span>CONSCIOUSNESS DECODING IN PROGRESS</span>
-                                    <span>{Math.min(round, 5)} / 5 FRAGMENTS</span>
+                                    <span>{userState.decodingProgress}% IDENTIFIED</span>
                                 </div>
                                 <div className={styles.progressBarTrack}>
                                     <div 
                                         className={styles.progressBarFill} 
-                                        style={{ width: `${(Math.min(round, 5) / 5) * 100}%` }}
+                                        style={{ width: `${userState.decodingProgress}%` }}
                                     />
                                 </div>
                             </div>
-
                             <div className={styles.chatHeaderTitle}>
                                 {/* Redundant HeroTitle removed for cleaner chat interface */}
                             </div>
@@ -901,7 +1081,7 @@ export default function HeroCTA({
                 </AnimatePresence>
 
                 {!isTransitioning && (
-                    <form className={`${styles.gradientFlowBtn} cta-message-box`} onSubmit={handleSubmit} style={{ position: 'relative' }}>
+                    <form className={`${styles.gradientFlowBtn} cta-message-box`} onSubmit={handleSubmit} style={{ position: 'relative', pointerEvents: 'auto', zIndex: 2000 }}>
                     <AudioVisualizer isActive={isListening} />
                     <div className={styles.inputLeftIcon}><img src="/images/logo.png" alt="Logo" /></div>
                     {showDatePicker ? (
@@ -923,7 +1103,7 @@ export default function HeroCTA({
                             }}>OK</button>
                         </div>
                     ) : isConvoComplete ? (<div style={{ flex: 1, display: 'flex', alignItems: 'center' }}><SacredStatus /></div>) : (
-                        <input type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
+                        <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
                     )}
                     <div className={styles.neuralStatus}>
                         {canShowCalendar && (<button type="button" className={styles.micButton} onClick={() => setShowDatePicker(!showDatePicker)} style={{ borderColor: showDatePicker ? '#00f2ff' : 'rgba(255,255,255,0.2)', background: showDatePicker ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)' }}><Calendar size={18} /></button>)}

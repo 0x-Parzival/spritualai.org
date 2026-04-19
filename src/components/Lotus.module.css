@@ -9,7 +9,7 @@
     place-items: center;
     transform-style: preserve-3d;
     perspective: 1000px;
-    z-index: 100;
+    z-index: 2500;
     pointer-events: none;
     transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -44,7 +44,7 @@
     background: radial-gradient(ellipse at bottom, rgba(53, 248, 255, 0.12), rgba(255, 60, 245, 0.05) 40%, transparent 70%);
     filter: blur(40px);
     pointer-events: none;
-    z-index: -1;
+    z-index: -2;
 }
 
 
@@ -56,6 +56,7 @@
     transform: translateZ(-20px);
     pointer-events: none;
     transition: border-color 1s ease, box-shadow 1s ease;
+    z-index: 1;
 }
 .a1 { width: 290px; height: 290px; }
 .a2 { width: 360px; height: 360px; transition-delay: 0.18s; }
@@ -72,7 +73,7 @@
     outline: none;
     pointer-events: auto;
     --open: 1;
-    z-index: 2;
+    z-index: 10;
 }
 .lotusWrap.closed { --open: 0; }
 
@@ -118,9 +119,7 @@
     filter:
         drop-shadow(0 0 8px rgba(255,60,245,.35))
         drop-shadow(0 0 10px rgba(53,248,255,.25));
-    transition:
-        transform var(--speed) cubic-bezier(0,.75,.25,1),
-        filter 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 .petalSvg.hovered {
@@ -249,6 +248,18 @@
     100% { transform: translateX(-50%) scale(1.5); opacity: 0; filter: blur(10px); }
 }
 
+.stemWrapper {
+    position: fixed;
+    bottom: calc(-34px - var(--lotus-offset, 0px));
+    left: 50%;
+    transform: translateX(-50%) translateY(0.5cm);
+    width: 500px;
+    height: 500px;
+    z-index: 500; /* Behind the 1000 z-index of the message box */
+    pointer-events: none;
+    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .stemContainer {
     position: absolute;
     top: 50%; /* Start from center of lotus */
@@ -256,7 +267,6 @@
     transform: translateX(-50%);
     width: 260px;
     height: 150vh; /* Extra long to ensure it hits the bottom */
-    z-index: 1;
     pointer-events: none;
     display: flex;
     justify-content: center;
