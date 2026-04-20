@@ -4,32 +4,44 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './SocialProofTicker.module.css';
 
-const notifications = [
+const baseNotifications = [
     "14,847 seekers decoded across 12 countries",
-    "INTJ from Vienna — 4 years of searching ended tonight",
+    "Seeker from Vienna — 4 years of searching ended tonight",
     "12 seekers active right now in the decoding chamber",
-    "INFJ from London — finally understood their loop",
+    "Seeker from London — finally understood their loop",
     "4,200+ blueprints delivered this month",
-    "ENFP from Tokyo — spiritual resonance found",
+    "Seeker from Tokyo — spiritual resonance found",
     "31 people joining the society in the last hour",
-    "INTP from Seattle — logic meets ancient wisdom",
-    "ENTJ from Sydney — strategic blueprint etched",
+    "Seeker from Seattle — logic meets ancient wisdom",
+    "Seeker from Sydney — strategic blueprint etched",
     "Someone just wept reading their consciousness report",
-    "ISTP from Berlin — precision path unlocked",
+    "Seeker from Berlin — precision path unlocked",
     "847 seekers discovered their true architecture this week",
-    "ENFJ from Paris — generational cycle broken",
+    "Seeker from Paris — generational cycle broken",
     "44 people found their path while you were reading this",
-    "ISFP from Seoul — artistic frequency stabilized",
-    "ESTJ from Chicago — structural alignment complete",
-    "ISTJ from Dubai — legacy pattern decoded"
+    "Seeker from Seoul — artistic frequency stabilized",
+    "Seeker from Chicago — structural alignment complete",
+    "Seeker from Dubai — legacy pattern decoded"
 ];
 
 export default function SocialProofTicker() {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [notifications, setNotifications] = useState(baseNotifications);
 
     useEffect(() => {
-        // Randomize the first index on load so it's different for every user
-        setCurrentIndex(Math.floor(Math.random() * notifications.length));
+        // Try to get user name from local storage or state
+        const stored = localStorage.getItem('user_state');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (parsed.name) {
+                    setNotifications(prev => [
+                        `${parsed.name}, your neural architecture is being scanned...`,
+                        ...prev
+                    ]);
+                }
+            } catch (e) {}
+        }
 
         const interval = setInterval(() => {
             setCurrentIndex((prev) => {

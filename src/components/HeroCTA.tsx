@@ -497,47 +497,49 @@ export default function HeroCTA({
     }, []);
 
     const handleInputFocus = async () => {
-        if (!showChat && messages.length === 0) {
-            const quizResult = localStorage.getItem('mbti_quiz_result');
-            if (quizResult) {
-                setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
-            }
-
-            const greeting = "Which of these feels most like your life right now?";
-            const greetingOptions = [
-                { text: "I feel stuck, and I don't know why.", subLabel: "Core blockage" },
-                { text: "Something feels missing, but I can't name it.", subLabel: "Void awareness" },
-                { text: "I don't know who I really am anymore.", subLabel: "Identity shift" },
-                { text: "I keep repeating the same patterns.", subLabel: "Loop detection" },
-                { text: "I sense there's more to life than this.", subLabel: "Existential pull" },
-                { text: "I feel deeply misunderstood by everyone.", subLabel: "Isolation pattern" },
-                { text: "I'm going through a major life change.", subLabel: "Transition state" },
-                { text: "My mind won't stop overthinking.", subLabel: "Cognitive loop" },
-                { text: "I've lost my sense of direction.", subLabel: "Path dissolution" },
-                { text: "I'm searching for something I can't explain.", subLabel: "Inner search" }
-            ];
-
-            setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
+        if (!showChat) {
             setShowChat(true);
-            setCurrentQuestion(greeting);
-            
-            const initialContext = lastReadArchitecture 
-                ? `[CONTEXT: User was just reading about "${lastReadArchitecture}"] ${greeting}`
-                : greeting;
-                
-            setConversationHistory([{ role: 'ai', content: initialContext }]);
-            setRound(0);
+            if (messages.length === 0) {
+                const quizResult = localStorage.getItem('mbti_quiz_result');
+                if (quizResult) {
+                    setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
+                }
 
-            for (let j = 0; j <= greeting.length; j++) {
-                const currentText = greeting.substring(0, j);
-                setMessages(prev => {
-                    const next = [...prev];
-                    if (next.length > 0) {
-                        next[0] = { ...next[0], content: currentText };
-                    }
-                    return next;
-                });
-                await new Promise(r => setTimeout(r, 10));
+                const greeting = "Which of these feels most like your life right now?";
+                const greetingOptions = [
+                    { text: "I feel stuck, and I don't know why.", subLabel: "Core blockage" },
+                    { text: "Something feels missing, but I can't name it.", subLabel: "Void awareness" },
+                    { text: "I don't know who I really am anymore.", subLabel: "Identity shift" },
+                    { text: "I keep repeating the same patterns.", subLabel: "Loop detection" },
+                    { text: "I sense there's more to life than this.", subLabel: "Existential pull" },
+                    { text: "I feel deeply misunderstood by everyone.", subLabel: "Isolation pattern" },
+                    { text: "I'm going through a major life change.", subLabel: "Transition state" },
+                    { text: "My mind won't stop overthinking.", subLabel: "Cognitive loop" },
+                    { text: "I've lost my sense of direction.", subLabel: "Path dissolution" },
+                    { text: "I'm searching for something I can't explain.", subLabel: "Inner search" }
+                ];
+
+                setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
+                setCurrentQuestion(greeting);
+                
+                const initialContext = lastReadArchitecture 
+                    ? `[CONTEXT: User was just reading about "${lastReadArchitecture}"] ${greeting}`
+                    : greeting;
+                    
+                setConversationHistory([{ role: 'ai', content: initialContext }]);
+                setRound(0);
+
+                for (let j = 0; j <= greeting.length; j++) {
+                    const currentText = greeting.substring(0, j);
+                    setMessages(prev => {
+                        const next = [...prev];
+                        if (next.length > 0) {
+                            next[0] = { ...next[0], content: currentText };
+                        }
+                        return next;
+                    });
+                    await new Promise(r => setTimeout(r, 10));
+                }
             }
         }
     };
@@ -1067,7 +1069,7 @@ export default function HeroCTA({
                 {!showChat && (
                     <div style={{ width: '100%', position: 'relative' }}>
                         <div className={styles.ctaPromptText}>
-                            Talk to Spiritual AI below ↓ It will guide you step-by-step
+                            {userState.name ? `Talk to Chaitanya, ${userState.name} ↓ It will guide you step-by-step` : "Talk to Chaitanya below ↓ It will guide you step-by-step"}
                         </div>
                         <div className={styles.staticCounter}>
                             <span className={styles.counterHighlight}>{decodedCount.toLocaleString()}</span> patterns decoded. Yours is next.
