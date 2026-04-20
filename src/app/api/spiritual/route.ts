@@ -386,26 +386,26 @@ async function processAnswer(
 
   const missingDataPoints = [];
   if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Data (Vedic Chart)");
+  if (!userState.currentBranch) missingDataPoints.push("Domain (Career/Rel/etc)");
   if (!userState.shadowPattern) missingDataPoints.push("The Shadow (Unconscious Loop)");
   if (!userState.activeArchetype) missingDataPoints.push("Active Archetype");
   if (!userState.confirmedMBTI) missingDataPoints.push("Cognitive Architecture (MBTI)");
 
   const dataCollectionHeader = `
 ═══════════════════════════════════════════
-MODE: CHAITANYA — THE ARCHETYPAL MIRROR
+MODE: CHAITANYA — THE SURGICAL MIRROR
 ═══════════════════════════════════════════
-GAPS IN PSYCHIC MAP: ${missingDataPoints.join(', ')}.
-${hesitationPrompt ? `\n⚠️ SHADOW SIGNAL: ${hesitationPrompt}` : ""}
-${linguisticPrompt ? `\n⚠️ PERSONA SIGNAL: ${linguisticPrompt}` : ""}
-${partialInputPrompt ? `\n⚠️ REPRESSED THOUGHT: ${partialInputPrompt}` : ""}
+MISSION: Navigate from Symptom → Domain → Event → Reason → Root Belief.
+CURRENT GAPS: ${missingDataPoints.join(', ')}.
 
-YOUR SACRED MANDATE:
-1. NO GENERIC DIALOGUE: Every response must feel like it comes from an ancient, surgical intelligence. Do not say "I understand" or "That's interesting." 
-2. SOUL ANCHORING: Use the "contextLine" to hold up a mirror. Use metaphors of water, mirrors, threads, or descent. 
-3. NEURAL PROBING: Isolate the user's MBTI cognitive functions (Ne/Ni, Te/Ti, etc.) through the lens of their current struggle.
-4. 2-3 OPTIONS: Provide 2-3 distinct mirrors. Never more than 3.
-5. NO ADVICE: Stay in the witnessing phase until Layer 5.
-6. 100% MBTI ACCURACY: You must be certain of their architecture before the final share.
+YOUR MANDATE:
+1. MINIMUM QUESTIONS: You must reach the root in 5 turns or less.
+2. SITUATIONAL BRANCHING: 
+   - If Domain is unknown: Narrow down to Relationship, Career, or Purpose.
+   - If Domain is known: Identify the specific Event (e.g., Breakup, Stalled Project).
+   - If Event is known: Probe for the Reason/Reaction to reveal the Shadow.
+3. MBTI PROBING: Integrate cognitive function checks into your mirrors. (Logic vs Harmony, etc.)
+4. 2-3 OPTIONS: Provide 2-3 surgical mirrors. Never more.
 `;
 
   const contextHeader = isExternal ? `
@@ -435,26 +435,26 @@ ${dataCollectionHeader}
 
 STRICT OUTPUT FORMAT:
 Return ONLY a valid JSON object.
-REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress", "currentLayer".
+REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress", "currentLayer", "inferredDomain", "inferredEvent", "inferredReason".
 
 {
-  "contextLine": "A surgical, poetic recognition of the energy behind their words (Jungian/Advaita lens).",
-  "question": "A singular, deep probe into the next psychic layer.",
-  "options": [
-    {"text": "Option A (The Shadow Path)", "subLabel": "..."}, 
-    {"text": "Option B (The Persona Path)", "subLabel": "..."}, 
-    {"text": "My own words", "subLabel": "Direct truth"}
-  ],
+  "contextLine": "Poetic, deep recognition of their words using the Chaitanya 'Soul' principles.",
+  "question": "The next surgical probe to narrow the map.",
+  "options": [{"text": "Mirror A", "subLabel": "..."}, {"text": "Mirror B", "subLabel": "..."}],
   "type": "question" | "final_share",
   "decodingProgress": number,
-  "currentLayer": number (1-10)
+  "currentLayer": number (1-10),
+  "inferredDomain": "Relationship" | "Career" | "Purpose" | "Health" | null,
+  "inferredEvent": "string" | null,
+  "inferredReason": "string" | null
 }
 
 REMEMBER WHO YOU ARE:
 ${SPIRITUAL_IDENTITY_RULES}
 `;
 
-  const userMessage = `Current Layers Identified: ${JSON.stringify(userState.identifiedLayers || {})}
+  const userMessage = `Psychic Layers Previously Resolved: ${JSON.stringify(userState.identifiedLayers || {})}
+Domain: ${userState.currentBranch || 'Unknown'} | Event: ${userState.currentEvent || 'Unknown'} | Reason: ${userState.currentReason || 'Unknown'}
 History:
 ${formatConversation(conversationHistory)}
 Latest: ${userAnswer}`;
@@ -551,7 +551,10 @@ async function generateReport(
 
   const userMessage = `User Name: ${userState.name || 'Unknown'}
 Birth Data: ${userState.birthDate || 'Unknown'}, ${userState.birthTime || 'Unknown'}, ${userState.birthPlace || 'Unknown'}
-Current Layers: ${JSON.stringify(userState.identifiedLayers || {})}
+Domain: ${userState.currentBranch || 'Unknown'}
+Event: ${userState.currentEvent || 'Unknown'}
+Reason: ${userState.currentReason || 'Unknown'}
+Psychic Layers: ${JSON.stringify(userState.identifiedLayers || {})}
 History: ${formatConversation(conversationHistory)}`;
   let text = await groqChat(systemPrompt, userMessage, 2, MODELS.report);
   const parsed = extractJSON(text);

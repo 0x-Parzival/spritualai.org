@@ -91,6 +91,9 @@ export interface UserState {
   // Chaitanya Layers
   identifiedLayers?: Record<string, string>;
   identifiedVedic?: Record<string, string>;
+  currentBranch?: 'Relationship' | 'Career' | 'Purpose' | 'Health' | 'unknown';
+  currentEvent?: string;
+  currentReason?: string;
 
   // Output
   report: ConsciousnessReport | null;

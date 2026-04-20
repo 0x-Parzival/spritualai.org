@@ -691,6 +691,9 @@ export default function HeroCTA({
                         if (parsed.activeArchetype) updated.activeArchetype = parsed.activeArchetype;
                         if (parsed.personaMask) updated.personaMask = parsed.personaMask;
                         if (parsed.complexIdentified) updated.complexIdentified = parsed.complexIdentified;
+                        if (parsed.inferredDomain) updated.currentBranch = parsed.inferredDomain;
+                        if (parsed.inferredEvent) updated.currentEvent = parsed.inferredEvent;
+                        if (parsed.inferredReason) updated.currentReason = parsed.inferredReason;
                         
                         if (parsed.currentLayer) {
                             updated.identifiedLayers = { 
