@@ -757,6 +757,7 @@ export function createInitialUserState(chip: string): UserState {
     confirmedMBTI: null,
     detectedPattern: null,
     patternConfidence: 0,
+    decodingProgress: 0,
     unconsciousPatterns: [],
     triggerWords: [],
     budget: 'unknown',
