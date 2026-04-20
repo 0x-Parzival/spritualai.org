@@ -5,7 +5,7 @@
 1. **Install nvm** (Node Version Manager) if you don't have it:
    ```bash 
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-   # Then restart your terminal or run `source ~/.bashrc`  
+   # Then restart your terminal or run `source ~/.bashrc`   
    ```
 2. **Install the required Node version** (reads the `.nvmrc` file):
    ```bashvb
