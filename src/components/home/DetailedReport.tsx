@@ -59,7 +59,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
 
     const report: any = userState.report;
     const { header, meta, vedicOverview, validation, realCause, cosmicAlignment, frequencyDoorway, teaching, witnessQuestion } = report;
-    const originPoint = userState.originPoint;
+    const originPoint = userState?.originPoint;
     const products = userState.recommendedProducts || report.products || [];
 
     const userName = userState.name || "Seeker";

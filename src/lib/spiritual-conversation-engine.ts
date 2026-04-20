@@ -91,6 +91,11 @@ export interface UserState {
   // Output
   report: ConsciousnessReport | null;
   recommendedProducts: Product[];
+  originPoint?: {
+    csn: string;
+    hash: string;
+    etchedAt: string;
+  };
 }
 
 export function analyzeLinguistics(text: string): string[] {
@@ -787,6 +792,7 @@ export function createInitialUserState(chip: string): UserState {
     identifiedVedic: {},
     report: null,
     recommendedProducts: [],
+    originPoint: undefined,
   };
 }
 
