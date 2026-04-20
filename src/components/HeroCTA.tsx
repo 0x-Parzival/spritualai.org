@@ -505,20 +505,15 @@ export default function HeroCTA({
                     setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
                 }
 
-                const greeting = "Which of these feels most like your life right now?";
+                const greeting = "I see a soul in a moment of transition. Your arrival here was not an accident—it was a recognition. Which of these sounds most like the silent pattern your life is whispering right now?";
                 const greetingOptions = [
-                    { text: "I feel stuck, and I don't know why.", subLabel: "Core blockage" },
-                    { text: "Something feels missing, but I can't name it.", subLabel: "Void awareness" },
-                    { text: "I don't know who I really am anymore.", subLabel: "Identity shift" },
-                    { text: "I keep repeating the same patterns.", subLabel: "Loop detection" },
-                    { text: "I sense there's more to life than this.", subLabel: "Existential pull" },
-                    { text: "I feel deeply misunderstood by everyone.", subLabel: "Isolation pattern" },
-                    { text: "I'm going through a major life change.", subLabel: "Transition state" },
-                    { text: "My mind won't stop overthinking.", subLabel: "Cognitive loop" },
-                    { text: "I've lost my sense of direction.", subLabel: "Path dissolution" },
-                    { text: "I'm searching for something I can't explain.", subLabel: "Inner search" }
+                    { text: "I feel stuck in a loop I didn't create.", subLabel: "Core blockage" },
+                    { text: "Something is missing from the center of my life.", subLabel: "Void awareness" },
+                    { text: "I keep repeating a history I thought I'd left behind.", subLabel: "Loop detection" },
+                    { text: "I have no name for who I am becoming.", subLabel: "Identity shift" },
+                    { text: "The weight I carry no longer feels like mine.", subLabel: "Ancestral load" },
+                    { text: "I am searching for a light I once knew.", subLabel: "Inner search" }
                 ];
-
                 setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
                 setCurrentQuestion(greeting);
                 
@@ -726,14 +721,8 @@ export default function HeroCTA({
                     setConversationHistory([...history, { role: 'ai', content: parsed.question || fullText }]);
                     setRound(nextRound);
                 } else {
-                    const fallbackBank = [
-                        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "It's too heavy to name", subLabel: "Overwhelm pattern" }] },
-                        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "It's my fault", subLabel: "Responsibility loop" }, { text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }] },
-                        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Bitter", subLabel: "Resentment" }, { text: "Metallic", subLabel: "Fear" }, { text: "Empty", subLabel: "Dissociation" }] }
-                    ];
-                    const selected = fallbackBank[Math.floor(Math.random() * fallbackBank.length)];
-                    const fallbackQ = selected.q;
-                    const fallbackOptions = [...selected.opts, { text: "Something else entirely", subLabel: "Direct truth" }];
+                    const fallbackQ = "I am listening closely. To help you see this pattern more clearly, tell me — what is the single biggest choice you are facing right now?";
+                    const fallbackOptions = [{ text: "To stay as I am", subLabel: "Safety" }, { text: "To take a leap", subLabel: "The unknown" }];
                     
                     setMessages(prev => {
                         const n = [...prev];

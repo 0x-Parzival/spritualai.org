@@ -211,8 +211,7 @@ async function groqStream(systemPrompt: string, userMessage: string, model = MOD
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
             stream: true,
             temperature: 0.7,
-            max_tokens: 400,
-            response_format: { type: 'json_object' }
+            max_tokens: 400
         }),
     });
 
@@ -481,18 +480,12 @@ Latest: ${userAnswer}`;
 
   const parsed = extractJSON(text);
   if (!parsed || !parsed.question) {
-    const fallbackBank = [
-        { q: "Your silence speaks more than words. What were you about to write before you stopped yourself?", opts: [{ text: "I'm not ready to see it yet", subLabel: "Defense pattern" }, { text: "Something else entirely", subLabel: "Direct truth" }] },
-        { q: "The logic breaks here. What is the one thing you refuse to admit about this situation?", opts: [{ text: "I enjoy the safety of the pain", subLabel: "Secondary gain" }, { text: "Something else entirely", subLabel: "Direct truth" }] },
-        { q: "Just one word — what does the core of this feeling actually taste like in your mind?", opts: [{ text: "Empty", subLabel: "Dissociation" }, { text: "Something else entirely", subLabel: "Direct truth" }] }
-    ];
-    const selected = fallbackBank[Math.floor(Math.random() * fallbackBank.length)];
     return NextResponse.json({ 
       success: true, 
       data: { 
-        question: selected.q, 
+        question: "Your depth has momentarily exceeded my reflection. Speak more — what is the specific weight you are feeling in this moment?", 
         type: 'question', 
-        options: selected.opts,
+        options: [{text: "It's heavy", subLabel: "Overwhelm"}, {text: "It's clarifying", subLabel: "Breakthrough"}],
         decodingProgress: userState.decodingProgress || 10
       } 
     });
