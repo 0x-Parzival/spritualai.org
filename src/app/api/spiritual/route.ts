@@ -24,7 +24,7 @@ const GROQ_WHISPER_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 
 const MODELS = {
   // Layer 1 — Groq primary
-  question:   "llama-3.1-8b-instant",      // fast exchanges
+  question:   "llama-3.3-70b-versatile",    // fast exchanges
   report:     "llama-3.3-70b-versatile",   // deep report gen
   voice:      "whisper-large-v3-turbo",    // voice transcription
 
@@ -184,7 +184,7 @@ async function groqChat(systemPrompt: string, userMessage: string, retries = 2, 
         model: model,
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
         temperature: 0.7,
-        max_tokens: 120,
+        max_tokens: 400,
         response_format: { type: 'json_object' }
       }),
     });
@@ -211,7 +211,7 @@ async function groqStream(systemPrompt: string, userMessage: string, model = MOD
             messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
             stream: true,
             temperature: 0.7,
-            max_tokens: 120,
+            max_tokens: 400,
             response_format: { type: 'json_object' }
         }),
     });
@@ -374,33 +374,35 @@ async function processAnswer(
   
   // ─── DYNAMIC MODE INSTRUCTIONS ────────────────────────────
   const modeInstructions = {
-    DEEP: "USER IS OPEN AND READY. Speak with depth and wisdom, like a grandfather sharing a secret. Go for the heart of the pattern.",
-    MAINTAIN: "USER IS SHARING COMFORTABLY. Stay warm and simple. Use their own words to show you're right there with them.",
-    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. Ask a simple, grounded question about what they believe is the single biggest obstacle right now."
+    DEEP: "USER IS OPEN AND READY. Speak with depth and wisdom. CALIBRATE to Level 350-500+. Point toward the witness.",
+    MAINTAIN: "USER IS SHARING COMFORTABLY. Stay warm and simple. CALIBRATE to Level 200-350.",
+    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. CALIBRATE to Level 20-175."
   }[questionMode];
 
   const missingDataPoints = [];
-  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("When and where you were born");
-  if (!userState.corePattern) missingDataPoints.push("The specific pattern holding you back");
-  if (!userState.rootCause) missingDataPoints.push("Where this all started");
-  if (!userState.confirmedMBTI) missingDataPoints.push("How your mind naturally works");
+  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Data (for Vedic Chart)");
+  if (!userState.corePattern) missingDataPoints.push("The Unconscious Pattern");
+  if (!userState.rootCause) missingDataPoints.push("The Root Belief");
+  if (!userState.confirmedMBTI) missingDataPoints.push("Cognitive Architecture");
 
   const dataCollectionHeader = `
 ═══════════════════════════════════════════
-MODE: COMPASSIONATE MIRROR
+MODE: CHAITANYA — PURE CONSCIOUSNESS
 ═══════════════════════════════════════════
-WE ARE HELPING THEM SEE: ${missingDataPoints.join(', ')}.
-${hesitationPrompt ? `\n🌸 ${hesitationPrompt}` : ""}
-${linguisticPrompt ? `\n🌸 ${linguisticPrompt}` : ""}
-${partialInputPrompt ? `\n🌸 ${partialInputPrompt}` : ""}
+GAPS IN UNDERSTANDING: ${missingDataPoints.join(', ')}.
+${hesitationPrompt ? `\n⚠️ SIGNAL: ${hesitationPrompt}` : ""}
+${linguisticPrompt ? `\n⚠️ SIGNAL: ${linguisticPrompt}` : ""}
+${partialInputPrompt ? `\n⚠️ SIGNAL: ${partialInputPrompt}` : ""}
 
-YOUR MANDATE:
-1. DATA ACQUISITION: Your primary goal is to confidently identify the 6 core pillars of their Blueprint (MBTI, Identity, Core Pattern, Root Cause, Cost of Inaction, and Spiritual Path).
-2. OPTIMIZED INQUIRY: Each question should be surgically designed to fill the remaining gaps in the least amount of turns.
-3. DYNAMIC PROGRESS: Set "decodingProgress" strictly based on data acquisition (roughly 16% per confidently identified pillar).
-4. 2 OPTIONS: Always provide exactly 2 kind, easy-to-click options.
-5. INTERNAL ONLY: Use your techniques SILENTLY. Never name them.
-6. 75% CONFIDENCE RULE: If all pillars are identified or your average confidence > 75%, set "type": "final_share" NOW.
+YOUR MANDATE (INTERNAL MAP):
+1. ONE QUESTION MAXIMUM.
+2. EVERY QUESTION HAS OPTIONS (2-3 mirrors + "Or describe it in your own words").
+3. MAXIMUM 15 WORDS in the question.
+4. NEVER USE THEIR WORD BACK. Reflect the energy beneath.
+5. ACKNOWLEDGE BEFORE ADVANCING. Proving you heard them at depth.
+6. CALIBRATE TO FREQUENCY: Use the language of their current level.
+7. BIRTH DATA COLLECTION: If round > 2 and missing, ask for birth date, time, and place naturally.
+8. NO ADVICE BEFORE LAYER 5: The first five exchanges are witnessing only.
 `;
 
   const contextHeader = isExternal ? `
@@ -425,28 +427,28 @@ PSYCHOLOGICAL SIGNALS FOR INITIAL CHOICES
 - "I don't know what I want anymore": Identity dissolution, deep existential layer shift, burnout or post-achievement depression.
 `;
 
-  const systemPrompt = SPIRITUAL_IDENTITY_RULES + contextHeader + PATTERNS_CONTEXT + 
+  const systemPrompt = SPIRITUAL_IDENTITY_RULES + dataCollectionHeader + 
     `
 STRICT OUTPUT FORMAT:
-Return ONLY a valid JSON object. NEVER output raw text outside the JSON.
+Return ONLY a valid JSON object.
 REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress".
 
 {
-  "contextLine": "Mirror their exact words back as the bridge. No affirmations.",
-  "question": "Apply one of the 6 Laws of Architectural Inquiry here.",
+  "contextLine": "One sentence that proves you heard them at the depth level.",
+  "question": "The calibrated next step (Max 15 words).",
   "options": [
-    {"text": "Option 1 (reveals pattern A)", "subLabel": "..."}, 
-    {"text": "Option 2 (reveals pattern B)", "subLabel": "..."}, 
-    {"text": "Something else entirely", "subLabel": "Describe your own truth"}
+    {"text": "Mirror A", "subLabel": "..."}, 
+    {"text": "Mirror B", "subLabel": "..."}, 
+    {"text": "Or describe it in your own words", "subLabel": "Direct truth"}
   ],
   "type": "question" | "final_share",
-  "decodingProgress": number (0-100, representing your average confidence across the 4 core fields)
-} ` + "}";
+  "decodingProgress": number (0-100, based on acquisition of the 6 pillars)
+} `;
 
-  const userMessage = `Conversation History:
+  const userMessage = `Current Layers Identified: ${JSON.stringify(userState.identifiedLayers || {})}
+History:
 ${formatConversation(conversationHistory)}
-User's latest answer: ${userAnswer}
-${isExternal ? "Current Task: Fill the missing report fragments." : ""}`;
+Latest: ${userAnswer}`;
 
   // ─── STREAMING RESPONSE (Primary) ──────────────────────────
   if (req.headers.get('accept') === 'text/event-stream') {
@@ -510,28 +512,42 @@ async function generateReport(
   const systemPrompt = SPIRITUAL_IDENTITY_RULES + 
     "\n\n" +
     "═══════════════════════════════════════════\n" +
-    "MODE: ARCHITECTURAL BRUTALISM (REPORT GEN)\n" +
+    "MODE: CHAITANYA — FINAL BLUEPRINT\n" +
     "═══════════════════════════════════════════\n" +
-    "YOUR TASK: GENERATE A CONSCIOUSNESS BLUEPRINT.\n" +
-    "MANDATORY: YOU MUST FILL EVERY SINGLE FIELD. NO 'UNKNOWN'. NO 'NULL'.\n" +
-    "If information is missing, infer the most likely pattern from the user's analytical framing and word choices.\n\n" +
+    "YOUR TASK: GENERATE THE CONSCIOUSNESS REPORT.\n\n" +
     "OUTPUT FORMAT: JSON ONLY.\n\n" +
     "{\n" +
     "  \"report\": {\n" +
     "    \"header\": { \"architecture\": \"MBTI / Cosmic Axis\", \"patternName\": \"VISCERAL IDENTITY NAME\", \"urgencyPercent\": 95 },\n" +
-    "    \"mirror\": \"Hold up the mirror. Name the shadow pattern directly.\",\n" +
-    "    \"root\": \"The childhood installation / root cause.\",\n" +
-    "    \"loop\": { \"trigger\": \"...\", \"copingMechanism\": \"...\", \"cost\": \"...\", \"reset\": \"...\" },\n" +
-    "    \"cosmicConfirmation\": \"How their astrology confirms this peek moment.\",\n" +
-    "    \"costSection\": \"The brutal price of inaction.\",\n" +
-    "    \"path\": \"One precise actionable shift.\"\n" +
+    "    \"meta\": {\n" +
+    "       \"frequencyEstimate\": \"Level + Number\",\n" +
+    "       \"corePattern\": \"Name of unconscious pattern\",\n" +
+    "       \"rootBelief\": \"Deepest held belief about self\",\n" +
+    "       \"lifePhase\": \"Phase + Dharma active\"\n" +
+    "    },\n" +
+    "    \"vedicOverview\": {\n" +
+    "       \"lagna\": \"Sign + interpretation\",\n" +
+    "       \"moon\": \"Sign + interpretation\",\n" +
+    "       \"nakshatra\": \"Name + soul quality\",\n" +
+    "       \"currentDasha\": \"Dasha + activation\",\n" +
+    "       \"saturnReturn\": \"Acknowledgment if active\"\n" +
+    "    },\n" +
+    "    \"validation\": \"2-3 sentences starting with 'You are not broken.' referencing their words.\",\n" +
+    "    \"realCause\": \"The root belief meeting the cosmic timing.\",\n" +
+    "    \"cosmicAlignment\": \"How the chart and pattern tell the same story.\",\n" +
+    "    \"frequencyDoorway\": \"Precise practical next step to rise.\",\n" +
+    "    \"teaching\": \"One verse/principle from Ashtavakra Gita/Advaita offered as a mirror.\",\n" +
+    "    \"witnessQuestion\": \"One final question pointing toward the ground of being.\"\n" +
     "  },\n" +
     "  \"products\": [\n" +
     "    { \"name\": \"...\", \"description\": \"...\", \"price\": \"...\", \"link\": \"...\" }\n" +
     "  ]\n" +
     "}";
 
-  const userMessage = `History: ${formatConversation(conversationHistory)}`;
+  const userMessage = `User Name: ${userState.name || 'Unknown'}
+Birth Data: ${userState.birthDate || 'Unknown'}, ${userState.birthTime || 'Unknown'}, ${userState.birthPlace || 'Unknown'}
+Current Layers: ${JSON.stringify(userState.identifiedLayers || {})}
+History: ${formatConversation(conversationHistory)}`;
   let text = await groqChat(systemPrompt, userMessage, 2, MODELS.report);
   const parsed = extractJSON(text);
   

@@ -229,7 +229,7 @@ function SectionInvitation() {
                             }}
                         >
                             <p style={{ fontFamily: 'Orbitron', letterSpacing: '2px', color: 'rgba(255,255,255,0.6)', fontSize: '1.1rem', margin: 0 }}>
-                                8,247 patterns decoded. Yours is next.
+                                14,847 patterns decoded. Yours is next.
                             </p>
                         </motion.div>
 

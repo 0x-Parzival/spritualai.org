@@ -333,14 +333,16 @@ export default function HeroCTA({
     onComplete,
     onChatActive,
     onGeneratingReport,
-    hidePopup = false
+    hidePopup = false,
+    lastReadArchitecture = null
 }: { 
     onGlassChange?: (active: boolean) => void,
     onRoundChange?: (round: number) => void,
     onComplete?: (state: any) => void,
     onChatActive?: (active: boolean) => void,
     onGeneratingReport?: (active: boolean) => void,
-    hidePopup?: boolean
+    hidePopup?: boolean,
+    lastReadArchitecture?: string | null
 }) {
     const router = useRouter();
 
@@ -360,7 +362,7 @@ export default function HeroCTA({
     };
 
     const [isListening, setIsListening] = useState(false);
-    const [decodedCount, setDecodedCount] = useState(8247);
+    const [decodedCount, setDecodedCount] = useState(14847);
 
     const [showChat, setShowChat] = useState(false);
 
@@ -518,7 +520,12 @@ export default function HeroCTA({
             setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
             setShowChat(true);
             setCurrentQuestion(greeting);
-            setConversationHistory([{ role: 'ai', content: greeting }]);
+            
+            const initialContext = lastReadArchitecture 
+                ? `[CONTEXT: User was just reading about "${lastReadArchitecture}"] ${greeting}`
+                : greeting;
+                
+            setConversationHistory([{ role: 'ai', content: initialContext }]);
             setRound(0);
 
             for (let j = 0; j <= greeting.length; j++) {
@@ -903,8 +910,15 @@ export default function HeroCTA({
         setMessages(prev => [...prev, { role: 'user', content: optionText }]);
         const tracked = updateStateWithTracking(optionText, userState);
         setUserState(tracked);
-        
-        const updatedHistory = [...conversationHistory, { role: 'user', content: optionText }];
+
+        const initialAIContext = lastReadArchitecture 
+            ? `[CONTEXT: User was reading "${lastReadArchitecture}" and chose option: "${optionText}"]`
+            : `[CONTEXT: User chose option: "${optionText}"]`;
+
+        const updatedHistory = [
+            { role: 'ai', content: `${initialAIContext} Which of these feels most like your life right now?` },
+            { role: 'user', content: optionText }
+        ];
 
         if (optionText === "Finish Report Now") {
             setTimeout(() => triggerSacredPause(tracked, updatedHistory), 1000);
@@ -916,7 +930,6 @@ export default function HeroCTA({
             setTimeout(() => triggerSacredPause(tracked, updatedHistory), 1500);
         }
     };
-
     const handleStruggleClick = async (struggle: string) => {
         if (isTyping || sacredPause) return;
         maybePlaySound();
@@ -940,7 +953,14 @@ export default function HeroCTA({
                 await new Promise(r => setTimeout(r, 10));
             }
             if (data?.options) setMessages(prev => { const n = [...prev]; if (n.length > 0) n[n.length - 1].options = data.options; return n; });
-            setCurrentQuestion(q); setConversationHistory([{ role: 'user', content: struggle }, { role: 'ai', content: q }]); setRound(1);
+            
+            const initialAIContext = lastReadArchitecture 
+                ? `[CONTEXT: User was reading "${lastReadArchitecture}" and chose struggle: "${struggle}"]`
+                : `[CONTEXT: User chose struggle: "${struggle}"]`;
+
+            setCurrentQuestion(q); 
+            setConversationHistory([{ role: 'user', content: struggle }, { role: 'ai', content: `${initialAIContext} ${q}` }]); 
+            setRound(1);
         }, struggle.length * 40 + 300);
     };
 

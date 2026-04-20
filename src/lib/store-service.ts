@@ -1,8 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
-const model = genAI ? genAI.getGenerativeModel({ model: "gemini-2.0-flash" }) : null;
+const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export interface Product {
     headline: string;
@@ -14,12 +11,36 @@ export interface Product {
 }
 
 /**
+ * Shared Groq Helper
+ */
+async function groqChat(systemPrompt: string, userMessage: string, model = "llama-3.3-70b-versatile"): Promise<string> {
+    if (!GROQ_API_KEY) return "";
+    try {
+        const res = await fetch(GROQ_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+            body: JSON.stringify({
+                model,
+                messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+                temperature: 0.7,
+                max_tokens: 1500,
+                // JSON mode if appropriate, but for simple text greeting it might be overkill
+                // Keeping it standard for more natural text unless it's products JSON
+            }),
+        });
+        const data = await res.json();
+        return data.choices[0]?.message?.content || "";
+    } catch (err) {
+        console.error("Groq Chat Error:", err);
+        return "";
+    }
+}
+
+/**
  * Generates a hyper-personalized greeting based on MBTI.
  */
 export async function generateGreeting(mbti: string, userName: string = "User"): Promise<string> {
     const fallback = `Hey ${userName}, as an ${mbti}, you're wired differently — and that’s your superpower. Your architecture is designed for depth and precision. Let's unlock your next version.`;
-
-    if (!model) return fallback;
 
     try {
         const prompt = `System: You are an ultra-premium AI brand consultant for SpiritualAI.store. 
@@ -40,8 +61,8 @@ export async function generateGreeting(mbti: string, userName: string = "User"):
     
     Output ONLY the greeting text.`;
 
-        const result = await model.generateContent(prompt);
-        return result.response.text() || fallback;
+        const response = await groqChat("You are an ultra-premium AI brand consultant.", prompt);
+        return response || fallback;
     } catch (error) {
         console.error("Error generating greeting:", error);
         return fallback;
@@ -53,8 +74,6 @@ export async function generateGreeting(mbti: string, userName: string = "User"):
  */
 export async function generateBehaviorIntel(mbti: string): Promise<string> {
     const fallback = `Decoding behavior for ${mbti}: Intuitive decision-making paired with a drive for meaningful transformation.`;
-
-    if (!model) return fallback;
 
     try {
         const prompt = `System: You are a behavioral psychologist for SpiritualAI.store.
@@ -71,8 +90,8 @@ export async function generateBehaviorIntel(mbti: string): Promise<string> {
     
     Output ONLY the analysis text.`;
 
-        const result = await model.generateContent(prompt);
-        return result.response.text() || fallback;
+        const response = await groqChat("You are a behavioral psychologist.", prompt);
+        return response || fallback;
     } catch (error) {
         console.error("Error generating behavior intel:", error);
         return fallback;
@@ -83,8 +102,6 @@ export async function generateBehaviorIntel(mbti: string): Promise<string> {
  * Generates hyper-personalized products based on MBTI and survey answer.
  */
 export async function generateProducts(mbti: string, aspiration: string, currentStep: number = 1): Promise<Product[]> {
-    if (!model) return [];
-
     try {
         const prompt = `System: You are the Lead Architect for SpiritualAI.store Product Engine.
     Task: Generate 3 hyper-personalized digital products for an [${mbti}] user chasing [${aspiration}].
@@ -109,10 +126,9 @@ export async function generateProducts(mbti: string, aspiration: string, current
     Tone: Ultra-premium luxury consulting.
     Output ONLY valid JSON array of 3 products.`;
 
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
+        const response = await groqChat("You are a Lead Product Architect.", prompt);
         // Clean up markdown code blocks if present
-        const jsonStr = text.replace(/```json|```/g, "").trim();
+        const jsonStr = response.replace(/```json|```/g, "").trim();
         return JSON.parse(jsonStr);
     } catch (e) {
         console.error("Failed to generate or parse products JSON:", e);

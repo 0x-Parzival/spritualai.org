@@ -8,16 +8,16 @@ const SIGNATURE_ARCHITECTURES = [
   { id: "01", title: "The Theoretical Titan", description: "Generates brilliant ideas but creates complexity to avoid launching them." },
   { id: "02", title: "The Sovereign in Exile", description: "Knows its worth but waits for external permission that never comes." },
   { id: "03", title: "The Sacred Giver", description: "Deeply compassionate but gives so much that their own identity vanishes." },
-  { id: "05", title: "The Analytical Ghost", description: "Solves every problem except the one that would make them happy." },
-  { id: "06", title: "The Untethered Visionary", description: "A vision that could change everything, but stays theoretical to avoid judgment." },
-  { id: "07", title: "The Chaos Catalyst", description: "Installs chaos the moment things get too peaceful or successful." },
-  { id: "08", title: "The Logic Shield", description: "Uses logic as a shield to avoid feeling the weight of their own existence." },
-  { id: "09", title: "The Underperformer", description: "Possesses elite skills but performs at 20% to avoid the burden of greatness." },
-  { id: "10", title: "The Pattern Prophet", description: "Expert at identifying everyone else's patterns while staying blind to their own." },
-  { id: "11", title: "The Chronic Student", description: "Constantly preparing, never arriving. The loop of one more course." },
+  { id: "04", title: "The Analytical Ghost", description: "Solves every problem except the one that would make them happy." },
+  { id: "05", title: "The Untethered Visionary", description: "A vision that could change everything, but stays theoretical to avoid judgment." },
+  { id: "06", title: "The Chaos Catalyst", description: "Installs chaos the moment things get too peaceful or successful." },
+  { id: "07", title: "The Logic Shield", description: "Uses logic as a shield to avoid feeling the weight of their own existence." },
+  { id: "08", title: "The Underperformer", description: "Possesses elite skills but performs at 20% to avoid the burden of greatness." },
+  { id: "09", title: "The Pattern Prophet", description: "Expert at identifying everyone else's patterns while staying blind to their own." },
+  { id: "10", title: "The Chronic Student", description: "Constantly preparing, never arriving. The loop of one more course." },
 ];
 
-export default function Page2Landing() {
+export default function Page2Landing({ onArchitectureView }: { onArchitectureView?: (title: string) => void }) {
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
 
   useEffect(() => {
@@ -82,6 +82,7 @@ export default function Page2Landing() {
                 key={i} 
                 className={styles.smallExampleCard}
                 whileHover={{ scale: 1.05, y: -10, zIndex: 100 }}
+                onViewportEnter={() => onArchitectureView?.(arch.title)}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
                 <div className={styles.smallLabel}>Signature Architecture #{arch.id}</div>

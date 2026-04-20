@@ -84,6 +84,10 @@ export interface UserState {
     pacingMode: 'deep' | 'rapid' | 'concluding';
   };
 
+  // Chaitanya Layers
+  identifiedLayers?: Record<string, string>;
+  identifiedVedic?: Record<string, string>;
+
   // Output
   report: ConsciousnessReport | null;
   recommendedProducts: Product[];
@@ -779,6 +783,8 @@ export function createInitialUserState(chip: string): UserState {
       maxQuestions: 8,
       pacingMode: 'deep',
     },
+    identifiedLayers: {},
+    identifiedVedic: {},
     report: null,
     recommendedProducts: [],
   };

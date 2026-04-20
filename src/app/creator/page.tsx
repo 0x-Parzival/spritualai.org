@@ -567,7 +567,7 @@ const CreatorPage = () => {
         {
             date: "Childhood - 2014",
             title: "Kid with a Calculator Brain",
-            desc: "Long before I wrote code, I was obsessed with patterns. At age X, I won a State Level Abacus Competition because evidently, I liked being a human calculator. I also joined a world record dance event at Khalsa College, proving that even nerds have rhythm.",
+            desc: "Long before I wrote code, I was obsessed with patterns. At age 10, I won a State Level Abacus Competition because evidently, I liked being a human calculator. I also joined a world record dance event at Khalsa College, proving that even nerds have rhythm.",
             images: ["/images/portfolio/abacus certificate.jpeg", "/images/portfolio/abacus award winning.jpeg", "/images/portfolio/star kalakar.jpeg"]
         },
         {

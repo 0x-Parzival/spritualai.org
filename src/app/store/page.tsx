@@ -103,7 +103,7 @@ export default function StorePage() {
                     <span className="font-black tracking-[0.4em] uppercase text-xs">Spiritual AI <span className="text-cyan-500">Store</span></span>
                 </div>
                 <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                    Engine: Gemini 2.0 Flash
+                    Engine: Llama 3.3 70b
                 </div>
             </header>
 
@@ -121,9 +121,14 @@ export default function StorePage() {
                                 Your Next Version <br />
                                 <span className="text-cyan-500 not-italic font-light">Is Waiting.</span>
                             </h1>
-                            <p className="text-xl text-white/40 max-w-2xl mx-auto">
-                                The trillion-dollar engine for hyper-personalized digital transformation. Ready to resolve your architecture?
-                            </p>
+                            <div className="space-y-4">
+                                <p className="text-xl text-white/40 max-w-2xl mx-auto">
+                                    The trillion-dollar engine for hyper-personalized digital transformation. Ready to resolve your architecture?
+                                </p>
+                                <p className="text-sm text-white/20 max-w-xl mx-auto leading-relaxed">
+                                    Initiating the protocol will trigger a deep-layer scan of your architectural blueprint. The engine uses your cognitive data to generate the exact digital instruments required to break your current loop and stabilize your next frequency.
+                                </p>
+                            </div>
                             <button
                                 onClick={startFlow}
                                 className="bg-white text-black px-12 py-6 rounded-full font-black uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all group mt-10"

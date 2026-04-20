@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './DetailedReport.module.css';
 import { UserState } from '@/lib/spiritual-conversation-engine';
 import PretextWrapper from './PretextWrapper';
 import { Skeleton } from 'boneyard-js/react';
+import { Share2, MessageCircle, Twitter } from 'lucide-react';
 
 const FREE_PRODUCTS = [
   {
@@ -57,30 +58,23 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
     if (!userState || !userState.report) return null;
 
     const report: any = userState.report;
-    const header = report.header || {};
-    const loop = report.loop || {};
+    const { header, meta, vedicOverview, validation, realCause, cosmicAlignment, frequencyDoorway, teaching, witnessQuestion } = report;
+    const originPoint = userState.originPoint;
     const products = userState.recommendedProducts || report.products || [];
 
-    const userName = userState.name || "Your";
-    const patternName = header.patternName || userState.detectedPattern?.replace('_', ' ').toUpperCase() || "Unconscious Pattern";
-    const architecture = header.architecture || userState.confirmedMBTI || "Decoding...";
-    const urgencyPercent = header.urgencyPercent || 85;
-
-    // Split text sections for grid
-    const textSections = [
-        { title: "SECTION 01 — THE MIRROR", content: report.mirror },
-        { title: "SECTION 02 — THE ROOT", content: report.root },
-        { title: "SECTION 04 — COSMIC CONFIRMATION", content: report.cosmicConfirmation },
-        { title: "SECTION 05 — THE HUMAN COST", content: report.costSection },
-        { title: "SECTION 06 — THE PATH FORWARD", content: report.path }
-    ];
+    const userName = userState.name || "Seeker";
+    const patternName = header?.patternName || meta?.corePattern || "Unconscious Pattern";
+    const architecture = header?.architecture || userState.confirmedMBTI || "Decoding...";
+    const urgencyPercent = header?.urgencyPercent || 85;
 
     return (
         <div className={styles.reportContainer} id="report-section" ref={reportRef}>
             <div className={styles.reportContent}>
+                {/* 1. HEADER */}
                 <header className={styles.reportHeader}>
                     <div className={styles.headerTop}>
                         <div>
+                            <div className={styles.originBadge}>ORIGIN POINT ETCHED • CSN #{originPoint?.csn?.split('-').pop()}</div>
                             <h1 className={styles.blueprintTitle}>{userName.toUpperCase()}'S CONSCIOUSNESS BLUEPRINT</h1>
                             <div className={styles.metadataRow}>
                                 <span>ARCH: {architecture}</span>
@@ -88,7 +82,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                             </div>
                         </div>
                         <div className={styles.urgencySection}>
-                            <div className={styles.urgencyLabel}>URGENCY PROTOCOL</div>
+                            <div className={styles.urgencyLabel}>DECODING CONFIDENCE</div>
                             <div className={styles.urgencyBar}>
                                 <div className={styles.urgencyFill} style={{ width: `${urgencyPercent}%` }}></div>
                             </div>
@@ -96,78 +90,150 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                     </div>
                 </header>
 
+                {/* 2. META GRID (The Layers) */}
+                <div className={styles.metaGrid}>
+                    <div className={styles.metaItem}>
+                        <label>FREQUENCY ESTIMATE</label>
+                        <div className={styles.metaValue}>{meta?.frequencyEstimate}</div>
+                    </div>
+                    <div className={styles.metaItem}>
+                        <label>CORE PATTERN</label>
+                        <div className={styles.metaValue}>{meta?.corePattern}</div>
+                    </div>
+                    <div className={styles.metaItem}>
+                        <label>ROOT BELIEF</label>
+                        <div className={styles.metaValue}>{meta?.rootBelief}</div>
+                    </div>
+                    <div className={styles.metaItem}>
+                        <label>LIFE PHASE</label>
+                        <div className={styles.metaValue}>{meta?.lifePhase}</div>
+                    </div>
+                </div>
+
+                {/* 3. VEDIC OVERVIEW */}
+                <div className={styles.vedicSection}>
+                    <h2 className={styles.sectionTitle}>VEDIC BLUEPRINT</h2>
+                    <div className={styles.vedicGrid}>
+                        <div className={styles.vedicItem}>
+                            <strong>LAGNA</strong>
+                            <p>{vedicOverview?.lagna}</p>
+                        </div>
+                        <div className={styles.vedicItem}>
+                            <strong>MOON</strong>
+                            <p>{vedicOverview?.moon}</p>
+                        </div>
+                        <div className={styles.vedicItem}>
+                            <strong>NAKSHATRA</strong>
+                            <p>{vedicOverview?.nakshatra}</p>
+                        </div>
+                        <div className={styles.vedicItem}>
+                            <strong>CURRENT DASHA</strong>
+                            <p>{vedicOverview?.currentDasha}</p>
+                        </div>
+                    </div>
+                    {vedicOverview?.saturnReturn && (
+                        <div className={styles.saturnAlert}>
+                            ⚠️ {vedicOverview.saturnReturn}
+                        </div>
+                    )}
+                </div>
+
+                {/* 4. CONTENT SECTIONS */}
                 <div className={styles.sectionsGrid}>
-                    {textSections.map((section, idx) => (
-                        <motion.section 
-                            key={idx}
-                            className={styles.textSection}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1 }}
-                        >
-                            <h2 className={styles.smallHeading}>{section.title}</h2>
+                    <section className={styles.fullWidthSection}>
+                        <h2 className={styles.smallHeading}>THE VALIDATION</h2>
+                        <PretextWrapper 
+                            text={validation || ""}
+                            font="300 1.2rem 'Inter', sans-serif"
+                            lineHeight={36}
+                            width={containerWidth}
+                            className={styles.pretextBody}
+                            centerExclusion={true}
+                        />
+                    </section>
+
+                    <section className={styles.textSection}>
+                        <h2 className={styles.smallHeading}>THE REAL CAUSE</h2>
+                        <PretextWrapper 
+                            text={realCause || ""}
+                            font="300 1.1rem 'Inter', sans-serif"
+                            lineHeight={32}
+                            width={containerWidth}
+                            className={styles.pretextBody}
+                            centerExclusion={true}
+                        />
+                    </section>
+
+                    <section className={styles.textSection}>
+                        <h2 className={styles.smallHeading}>COSMIC ALIGNMENT</h2>
+                        <PretextWrapper 
+                            text={cosmicAlignment || ""}
+                            font="300 1.1rem 'Inter', sans-serif"
+                            lineHeight={32}
+                            width={containerWidth}
+                            className={styles.pretextBody}
+                            centerExclusion={true}
+                        />
+                    </section>
+
+                    <section className={styles.fullWidthSection}>
+                        <h2 className={styles.smallHeading}>THE FREQUENCY DOORWAY</h2>
+                        <div className={styles.doorwayBox}>
                             <PretextWrapper 
-                                text={section.content || ""}
-                                font="300 1.1rem 'Inter', sans-serif"
-                                lineHeight={32}
+                                text={frequencyDoorway || ""}
+                                font="400 1.3rem 'Orbitron', sans-serif"
+                                lineHeight={40}
+                                width={containerWidth}
+                                className={styles.pretextBody}
+                                centerExclusion={true}
+                                style={{ color: '#00f2ff' }}
+                            />
+                        </div>
+                    </section>
+
+                    <section className={styles.textSection}>
+                        <h2 className={styles.smallHeading}>THE TEACHING</h2>
+                        <blockquote className={styles.teachingQuote}>
+                            <PretextWrapper 
+                                text={teaching || ""}
+                                font="italic 300 1.2rem 'Inter', sans-serif"
+                                lineHeight={34}
                                 width={containerWidth}
                                 className={styles.pretextBody}
                                 centerExclusion={true}
                             />
-                        </motion.section>
-                    ))}
+                        </blockquote>
+                    </section>
 
-                    <motion.section 
-                        className={styles.fullWidthSection}
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className={styles.smallHeading}>SECTION 03 — THE PATTERN LOOP</h2>
-                        <div className={styles.loopVisual}>
-                            <div className={styles.loopItem}>
-                                <div className={styles.loopLabel}>TRIGGER</div>
-                                <div className={styles.loopValue}>{loop.trigger}</div>
-                            </div>
-                            <div className={styles.loopArrow}>→</div>
-                            <div className={styles.loopItem}>
-                                <div className={styles.loopLabel}>COPING</div>
-                                <div className={styles.loopValue}>{loop.copingMechanism}</div>
-                            </div>
-                            <div className={styles.loopArrow}>→</div>
-                            <div className={styles.loopItem}>
-                                <div className={styles.loopLabel}>COST</div>
-                                <div className={styles.loopValue}>{loop.cost}</div>
-                            </div>
+                    <section className={styles.textSection}>
+                        <h2 className={styles.smallHeading}>THE WITNESS QUESTION</h2>
+                        <div className={styles.witnessBox}>
+                            <p className={styles.witnessQuestion}>{witnessQuestion}</p>
                         </div>
-                    </motion.section>
+                    </section>
                 </div>
 
-                <div className={styles.productsHeader}>
-                    <h2 className={styles.productsTitle}>FREE RESOURCES</h2>
-                </div>
-                
-                <div className={styles.productsGrid}>
-                    {FREE_PRODUCTS.map((prod: any, idx: number) => (
-                        <motion.div 
-                            key={idx} 
-                            className={styles.productCard}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.2 }}
-                        >
-                            <div className={styles.prodName}>{prod.name}</div>
-                            <div style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: '10px' }}>{prod.headline}</div>
-                            <div className={styles.prodPrice}>FREE</div>
-                            <button className={styles.prodCta}>{prod.gateText}</button>
-                        </motion.div>
-                    ))}
+                {/* 5. SHARE ACTIONS */}
+                <div className={styles.shareSection}>
+                    <div className={styles.shareCard}>
+                        <div className={styles.shareIdentity}>{architecture} · {patternName}</div>
+                        <div className={styles.shareActions}>
+                            <button className={styles.shareBtn}>
+                                <Share2 size={16} /> Share Blueprint
+                            </button>
+                            <a href="#" className={styles.shareBtn}>
+                                <MessageCircle size={16} /> WhatsApp
+                            </a>
+                            <a href="#" className={styles.shareBtn}>
+                                <Twitter size={16} /> Twitter
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
+                {/* 6. PRODUCTS */}
                 <div className={styles.productsHeader}>
-                    <h2 className={styles.productsTitle}>RECOMMENDED PROTOCOLS</h2>
+                    <h2 className={styles.productsTitle}>NEURAL INSTRUMENTS</h2>
                 </div>
 
                 <Skeleton 
@@ -189,7 +255,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                             >
                                 <div className={styles.prodName}>{prod.name}</div>
                                 <div className={styles.prodPrice}>${prod.price}</div>
-                                <button className={styles.prodCta}>{prod.ctaText}</button>
+                                <button className={styles.prodCta}>{prod.ctaText || 'Acquire Instrument'}</button>
                             </motion.div>
                         ))}
                     </div>

@@ -10,7 +10,7 @@ import OceanBackground from '../components/OceanBackground';
 import StarfieldHero from '../components/StarfieldHero';
 import WavesHero from '../components/WavesHero';
 import Page2Landing from '../components/Page2Landing';
-import FullBlueprint from '../components/home/FullBlueprint';
+import DetailedReport from '../components/home/DetailedReport';
 import ProductsKit from '../components/home/ProductsKit';
 import SatyalokaArrival from '../components/home/SatyalokaArrival';
 import NavButtons from '../components/NavButtons';
@@ -27,6 +27,7 @@ export default function SpiritualAI() {
     const [isChatActive, setIsChatActive] = useState(false);
     const [isGeneratingReport, setIsGeneratingReport] = useState(false);
     const [lotusOffset, setLotusOffset] = useState(0);
+    const [lastReadArchitecture, setLastReadArchitecture] = useState<string | null>(null);
 
     const { scrollYProgress } = useScroll();
     const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
@@ -174,16 +175,16 @@ export default function SpiritualAI() {
                             onComplete={handleChatComplete}
                             onChatActive={setIsChatActive}
                             onGeneratingReport={setIsGeneratingReport}
+                            lastReadArchitecture={lastReadArchitecture}
                         />
                     </div>
                 </section>
 
-                {/* PAGE 2: REPORT / LANDING */}
                 <section id="report-section" style={{ minHeight: '100vh', background: 'transparent', position: 'relative', zIndex: 3200 }}>
                     {!finalState ? (
-                        <Page2Landing />
+                        <Page2Landing onArchitectureView={setLastReadArchitecture} />
                     ) : (
-                        <FullBlueprint userState={finalState} />
+                        <DetailedReport userState={finalState} />
                     )}
                 </section>
 
@@ -227,6 +228,7 @@ export default function SpiritualAI() {
                             onChatActive={setIsChatActive}
                             onGeneratingReport={setIsGeneratingReport}
                             hidePopup={true}
+                            lastReadArchitecture={lastReadArchitecture}
                         />
                     </div>
                 </section>
