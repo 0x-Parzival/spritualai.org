@@ -768,28 +768,34 @@ export default function HeroCTA({
 
     const extractJSONFromStream = (text: string) => {
         if (!text) return null;
+        let parsed: any = null;
         try {
             // First try pure parse
-            return JSON.parse(text);
+            parsed = JSON.parse(text);
         } catch (e) {
             try {
                 // Try to find JSON block
                 const matches = text.match(/\{[\s\S]*\}/g);
                 if (matches) {
-                    return JSON.parse(matches[matches.length - 1]);
+                    parsed = JSON.parse(matches[matches.length - 1]);
                 }
             } catch (e2) {}
             
             // If it's still failing but looks like it tried to be JSON,
             // let's try to manually extract the question to save the UX
-            if (text.includes('"question"')) {
+            if (!parsed && text.includes('"question"')) {
                 const qMatch = text.match(/"question"\s*:?\s*"?([^",}]+)/);
                 if (qMatch && qMatch[1]) {
-                    return { question: qMatch[1].trim() };
+                    parsed = { question: qMatch[1].trim() };
                 }
             }
         }
-        return null;
+        
+        if (parsed && Array.isArray(parsed.options)) {
+            parsed.options = parsed.options.slice(0, 3);
+        }
+
+        return parsed;
     };
 
     const triggerSacredPause = (state: UserState, history: any[]) => {

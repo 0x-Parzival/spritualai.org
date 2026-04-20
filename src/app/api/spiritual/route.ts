@@ -286,26 +286,32 @@ async function localOllamaChat(systemPrompt: string, userMessage: string, model 
 function extractJSON(text: string): any {
   if (!text) return null;
   let cleanText = text.replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
+  let parsed: any = null;
   try {
-    return JSON.parse(cleanText);
+    parsed = JSON.parse(cleanText);
   } catch {
     const matches = cleanText.match(/\{[\s\S]*\}/g);
     if (matches) {
       const lastMatch = matches[matches.length - 1];
       try {
-        return JSON.parse(lastMatch.replace(/```json|```/g, '').trim());
+        parsed = JSON.parse(lastMatch.replace(/```json|```/g, '').trim());
       } catch (e) {}
     }
     
     // Fallback: If it's malformed JSON, try to extract just the question
-    if (cleanText.includes('"question"')) {
+    if (!parsed && cleanText.includes('"question"')) {
         const qMatch = cleanText.match(/"question"\s*:?\s*"?([^",}]+)/);
         if (qMatch && qMatch[1]) {
-            return { question: qMatch[1].trim(), options: [], type: "question", contextLine: "" };
+            parsed = { question: qMatch[1].trim(), options: [], type: "question", contextLine: "" };
         }
     }
-    return null;
   }
+
+  if (parsed && Array.isArray(parsed.options)) {
+      parsed.options = parsed.options.slice(0, 3);
+  }
+
+  return parsed || null;
 }
 
 function formatConversation(history: any[]): string {
