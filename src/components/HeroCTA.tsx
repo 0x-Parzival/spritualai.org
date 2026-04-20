@@ -690,6 +690,17 @@ export default function HeroCTA({
                         const updated = { ...prev };
                         if (parsed.updatedTracking) updated.tracking = { ...updated.tracking, ...parsed.updatedTracking };
                         if (parsed.inferredMBTI) updated.confirmedMBTI = parsed.inferredMBTI;
+                        if (parsed.shadowPattern) updated.shadowPattern = parsed.shadowPattern;
+                        if (parsed.activeArchetype) updated.activeArchetype = parsed.activeArchetype;
+                        if (parsed.personaMask) updated.personaMask = parsed.personaMask;
+                        if (parsed.complexIdentified) updated.complexIdentified = parsed.complexIdentified;
+                        
+                        if (parsed.currentLayer) {
+                            updated.identifiedLayers = { 
+                                ...updated.identifiedLayers, 
+                                [`layer_${parsed.currentLayer}`]: parsed.question 
+                            };
+                        }
                         updated.decodingProgress = finalProgress;
                         return updated;
                     });
@@ -1129,9 +1140,9 @@ export default function HeroCTA({
                                         {msg.content}
                                     </div>
                                     {msg.role === 'ai' && msg.options && idx === messages.length - 1 && !isTyping && !sacredPause && !isConvoComplete && (
-                                        <div className={styles.optionsMarqueeContainer}>
-                                            <div className={styles.optionsMarqueeTrack}>
-                                                {[...msg.options, ...msg.options].map((opt, oi) => (
+                                        <div className={msg.options.length <= 3 ? styles.staticOptionsContainer : styles.optionsMarqueeContainer}>
+                                            <div className={msg.options.length <= 3 ? styles.staticOptionsTrack : styles.optionsMarqueeTrack}>
+                                                {(msg.options.length <= 3 ? msg.options : [...msg.options, ...msg.options]).map((opt, oi) => (
                                                     <button 
                                                         key={oi} 
                                                         className={styles.optionBubble} 

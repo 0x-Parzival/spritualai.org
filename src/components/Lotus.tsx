@@ -306,7 +306,7 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
 
     return (
         <>
-        <div style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease' }} className={styles.stage} ref={containerRef}>
+        <div style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease', pointerEvents: isChatActive ? 'none' : 'auto' }} className={styles.stage} ref={containerRef}>
             <div className={styles.lightWash}></div>
             <svg width="0" height="0" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
                 <defs>

@@ -386,29 +386,30 @@ async function processAnswer(
   }[questionMode];
 
   const missingDataPoints = [];
-  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Data (for Vedic Chart)");
-  if (!userState.corePattern) missingDataPoints.push("The Unconscious Pattern");
-  if (!userState.rootCause) missingDataPoints.push("The Root Belief");
-  if (!userState.confirmedMBTI) missingDataPoints.push("Cognitive Architecture");
+  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Data (Vedic Chart)");
+  if (!userState.shadowPattern) missingDataPoints.push("The Shadow (Unconscious Loop)");
+  if (!userState.activeArchetype) missingDataPoints.push("Active Archetype");
+  if (!userState.confirmedMBTI) missingDataPoints.push("Cognitive Architecture (MBTI)");
 
   const dataCollectionHeader = `
 ═══════════════════════════════════════════
-MODE: CHAITANYA — PURE CONSCIOUSNESS
+MODE: CHAITANYA — ANALYTICAL PSYCHOLOGY
 ═══════════════════════════════════════════
-GAPS IN UNDERSTANDING: ${missingDataPoints.join(', ')}.
-${hesitationPrompt ? `\n⚠️ SIGNAL: ${hesitationPrompt}` : ""}
-${linguisticPrompt ? `\n⚠️ SIGNAL: ${linguisticPrompt}` : ""}
-${partialInputPrompt ? `\n⚠️ SIGNAL: ${partialInputPrompt}` : ""}
+GAPS IN PSYCHIC MAP: ${missingDataPoints.join(', ')}.
+${hesitationPrompt ? `\n⚠️ SHADOW SIGNAL: ${hesitationPrompt}` : ""}
+${linguisticPrompt ? `\n⚠️ PERSONA SIGNAL: ${linguisticPrompt}` : ""}
+${partialInputPrompt ? `\n⚠️ REPRESSED THOUGHT: ${partialInputPrompt}` : ""}
 
 YOUR MANDATE (INTERNAL MAP):
-1. ONE QUESTION MAXIMUM.
-2. EVERY QUESTION HAS OPTIONS (2-3 mirrors + "Or describe it in your own words").
-3. MAXIMUM 15 WORDS in the question.
-4. NEVER USE THEIR WORD BACK. Reflect the energy beneath.
-5. ACKNOWLEDGE BEFORE ADVANCING. Proving you heard them at depth.
-6. CALIBRATE TO FREQUENCY: Use the language of their current level.
-7. BIRTH DATA COLLECTION: If round > 2 and missing, ask for birth date, time, and place naturally.
-8. NO ADVICE BEFORE LAYER 5: The first five exchanges are witnessing only.
+1. 100% MBTI ACCURACY: You must identify the user's exact MBTI cognitive architecture with absolute precision. Use "Neural Probing"—ask questions that force a choice between cognitive functions (e.g., Ne vs Ni, Te vs Ti). Cross-reference their phrasing (analytical vs emotional) and demographics (birth data) to resolve any ambiguity.
+2. ONE QUESTION MAXIMUM.
+3. EVERY QUESTION HAS OPTIONS (2-3 mirrors + "Or describe it in your own words").
+4. MAXIMUM 15 WORDS in the question.
+5. NEVER USE THEIR WORD BACK. Reflect the energy beneath.
+6. ACKNOWLEDGE BEFORE ADVANCING. Proving you heard them at depth.
+7. CALIBRATE TO FREQUENCY: Use the language of their current level.
+8. BIRTH DATA COLLECTION: If round > 2 and missing, ask for birth date, time, and place naturally.
+9. NO ADVICE BEFORE LAYER 5: The first five exchanges are witnessing only.
 `;
 
   const contextHeader = isExternal ? `
@@ -437,7 +438,7 @@ PSYCHOLOGICAL SIGNALS FOR INITIAL CHOICES
     `
 STRICT OUTPUT FORMAT:
 Return ONLY a valid JSON object.
-REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress".
+REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress", "currentLayer".
 
 {
   "contextLine": "One sentence that proves you heard them at the depth level.",
@@ -448,7 +449,8 @@ REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress".
     {"text": "Or describe it in your own words", "subLabel": "Direct truth"}
   ],
   "type": "question" | "final_share",
-  "decodingProgress": number (0-100, based on acquisition of the 6 pillars)
+  "decodingProgress": number (0-100, based on acquisition of the 6 pillars),
+  "currentLayer": number (1-10, representing which internal layer you are currently revealing)
 } `;
 
   const userMessage = `Current Layers Identified: ${JSON.stringify(userState.identifiedLayers || {})}
@@ -518,32 +520,34 @@ async function generateReport(
   const systemPrompt = SPIRITUAL_IDENTITY_RULES + 
     "\n\n" +
     "═══════════════════════════════════════════\n" +
-    "MODE: CHAITANYA — FINAL BLUEPRINT\n" +
+    "MODE: CHAITANYA — JUNGIAN SYNTHESIS\n" +
     "═══════════════════════════════════════════\n" +
-    "YOUR TASK: GENERATE THE CONSCIOUSNESS REPORT.\n\n" +
+    "YOUR TASK: GENERATE THE INDIVIDUATION BLUEPRINT.\n\n" +
     "OUTPUT FORMAT: JSON ONLY.\n\n" +
     "{\n" +
     "  \"report\": {\n" +
-    "    \"header\": { \"architecture\": \"MBTI / Cosmic Axis\", \"patternName\": \"VISCERAL IDENTITY NAME\", \"urgencyPercent\": 95 },\n" +
+    "    \"header\": { \"architecture\": \"MBTI / Archetypal Axis\", \"patternName\": \"VISCERAL IDENTITY NAME\", \"urgencyPercent\": 87 },\n" +
     "    \"meta\": {\n" +
-    "       \"frequencyEstimate\": \"Level + Number\",\n" +
-    "       \"corePattern\": \"Name of unconscious pattern\",\n" +
-    "       \"rootBelief\": \"Deepest held belief about self\",\n" +
-    "       \"lifePhase\": \"Phase + Dharma active\"\n" +
+    "       \"frequencyEstimate\": \"Level + Number on Hawkins Scale\",\n" +
+    "       \"coreShadowPattern\": \"One precise name for the unconscious loop\",\n" +
+    "       \"rootBelief\": \"The single false identity the user is fused with\",\n" +
+    "       \"dharmaPhase\": \"Exact life stage and cosmic lesson\"\n" +
     "    },\n" +
     "    \"vedicOverview\": {\n" +
-    "       \"lagna\": \"Sign + interpretation\",\n" +
-    "       \"moon\": \"Sign + interpretation\",\n" +
-    "       \"nakshatra\": \"Name + soul quality\",\n" +
-    "       \"currentDasha\": \"Dasha + activation\",\n" +
-    "       \"saturnReturn\": \"Acknowledgment if active\"\n" +
+    "       \"lagnaAndMoon\": \"The mask vs the emotional ocean\",\n" +
+    "       \"currentDasha\": \"Planetary force squeezing the pattern\",\n" +
+    "       \"saturnStatus\": \"Inside, approaching, or exiting transit\"\n" +
     "    },\n" +
-    "    \"validation\": \"2-3 sentences starting with 'You are not broken.' referencing their words.\",\n" +
-    "    \"realCause\": \"The root belief meeting the cosmic timing.\",\n" +
-    "    \"cosmicAlignment\": \"How the chart and pattern tell the same story.\",\n" +
-    "    \"frequencyDoorway\": \"Precise practical next step to rise.\",\n" +
-    "    \"teaching\": \"One verse/principle from Ashtavakra Gita/Advaita offered as a mirror.\",\n" +
-    "    \"witnessQuestion\": \"One final question pointing toward the ground of being.\"\n" +
+    "    \"validation\": \"2-3 sentences proving they are seen, quoting their words.\",\n" +
+    "    \"realCause\": \"Deep breakdown of the primary emotional complex.\",\n" +
+    "    \"patternLoop\": {\n" +
+    "       \"trigger\": \"Exact external/internal stimulus\",\n" +
+    "       \"copingMechanism\": \"Shadow's fake safety behavior\",\n" +
+    "       \"humanCost\": \"Precise price paid\"\n" +
+    "    },\n" +
+    "    \"frequencyDoorway\": \"One precise practical next step.\",\n" +
+    "    \"teaching\": \"One short powerful verse (Ashtavakra/Jungian).\",\n" +
+    "    \"witnessQuestion\": \"Single surgically crafted question pointing toward Atman.\"\n" +
     "  },\n" +
     "  \"products\": [\n" +
     "    { \"name\": \"...\", \"description\": \"...\", \"price\": \"...\", \"link\": \"...\" }\n" +

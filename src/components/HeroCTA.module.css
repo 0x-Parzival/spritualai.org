@@ -337,6 +337,20 @@
     mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
+.staticOptionsContainer {
+    width: 100%;
+    margin-top: 15px;
+    position: relative;
+    pointer-events: auto;
+}
+
+.staticOptionsTrack {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
 .optionsMarqueeTrack {
     display: flex;
     gap: 12px;

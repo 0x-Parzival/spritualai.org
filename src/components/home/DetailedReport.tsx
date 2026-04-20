@@ -58,31 +58,30 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
     if (!userState || !userState.report) return null;
 
     const report: any = userState.report;
-    const { header, meta, vedicOverview, validation, realCause, cosmicAlignment, frequencyDoorway, teaching, witnessQuestion } = report;
+    const { header, meta, vedicOverview, validation, realCause, patternLoop, frequencyDoorway, teaching, witnessQuestion } = report;
     const originPoint = userState?.originPoint;
     const products = userState.recommendedProducts || report.products || [];
 
     const userName = userState.name || "Seeker";
-    const patternName = header?.patternName || meta?.corePattern || "Unconscious Pattern";
+    const patternName = header?.patternName || meta?.coreShadowPattern || "Unconscious Pattern";
     const architecture = header?.architecture || userState.confirmedMBTI || "Decoding...";
-    const urgencyPercent = header?.urgencyPercent || 85;
+    const urgencyPercent = header?.urgencyPercent || 87;
 
     return (
         <div className={styles.reportContainer} id="report-section" ref={reportRef}>
             <div className={styles.reportContent}>
-                {/* 1. HEADER */}
+                {/* I. ARCHITECTURAL IDENTITY */}
                 <header className={styles.reportHeader}>
                     <div className={styles.headerTop}>
                         <div>
-                            <div className={styles.originBadge}>ORIGIN POINT ETCHED • CSN #{originPoint?.csn?.split('-').pop()}</div>
-                            <h1 className={styles.blueprintTitle}>{userName.toUpperCase()}'S CONSCIOUSNESS BLUEPRINT</h1>
+                            <div className={styles.originBadge}>ORIGIN POINT ETCHED • CSN #{originPoint?.csn || 'PENDING'}</div>
+                            <h1 className={styles.blueprintTitle}>{userName.toUpperCase()}'S INDIVIDUATION BLUEPRINT</h1>
                             <div className={styles.metadataRow}>
                                 <span>ARCH: {architecture}</span>
-                                <span>PATTERN: {patternName}</span>
                             </div>
                         </div>
                         <div className={styles.urgencySection}>
-                            <div className={styles.urgencyLabel}>DECODING CONFIDENCE</div>
+                            <div className={styles.urgencyLabel}>URGENCY PROTOCOL</div>
                             <div className={styles.urgencyBar}>
                                 <div className={styles.urgencyFill} style={{ width: `${urgencyPercent}%` }}></div>
                             </div>
@@ -90,58 +89,50 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                     </div>
                 </header>
 
-                {/* 2. META GRID (The Layers) */}
+                {/* II. THE PSYCHIC MAP */}
                 <div className={styles.metaGrid}>
                     <div className={styles.metaItem}>
                         <label>FREQUENCY ESTIMATE</label>
                         <div className={styles.metaValue}>{meta?.frequencyEstimate}</div>
                     </div>
                     <div className={styles.metaItem}>
-                        <label>CORE PATTERN</label>
-                        <div className={styles.metaValue}>{meta?.corePattern}</div>
+                        <label>CORE SHADOW PATTERN</label>
+                        <div className={styles.metaValue}>{meta?.coreShadowPattern}</div>
                     </div>
                     <div className={styles.metaItem}>
                         <label>ROOT BELIEF</label>
                         <div className={styles.metaValue}>{meta?.rootBelief}</div>
                     </div>
                     <div className={styles.metaItem}>
-                        <label>LIFE PHASE</label>
-                        <div className={styles.metaValue}>{meta?.lifePhase}</div>
+                        <label>DHARMA PHASE</label>
+                        <div className={styles.metaValue}>{meta?.dharmaPhase}</div>
                     </div>
                 </div>
 
-                {/* 3. VEDIC OVERVIEW */}
+                {/* III. VEDIC BLUEPRINT */}
                 <div className={styles.vedicSection}>
-                    <h2 className={styles.sectionTitle}>VEDIC BLUEPRINT</h2>
+                    <h2 className={styles.sectionTitle}>III. VEDIC BLUEPRINT</h2>
                     <div className={styles.vedicGrid}>
                         <div className={styles.vedicItem}>
-                            <strong>LAGNA</strong>
-                            <p>{vedicOverview?.lagna}</p>
-                        </div>
-                        <div className={styles.vedicItem}>
-                            <strong>MOON</strong>
-                            <p>{vedicOverview?.moon}</p>
-                        </div>
-                        <div className={styles.vedicItem}>
-                            <strong>NAKSHATRA</strong>
-                            <p>{vedicOverview?.nakshatra}</p>
+                            <strong>LAGNA & MOON</strong>
+                            <p>{vedicOverview?.lagnaAndMoon}</p>
                         </div>
                         <div className={styles.vedicItem}>
                             <strong>CURRENT DASHA</strong>
                             <p>{vedicOverview?.currentDasha}</p>
                         </div>
                     </div>
-                    {vedicOverview?.saturnReturn && (
+                    {vedicOverview?.saturnStatus && (
                         <div className={styles.saturnAlert}>
-                            ⚠️ {vedicOverview.saturnReturn}
+                            ⚠️ SATURN STATUS: {vedicOverview.saturnStatus}
                         </div>
                     )}
                 </div>
 
-                {/* 4. CONTENT SECTIONS */}
+                {/* IV. CONTENT SECTIONS */}
                 <div className={styles.sectionsGrid}>
                     <section className={styles.fullWidthSection}>
-                        <h2 className={styles.smallHeading}>THE VALIDATION</h2>
+                        <h2 className={styles.smallHeading}>IV. THE VALIDATION</h2>
                         <PretextWrapper 
                             text={validation || ""}
                             font="300 1.2rem 'Inter', sans-serif"
@@ -153,7 +144,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                     </section>
 
                     <section className={styles.textSection}>
-                        <h2 className={styles.smallHeading}>THE REAL CAUSE</h2>
+                        <h2 className={styles.smallHeading}>V. THE REAL CAUSE</h2>
                         <PretextWrapper 
                             text={realCause || ""}
                             font="300 1.1rem 'Inter', sans-serif"
@@ -164,20 +155,29 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                         />
                     </section>
 
-                    <section className={styles.textSection}>
-                        <h2 className={styles.smallHeading}>COSMIC ALIGNMENT</h2>
-                        <PretextWrapper 
-                            text={cosmicAlignment || ""}
-                            font="300 1.1rem 'Inter', sans-serif"
-                            lineHeight={32}
-                            width={containerWidth}
-                            className={styles.pretextBody}
-                            centerExclusion={true}
-                        />
+                    {/* VI. THE PATTERN LOOP */}
+                    <section className={styles.fullWidthSection}>
+                        <h2 className={styles.smallHeading}>VI. THE PATTERN LOOP</h2>
+                        <div className={styles.loopVisual}>
+                            <div className={styles.loopItem}>
+                                <div className={styles.loopLabel}>TRIGGER</div>
+                                <div className={styles.loopValue}>{patternLoop?.trigger}</div>
+                            </div>
+                            <div className={styles.loopArrow}>→</div>
+                            <div className={styles.loopItem}>
+                                <div className={styles.loopLabel}>COPING MECHANISM</div>
+                                <div className={styles.loopValue}>{patternLoop?.copingMechanism}</div>
+                            </div>
+                            <div className={styles.loopArrow}>→</div>
+                            <div className={styles.loopItem}>
+                                <div className={styles.loopLabel}>HUMAN COST</div>
+                                <div className={styles.loopValue}>{patternLoop?.humanCost}</div>
+                            </div>
+                        </div>
                     </section>
 
                     <section className={styles.fullWidthSection}>
-                        <h2 className={styles.smallHeading}>THE FREQUENCY DOORWAY</h2>
+                        <h2 className={styles.smallHeading}>VII. THE FREQUENCY DOORWAY</h2>
                         <div className={styles.doorwayBox}>
                             <PretextWrapper 
                                 text={frequencyDoorway || ""}
@@ -189,11 +189,7 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                                 style={{ color: '#00f2ff' }}
                             />
                         </div>
-                    </section>
-
-                    <section className={styles.textSection}>
-                        <h2 className={styles.smallHeading}>THE TEACHING</h2>
-                        <blockquote className={styles.teachingQuote}>
+                        <blockquote className={styles.teachingQuote} style={{ marginTop: '40px' }}>
                             <PretextWrapper 
                                 text={teaching || ""}
                                 font="italic 300 1.2rem 'Inter', sans-serif"
@@ -205,8 +201,8 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                         </blockquote>
                     </section>
 
-                    <section className={styles.textSection}>
-                        <h2 className={styles.smallHeading}>THE WITNESS QUESTION</h2>
+                    <section className={styles.fullWidthSection}>
+                        <h2 className={styles.smallHeading}>VIII. THE WITNESS QUESTION</h2>
                         <div className={styles.witnessBox}>
                             <p className={styles.witnessQuestion}>{witnessQuestion}</p>
                         </div>

@@ -41,6 +41,10 @@ export interface UserState {
 
   // Pattern detection
   detectedPattern: string | null;
+  shadowPattern: string | null;
+  activeArchetype: string | null;
+  personaMask: string | null;
+  complexIdentified: string | null;
   patternConfidence: number;
   decodingProgress: number; // 0 to 100
   unconsciousPatterns: string[];
@@ -765,6 +769,10 @@ export function createInitialUserState(chip: string): UserState {
     },
     confirmedMBTI: null,
     detectedPattern: null,
+    shadowPattern: null,
+    activeArchetype: null,
+    personaMask: null,
+    complexIdentified: null,
     patternConfidence: 0,
     decodingProgress: 0,
     unconsciousPatterns: [],
