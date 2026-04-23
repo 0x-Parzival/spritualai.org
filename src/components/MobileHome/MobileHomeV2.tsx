@@ -4,11 +4,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import styles from "./mobile-home-v2.module.css";
-import { useAuth } from "@/context/AuthContext";
+import { useUser, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function MobileHomeV2() {
-    const { user, signInWithGoogle } = useAuth();
+    const { isSignedIn, user: clerkUser } = useUser();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const starsRef = useRef<HTMLDivElement>(null);
 
@@ -198,14 +198,17 @@ export default function MobileHomeV2() {
                         <div className={styles.sidebarLinks}>
                             {/* PROFILE SECTION MOBILE */}
                             <div style={{ marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
-                                {user ? (
+                                {isSignedIn ? (
                                     <Link href="/profile" className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', justifyContent: 'center' }}>
-                                        <span>👤</span> My Profile
+                                        <img src={clerkUser?.imageUrl || ''} style={{ width: '20px', height: '20px', borderRadius: '50%', marginRight: '8px' }} alt="User" />
+                                        My Profile
                                     </Link>
                                 ) : (
-                                    <button onClick={() => signInWithGoogle('/')} className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', width: '100%', justifyContent: 'center' }}>
-                                        <span>👤</span> MY PROFILE
-                                    </button>
+                                    <SignInButton mode="modal">
+                                        <button className={styles.sidebarLink} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', width: '100%', justifyContent: 'center' }}>
+                                            <span>👤</span> MY PROFILE
+                                        </button>
+                                    </SignInButton>
                                 )}
                             </div>
 

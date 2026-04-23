@@ -1,0 +1,77 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    pointer-events: none;
+}
+
+.titleWrapper {
+    position: relative;
+    display: inline-block;
+    filter: brightness(0.8);
+}
+
+.titleMain {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 108px; /* Increased by another 1.5x (72 * 1.5) */
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 18px; /* 13.5 * 1.5 */
+    white-space: nowrap;
+    color: transparent;
+    text-align: center;
+    /* Full brightness Cyan stroke */
+    -webkit-text-stroke: 1.5px #35f8ff; 
+    animation: waveInverse 4s ease-in-out infinite;
+    z-index: 2;
+    filter: drop-shadow(0 0 20px rgba(53, 242, 255, 0.4));
+}
+
+.titleGlow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 108px; /* Increased to 108px */
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 18px; /* 13.5 * 1.5 */
+    white-space: nowrap;
+    /* 100% Brightness gradient */
+    background: linear-gradient(to top,
+            #B76E79 0%,
+            #6a1bc9 33%,
+            #35F8FF 66%,
+            #B76E79 100%); 
+    background-size: 100% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 0;
+    /* Cinematic animation */
+    animation: holographic 15s linear infinite, wave 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 1; 
+    filter: 
+        drop-shadow(0 0 20px rgba(53, 242, 255, 0.4));
+}
+
+@keyframes wave {
+    0%, 100% { clip-path: polygon(0% 25%, 15% 20%, 30% 25%, 45% 35%, 60% 40%, 75% 35%, 90% 30%, 100% 25%, 100% 100%, 0% 100%); }
+    50% { clip-path: polygon(0% 40%, 15% 45%, 30% 40%, 45% 30%, 60% 25%, 75% 30%, 90% 35%, 100% 40%, 100% 100%, 0% 100%); }
+}
+
+@keyframes waveInverse {
+    0%, 100% { clip-path: polygon(0% 0%, 100% 0%, 100% 25%, 90% 30%, 75% 35%, 60% 40%, 45% 35%, 30% 25%, 15% 20%, 0% 25%); }
+    50% { clip-path: polygon(0% 0%, 100% 0%, 100% 40%, 90% 35%, 75% 30%, 60% 25%, 45% 30%, 30% 40%, 15% 45%, 0% 40%); }
+}
+
+@keyframes holographic {
+    0% { background-position: center 0%; }
+    100% { background-position: center 200%; }
+}

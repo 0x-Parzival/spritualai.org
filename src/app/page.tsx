@@ -4,20 +4,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useSpring, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import HeroTitle from '../components/HeroTitle';
 import HeroCTA from '../components/HeroCTA';
-import FallingMan from '../components/FallingMan';
-import Lotus from '../components/Lotus';
-import OceanBackground from '../components/OceanBackground';
-import StarfieldHero from '../components/StarfieldHero';
-import WavesHero from '../components/WavesHero';
-import Page2Landing from '../components/Page2Landing';
-import DetailedReport from '../components/home/DetailedReport';
-import ProductsKit from '../components/home/ProductsKit';
-import SatyalokaArrival from '../components/home/SatyalokaArrival';
 import NavButtons from '../components/NavButtons';
-import InfinitePetals from '../components/InfinitePetals';
+import Page2Landing from '../components/Page2Landing';
+import SocialLinks from '../components/home/SocialLinks';
+import MiniHeroBranding from '../components/home/MiniHeroBranding';
 import dynamic from 'next/dynamic';
 
 const FishTank = dynamic(() => import('../components/artistic/FishTank'), { ssr: false });
+const Lotus = dynamic(() => import('../components/Lotus'), { ssr: false });
+const OceanBackground = dynamic(() => import('../components/OceanBackground'), { ssr: false });
+const StarfieldHero = dynamic(() => import('../components/StarfieldHero'), { ssr: false });
+const WavesHero = dynamic(() => import('../components/WavesHero'), { ssr: false });
+const FallingMan = dynamic(() => import('../components/FallingMan'), { ssr: false });
+const InfinitePetals = dynamic(() => import('../components/InfinitePetals'), { ssr: false });
+const PatternDeconstruction = dynamic(() => import('../components/home/PatternDeconstruction'), { ssr: false });
+const EyeComponent = dynamic(() => import('../components/artistic/EyeComponent'), { ssr: false });
+const DetailedReport = dynamic(() => import('../components/home/DetailedReport'), { ssr: false });
+const ProductsKit = dynamic(() => import('../components/home/ProductsKit'), { ssr: false });
+const SatyalokaArrival = dynamic(() => import('../components/home/SatyalokaArrival'), { ssr: false });
 
 export default function SpiritualAI() {
     const [isGlassActive, setIsGlassActive] = useState(false);
@@ -108,6 +112,27 @@ export default function SpiritualAI() {
             <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 1, pointerEvents: 'none', opacity: 0.33 }}>
                 <StarfieldHero boost={!!finalState} />
             </div>
+
+            {/* Shared HeroCTA (Persistent across pages) */}
+            <div style={{
+                position: 'fixed', 
+                bottom: 0, 
+                left: 0, 
+                width: '100%',
+                display: 'flex', 
+                justifyContent: 'center', 
+                pointerEvents: 'none',
+                zIndex: 9000 // Above everything to persist during scroll
+            }}>
+                <HeroCTA 
+                    onGlassChange={setIsGlassActive} 
+                    onRoundChange={setChatRound} 
+                    onComplete={handleChatComplete}
+                    onChatActive={setIsChatActive}
+                    onGeneratingReport={setIsGeneratingReport}
+                    lastReadArchitecture={lastReadArchitecture}
+                />
+            </div>
             
             <InfinitePetals />
 
@@ -164,23 +189,12 @@ export default function SpiritualAI() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    <div style={{
-                        position: 'absolute', bottom: '0', left: 0, width: '100%',
-                        display: 'flex', justifyContent: 'center', pointerEvents: 'none',
-                        zIndex: 7000 // Higher than Lotus (6000)
-                    }}>
-                        <HeroCTA 
-                            onGlassChange={setIsGlassActive} 
-                            onRoundChange={setChatRound} 
-                            onComplete={handleChatComplete}
-                            onChatActive={setIsChatActive}
-                            onGeneratingReport={setIsGeneratingReport}
-                            lastReadArchitecture={lastReadArchitecture}
-                        />
-                    </div>
                 </section>
 
                 <section id="report-section" style={{ minHeight: '100vh', background: 'transparent', position: 'relative', zIndex: 3200 }}>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: -1, pointerEvents: 'none', opacity: 0.6 }}>
+                        <FishTank />
+                    </div>
                     {!finalState ? (
                         <Page2Landing onArchitectureView={setLastReadArchitecture} />
                     ) : (
@@ -205,31 +219,67 @@ export default function SpiritualAI() {
                     {/* Background Waves Layer 3: Colorful (Page 3 Foreground) - Moved inside to manage stacking */}
                     <div style={{
                         position: 'absolute',
-                        bottom: 0,
+                        top: 'calc(48vh + 3.04cm)', // Same as page 1
                         left: 0,
                         width: '100%',
-                        height: '60vh', 
+                        height: '152vh', // Same as page 1
                         zIndex: 100, 
                         pointerEvents: 'none',
                         opacity: 0.77,
+                        overflow: 'hidden'
                     }}>
                         <WavesHero variant="spiritual" />
                     </div>
 
+                    {/* Branding (Centered on Page 3) */}
                     <div style={{
-                        position: 'absolute', bottom: '2vh', left: 0, width: '100%',
-                        display: 'flex', justifyContent: 'center', pointerEvents: 'none',
-                        zIndex: 7000 // Higher than Lotus (6000)
+                        position: 'absolute',
+                        top: '60px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 8000,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        width: '100%',
+                        textAlign: 'center'
                     }}>
-                        <HeroCTA 
-                            onGlassChange={setIsGlassActive} 
-                            onRoundChange={setChatRound} 
-                            onComplete={handleChatComplete}
-                            onChatActive={setIsChatActive}
-                            onGeneratingReport={setIsGeneratingReport}
-                            hidePopup={true}
-                            lastReadArchitecture={lastReadArchitecture}
-                        />
+                        <MiniHeroBranding />
+                        <h2 style={{ 
+                            marginTop: 'calc(1rem - 1.5cm)', 
+                            fontSize: 'clamp(18px, 2.8vw, 32px)', 
+                            fontWeight: 300, 
+                            fontFamily: 'var(--font-sans), sans-serif',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            lineHeight: 1.4,
+                            letterSpacing: '0.05em',
+                            width: '100%',
+                            whiteSpace: 'nowrap',
+                            padding: '0 20px',
+                            textTransform: 'uppercase'
+                        }}>
+                            Your pattern is not the problem. The way you’re trying to solve it is.
+                        </h2>
+                    </div>
+
+                    <div style={{ position: 'absolute', bottom: 'calc(15vh + 3cm)', left: '1vw', width: '43vw', zIndex: 8000, pointerEvents: 'auto' }}>
+                        <PatternDeconstruction startIndex={0} initialDelay={5000} />
+                    </div>
+
+                    <div style={{ position: 'absolute', bottom: 'calc(15vh + 3cm)', right: '1vw', width: '43vw', zIndex: 8000, pointerEvents: 'auto' }}>
+                        <PatternDeconstruction startIndex={2} initialDelay={10000} />
+                    </div>
+
+                    <EyeComponent />
+
+                    {/* Social Links (Top Right on Page 3) */}
+                    <div style={{
+                        position: 'absolute',
+                        top: '60px',
+                        right: '60px',
+                        zIndex: 8000 // Above almost everything
+                    }}>
+                        <SocialLinks />
                     </div>
                 </section>
             </div>

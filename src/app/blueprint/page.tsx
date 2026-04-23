@@ -1,47 +1,68 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { playOmSound } from '../../utils/audio';
 import styles from './blueprint.module.css';
-import { MBTI_PROFILES } from '../../lib/backend-framework';
+import { useUser } from '@clerk/nextjs';
 
 export default function BlueprintPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { isLoaded, isSignedIn, user: clerkUser } = useUser();
+    
     const [userState, setUserState] = useState<any>(null);
-    const [timeLeft, setTimeLeft] = useState(14 * 60 + 32); // 14:32
+    const [loading, setLoading] = useState(true);
+    const [timeLeft, setTimeLeft] = useState(14 * 60 + 32);
 
     useEffect(() => {
-        const savedState = localStorage.getItem('spiritualAiState');
-        if (savedState) {
-            try {
-                setUserState(JSON.parse(savedState));
-            } catch (e) {
-                console.error("Failed to parse state", e);
+        const blueprintId = searchParams.get('id');
+
+        const loadData = async () => {
+            if (blueprintId && isLoaded) {
+                try {
+                    const res = await fetch(`/api/spiritual/fetch-report?id=${blueprintId}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        setUserState(data.data);
+                        setLoading(false);
+                        return;
+                    }
+                } catch (e) {
+                    console.error("DB Fetch failed", e);
+                }
             }
-        }
+
+            // Fallback to local storage
+            const savedState = localStorage.getItem('spiritualAiState');
+            if (savedState) {
+                try {
+                    setUserState(JSON.parse(savedState));
+                } catch (e) {
+                    console.error("Failed to parse state", e);
+                }
+            }
+            setLoading(false);
+        };
+
+        loadData();
 
         const timer = setInterval(() => {
             setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [searchParams, isLoaded]);
 
-    const handlePurchase = () => {
-        playOmSound();
-        router.push('/success');
-    };
-
-    if (!userState) {
-        return <div className={styles.container} style={{ justifyContent: 'center', alignItems: 'center' }}>Loading your architecture...</div>;
+    if (loading) {
+        return <div className={styles.container} style={{ justifyContent: 'center', alignItems: 'center' }}>Synchronizing architecture...</div>;
     }
 
-    const mbti = userState.confirmed_mbti || "INFP"; // Fallback
-    const pattern = userState.pain_pattern || "People Pleasing Loop";
-    const lifeStage = userState.life_stage || "The Awakening (25-34)";
-    const profile = MBTI_PROFILES[mbti] || MBTI_PROFILES["INFP"];
+    const mbti = userState.confirmed_mbti || userState.confirmedMBTI || "INFP";
+    const pattern = userState.pain_pattern || userState.detectedPattern || "The Unconscious Loop";
+    const report = userState.report || {};
+    const header = report.header || { architecture: "Seeker", patternName: pattern, urgencyPercent: 72 };
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
@@ -55,9 +76,9 @@ export default function BlueprintPage() {
 
             <div className={styles.contentWrapper}>
                 
-                {/* PAGE 4: THE MIRROR */}
+                {/* PAGE 4: THE MIRROR (INTELLIGENCE SYNTHESIS) */}
                 <section className={styles.mirrorSection}>
-                    <h1 className={styles.headline}>Here's what's actually happening beneath the surface.</h1>
+                    <h1 className={styles.headline}>Your Consciousness Blueprint</h1>
                     
                     <motion.div 
                         className={styles.blueprintCard}
@@ -67,37 +88,60 @@ export default function BlueprintPage() {
                     >
                         <div className={styles.blueprintGrid}>
                             <div className={styles.blueprintLabel}>Architecture:</div>
-                            <div className={styles.blueprintValue}>{mbti}</div>
-                            
-                            <div className={styles.blueprintLabel}>Life Stage:</div>
-                            <div className={styles.blueprintValue}>{lifeStage}</div>
+                            <div className={styles.blueprintValue}>{header.architecture || mbti}</div>
                             
                             <div className={styles.blueprintLabel}>Core Pattern:</div>
-                            <div className={styles.blueprintValue} style={{ color: '#ff00ea' }}>{pattern.replace('_', ' ').toUpperCase()}</div>
+                            <div className={styles.blueprintValue} style={{ color: '#ff00ea' }}>{(header.patternName || pattern).toUpperCase()}</div>
                             
-                            <div className={styles.blueprintLabel}>Root Cause:</div>
-                            <div className={styles.blueprintValue}>Unmet authentic self-expression</div>
+                            <div className={styles.blueprintLabel}>MBTI Frequency:</div>
+                            <div className={styles.blueprintValue}>{mbti}</div>
                             
                             <div className={styles.blueprintLabel}>Urgency Level:</div>
-                            <div className={styles.blueprintValue} style={{ color: '#ff0000' }}>High</div>
+                            <div className={styles.blueprintValue} style={{ color: '#ff0000' }}>{header.urgencyPercent}% Critical</div>
                         </div>
                     </motion.div>
 
-                    <div style={{ marginTop: '20px' }}>
+                    <div style={{ marginTop: '40px' }}>
+                        <h2 className={styles.sectionTitle}>The Mirror</h2>
                         <p className={styles.paragraph}>
-                            <span className={styles.highlight}>You are not the problem. You never were.</span><br/><br/>
-                            What you've been calling your weakness is actually an unmet depth — a capacity for connection so profound that when it has nowhere to go, it turns inward as self-abandonment.
+                            <span className={styles.highlight}>{report.empathy || "We see the thread you have been following."}</span>
                         </p>
+
+                        {report.scriptureOfTheSelf && (
+                            <>
+                                <h2 className={styles.sectionTitle} style={{ marginTop: '40px' }}>Scripture of the Self</h2>
+                                <div className={styles.paragraph} style={{ 
+                                    whiteSpace: 'pre-wrap', 
+                                    fontStyle: 'italic', 
+                                    lineHeight: '1.8',
+                                    borderLeft: '2px solid #00f2ff',
+                                    paddingLeft: '20px',
+                                    marginTop: '20px'
+                                }}>
+                                    {report.scriptureOfTheSelf}
+                                </div>
+                            </>
+                        )}
                         
+                        <h2 className={styles.sectionTitle} style={{ marginTop: '40px' }}>Cosmic Alignment</h2>
                         <p className={styles.paragraph}>
-                            Here's what nobody told you — this pattern wasn't created by you. It was installed before you had the cognitive capacity to reject it. Your mind made a decision to survive your environment. That decision became automatic. That automation became your personality. Or so it seemed.
+                            {report.astroInsight || "The stars reflect the same architecture we see in your mind."}
+                        </p>
+
+                        <h2 className={styles.sectionTitle} style={{ marginTop: '40px' }}>Psychological Mapping</h2>
+                        <p className={styles.paragraph}>
+                            {report.psychMbtiLink || "Your patterns and personality are perfectly aligned with this moment."}
                         </p>
 
                         <div className={styles.damagingAdmission}>
-                            <strong>We have to tell you something most platforms won't say:</strong><br/><br/>
-                            No single product dissolves a pattern that took years to form. Not even ours.<br/><br/>
-                            What does dissolve it: Understanding the exact pattern. Having the precise tool built for that specific architecture. 21 days of consistent application.<br/><br/>
-                            We can give you the first two instantly. The third is yours.
+                            <strong>Actionable Practice:</strong><br/><br/>
+                            {report.actionablePractice || "Observe the gap between trigger and response."}<br/><br/>
+                            <strong>Reflective Question:</strong><br/><br/>
+                            {report.reflectiveQuestion || "What would you be without this story?"}
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: '40px', fontStyle: 'italic', color: 'rgba(255,255,255,0.7)' }}>
+                            "{report.cosmicConfirmation || "You are not the pattern. You are the space in which it appears."}"
                         </div>
                     </div>
                 </section>

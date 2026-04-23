@@ -28,16 +28,19 @@ export default function PretextWrapper({
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollPos, setScrollPos] = useState(0);
 
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => { setIsClient(true); }, []);
+
   // Measure text once
   const prepared = useMemo(() => {
-    if (!text) return null;
+    if (!text || !isClient) return null;
     try {
         return prepareWithSegments(text, font);
     } catch (e) {
         console.error("Pretext prepare failed", e);
         return null;
     }
-  }, [text, font]);
+  }, [text, font, isClient]);
 
   useEffect(() => {
     if (!centerExclusion) return;

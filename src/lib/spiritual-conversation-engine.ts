@@ -1,6 +1,6 @@
 // ============================================================
 // SPIRITUAL AI — CONVERSATION ENGINE
-// conversationEngine.ts  (used by SpiritualConversation.tsx)
+// conversationEngine.ts
 // ============================================================
 
 // ============================================================
@@ -30,7 +30,7 @@ export interface UserState {
     majorTransits: string[];
   };
 
-  // MBTI inference
+  // MBTI inference (Now semantically driven)
   mbtiSignals: {
     E_I: { signal: 'E' | 'I' | null; confidence: number };
     N_S: { signal: 'N' | 'S' | null; confidence: number };
@@ -39,7 +39,7 @@ export interface UserState {
   };
   confirmedMBTI: string | null;
 
-  // Pattern detection
+  // Pattern detection (Now semantically driven)
   detectedPattern: string | null;
   shadowPattern: string | null;
   activeArchetype: string | null;
@@ -67,7 +67,7 @@ export interface UserState {
   exchangeHistory: Array<{ role: 'ai' | 'user'; content: string }>;
   finalShare: string | null;
 
-  // New Tracking Metrics
+  // Tracking Metrics
   tracking: {
     responseTimeMillis: number[];
     wordChoice: { emotional: number; analytical: number };
@@ -88,7 +88,7 @@ export interface UserState {
     pacingMode: 'deep' | 'rapid' | 'concluding';
   };
 
-  // Chaitanya Layers
+  // Intelligence Layers
   identifiedLayers?: Record<string, string>;
   identifiedVedic?: Record<string, string>;
   currentBranch?: 'Relationship' | 'Career' | 'Purpose' | 'Health' | 'unknown';
@@ -105,39 +105,20 @@ export interface UserState {
   };
 }
 
-export function analyzeLinguistics(text: string): string[] {
-  const flags: string[] = [];
-  const lowerText = text.toLowerCase();
-
-  // Distancing
-  if (/\b(you|one)\b.*\b(feel|think|know)\b/.test(lowerText) && !lowerText.includes('i feel')) {
-    flags.push("DISTANCING (Using 'you/one' instead of 'I' to avoid owning the feeling)");
-  }
-  
-  // Absolutes
-  if (/\b(always|never|impossible|everyone|nobody|ruined)\b/.test(lowerText)) {
-    flags.push("ABSOLUTES (Rigid, black-and-white cognitive distortion)");
-  }
-
-  // Passive / External Locus
-  if (/\b(made me|happened to me|forces me|can't help it)\b/.test(lowerText)) {
-    flags.push("EXTERNAL LOCUS (Speaking as if life happens TO them, lacking agency)");
-  }
-
-  return flags;
-}
-
 export interface GeneratedQuestion {
-  question: string;
   contextLine: string;
+  question: string;
   options: Array<{
     text: string;
     subLabel: string;
-    mbtiSignal: string;
-    patternSignal: string;
+    mbtiSignal?: string;
+    patternSignal?: string;
   }>;
-  allowFreeText: boolean;
-  mbtiDimension: string;
+  type?: 'question' | 'final_share';
+  decodingProgress?: number;
+  patternConfidence?: number;
+  mbtiConfidence?: number;
+  rootConfidence?: number;
 }
 
 export interface ConsciousnessReport {
@@ -410,7 +391,7 @@ export const PATTERNS: Record<string, {
 }> = {
   sovereign_in_exile: {
     name: "The Sovereign in Exile",
-    triggers: ["almost ready", "needs more research", "one more iteration", "not quite there", "waiting for permission"],
+    triggers: [],
     product: "advanced_shadow",
     path: "Karma Yoga (Direct Action)",
     societyAngle: "Your brilliance is a cage if you never commit. Release the vision.",
@@ -420,7 +401,7 @@ export const PATTERNS: Record<string, {
   },
   avoidance_loop: {
     name: "Avoidance Pattern",
-    triggers: ["don't finish", "starting things", "fear of completion", "not ready", "unfinished"],
+    triggers: [],
     product: "perfectionism_blueprint",
     path: "Jnana Yoga track",
     societyAngle: "Completion is the death of the ego's safety. Finish to be free.",
@@ -430,7 +411,7 @@ export const PATTERNS: Record<string, {
   },
   achievement_emptiness: {
     name: "Achievement-Emptiness Loop",
-    triggers: ["don't satisfy me", "now what", "validation seeker", "meaningless success", "empty win"],
+    triggers: [],
     product: "abundance_audio",
     path: "Bhakti Yoga track",
     societyAngle: "Success without soul is the ultimate failure.",
@@ -440,7 +421,7 @@ export const PATTERNS: Record<string, {
   },
   self_sabotage: {
     name: "Self-Sabotage Pattern",
-    triggers: ["can't make myself", "know what i want", "holding back", "resisting", "secondary gain"],
+    triggers: [],
     product: "shadow_work_journal",
     path: "Karma Yoga track",
     societyAngle: "Your resistance is protecting a version of you that no longer exists.",
@@ -450,7 +431,7 @@ export const PATTERNS: Record<string, {
   },
   identity_dissolution: {
     name: "Identity Dissolution",
-    triggers: ["don't know what i want", "who am i", "lost entirely", "existential", "burnout"],
+    triggers: [],
     product: "advanced_shadow",
     path: "Raja Yoga track",
     societyAngle: "The void is not the end. It is the beginning of the real you.",
@@ -460,7 +441,7 @@ export const PATTERNS: Record<string, {
   },
   victim_loop: {
     name: "Victim Loop",
-    triggers: ["always happens to me", "nothing works", "why me", "unfair", "stuck forever"],
+    triggers: [],
     product: "shadow_work_journal",
     path: "Karma Yoga track",
     societyAngle: "Break the loop, join those who did.",
@@ -470,7 +451,7 @@ export const PATTERNS: Record<string, {
   },
   perfectionism: {
     name: "Perfectionism",
-    triggers: ["not good enough", "scared to start", "never finish", "never ready", "must be perfect"],
+    triggers: [],
     product: "perfectionism_blueprint",
     path: "Jnana Yoga track",
     societyAngle: "Done is sacred. Perfect is the enemy of free.",
@@ -480,7 +461,7 @@ export const PATTERNS: Record<string, {
   },
   emotional_avoidance: {
     name: "Emotional Avoidance",
-    triggers: ["don't know why I feel", "can't explain it", "just numb", "disconnected", "fine"],
+    triggers: [],
     product: "feeling_body_audio",
     path: "Bhakti Yoga track",
     societyAngle: "Feel to heal. Your depth is your power.",
@@ -490,7 +471,7 @@ export const PATTERNS: Record<string, {
   },
   people_pleasing: {
     name: "People Pleasing",
-    triggers: ["everyone else", "let them down", "their needs", "can't say no", "sorry"],
+    triggers: [],
     product: "boundaries_guide",
     path: "Karma Yoga track",
     societyAngle: "Your 'no' is the border of your soul.",
@@ -500,7 +481,7 @@ export const PATTERNS: Record<string, {
   },
   scarcity_mindset: {
     name: "Scarcity Mindset",
-    triggers: ["can't afford", "never enough", "what's the point", "losing", "lack"],
+    triggers: [],
     product: "abundance_audio",
     path: "Jnana Yoga track",
     societyAngle: "From lack to legacy. Change the frequency.",
@@ -510,7 +491,7 @@ export const PATTERNS: Record<string, {
   },
   spiritual_bypassing: {
     name: "Spiritual Bypassing",
-    triggers: ["already meditate", "know all this", "tried everything", "still stuck", "higher vibration"],
+    triggers: [],
     product: "advanced_shadow",
     path: "Integration Track",
     societyAngle: "The only way out is through. No more hiding in the light.",
@@ -619,92 +600,8 @@ export const PRODUCT_CATALOG: Record<string, Product> = {
 };
 
 // ============================================================
-// DETECTORS
+// HELPERS
 // ============================================================
-
-export function detectPattern(text: string): { pattern: string; confidence: number; triggerWords: string[] } {
-  const lower = text.toLowerCase();
-  let bestPattern = "victim_loop"; // fallback
-  let maxMatches = 0;
-  let foundTriggers: string[] = [];
-
-  for (const [key, data] of Object.entries(PATTERNS)) {
-    const matches = data.triggers.filter((t: string) => lower.includes(t));
-    if (matches.length > maxMatches) {
-      maxMatches = matches.length;
-      bestPattern = key;
-      foundTriggers = matches;
-    }
-  }
-
-  return {
-    pattern: bestPattern,
-    confidence: Math.min(maxMatches * 0.35, 1.0),
-    triggerWords: foundTriggers
-  };
-}
-
-export function analyzeWordChoice(text: string): { emotional: number; analytical: number } {
-  if (!text) return { emotional: 0, analytical: 0 };
-  const lower = text.toLowerCase();
-  const emotionalKeywords = ['feel', 'hurt', 'sad', 'happy', 'love', 'pain', 'heart', 'soul', 'empty', 'lonely', 'anxiety', 'fear', 'joy'];
-  const analyticalKeywords = ['think', 'logic', 'reason', 'why', 'how', 'mechanism', 'system', 'structure', 'analyze', 'process', 'data', 'fact'];
-  const emotional = emotionalKeywords.filter(w => lower.includes(w)).length;
-  const analytical = analyticalKeywords.filter(w => lower.includes(w)).length;
-  return { emotional, analytical };
-}
-
-export function detectEnergyLevel(text: string, prevText?: string): 'expanding' | 'contracting' | 'neutral' {
-  const currentLen = text.length;
-  const prevLen = prevText?.length || 0;
-  if (currentLen > prevLen + 20) return 'expanding';
-  if (currentLen < prevLen - 20 && prevLen > 0) return 'contracting';
-  return 'neutral';
-}
-
-export function isTopicShift(text: string, prevText?: string): boolean {
-  if (!prevText) return false;
-  const currentWords = new Set(text.toLowerCase().split(/\s+/).filter(w => w.length > 4));
-  const prevWords = new Set(prevText.toLowerCase().split(/\s+/).filter(w => w.length > 4));
-  let overlap = 0;
-  currentWords.forEach(w => { if (prevWords.has(w)) overlap++; });
-  return overlap === 0 && currentWords.size > 0;
-}
-
-export function detectMBTISignals(text: string): Partial<UserState['mbtiSignals']> {
-  const lower = text.toLowerCase();
-  const signals: Partial<UserState['mbtiSignals']> = {};
-
-  const eSignals = ['everyone', 'people', 'friends', 'social', 'talk to', 'share', 'group'];
-  const iSignals = ['alone', 'myself', 'quiet', 'private', 'recharge', 'solitude', 'space'];
-  const eScore = eSignals.filter(s => lower.includes(s)).length;
-  const iScore = iSignals.filter(s => lower.includes(s)).length;
-  if (eScore > iScore) signals.E_I = { signal: 'E', confidence: Math.min(eScore * 0.3, 1) };
-  else if (iScore > eScore) signals.E_I = { signal: 'I', confidence: Math.min(iScore * 0.3, 1) };
-
-  const nSignals = ['meaning', 'pattern', 'why', 'future', 'possible', 'imagine', 'deeper'];
-  const sSignals = ['practical', 'real', 'facts', 'actual', 'concrete', 'specific', 'now'];
-  const nScore = nSignals.filter(s => lower.includes(s)).length;
-  const sScore = sSignals.filter(s => lower.includes(s)).length;
-  if (nScore > sScore) signals.N_S = { signal: 'N', confidence: Math.min(nScore * 0.3, 1) };
-  else if (sScore > nScore) signals.N_S = { signal: 'S', confidence: Math.min(sScore * 0.3, 1) };
-
-  const tSignals = ['logic', 'reason', 'think', 'analyze', 'data', 'efficient', 'objective'];
-  const fSignals = ['feel', 'heart', 'care', 'hurt', 'emotion', 'values', 'connection'];
-  const tScore = tSignals.filter(s => lower.includes(s)).length;
-  const fScore = fSignals.filter(s => lower.includes(s)).length;
-  if (tScore > fScore) signals.T_F = { signal: 'T', confidence: Math.min(tScore * 0.3, 1) };
-  else if (fScore > tScore) signals.T_F = { signal: 'F', confidence: Math.min(fScore * 0.3, 1) };
-
-  const jSignals = ['plan', 'schedule', 'decide', 'finish', 'structure', 'organized', 'control'];
-  const pSignals = ['flexible', 'open', 'spontaneous', 'options', 'adapt', 'freedom'];
-  const jScore = jSignals.filter(s => lower.includes(s)).length;
-  const pScore = pSignals.filter(s => lower.includes(s)).length;
-  if (jScore > pScore) signals.J_P = { signal: 'J', confidence: Math.min(jScore * 0.3, 1) };
-  else if (pScore > jScore) signals.J_P = { signal: 'P', confidence: Math.min(pScore * 0.3, 1) };
-
-  return signals;
-}
 
 export function computeMBTI(signals: UserState['mbtiSignals']): { type: string; confidence: number } {
   const e_i = signals.E_I?.signal || 'I';

@@ -10,6 +10,28 @@
     z-index: 100;
 }
 
+.lockedReport {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.blurredContent {
+    filter: blur(25px);
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+}
+
+.lockOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 26, 0.2);
+}
+
 .reportContent {
     width: 100%;
     max-width: 1400px;

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCurrency } from "@/context/CurrencyContext";
-import { useAuth } from "@/context/AuthContext";
+import { useUser } from "@clerk/nextjs";
 import { supabase } from "@/lib/supabase/client";
 import QRCode from "./QRCode";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,7 +22,7 @@ const UPI_ID = "7457852306@pthdfc";
 
 export default function CheckoutModal({ isOpen, onClose, productName, amountUSD, productId, productType }: CheckoutModalProps) {
     const { currency, convertPrice } = useCurrency();
-    const { user } = useAuth();
+    const { user: clerkUser } = useUser();
 
     const [step, setStep] = useState<'pay' | 'verify' | 'customize' | 'success' | 'details'>('pay');
     const [cryptoNetwork, setCryptoNetwork] = useState<'TRC20' | 'ERC20'>('TRC20');
@@ -40,13 +40,17 @@ export default function CheckoutModal({ isOpen, onClose, productName, amountUSD,
     useEffect(() => {
         if (isOpen) {
             setStep('pay');
-            setFormData({ name: '', email: user?.email || '', txnId: '' });
+            setFormData({ 
+                name: clerkUser?.fullName || '', 
+                email: clerkUser?.primaryEmailAddress?.emailAddress || '', 
+                txnId: '' 
+            });
             setReferralCode("");
             setAppliedDiscount(0);
             setValidCode("");
             setDiscountError("");
         }
-    }, [isOpen, user]);
+    }, [isOpen, clerkUser]);
 
     if (!isOpen) return null;
 
@@ -112,7 +116,7 @@ export default function CheckoutModal({ isOpen, onClose, productName, amountUSD,
         try {
             // Log order
             const { data, error } = await supabase.from('orders').insert({
-                user_id: user?.id || null,
+                user_id: clerkUser?.id || null,
                 product_name: productName,
                 product_id: productId,
                 product_type: productType,

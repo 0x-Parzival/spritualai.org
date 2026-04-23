@@ -426,8 +426,8 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
                                 <PretextWrapper 
                                     text={"The lotus holds a secret.\nThose who seek, find."}
                                     font="300 0.9rem 'Inter', sans-serif"
-                                    width={240}
-                                    centerExclusion={false}
+                                    width={300}
+                                    centerExclusion={true}
                                     style={{ fontWeight: 300, lineHeight: 1.6 }}
                                 />
                 </div>

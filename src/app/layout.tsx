@@ -8,18 +8,21 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: 'swap',
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: 'swap',
+  preload: true,
 });
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
   subsets: ["latin"],
   display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -149,10 +152,10 @@ const quizSchema = {
   ]
 };
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
-import { AuthProvider } from "@/context/AuthContext";
 import InstallPrompt from "@/components/InstallPrompt";
 import WitnessReturns from "@/components/WitnessReturns";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -164,52 +167,52 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased min-h-screen flex flex-col`}
-      >
-        <Script
-          id="website-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-        <Script
-          id="org-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-        />
-        <Script
-          id="software-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
-        />
-        <Script
-          id="quiz-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(quizSchema) }}
-        />
-        <CursorArrow />
-        <CurrencyProvider>
-          <AuthProvider>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link rel="icon" href="/favicon.png" type="image/png" />
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#000000" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        </head>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased min-h-screen flex flex-col`}
+        >
+          <Script
+            id="website-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          />
+          <Script
+            id="org-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          />
+          <Script
+            id="software-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+          />
+          <Script
+            id="quiz-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(quizSchema) }}
+          />
+          <CursorArrow />
+          <CurrencyProvider>
             <main className="flex-grow">
               {children}
             </main>
             <WitnessReturns />
             <ServiceWorkerRegister />
-          </AuthProvider>
-        </CurrencyProvider>
-        <Footer />
-        <SpeedInsights />
-      </body>
-    </html>
+          </CurrencyProvider>
+          <Footer />
+          <SpeedInsights />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

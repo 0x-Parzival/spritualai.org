@@ -1,12 +1,12 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
+import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Zap } from "lucide-react";
 
 export default function MainNav() {
-    const { user, signInWithGoogle } = useAuth();
+    const { isSignedIn } = useUser();
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -30,18 +30,20 @@ export default function MainNav() {
                 </Link>
 
                 {/* Profile / Auth Section */}
-                {user ? (
-                    <Link href="/profile" className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider font-bold text-xs flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        My Profile
-                    </Link>
+                {isSignedIn ? (
+                    <div className="flex items-center gap-4">
+                        <Link href="/profile" className="text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-wider font-bold text-xs flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            My Profile
+                        </Link>
+                        <UserButton />
+                    </div>
                 ) : (
-                    <button
-                        onClick={() => signInWithGoogle()}
-                        className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs"
-                    >
-                        Login
-                    </button>
+                    <SignInButton mode="modal">
+                        <button className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs">
+                            Login
+                        </button>
+                    </SignInButton>
                 )}
 
                 <a href="#contact" className="text-white/70 hover:text-white transition-colors uppercase tracking-wider text-xs">

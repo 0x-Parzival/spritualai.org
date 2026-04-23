@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
+import { useUser } from "@clerk/nextjs";
 import { supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -24,14 +24,11 @@ interface Sale {
     amount_paid: string;
     status: string;
     referral_code: string;
-    profiles: {
-        full_name: string | null;
-        email: string | null;
-    } | null;
+    user_id: string;
 }
 
 export default function ReferralsAdmin() {
-    const { user, profile, loading } = useAuth();
+    const { isLoaded, isSignedIn, user: clerkUser } = useUser();
     const [referrals, setReferrals] = useState<Referral[]>([]);
     const [sales, setSales] = useState<Sale[]>([]);
     const [newCode, setNewCode] = useState("");
@@ -40,12 +37,14 @@ export default function ReferralsAdmin() {
     const [creating, setCreating] = useState(false);
     const [activeTab, setActiveTab] = useState<'codes' | 'sales'>('codes');
 
+    const isAdmin = clerkUser?.publicMetadata?.role === 'admin';
+
     useEffect(() => {
-        if (profile?.is_admin) {
+        if (isAdmin) {
             fetchReferrals();
             fetchSales();
         }
-    }, [profile]);
+    }, [isAdmin]);
 
     const fetchReferrals = async () => {
         const { data, error } = await supabase
@@ -57,7 +56,6 @@ export default function ReferralsAdmin() {
     };
 
     const fetchSales = async () => {
-        // Fetch orders where referral_code is not null, joining with profiles
         const { data, error } = await supabase
             .from('orders')
             .select(`
@@ -67,10 +65,7 @@ export default function ReferralsAdmin() {
                 amount_paid,
                 status,
                 referral_code,
-                profiles:user_id (
-                    full_name,
-                    email
-                )
+                user_id
             `)
             .not('referral_code', 'is', null)
             .order('created_at', { ascending: false });
@@ -91,7 +86,7 @@ export default function ReferralsAdmin() {
             const { error } = await supabase.from('referrals').insert({
                 code: newCode.toUpperCase(),
                 discount_percentage: discount,
-                created_by: user?.id,
+                created_by: clerkUser?.id,
                 usage_count: 0,
                 total_revenue_generated: 0
             });
@@ -116,13 +111,13 @@ export default function ReferralsAdmin() {
         if (!error) fetchReferrals();
     };
 
-    if (loading) return (
+    if (!isLoaded) return (
         <div className="min-h-screen bg-[#050505] flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-cyan-500"></div>
         </div>
     );
 
-    if (!profile?.is_admin) return (
+    if (!isAdmin) return (
         <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
             <div className="max-w-md bg-white/5 border border-white/10 p-10 rounded-3xl backdrop-blur-xl">
                 <i className="fas fa-shield-virus text-4xl text-red-500 mb-6"></i>
@@ -329,8 +324,8 @@ export default function ReferralsAdmin() {
                                                     >
                                                         <td className="px-8 py-6">
                                                             <div className="flex flex-col">
-                                                                <span className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">{sale.profiles?.full_name || "Unknown Bio"}</span>
-                                                                <span className="text-[10px] font-mono text-white/30">{sale.profiles?.email || "No Email"}</span>
+                                                                <span className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tight">Buyer ID</span>
+                                                                <span className="text-[10px] font-mono text-white/30 truncate max-w-[120px]">{sale.user_id}</span>
                                                             </div>
                                                         </td>
                                                         <td className="px-8 py-6">

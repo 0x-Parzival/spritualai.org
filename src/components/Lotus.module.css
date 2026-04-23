@@ -1,10 +1,10 @@
 .stage {
     position: fixed;
-    bottom: calc(-34px - var(--lotus-offset, 0px));
+    bottom: calc(110px - var(--lotus-offset, 0px));
     left: 50%;
-    transform: translateX(-50%) translateY(0.5cm);
-    width: 500px;
-    height: 500px;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 220px;
     display: grid;
     place-items: center;
     transform-style: preserve-3d;
@@ -12,13 +12,14 @@
     z-index: 6000; /* Most forward, above everything else */
     pointer-events: none;
     transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: brightness(0.7);
 }
 
 @media (max-width: 640px) {
     .stage {
-        width: 320px;
-        height: 320px;
-        transform: translateX(-50%) translateY(0.5cm) scale(0.65);
+        width: 140px;
+        height: 140px;
+        transform: translateX(-50%) scale(0.65);
     }
 }
 
@@ -53,10 +54,12 @@
     border-radius: 50%;
     border: 1px solid rgba(53,248,255,0);
     box-shadow: 0 0 0 rgba(53,248,255,0);
-    transform: translateZ(-20px);
+    transform: translate(-50%, -50%) translateZ(-20px);
     pointer-events: none;
     transition: border-color 1s ease, box-shadow 1s ease;
     z-index: 1;
+    left: 50%;
+    top: 50%;
 }
 .a1 { width: 290px; height: 290px; }
 .a2 { width: 360px; height: 360px; transition-delay: 0.18s; }
@@ -206,12 +209,13 @@
 .fade { opacity: 0; }
 
 .lotusMessage {
-    position: fixed;
-    bottom: calc(var(--lotus-offset, 0px) + 200px + 1cm); /* Moved 1cm upward */
-    left: calc(50% + 200px); 
-    width: 240px;
-    padding: 0; /* Removed padding */
-    background: none; /* No background */
+    position: absolute;
+    bottom: 55px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    padding: 0; 
+    background: none; 
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border: none;
@@ -220,7 +224,7 @@
     font-size: 0.9rem;
     font-weight: 300;
     line-height: 1.6;
-    text-align: left;
+    text-align: center;
     box-shadow: none;
     z-index: 6100;
     pointer-events: auto;
@@ -250,14 +254,15 @@
 
 .stemWrapper {
     position: fixed;
-    bottom: calc(-34px - var(--lotus-offset, 0px));
+    bottom: calc(110px - var(--lotus-offset, 0px));
     left: 50%;
-    transform: translateX(-50%) translateY(0.5cm);
-    width: 500px;
-    height: 500px;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 220px;
     z-index: 4000; /* Above Sections (3150) but behind HeroCTA (5000) */
     pointer-events: none;
     transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: brightness(0.7);
 }
 
 .stemContainer {

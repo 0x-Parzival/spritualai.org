@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuth } from '@/context/AuthContext';
+import { useUser, SignInButton } from '@clerk/nextjs';
 import styles from './NavButtons.module.css';
 
 export default function NavButtons() {
-    const { user, signInWithGoogle } = useAuth();
+    const { isSignedIn, user: clerkUser } = useUser();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
@@ -63,28 +63,30 @@ export default function NavButtons() {
                 <div className={styles.sidebarContent}>
                     {/* PROFILE SECTION */}
                     <div style={{ marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '20px' }}>
-                        {user ? (
+                        {isSignedIn ? (
                             <Link href="/profile" className={styles.contactLink} style={{ background: 'rgba(255,255,255,0.05)' }}>
                                 <div className={styles.linkIcon}>
-                                    {user.user_metadata?.avatar_url ? (
-                                        <img src={user.user_metadata.avatar_url} alt="User" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                                    {clerkUser?.imageUrl ? (
+                                        <img src={clerkUser.imageUrl} alt="User" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                                     ) : (
                                         <span>👤</span>
                                     )}
                                 </div>
                                 <div className={styles.linkDetails}>
                                     <span className={styles.linkLabel} style={{ color: '#4FD1C5' }}>My Profile</span>
-                                    <span className={styles.linkValue}>View Purchases</span>
+                                    <span className={styles.linkValue}>{clerkUser?.fullName || 'View Purchases'}</span>
                                 </div>
                             </Link>
                         ) : (
-                            <button onClick={() => signInWithGoogle()} className={styles.contactLink} style={{ width: '100%', textAlign: 'left', background: 'rgba(255,255,255,0.05)', cursor: 'pointer' }}>
-                                <span className={styles.linkIcon}>👤</span>
-                                <div className={styles.linkDetails}>
-                                    <span className={styles.linkLabel}>MY PROFILE</span>
-                                    <span className={styles.linkValue}>Login / Sign Up</span>
-                                </div>
-                            </button>
+                            <SignInButton mode="modal">
+                                <button className={styles.contactLink} style={{ width: '100%', textAlign: 'left', background: 'rgba(255,255,255,0.05)', cursor: 'pointer' }}>
+                                    <span className={styles.linkIcon}>👤</span>
+                                    <div className={styles.linkDetails}>
+                                        <span className={styles.linkLabel}>MY PROFILE</span>
+                                        <span className={styles.linkValue}>Login / Sign Up</span>
+                                    </div>
+                                </button>
+                            </SignInButton>
                         )}
                     </div>
 

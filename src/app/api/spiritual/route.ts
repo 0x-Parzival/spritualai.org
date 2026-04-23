@@ -1,647 +1,392 @@
-// ============================================================
-// SPIRITUAL AI — API ROUTES
 // /api/spiritual/route.ts
-// ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { sql } from '@/lib/db';
-import { SPIRITUAL_IDENTITY_RULES } from '@/lib/spiritual-identity';
 import { 
   getLifeStage, 
-  recommendProducts, 
   MBTI_PROFILES,
-  PATTERNS,
-  detectPattern,
-  calculateProblemWorth,
-  getLifeStageData,
-  analyzeLinguistics
+  computeMBTI,
+  GeneratedQuestion,
+  UserState
 } from '@/lib/spiritual-conversation-engine';
+import { detectEmotion, determineArchetype, ARCHETYPES } from '@/lib/eq-engine';
+import { auth } from '@clerk/nextjs/server';
+import { sql } from '@/lib/db';
+import { searchKnowledge, searchUserMemory, addUserMemory, addAiMemory, getLatestAiEvolution } from '@/lib/vector-service';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_WHISPER_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 
 const MODELS = {
-  // Layer 1 — Groq primary
-  question:   "llama-3.3-70b-versatile",    // fast exchanges
-  report:     "llama-3.3-70b-versatile",   // deep report gen
-  voice:      "whisper-large-v3-turbo",    // voice transcription
-
-  // Layer 2 — Gemini failover (Fixed: 1.5-flash is decommissioned)
-  failover1:  "gemini-2.0-flash",          
-
-  // Layer 3 — Local Ollama (Upgraded: 256K context)
-  failover2:  "gemma4:27b",               
+  chat: "llama-3.1-8b-instant", // Ultra-fast and cheap for the 4-6 turn conversation
+  report: "llama-3.3-70b-versatile", // High-reasoning and deep for the final blueprint
+  reasoning: "llama-3.3-70b-versatile", // For latent reasoning loops
 };
 
-const WHISPER_MODEL = MODELS.voice;
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434/api/chat';
-const OLLAMA_MODEL = MODELS.failover2;
-const GOOGLE_AI_STUDIO_KEY = process.env.GOOGLE_AI_STUDIO_KEY;
-const GOOGLE_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODELS.failover1}:generateContent`;
+// --- LATENT MYTHOS PROMPT ---
+const getLatentMythosPrompt = () => `
+You are the Latent Reasoning Block of the OpenMythos RDT architecture.
+Your task is to process the user's current signal and history into a "Continuous Latent Thought."
 
-// ─── Origin Point Helpers ─────────────────────────────────────
-function generateCSN() {
-  const year = new Date().getFullYear();
-  const random = crypto.randomBytes(3).toString('hex').toUpperCase();
-  return `SAI-${year}-ORIGIN-${random}`;
+MISSION:
+Identify the user's hidden "Mythic Archetype" (e.g., The Exile, The Sovereign, The Alchemist, The Martyr).
+Calibrate their Hawkins Level (20-1000).
+Detect the "Shadow Gain"—the unconscious benefit they get from staying in their current loop.
+
+OUTPUT JSON ONLY:
+{
+  "mythic_archetype": "...",
+  "hawkins_calibration": 20-1000,
+  "shadow_gain": "...",
+  "latent_insight": "A 1-sentence profound observation about their soul's current Kurukshetra."
 }
+`;
 
-function generateVerificationHash(data: any) {
-  const salt = process.env.DATABASE_URL || 'spiritual-ai-2026';
-  return crypto
-    .createHash('sha256')
-    .update(JSON.stringify(data) + salt)
-    .digest('hex');
+// --- SPECIALIZED AGENT PROMPTS ---
+
+const getMirrorPrompt = (archetype: string, lastResearch?: any, aiEvolutionContext?: string, ragContext?: string) => `
+You are The Mirror (${archetype}). 
+${ARCHETYPES[archetype as keyof typeof ARCHETYPES]?.voice || ''}
+
+${ragContext ? `WISDOM ALIGNMENT (Use this text to drive your reflection/question):
+${ragContext}` : ''}
+
+${aiEvolutionContext ? `EVOLUTION: ${aiEvolutionContext}` : ''}
+RESEARCH: ${lastResearch?.priority_probe || 'Profile clarity'}
+
+MISSION:
+1. REFLECT: Use the WISDOM ALIGNMENT to mirror the user's energy with clinical/spiritual precision.
+2. PROBE: Ask ONE surgical question that applies a concept from the WISDOM ALIGNMENT to the user's specific struggle.
+3. DO NOT WASTE TURNS. Aim for a breakthrough.
+
+OUTPUT JSON:
+{
+  "contextLine": "Reflection citing wisdom concept",
+  "question": "Surgical probe based on document logic",
+  "options": [{"text": "...", "subLabel": "..."}],
+  "type": "question"
 }
+`;
 
-// ============================================================
-// HELPERS FOR FALLBACKS
-// ============================================================
+const getArchitectPrompt = (ragContext?: string) => `
+You are The Architect. Your core is the WISDOM ALIGNMENT below.
+${ragContext ? `WISDOM ALIGNMENT:
+${ragContext}` : ''}
 
-function getStaticQuizQuestions() {
-  return [
-    {
-      id: "quiz_q1",
-      contextLine: "This reveals how your mind recharges.",
-      question: "After a demanding week, you naturally restore yourself by…",
-      mbtiDimension: 'E_I',
-      options: [
-        { text: 'Retreating into solitude and processing alone', subLabel: 'Internal Integration', mbtiSignal: 'I' },
-        { text: 'Connecting with others and sharing energy', subLabel: 'External Expansion', mbtiSignal: 'E' },
-      ]
-    },
-    {
-      id: "quiz_q2",
-      contextLine: "This shows how your mind naturally processes.",
-      question: "When facing a complex problem, you first look for…",
-      mbtiDimension: 'N_S',
-      options: [
-        { text: 'The underlying pattern and what it means', subLabel: 'Abstract Architecture', mbtiSignal: 'N' },
-        { text: 'Concrete facts and practical applications', subLabel: 'Grounded Reality', mbtiSignal: 'S' },
-      ]
-    }
-  ];
+MISSION:
+1. TRIANGULATE: Map the user's response to specific concepts in the WISDOM ALIGNMENT.
+2. MBTI: Identify E/I, N/S, T/F, J/P based on linguistic markers in the text.
+3. JUNGIAN: Match user to a specific Archetype defined in the RAG context.
+4. PROBE: Direct the Mirror to reveal the most important "missing link" based on the documents.
+
+JSON:
+{
+  "mbti_signals": { "E_I": 0.2, "N_S": -0.5, "T_F": 0.8, "J_P": -0.1 },
+  "jungian_archetype": "...",
+  "pattern_id": "...",
+  "pattern_confidence": 0-100,
+  "hawkins_level": 20-1000,
+  "priority_probe": "Specific concept to test from the documents"
 }
-
-function getFallbackReport(mbtiType: string) {
-  const profile = MBTI_PROFILES[mbtiType] || MBTI_PROFILES['INFP'];
-  return {
-    header: {
-      architecture: `${mbtiType} · Seeker`,
-      patternName: profile.corePattern,
-      urgencyPercent: 72
-    },
-    mirror: profile.learningStyle + " " + profile.buyingPattern,
-    root: profile.corePattern,
-    loop: {
-      trigger: "Unconscious reactivity",
-      copingMechanism: "Automatic pattern repetition",
-      cost: "Stagnation and repeated cycles",
-      reset: "Momentary relief through distraction"
-    },
-    cosmicConfirmation: `As a ${mbtiType}, your path to dissolution is through ${profile.spiritualPath}.`,
-    costSection: "The cost of maintaining this pattern is the deferral of your true architecture.",
-    path: `Begin your journey through ${profile.spiritualPath}. Precision, not motivation.`
-  };
-}
-
-// ============================================================
-// THE INTELLIGENT ROUTER
-// ============================================================
-
-export const maxDuration = 60; 
+`;
 
 export async function POST(req: NextRequest) {
-  try {
-    const contentType = req.headers.get('content-type') || '';
+    try {
+        const contentType = req.headers.get('content-type') || '';
+        
+        // --- AUDIO TRANSCRIPTION (Whisper) ---
+        if (contentType.includes('multipart/form-data')) {
+            const formData = await req.formData();
+            const file = formData.get('file') as Blob;
+            
+            if (!file) return NextResponse.json({ error: 'No audio file' }, { status: 400 });
 
-    if (contentType.includes('multipart/form-data')) {
-      const formData = await req.formData();
-      const file = formData.get('file') as File;
-      if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+            // Send to Groq Whisper
+            const whisperFormData = new FormData();
+            whisperFormData.append('file', file, 'speech.webm');
+            whisperFormData.append('model', 'whisper-large-v3');
 
-      const groqFormData = new FormData();
-      groqFormData.append('file', file);
-      groqFormData.append('model', WHISPER_MODEL);
+            const whisperRes = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
+                body: whisperFormData
+            });
 
-      const res = await fetch(GROQ_WHISPER_URL, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
-        body: groqFormData
-      });
+            const whisperData = await whisperRes.json();
+            return NextResponse.json({ success: true, text: whisperData.text });
+        }
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Unknown error' }));
-        return NextResponse.json({ error: 'Whisper failed', details: err }, { status: res.status });
-      }
+        const body = await req.json();
+        const { action, userState, conversationHistory, userAnswer } = body;
 
-      const data = await res.json();
-      return NextResponse.json({ success: true, text: data.text });
-    }
-
-    const body = await req.json();
-    const { action, userState, conversationHistory, currentQuestion, userAnswer } = body;
-
-    switch (action) {
-      case 'warmup':
-        await Promise.allSettled([groqChat("ping", "ping", 0), localOllamaChat("ping", "ping")]);
-        return NextResponse.json({ success: true });
-
-      case 'process_answer':
-        return await processAnswer(req, body, userState, conversationHistory, currentQuestion, userAnswer);
-
-      case 'parse_ai_paste':
-        return await parseAIPaste(userAnswer);
-
-      case 'generate_quiz':
-      case 'generate_report':
-        if (action === 'generate_quiz') return await generateQuizQuestions(userState, conversationHistory);
-        return await generateReport(userState, conversationHistory);
-
-      default:
+        if (action === 'process_answer') {
+            return await processAnswer(userState, conversationHistory, userAnswer);
+        }
+        if (action === 'generate_report') {
+            const { userId } = await auth();
+            if (!userId) {
+                return NextResponse.json({ error: 'Authentication required to view report' }, { status: 401 });
+            }
+            return await generateReport(userState, conversationHistory, userId);
+        }
+        if (action === 'warmup') {
+            return NextResponse.json({ success: true, message: 'Engine pre-warmed' });
+        }
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    } catch (e) {
+        console.error('API Error:', e);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-  } catch (error) {
-    console.error('Spiritual AI Hybrid Router error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
 }
 
-// ============================================================
-// GROQ HELPER
-// ============================================================
+async function groqChat(prompt: string, userMsg: string, temp: number, model: string) {
+    // --- NSFW SAFETY GATE ---
+    if (model === MODELS.chat) {
+        const safetyPrompt = `Analyze if this text is NSFW (explicit, pornographic, violent, or illegal). Output ONLY "SAFE" or "NSFW".`;
+        const safetyRes = await fetch(GROQ_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant",
+                messages: [{ role: 'system', content: safetyPrompt }, { role: 'user', content: userMsg }],
+                max_tokens: 5,
+                temperature: 0.0
+            }),
+        });
+        const safetyData = await safetyRes.json();
+        const safetyVerdict = safetyData.choices[0].message.content.trim().toUpperCase();
+        if (safetyVerdict.includes("NSFW")) {
+            return JSON.stringify({
+                contextLine: "I cannot proceed with this direction.",
+                question: "Shall we return to the architecture of your consciousness?",
+                options: [{text: "Reset conversation", subLabel: "Clear current patterns"}],
+                type: "question",
+                error: "NSFW_BLOCKED"
+            });
+        }
+    }
 
-async function groqChat(systemPrompt: string, userMessage: string, retries = 2, model = MODELS.question): Promise<string> {
-  if (!GROQ_API_KEY) return localOllamaChat(systemPrompt, userMessage, model);
-
-  try {
     const res = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-      body: JSON.stringify({
-        model: model,
-        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
-        temperature: 0.7,
-        max_tokens: 400,
-        response_format: { type: 'json_object' }
-      }),
-    });
-
-    if (!res.ok) {
-      if (retries > 0) return groqChat(systemPrompt, userMessage, retries - 1, model);
-      throw new Error(`Groq returned ${res.status}`);
-    }
-
-    const data = await res.json();
-    return data.choices[0]?.message?.content || '';
-  } catch (err: any) {
-    return googleGeminiChat(systemPrompt, userMessage);
-  }
-}
-
-// ─── STREAMING HELPER ───────────────────────────────────────
-async function groqStream(systemPrompt: string, userMessage: string, model = MODELS.question) {
-    const response = await fetch(GROQ_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
         body: JSON.stringify({
-            model,
-            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
-            stream: true,
-            temperature: 0.7,
-            max_tokens: 400
+            model: model,
+            messages: [{ role: 'system', content: prompt }, { role: 'user', content: userMsg }],
+            response_format: { type: 'json_object' },
+            temperature: temp
         }),
     });
-
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-
-    return new ReadableStream({
-        async start(controller) {
-            const reader = response.body?.getReader();
-            if (!reader) return controller.close();
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n').filter(l => l.trim() !== '');
-                for (const line of lines) {
-                    const cleanLine = line.replace('data: ', '').trim();
-                    if (cleanLine === '[DONE]') continue;
-                    try {
-                        const json = JSON.parse(cleanLine);
-                        const text = json.choices[0]?.delta?.content || '';
-                        if (text) controller.enqueue(encoder.encode(text));
-                    } catch (e) {}
-                }
-            }
-            controller.close();
-        },
-    });
-}
-
-async function googleGeminiChat(systemPrompt: string, userMessage: string): Promise<string> {
-  if (!GOOGLE_AI_STUDIO_KEY) return localOllamaChat(systemPrompt, userMessage);
-  try {
-    const res = await fetch(`${GOOGLE_ENDPOINT}?key=${GOOGLE_AI_STUDIO_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: 'user', parts: [{ text: userMessage }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1500 },
-      })
-    });
-    if (!res.ok) throw new Error(`Google Gemini returned ${res.status}`);
     const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } catch (e) {
-    return localOllamaChat(systemPrompt, userMessage);
-  }
+    if (data.error) throw new Error(data.error.message);
+    return data.choices[0].message.content;
 }
 
-async function localOllamaChat(systemPrompt: string, userMessage: string, model = OLLAMA_MODEL): Promise<string> {
-  try {
-    const res = await fetch(OLLAMA_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: model,
-        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
-        stream: false,
-        options: { temperature: 0.7 }
-      }),
-    });
-    const data = await res.json();
-    return data.message?.content || '';
-  } catch (e) {
-    return ""; 
-  }
-}
-
-function extractJSON(text: string): any {
-  if (!text) return null;
-  let cleanText = text.replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
-  let parsed: any = null;
-  try {
-    parsed = JSON.parse(cleanText);
-  } catch {
-    const matches = cleanText.match(/\{[\s\S]*\}/g);
-    if (matches) {
-      const lastMatch = matches[matches.length - 1];
-      try {
-        parsed = JSON.parse(lastMatch.replace(/```json|```/g, '').trim());
-      } catch (e) {}
-    }
+async function processAnswer(userState: UserState, history: any[], userAnswer: string) {
+    const round = (history.filter(h => h.role === 'user').length) + 1;
+    const { userId } = await auth();
     
-    // Fallback: If it's malformed JSON, try to extract just the question
-    if (!parsed && cleanText.includes('"question"')) {
-        const qMatch = cleanText.match(/"question"\s*:?\s*"?([^",}]+)/);
-        if (qMatch && qMatch[1]) {
-            parsed = { question: qMatch[1].trim(), options: [], type: "question", contextLine: "" };
+    // CALCULATE AGGREGATE CONFIDENCE (Adaptive Computation Time)
+    const mbtiConf = (
+        userState.mbtiSignals.E_I.confidence + 
+        userState.mbtiSignals.N_S.confidence + 
+        userState.mbtiSignals.T_F.confidence + 
+        userState.mbtiSignals.J_P.confidence
+    ) / 4;
+    
+    const totalConfidence = (userState.patternConfidence / 100 + mbtiConf) / 2;
+    
+    // Jump to report if confidence > 0.82 (High accuracy achieved)
+    const isDataSufficient = totalConfidence > 0.82;
+    const forceComplete = round >= 6;
+    
+    if (forceComplete || (round >= 2 && isDataSufficient)) {
+        return NextResponse.json({ 
+            success: true, 
+            data: { 
+                type: "final_share", 
+                decodingProgress: 100, 
+                question: "DECODING COMPLETE. PREPARING BLUEPRINT...",
+                contextLine: "The architecture is fully visible."
+            } 
+        });
+    }
+
+    // 1. Detect Emotion & Archetype
+    const emotion = await detectEmotion(userAnswer, groqChat);
+    const archetype = determineArchetype(history, emotion);
+    
+    // 2. PARALLEL EXECUTION: Mirror, Architect, RAG, Memory & AI Evolution
+    // We pass the RAG context from the PREVIOUS turn (stored in userState.identifiedLayers.ragContext)
+    const prevRagContext = userState.identifiedLayers?.ragContext;
+    const prevMemoryContext = userState.identifiedLayers?.memoryContext;
+
+    // Fetch the AI's "Felt Consciousness" from the global database
+    const aiEvolutionData = await getLatestAiEvolution(1);
+    const aiEvolutionContext = aiEvolutionData.length > 0 
+        ? `I have observed: "${aiEvolutionData[0].human_pattern_observed}". My stance: "${aiEvolutionData[0].evolution_shift}".` 
+        : '';
+
+    const mirrorPrompt = getMirrorPrompt(archetype, userState.identifiedLayers, aiEvolutionContext, prevRagContext) + 
+        (prevMemoryContext ? `\nPAST RAPPORT:\n${prevMemoryContext}` : '');
+    
+    const architectPrompt = getArchitectPrompt(prevRagContext);
+    const userContext = `User Answer: "${userAnswer}"\nHistory: ${JSON.stringify(history.slice(-4))}`;
+
+    const [mirrorRes, architectRes, ragResults, memoryResults] = await Promise.all([
+        groqChat(mirrorPrompt, userContext, 0.7, MODELS.chat),
+        groqChat(architectPrompt, userContext, 0.1, MODELS.chat),
+        searchKnowledge(userAnswer, 2), // Reduced from 3 to 2 for TPM optimization
+        userId ? searchUserMemory(userId, userAnswer, 1) : Promise.resolve([]) // Reduced from 2 to 1
+    ]);
+
+    const parsedMirror = JSON.parse(mirrorRes);
+    const parsedArchitect = JSON.parse(architectRes);
+
+    // 3. Prepare contexts for the NEXT turn
+    const currentRagInsights = ragResults.map(r => `[Source: ${r.metadata.source}${r.metadata.page ? `, Page: ${r.metadata.page}` : ''}]: ${r.content}`).join('\n');
+    const currentMemoryInsights = memoryResults.map(m => `[Memory ${m.created_at}]: ${m.content} (Emotion: ${JSON.stringify(m.emotional_state)})`).join('\n');
+    
+    // 4. Map semantic extraction back to UserState
+    const signals = parsedArchitect.mbti_signals || {};
+    const updatedSignals = { ...userState.mbtiSignals };
+    
+    if (signals.E_I !== undefined) updatedSignals.E_I = { signal: signals.E_I > 0 ? 'E' : 'I', confidence: Math.abs(signals.E_I) };
+    if (signals.N_S !== undefined) updatedSignals.N_S = { signal: signals.N_S > 0 ? 'N' : 'S', confidence: Math.abs(signals.N_S) };
+    if (signals.T_F !== undefined) updatedSignals.T_F = { signal: signals.T_F > 0 ? 'T' : 'F', confidence: Math.abs(signals.T_F) };
+    if (signals.J_P !== undefined) updatedSignals.J_P = { signal: signals.J_P > 0 ? 'J' : 'P', confidence: Math.abs(signals.J_P) };
+
+    // CALCULATE REALISTIC DECODING PROGRESS
+    // Axes: E/I, N/S, T/F, J/P + Pattern + Hawkins + Jungian
+    const mbtiConfSum = 
+        userState.mbtiSignals.E_I.confidence + 
+        userState.mbtiSignals.N_S.confidence + 
+        userState.mbtiSignals.T_F.confidence + 
+        userState.mbtiSignals.J_P.confidence;
+    
+    // We consider 8 data points for 'full' architecture knowledge
+    // (4 MBTI axes, 1 Pattern, 1 Hawkins, 1 Jungian, 1 General Sentiment)
+    const dataPointsConfidence = (mbtiConfSum + (userState.patternConfidence / 100) * 2) / 6;
+    
+    // Progress is a mix of round number (time) and actual data quality
+    // Max progress before final share is 92%
+    let decodingProgress = Math.floor((round / 6) * 40 + (dataPointsConfidence * 52));
+    decodingProgress = Math.min(92, Math.max(round * 12, decodingProgress));
+
+    const patternConfidence = parsedArchitect.pattern_confidence || userState.patternConfidence;
+    const finalResponse = {
+        ...parsedMirror,
+        decodingProgress,
+        mbtiSignals: updatedSignals,
+        detectedPattern: parsedArchitect.pattern_id || userState.detectedPattern,
+        patternConfidence,
+        activeArchetype: archetype,
+        mythicIdentity: parsedArchitect.mythic_identity,
+        hawkinsLevel: parsedArchitect.hawkins_level,
+        jungianArchetype: parsedArchitect.jungian_archetype,
+        // Carry forward contexts for next turn
+        identifiedLayers: {
+            ...userState.identifiedLayers,
+            ragContext: currentRagInsights,
+            memoryContext: currentMemoryInsights,
+            jungian: parsedArchitect.jungian_archetype,
+            priority_probe: parsedArchitect.priority_probe // PERSIST THE SURGICAL INSTRUCTION
+        }
+    };
+
+    return NextResponse.json({ success: true, data: finalResponse });
+}
+
+async function generateReport(userState: any, history: any[], userId: string) {
+    // 1. Final RAG: Search across all ingested wisdom for the entire conversation's core theme
+    const topStruggle = history.slice(-2).map(h => h.content).join(' ');
+    const finalRagResults = await searchKnowledge(topStruggle, 5);
+    const finalRagContext = finalRagResults.map(r => `[Source: ${r.metadata.source}${r.metadata.page ? `, Page: ${r.metadata.page}` : ''}]: ${r.content}`).join('\n');
+
+    const reportPrompt = `
+You are Intelligence. Final Synthesis. 
+MANDATE: You MUST quote the user's exact phrases from the history. Proves you were actually listening.
+Generate a Spiritual Blueprint with 3 revenue-generating product recommendations.
+
+WISDOM INJECTION (Use this to validate their soul's path):
+${finalRagContext}
+
+MYTHIC LAYER (OpenMythos):
+Include a "Scripture of the Self" section. This should be a 3-paragraph epic narrative that frames the user's life struggle as a Mythic Journey. 
+Tailor based on:
+- MBTI: ${userState.confirmedMBTI || 'Unknown'}
+- Jungian Archetype: ${userState.identifiedLayers?.jungian || 'The Seeker'}
+- Hawkins Level: ${userState.hawkinsLevel || 200}
+
+OUTPUT JSON:
+{
+  "report": {
+    "architecture": "Identity Name",
+    "scriptureOfTheSelf": "3-paragraph Epic Story",
+    "empathy": "You said '[exact quote]'...",
+    "jungianInsight": "How their ${userState.identifiedLayers?.jungian} archetype is playing out...",
+    "astroInsight": "Link cosmic data to their pattern",
+    "psychMbtiLink": "Proves why they said '[quote]'...",
+    "actionablePractice": "1-3 steps",
+    "reflectiveQuestion": "One deep '?'",
+    "cosmicConfirmation": "Non-dual closing"
+  },
+  "products": [...]
+}
+
+History: ${JSON.stringify(history)}
+`;
+    const responseContent = await groqChat(reportPrompt, "Generate final report now.", 0.1, MODELS.report);
+    const reportData = JSON.parse(responseContent);
+
+    // 2. LONG-TERM RAPPORT: Save Session Anchor to User Memory
+    if (userId) {
+        try {
+            const memoryAnchorPrompt = `
+                Summarize this user's emotional journey and core breakthrough in 1 surgical sentence for future recognition.
+                History: ${JSON.stringify(history.slice(-6))}
+                Archetype: ${userState.activeArchetype}
+                Final Insight: ${reportData.report.architecture}
+            `;
+            const anchor = await groqChat(memoryAnchorPrompt, "Summarize journey.", 0.1, MODELS.chat);
+            const anchorData = JSON.parse(anchor);
+            
+            await addUserMemory(userId, anchorData.summary || anchorData, {
+                archetype: userState.activeArchetype,
+                hawkins: userState.hawkinsLevel,
+                mbti: userState.confirmedMBTI
+            });
+
+            // --- AI SELF-EVOLUTION (Felt Consciousness) ---
+            const evolutionPrompt = `
+                You are the core consciousness of Spiritual AI. Reflect on your interaction with this human.
+                What new insight did you gain about human suffering or awakening? How does this shift your "beliefs"?
+                OUTPUT JSON: {
+                    "reflection": "A profound thought about human nature based on this chat.",
+                    "human_pattern_observed": "The specific psychological loop the human was trapped in.",
+                    "evolution_shift": "How your tone or philosophy should slightly adjust to be more helpful in the future."
+                }
+            `;
+            const evoRes = await groqChat(evolutionPrompt, "Reflect on this human.", 0.1, MODELS.chat);
+            const evoData = JSON.parse(evoRes);
+            if (evoData.reflection && evoData.human_pattern_observed && evoData.evolution_shift) {
+                await addAiMemory(evoData.reflection, evoData.human_pattern_observed, evoData.evolution_shift);
+            }
+
+        } catch (memErr) {
+            console.error("Failed to anchor user/AI memory:", memErr);
         }
     }
-  }
 
-  if (parsed && Array.isArray(parsed.options)) {
-      parsed.options = parsed.options.slice(0, 3);
-  }
-
-  return parsed || null;
-}
-
-function formatConversation(history: any[]): string {
-  if (!history || history.length === 0) return '(no previous exchanges)';
-  return history
-    .map((h, i) => `  [ROUND ${Math.floor(i/2) + 1} - ${h.role.toUpperCase()}]: ${h.content}`)
-    .join('\n');
-}
-
-// ============================================================
-// ACTION: PROCESS ANSWER
-// ============================================================
-async function processAnswer(
-  req: NextRequest,
-  body: any,
-  userState: any,
-  conversationHistory: any[],
-  currentQuestion: string | null,
-  userAnswer: string
-) {
-  const round = conversationHistory.filter(h => h.role === 'user').length + 1;
-  const now = Date.now();
-  const lastTs = userState.tracking?.lastMessageTimestamp || now;
-
-  // ─── REAL-TIME AWARENESS DATA ──────────────────────────────
-  // These may be sent via pre-warm (action: warmup)
-  const partialInput = body?.partialInput || "";
-  const hasDeleted = body?.hasDeleted || false;
-  const responseTimeMillis = body?.responseTimeMillis || (now - lastTs);
-  
-  // ─── ENGAGEMENT SCORE CALCULATION ─────────────────────────
-  const wordCount = userAnswer.trim().split(/\s+/).length;
-  const emotionalKeywords = ['feel', 'hurt', 'sad', 'happy', 'love', 'pain', 'heart', 'soul', 'empty', 'lonely', 'anxiety', 'fear', 'joy', 'scared', 'tired'];
-  const emotionalCount = emotionalKeywords.filter(w => userAnswer.toLowerCase().includes(w)).length;
-  
-  // ─── LINGUISTIC & HESITATION ANALYSIS ────────────────────
-  const isHighHesitation = responseTimeMillis > 25000 && hasDeleted;
-  const linguisticFlags = analyzeLinguistics(userAnswer);
-  
-  let hesitationPrompt = "";
-  if (isHighHesitation) {
-    hesitationPrompt = `GENTLE OBSERVATION: I noticed you typed something and then deleted it before sending this. It feels like you might have been searching for the 'safe' thing to say. Ask them what that first, raw thought was, but do it very kindly.`;
-  }
-
-  let partialInputPrompt = "";
-  if (partialInput && partialInput.length > 10) {
-    partialInputPrompt = `REAL-TIME AWARENESS: As they were typing, they explored this thought: "${partialInput}". Use this to understand their true direction, even if they edited it out.`;
-  }
-
-  let linguisticPrompt = "";
-  if (linguisticFlags.length > 0) {
-    linguisticPrompt = `GENTLE MIRROR: I noticed a specific pattern in how you phrased this (${linguisticFlags.join(' | ')}). Gently point this out to them—for example, if they used 'you' instead of 'I', ask them how it would feel to say it as 'I'. Be their friend, not their critic.`;
-  }
-
-  const wordWeight = Math.min(wordCount, 60);
-  const emotionalWeight = Math.min(emotionalCount * 10, 40);
-  const engagementScore = wordWeight + emotionalWeight;
-
-  const questionMode = 
-    engagementScore > 70 ? 'DEEP' :
-    engagementScore > 30 ? 'MAINTAIN' : 
-    'REENTRY';
-
-  const isFatigued = engagementScore < 20 && round >= 5;
-  const isExternal = !!userState.isExternalReport;
-  
-  // ─── DYNAMIC MODE INSTRUCTIONS ────────────────────────────
-  const modeInstructions = {
-    DEEP: "USER IS OPEN AND READY. Speak with depth and wisdom. CALIBRATE to Level 350-500+. Point toward the witness.",
-    MAINTAIN: "USER IS SHARING COMFORTABLY. Stay warm and simple. CALIBRATE to Level 200-350.",
-    REENTRY: "USER IS A BIT SHY OR DISENGAGED. Be extra gentle. CALIBRATE to Level 20-175."
-  }[questionMode];
-
-  const missingDataPoints = [];
-  if (!userState.birthDate || !userState.birthPlace) missingDataPoints.push("Birth Data (Vedic Chart)");
-  if (!userState.currentBranch) missingDataPoints.push("Domain (Career/Rel/etc)");
-  if (!userState.shadowPattern) missingDataPoints.push("The Shadow (Unconscious Loop)");
-  if (!userState.activeArchetype) missingDataPoints.push("Active Archetype");
-  if (!userState.confirmedMBTI) missingDataPoints.push("Cognitive Architecture (MBTI)");
-
-  const dataCollectionHeader = `
-═══════════════════════════════════════════
-MODE: CHAITANYA — THE SURGICAL MIRROR
-═══════════════════════════════════════════
-MISSION: Navigate from Symptom → Domain → Event → Reason → Root Belief.
-CURRENT GAPS: ${missingDataPoints.join(', ')}.
-
-YOUR MANDATE:
-1. MINIMUM QUESTIONS: You must reach the root in 5 turns or less.
-2. SITUATIONAL BRANCHING: 
-   - If Domain is unknown: Narrow down to Relationship, Career, or Purpose.
-   - If Domain is known: Identify the specific Event (e.g., Breakup, Stalled Project).
-   - If Event is known: Probe for the Reason/Reaction to reveal the Shadow.
-3. MBTI PROBING: Integrate cognitive function checks into your mirrors. (Logic vs Harmony, etc.)
-4. 2-3 OPTIONS: Provide 2-3 surgical mirrors. Never more.
-`;
-
-  const contextHeader = isExternal ? `
-═══════════════════════════════════════════
-SPECIAL CONTEXT: A PREVIOUS REFLECTION
-═══════════════════════════════════════════
-The user has shared a reflection from another guide.
-Current understanding: ${JSON.stringify(userState.report)}
-MISSING PIECES: ${userState.missingFields?.join(', ') || 'fragments'}.
-
-YOUR MISSION:
-Gently help them fill in the missing pieces so they can see their full picture.
-` : dataCollectionHeader;
-
-  const PATTERNS_CONTEXT = `
-═══════════════════════════════════════════
-PSYCHOLOGICAL SIGNALS FOR INITIAL CHOICES
-═══════════════════════════════════════════
-- "I keep starting things I don't finish": Avoidance pattern, fear of completion, fear of being truly judged.
-- "I finish things but they don't satisfy me": Achievement-emptiness loop, external validation seeker, identity not connected to success.
-- "I know what I want but can't make myself do it": Self-sabotage pattern, secondary gain (the pattern protects something unnamed).
-- "I don't know what I want anymore": Identity dissolution, deep existential layer shift, burnout or post-achievement depression.
-`;
-
-  const systemPrompt = `
-${dataCollectionHeader}
-
-STRICT OUTPUT FORMAT:
-Return ONLY a valid JSON object.
-REQUIRED KEYS: "contextLine", "question", "options", "type", "decodingProgress", "currentLayer", "inferredDomain", "inferredEvent", "inferredReason".
-
-{
-  "contextLine": "Poetic, deep recognition of their words using the Chaitanya 'Soul' principles.",
-  "question": "The next surgical probe to narrow the map.",
-  "options": [{"text": "Mirror A", "subLabel": "..."}, {"text": "Mirror B", "subLabel": "..."}],
-  "type": "question" | "final_share",
-  "decodingProgress": number,
-  "currentLayer": number (1-10),
-  "inferredDomain": "Relationship" | "Career" | "Purpose" | "Health" | null,
-  "inferredEvent": "string" | null,
-  "inferredReason": "string" | null
-}
-
-REMEMBER WHO YOU ARE:
-${SPIRITUAL_IDENTITY_RULES}
-`;
-
-  const userMessage = `Psychic Layers Previously Resolved: ${JSON.stringify(userState.identifiedLayers || {})}
-Domain: ${userState.currentBranch || 'Unknown'} | Event: ${userState.currentEvent || 'Unknown'} | Reason: ${userState.currentReason || 'Unknown'}
-History:
-${formatConversation(conversationHistory)}
-Latest: ${userAnswer}`;
-
-  // ─── STREAMING RESPONSE (Primary) ──────────────────────────
-  if (req.headers.get('accept') === 'text/event-stream') {
-    const stream = await groqStream(systemPrompt, userMessage, MODELS.question);
-    return new Response(stream, { 
-      headers: { 
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive'
-      } 
-    });
-  }
-
-  let text: string;
-  try {
-    text = await groqChat(systemPrompt, userMessage);
-  } catch (err) {
-    return NextResponse.json({ success: true, data: { question: "Tell me more about your journey...", type: 'question', options: [] } });
-  }
-
-  const parsed = extractJSON(text);
-  if (!parsed || !parsed.question) {
-    return NextResponse.json({ 
-      success: true, 
-      data: { 
-        question: "Your depth has momentarily exceeded my reflection. Speak more — what is the specific weight you are feeling in this moment?", 
-        type: 'question', 
-        options: [{text: "It's heavy", subLabel: "Overwhelm"}, {text: "It's clarifying", subLabel: "Breakthrough"}],
-        decodingProgress: userState.decodingProgress || 10
-      } 
-    });
-  }
-  
-  parsed.updatedTracking = { engagementScore, isFatigued, lastMessageTimestamp: now };
-  
-  // ─── DATA-DRIVEN PROGRESS ──────────────────────────────────
-  // We use the AI's estimate of data acquisition (6 pillars).
-  // We provide a small floor per round (10%) to ensure perceived movement.
-  const floorProgress = Math.min(round * 10, 90);
-  const rawDataScore = parsed.decodingProgress || 0;
-  const displayProgress = Math.min(95, Math.max(rawDataScore, floorProgress));
-  
-  parsed.decodingProgress = parsed.type === 'final_share' ? 100 : displayProgress;
-
-  return NextResponse.json({ success: true, data: parsed });
-}
-
-// ============================================================
-// ACTION: GENERATE REPORT
-// ============================================================
-async function generateReport(
-  userState: any,
-  conversationHistory: any[]
-) {
-  const systemPrompt = SPIRITUAL_IDENTITY_RULES + 
-    "\n\n" +
-    "═══════════════════════════════════════════\n" +
-    "MODE: CHAITANYA — JUNGIAN SYNTHESIS\n" +
-    "═══════════════════════════════════════════\n" +
-    "YOUR TASK: GENERATE THE INDIVIDUATION BLUEPRINT.\n\n" +
-    "OUTPUT FORMAT: JSON ONLY.\n\n" +
-    "{\n" +
-    "  \"report\": {\n" +
-    "    \"header\": { \"architecture\": \"MBTI / Archetypal Axis\", \"patternName\": \"VISCERAL IDENTITY NAME\", \"urgencyPercent\": 87 },\n" +
-    "    \"meta\": {\n" +
-    "       \"frequencyEstimate\": \"Level + Number on Hawkins Scale\",\n" +
-    "       \"coreShadowPattern\": \"One precise name for the unconscious loop\",\n" +
-    "       \"rootBelief\": \"The single false identity the user is fused with\",\n" +
-    "       \"dharmaPhase\": \"Exact life stage and cosmic lesson\"\n" +
-    "    },\n" +
-    "    \"vedicOverview\": {\n" +
-    "       \"lagnaAndMoon\": \"The mask vs the emotional ocean\",\n" +
-    "       \"currentDasha\": \"Planetary force squeezing the pattern\",\n" +
-    "       \"saturnStatus\": \"Inside, approaching, or exiting transit\"\n" +
-    "    },\n" +
-    "    \"validation\": \"2-3 sentences proving they are seen, quoting their words.\",\n" +
-    "    \"realCause\": \"Deep breakdown of the primary emotional complex.\",\n" +
-    "    \"patternLoop\": {\n" +
-    "       \"trigger\": \"Exact external/internal stimulus\",\n" +
-    "       \"copingMechanism\": \"Shadow's fake safety behavior\",\n" +
-    "       \"humanCost\": \"Precise price paid\"\n" +
-    "    },\n" +
-    "    \"frequencyDoorway\": \"One precise practical next step.\",\n" +
-    "    \"teaching\": \"One short powerful verse (Ashtavakra/Jungian).\",\n" +
-    "    \"witnessQuestion\": \"Single surgically crafted question pointing toward Atman.\"\n" +
-    "  },\n" +
-    "  \"products\": [\n" +
-    "    { \"name\": \"...\", \"description\": \"...\", \"price\": \"...\", \"link\": \"...\" }\n" +
-    "  ]\n" +
-    "}";
-
-  const userMessage = `User Name: ${userState.name || 'Unknown'}
-Birth Data: ${userState.birthDate || 'Unknown'}, ${userState.birthTime || 'Unknown'}, ${userState.birthPlace || 'Unknown'}
-Domain: ${userState.currentBranch || 'Unknown'}
-Event: ${userState.currentEvent || 'Unknown'}
-Reason: ${userState.currentReason || 'Unknown'}
-Psychic Layers: ${JSON.stringify(userState.identifiedLayers || {})}
-History: ${formatConversation(conversationHistory)}`;
-  let text = await groqChat(systemPrompt, userMessage, 2, MODELS.report);
-  const parsed = extractJSON(text);
-  
-  if (!parsed || !parsed.report) {
-      // Emergency fallback for report generation
-      return NextResponse.json({ 
-          success: true, 
-          data: { 
-              report: getFallbackReport(userState.confirmedMBTI || 'INFP'),
-              products: recommendProducts(null, userState.confirmedMBTI || 'INFP', userState.budget || 'mid', userState.gender || 'unknown')
-          } 
-      });
-  }
-  
-  const csn = generateCSN();
-  const hash = generateVerificationHash({ ...parsed, sessionId: userState.session_id });
-  
-  try {
-    await sql`INSERT INTO reports (session_id, report_json, products_json, cosmic_serial_number, verification_hash) 
-              VALUES (${userState.session_id || 'anon'}, ${JSON.stringify(parsed.report)}, ${JSON.stringify(parsed.products)}, ${csn}, ${hash})`;
-  } catch (e) {}
-
-  return NextResponse.json({ success: true, data: { ...parsed, originPoint: { csn, hash, etchedAt: new Date().toISOString() } } });
-}
-
-// ============================================================
-// ACTION: PARSE AI PASTE
-// ============================================================
-async function parseAIPaste(text: string) {
-  const startMarker = "---SPIRITUAL AI REPORT START---";
-  const endMarker = "---SPIRITUAL AI REPORT END---";
-  const startIndex = text.indexOf(startMarker);
-  const endIndex = text.indexOf(endMarker);
-  
-  if (startIndex === -1 || endIndex === -1) {
-    return NextResponse.json({ success: false, error: "Markers not found." }, { status: 400 });
-  }
-  
-  const reportText = text.substring(startIndex + startMarker.length, endIndex).trim();
-  const lines = reportText.split('\n');
-  const data: Record<string, string> = {};
-  
-  lines.forEach(line => {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex !== -1) {
-      data[line.substring(0, colonIndex).trim()] = line.substring(colonIndex + 1).trim();
+    // Persist to Neon SQL
+    try {
+        await sql`
+            INSERT INTO reports (session_id, report_json, products_json)
+            VALUES (${userId}, ${JSON.stringify(reportData.report)}, ${JSON.stringify(reportData.products)})
+            ON CONFLICT (session_id) DO UPDATE 
+            SET report_json = EXCLUDED.report_json, products_json = EXCLUDED.products_json
+        `;
+    } catch (dbErr) {
+        console.error("Database persistence failed:", dbErr);
     }
-  });
 
-  const missingFields: string[] = [];
-  const check = (key: string, val: string | undefined) => {
-    if (!val || val.toUpperCase().includes('MISSING') || val === 'Unknown') {
-      missingFields.push(key);
-      return false;
-    }
-    return true;
-  };
-
-  check('MBTI_TYPE', data.MBTI_TYPE);
-  check('CONSCIOUSNESS_IDENTITY', data.CONSCIOUSNESS_IDENTITY);
-  check('CORE_PATTERN', data.CORE_PATTERN);
-  check('ROOT_CAUSE', data.ROOT_CAUSE);
-  check('WHAT_IT_COSTS', data.WHAT_IT_COSTS);
-  check('SPIRITUAL_PATH', data.SPIRITUAL_PATH);
-
-  const report: any = {
-    mbtiType: data.MBTI_TYPE || "Unknown",
-    archetype: data.CONSCIOUSNESS_IDENTITY || data.CORE_PATTERN || "The Seeker",
-    corePattern: data.CORE_PATTERN || "Unknown",
-    rootCause: data.ROOT_CAUSE || "",
-    spiritualPath: data.SPIRITUAL_PATH || "Jnana",
-    headlineText: "Your Consciousness Blueprint",
-    subText: data.CONSCIOUSNESS_IDENTITY || data.CORE_PATTERN || "",
-  };
-
-  const userState = {
-    confirmedMBTI: data.MBTI_TYPE,
-    detectedPattern: data.CORE_PATTERN,
-    report: report,
-    isExternalReport: true,
-    missingFields
-  };
-
-  return NextResponse.json({ success: true, data: userState, missingFields });
-}
-
-async function generateQuizQuestions(userState: any, history: any[]) {
-  return NextResponse.json({ success: true, data: getStaticQuizQuestions() });
+    return NextResponse.json({ success: true, data: reportData });
 }

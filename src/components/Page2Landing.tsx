@@ -113,7 +113,7 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
             whileTap={{ scale: 0.98 }}
             className={styles.ctaButton}
           >
-            Secure My Architectural Blueprint
+            Reveal My Pattern
           </motion.button>
         </div>
       </motion.div>

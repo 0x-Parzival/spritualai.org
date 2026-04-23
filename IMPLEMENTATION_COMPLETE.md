@@ -42,7 +42,7 @@
 
 **Configuration**  
 ```env
-GROQ_API_KEY=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
+GROQ_API_KEY=your_groq_api_key_here
 GROQ_MODEL=llama-3.1-70b-versatile
 ```
 

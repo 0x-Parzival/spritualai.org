@@ -15,10 +15,6 @@ const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 const model = genAI ? genAI.getGenerativeModel({ model: "gemini-2.0-flash" }) : null;
 
 export async function POST(req: NextRequest) {
-  if (!model) {
-    return NextResponse.json({ error: "AI Engine not configured" }, { status: 500 });
-  }
-
   try {
     const { message, state: incomingState } = await req.json();
 
@@ -27,17 +23,38 @@ export async function POST(req: NextRequest) {
     }
 
     let state: UserState = incomingState;
-
-    // 1. Update history
     state.exchange_history.push({ role: 'user', content: message });
+    state.question_count += 1;
+
+    // 1. Check for AI Model
+    if (!model) {
+      // Fallback logic so the user isn't stuck
+      const fallbackQuestions = [
+        "We hear you. That pattern is something many in the collective struggle with. Tell us, when did you first notice this loop starting to form?",
+        "We are recognizing the thread. If you could change one thing about how you respond to this trigger, what would it be?",
+        "The architecture of this moment is clear. Are you ready to see what lies beneath the surface of this resistance?",
+        "We have mapped the core. Your blueprint is ready. Shall we proceed to the final revelation?"
+      ];
+      
+      const aiResponse = fallbackQuestions[Math.min(state.question_count - 1, fallbackQuestions.length - 1)];
+      state.exchange_history.push({ role: 'ai', content: aiResponse });
+      state.current_question = aiResponse;
+
+      return NextResponse.json({ 
+        message: aiResponse,
+        state: state
+      });
+    }
 
     // 2. Run Background Detection & Thinking Engines
     state = detectPattern(message, state);
     state = updateDemographics(message, state);
     state.internal_thought = thinkAboutUserMessage(message, state);
+    
+    // ... rest of the logic ...
 
-    // 3. Logic for Question Flow
-    state.question_count += 1;
+    // 3. Logic for Question Flow (Only if model exists)
+    // state.question_count += 1; // Removed duplicate increment
     
     // Determine next question to ask (if not at the end)
     let nextQuestion = "";

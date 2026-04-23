@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# sensitive data
+orders.json
+lotusgod.zip
+*.log
+verify_flow.js
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

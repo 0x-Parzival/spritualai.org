@@ -59,6 +59,7 @@ export default function FallingMan({ mouseX, mouseY }: FallingManProps) {
                     src="/images/home/fallingman.png"
                     alt="Falling Man"
                     fill
+                    sizes="300px"
                     style={{ objectFit: 'contain' }}
                     priority
                 />

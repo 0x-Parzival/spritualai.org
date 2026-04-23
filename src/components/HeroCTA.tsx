@@ -8,7 +8,9 @@ import { playOmSound } from '../utils/audio';
 import styles from './HeroCTA.module.css';
 import HeroTitle from './HeroTitle';
 import PretextWrapper from './home/PretextWrapper';
-import { analyzeWordChoice, detectEnergyLevel, isTopicShift, UserState } from '../lib/spiritual-conversation-engine';
+import AuthGate from './AuthGate';
+import { useUser } from '@clerk/nextjs';
+import { UserState } from '../lib/spiritual-conversation-engine';
 import { DECODE_PROMPT } from '../lib/decodePrompt';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -19,12 +21,15 @@ interface ChatMessage {
     options?: { text: string; subLabel: string }[];
     type?: 'question' | 'final_share';
 }
-
 const SacredStatus = () => {
     const [statusIdx, setStatusIdx] = useState(0);
     const statuses = [
         "Identifying the thread in the fabric...",
+        "The Seeker is tracing your linguistic patterns...",
+        "The Shadow Witness is observing the unspoken...",
+        "Specialist agents are debating your architecture...",
         "Witnessing the version of you that stays...",
+        "The Sage is harmonizing the findings...",
         "Sealing the vision across timelines...",
         "Tracing the architecture of your soul...",
         "Observing the pattern without judgment...",
@@ -230,6 +235,10 @@ const DEFAULT_USER_STATE: UserState = {
     },
     confirmedMBTI: null,
     detectedPattern: null,
+    shadowPattern: null,
+    activeArchetype: null,
+    personaMask: null,
+    complexIdentified: null,
     patternConfidence: 0,
     decodingProgress: 0,
     unconsciousPatterns: [],
@@ -269,60 +278,59 @@ const STRUGGLES = [
 
 const FIRST_QUESTIONS: Record<string, { question: string; options: { text: string; subLabel: string }[] }> = {
     "Spiritual disconnection": {
-        question: "Does your practice feel like performing a script that no longer has any life in it?",
+        question: "Is your disconnection a loss of faith in the practice itself, or a deeper fatigue with the version of you that is performing it?",
         options: [
-            { text: "Yes, it's just habit now", subLabel: "" },
-            { text: "I've stopped entirely", subLabel: "" },
-            { text: "I feel like a ghost in the room", subLabel: "" }
+            { text: "Fatigue with myself", subLabel: "Internal shift" },
+            { text: "Loss of faith in the method", subLabel: "External doubt" },
+            { text: "The practice feels like a mask", subLabel: "Identity crisis" }
         ]
     },
     "Feeling lost": {
-        question: "Does this 'lost' feeling feel like you're in the wrong place, or like you've lost the map entirely?",
+        question: "Does this 'lost' feeling stem from having no destination, or from having arrived at one and realizing it wasn't yours?",
         options: [
-            { text: "I'm in the wrong place", subLabel: "" },
-            { text: "I've lost the map", subLabel: "" },
-            { text: "It's both", subLabel: "" }
+            { text: "No destination", subLabel: "Void seeking" },
+            { text: "Wrong destination", subLabel: "Success trap" },
+            { text: "I've lost the map entirely", subLabel: "Total reset" }
         ]
     },
     "Relationship pain": {
-        question: "Is the pain coming from the presence of someone who shouldn't be there, or the absence of someone you actually need?",
+        question: "Are you grieving the loss of who they were, or the version of yourself you were when you were with them?",
         options: [
-            { text: "Presence of someone", subLabel: "" },
-            { text: "Absence of someone", subLabel: "" },
-            { text: "It's complicated", subLabel: "" }
+            { text: "Loss of them", subLabel: "Grief/Attachment" },
+            { text: "Loss of myself", subLabel: "Identity merge" },
+            { text: "The weight of the unspoken", subLabel: "Hidden truth" }
         ]
     },
     "Career confusion": {
-        question: "Are you mourning a path you didn't take, or are you suffocating on the one you're currently on?",
+        question: "Is your confusion a lack of 'what' to do, or a terrifying clarity about the 'why' that you can no longer ignore?",
         options: [
-            { text: "Mourning a path", subLabel: "" },
-            { text: "Suffocating here", subLabel: "" },
-            { text: "Just feeling stuck", subLabel: "" }
+            { text: "Lack of 'what'", subLabel: "Tactical pivot" },
+            { text: "Terrifying 'why'", subLabel: "Existential shift" },
+            { text: "I am suffocating here", subLabel: "Urgent exit" }
         ]
     },
     "Inner emptiness": {
-        question: "Does the emptiness feel like a hollow space that needs filling, or a heavy weight that you're tired of carrying?",
+        question: "Is the emptiness a hollow space waiting to be filled, or a sacred space trying to clear away what no longer belongs?",
         options: [
-            { text: "A hollow space", subLabel: "" },
-            { text: "A heavy weight", subLabel: "" },
-            { text: "Something else", subLabel: "" }
+            { text: "Hollow space", subLabel: "Scarcity/Need" },
+            { text: "Sacred space", subLabel: "Purification" },
+            { text: "It feels like a heavy void", subLabel: "Depression/Wait" }
         ]
     },
     "Anxiety & overthinking": {
-        question: "Is your mind trying to solve a problem that exists, or is it creating problems so it has something to solve?",
+        question: "Is your mind frantically trying to solve a real threat, or is it creating complexity to avoid taking a simple, terrifying action?",
         options: [
-            { text: "Solving a real problem", subLabel: "" },
-            { text: "Creating problems", subLabel: "" },
-            { text: "I can't tell anymore", subLabel: "" }
+            { text: "Solving a real threat", subLabel: "Survival mode" },
+            { text: "Avoiding action", subLabel: "The Safe Loop" },
+            { text: "I can't stop the noise", subLabel: "System overload" }
         ]
     },
     "I don't even know": {
-        question: "If your silence could speak for ten seconds without you judging it — what's the first word it would say?",
+        question: "If the confusion was a doorway instead of a wall—what is the one thing you are most afraid to find on the other side?",
         options: [
-            { text: "Tired", subLabel: "" },
-            { text: "Scared", subLabel: "" },
-            { text: "Numb", subLabel: "" },
-            { text: "Waiting", subLabel: "" }
+            { text: "True Responsibility", subLabel: "End of blame" },
+            { text: "Total Freedom", subLabel: "End of safety" },
+            { text: "Absolute Silence", subLabel: "End of self" }
         ]
     }
 };
@@ -345,6 +353,7 @@ export default function HeroCTA({
     lastReadArchitecture?: string | null
 }) {
     const router = useRouter();
+    const { isSignedIn, user: clerkUser } = useUser();
 
     const originalText = "Your pattern brought you here. Which loop are we breaking tonight?";
     const [ctaText, setCtaText] = useState(originalText);
@@ -365,6 +374,7 @@ export default function HeroCTA({
     const [decodedCount, setDecodedCount] = useState(14847);
 
     const [showChat, setShowChat] = useState(false);
+    const [showAuthGate, setShowAuthGate] = useState(false);
 
     useEffect(() => {
         if (onChatActive) {
@@ -374,6 +384,36 @@ export default function HeroCTA({
 
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isTyping, setIsTyping] = useState(false);
+    const [thinkingMessage, setThinkingMessage] = useState("Intelligence is observing the pattern...");
+    const [thinkingStatus, setThinkingStatus] = useState("Thinking");
+    
+    const thinkingPhrases = [
+        "Intelligence is observing the pattern...",
+        "Consulting the Akasha for your soul's architecture...",
+        "Navigating the Latent Mythos...",
+        "Tracing the mythic thread of your response...",
+        "Mirroring the depth of your unconditioned self...",
+        "Identifying the Kurukshetra within...",
+        "Aligning with your latent awakening...",
+        "Synthesizing dharmic clarity..."
+    ];
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isTyping) {
+            let i = 0;
+            interval = setInterval(() => {
+                const phrase = thinkingPhrases[i % thinkingPhrases.length];
+                setThinkingMessage(phrase);
+                setThinkingStatus(phrase.toUpperCase());
+                i++;
+            }, 2500);
+        } else {
+            setThinkingStatus("Thinking");
+        }
+        return () => clearInterval(interval);
+    }, [isTyping]);
+
     const [round, setRound] = useState(0);
     const [conversationHistory, setConversationHistory] = useState<{ role: string; content: string }[]>([]);
     const [userState, setUserState] = useState<UserState>(DEFAULT_USER_STATE);
@@ -392,30 +432,6 @@ export default function HeroCTA({
     const [isLiveMode, setIsLiveMode] = useState(false);
     const [isAiTalking, setIsAiTalking] = useState(false);
     const lastActivityRef = useRef<number>(Date.now());
-    
-    const [thinkingStatus, setThinkingStatus] = useState("Thinking");
-    
-    useEffect(() => {
-        if (isTyping) {
-            const statusMap: Record<number, string[]> = {
-                0: ["ISOLATING COGNITIVE BIAS...", "MAPPING RECURSIVE LOOPS..."],
-                1: ["CALIBRATING ASTROLOGY...", "DECODING BIRTH COORDINATES..."],
-                2: ["ANALYZING DEFENSE ARCHITECTURE...", "TARGETING ROOT AGE..."],
-                3: ["UNCOVERING SECONDARY GAIN...", "EXPOSING HIDDEN PROFITS..."],
-                4: ["VISUALIZING IDENTITY ATTACHMENT...", "PREPARING FINAL BLUEPRINT..."],
-                5: ["ETCHING CONSCIOUSNESS DATA...", "DECODING FINAL ARCHITECTURE..."]
-            };
-            const statuses = statusMap[round] || statusMap[0];
-            let i = 0;
-            const interval = setInterval(() => {
-                setThinkingStatus(statuses[i % statuses.length]);
-                i++;
-            }, 1000);
-            return () => clearInterval(interval);
-        } else {
-            setThinkingStatus("Thinking");
-        }
-    }, [isTyping, round]);
 
     // Pre-warm next question while user types
     useEffect(() => {
@@ -440,11 +456,20 @@ export default function HeroCTA({
         return () => clearTimeout(prewarmTimer);
     }, [inputValue, showChat, isTyping]);
 
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     useEffect(() => {
         if (showChat || isConvoComplete || showPromptPopup) return;
         const timer = setInterval(() => {
             const now = Date.now();
-            if (now - lastActivityRef.current > 15000) { 
+            // Only show popup if user is inactive AND on Page 1 (scrollY < 300)
+            if (now - lastActivityRef.current > 15000 && window.scrollY < 300) { 
                 setShowPromptPopup(true);
             }
         }, 1000);
@@ -461,6 +486,12 @@ export default function HeroCTA({
             window.removeEventListener('touchstart', resetTimer);
         };
     }, [showChat, isConvoComplete, showPromptPopup]);
+
+    useEffect(() => {
+        if (showPromptPopup && scrollY > 300) {
+            setShowPromptPopup(false);
+        }
+    }, [scrollY, showPromptPopup]);
 
     useEffect(() => {
         if (showChat && showPromptPopup) {
@@ -507,12 +538,39 @@ export default function HeroCTA({
 
                 const greeting = "I see a soul in a moment of transition. Your arrival here was not an accident—it was a recognition. Which of these sounds most like the silent pattern your life is whispering right now?";
                 const greetingOptions = [
-                    { text: "I feel stuck in a loop I didn't create.", subLabel: "Core blockage" },
-                    { text: "Something is missing from the center of my life.", subLabel: "Void awareness" },
-                    { text: "I keep repeating a history I thought I'd left behind.", subLabel: "Loop detection" },
-                    { text: "I have no name for who I am becoming.", subLabel: "Identity shift" },
-                    { text: "The weight I carry no longer feels like mine.", subLabel: "Ancestral load" },
-                    { text: "I am searching for a light I once knew.", subLabel: "Inner search" }
+                    { text: "I know I can do more, but I keep delaying.", subLabel: "Resistance" },
+                    { text: "I feel lost and unsure about my direction.", subLabel: "Uncertainty" },
+                    { text: "Things look fine, but I feel empty inside.", subLabel: "Soul thirst" },
+                    { text: "I’m stuck on someone or something from the past.", subLabel: "Lingering ties" },
+                    { text: "I don’t feel good enough, no matter what I do.", subLabel: "Worthiness" },
+                    { text: "I overthink so much that I don’t act.", subLabel: "Analysis paralysis" },
+                    { text: "I feel tired, disconnected, or mentally drained.", subLabel: "Burnout" },
+                    { text: "I have achieved my goals, yet I feel no fulfillment.", subLabel: "Arrival Fallacy" },
+                    { text: "I feel a calling I can't name yet, a pull toward something more.", subLabel: "Awakening" },
+                    { text: "I'm living someone else's life, and my own is waiting.", subLabel: "Inauthenticity" },
+                    { text: "I feel like a wanderer with no home to return to.", subLabel: "Rootlessness" },
+                    { text: "I'm searching for a meaning that transcends the daily grind.", subLabel: "Existential Thirst" },
+                    { text: "My mind is a storm of ideas, but my hands are still.", subLabel: "Creative Blockage" },
+                    { text: "I fear my best work is behind me, or perhaps it never was.", subLabel: "Imposter Syndrome" },
+                    { text: "I'm obsessed with perfection to the point of stagnation.", subLabel: "Perfectionism" },
+                    { text: "I have the map, but I’m terrified to take the first step.", subLabel: "Fear of Failure" },
+                    { text: "The world feels too loud for my quiet thoughts to breathe.", subLabel: "Overstimulation" },
+                    { text: "I give so much to others that I have nothing left for myself.", subLabel: "Self-Neglect" },
+                    { text: "I'm surrounded by people, yet I feel completely alone.", subLabel: "Isolation" },
+                    { text: "I’m holding onto a ghost that no longer wants to be held.", subLabel: "Grief" },
+                    { text: "I fear if people saw the real me, they would leave.", subLabel: "Vulnerability" },
+                    { text: "I keep repeating the same painful patterns in my heart.", subLabel: "Karmic Cycles" },
+                    { text: "I feel trapped by responsibilities that no longer fit.", subLabel: "Confinement" },
+                    { text: "Money and security are my anchors, but they’ve become my cage.", subLabel: "Materialism" },
+                    { text: "I feel like a cog in a machine that doesn't care if I break.", subLabel: "Dehumanization" },
+                    { text: "I’m hiding a part of myself that I’m too ashamed to face.", subLabel: "Shadow Work" },
+                    { text: "I feel a deep, old anger that I don't know how to release.", subLabel: "Suppression" },
+                    { text: "I’m constantly bracing for a blow that hasn't come yet.", subLabel: "Hypervigilance" },
+                    { text: "I feel like I'm broken beyond repair, just keeping up appearances.", subLabel: "Internal Fracture" },
+                    { text: "I seek distractions because I’m afraid of the silence.", subLabel: "Avoidance" },
+                    { text: "I’m outgrowing my environment, and the friction is painful.", subLabel: "Expansion Pain" },
+                    { text: "I’m learning to love the person I’m becoming.", subLabel: "Self-Actualization" },
+                    { text: "I’m standing at a threshold, and I can’t go back.", subLabel: "Point of No Return" }
                 ];
                 setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
                 setCurrentQuestion(greeting);
@@ -621,154 +679,87 @@ export default function HeroCTA({
         };
     }, [showChat]);
 
+    // Thinking state moved up to main state section
+    
     const sendToAI = async (userAnswer: string, chipSelected: string, state: UserState, history: { role: string; content: string }[], qCount: number) => {
         setIsTyping(true);
         try {
             const res = await fetch('/api/spiritual', {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'text/event-stream'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'process_answer',
                     userState: state,
                     conversationHistory: history,
-                    currentQuestion: currentQuestion,
                     userAnswer,
                 }),
             });
 
-            if (res.headers.get('Content-Type')?.includes('text/event-stream')) {
-                const reader = res.body?.getReader();
-                const decoder = new TextDecoder();
-                let fullText = '';
+            const data = await res.json();
+            if (data.success && data.data) {
+                const aiData = data.data;
+                const nextRound = qCount + 1;
                 
-                setMessages(prev => [...prev, { role: 'ai', content: "" }]);
+                const questionText = aiData.question || "Continue your journey...";
 
-                while (reader) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value);
-                    fullText += chunk;
-                    
-                    let displayContent = fullText;
-                    if (fullText.includes('"question"')) {
-                        // More robust regex: handles missing quotes or colons after "question"
-                        // 1. Look for "question" followed by optional colon/whitespace
-                        // 2. Look for optional starting quote
-                        // 3. Capture everything until a closing quote OR a comma OR a closing brace OR end of string
-                        const qMatch = fullText.match(/"question"\s*:?\s*"?([^",}]+)/);
-                        if (qMatch && qMatch[1] !== undefined) {
-                            displayContent = qMatch[1].trim();
-                        }
-                    } else if (fullText.trim().startsWith('{')) {
-                        displayContent = "...";
-                    }
-
+                // SMOOTH TYPING: Subsequent AI messages
+                setMessages(prev => [...prev, { role: 'ai', content: "", options: [], contextLine: aiData.contextLine }]);
+                for (let j = 0; j <= questionText.length; j++) {
+                    const cur = questionText.substring(0, j);
                     setMessages(prev => {
                         const n = [...prev];
-                        if (n.length > 0) n[n.length - 1].content = displayContent;
+                        if (n.length > 0) n[n.length - 1].content = cur;
                         return n;
                     });
+                    await new Promise(r => setTimeout(r, 12)); // Slightly faster for long responses
                 }
 
-                const parsed = extractJSONFromStream(fullText);
-                if (parsed && parsed.question) {
-                    setCurrentAiResponse(parsed);
-                    
-                    const nextRound = qCount + 1;
-                    // Data-Driven Progress: AI's score with a per-round floor
-                    const floorProgress = Math.min(nextRound * 10, 90);
-                    const rawDataScore = parsed.decodingProgress || 0;
-                    const finalProgress = parsed.type === 'final_share' ? 100 : Math.min(95, Math.max(rawDataScore, floorProgress));
+                // Show options after typing
+                setMessages(prev => {
+                    const n = [...prev];
+                    if (n.length > 0) n[n.length - 1].options = aiData.options || [];
+                    return n;
+                });
+                
+                const newHistory = [...history, { role: 'ai', content: questionText }];
+                setConversationHistory(newHistory);
+                setRound(nextRound);
 
-                    setUserState(prev => {
-                        const updated = { ...prev };
-                        if (parsed.updatedTracking) updated.tracking = { ...updated.tracking, ...parsed.updatedTracking };
-                        if (parsed.inferredMBTI) updated.confirmedMBTI = parsed.inferredMBTI;
-                        if (parsed.shadowPattern) updated.shadowPattern = parsed.shadowPattern;
-                        if (parsed.activeArchetype) updated.activeArchetype = parsed.activeArchetype;
-                        if (parsed.personaMask) updated.personaMask = parsed.personaMask;
-                        if (parsed.complexIdentified) updated.complexIdentified = parsed.complexIdentified;
-                        if (parsed.inferredDomain) updated.currentBranch = parsed.inferredDomain;
-                        if (parsed.inferredEvent) updated.currentEvent = parsed.inferredEvent;
-                        if (parsed.inferredReason) updated.currentReason = parsed.inferredReason;
-                        
-                        if (parsed.currentLayer) {
-                            updated.identifiedLayers = { 
-                                ...updated.identifiedLayers, 
-                                [`layer_${parsed.currentLayer}`]: parsed.question 
-                            };
-                        }
-                        updated.decodingProgress = finalProgress;
-                        return updated;
-                    });
-
-                    setMessages(prev => {
-                        const n = [...prev];
-                        if (n.length > 0) {
-                            n[n.length - 1].content = parsed.question || fullText;
-                            n[n.length - 1].options = parsed.options || [];
-                            n[n.length - 1].contextLine = parsed.contextLine || "";
-                        }
-                        return n;
-                    });
+                // Map state extraction to UserState (Moved after typing to prevent UI jumps)
+                setUserState(prev => {
+                    const updated = { ...prev, ...aiData };
+                    if (aiData.mbtiSignals) updated.mbtiSignals = aiData.mbtiSignals;
+                    if (aiData.detectedPattern) updated.detectedPattern = aiData.detectedPattern;
+                    if (aiData.activeArchetype) updated.activeArchetype = aiData.activeArchetype;
                     
-                    const lowerQ = (parsed.question || "").toLowerCase();
-                    const needsDOB = (lowerQ.includes('date of birth') || lowerQ.includes('born on') || lowerQ.includes('birth details')) && !state.birthDate;
-                    if (needsDOB) {
-                        setCanShowCalendar(true);
-                        setShowDatePicker(true);
+                    if (aiData.type === 'final_share') {
+                        updated.decodingProgress = 100;
+                    } else if (aiData.decodingProgress === undefined) {
+                        const floorProgress = Math.min(nextRound * 15, 92);
+                        updated.decodingProgress = floorProgress;
+                    } else {
+                        updated.decodingProgress = aiData.decodingProgress;
                     }
-                    setConversationHistory([...history, { role: 'ai', content: parsed.question || fullText }]);
-                    setRound(nextRound);
-                } else {
-                    const fallbackQ = "I am listening closely. To help you see this pattern more clearly, tell me — what is the single biggest choice you are facing right now?";
-                    const fallbackOptions = [{ text: "To stay as I am", subLabel: "Safety" }, { text: "To take a leap", subLabel: "The unknown" }];
-                    
-                    setMessages(prev => {
-                        const n = [...prev];
-                        if (n.length > 0) {
-                            n[n.length - 1].content = fallbackQ;
-                            n[n.length - 1].options = fallbackOptions;
-                        }
-                        return n;
-                    });
-                    setConversationHistory([...history, { role: 'ai', content: fallbackQ }]);
-                    setRound(qCount + 1);
-                }
-            } else {
-                const data = await res.json();
-                if (data.success && data.data) {
-                    const aiData = data.data;
-                    const nextRound = qCount + 1;
+                    return updated;
+                });
 
-                    setUserState(prev => {
-                        const updated = { ...prev, ...aiData };
-                        if (aiData.decodingProgress === undefined) {
-                            const roundContribution = Math.min(nextRound * 12, 85);
-                            updated.decodingProgress = Math.min(95, roundContribution);
-                        }
-                        return updated;
-                    });
-
-                    setMessages(prev => [...prev, { role: 'ai', content: aiData.question || aiData, options: aiData.options, contextLine: aiData.contextLine }]);
-                    setConversationHistory([...history, { role: 'ai', content: aiData.question || aiData }]);
-                    setRound(nextRound);
+                if (aiData.type === 'final_share' || aiData.decodingProgress >= 100) {
+                    setIsConvoComplete(true);
+                    setTimeout(() => {
+                        // Re-fetch latest userState for the pause
+                        setUserState(s => {
+                            triggerSacredPause(s, newHistory);
+                            return s;
+                        });
+                    }, 1500);
                 }
             }
         } catch (err) {
             console.error('AI error:', err);
-            setMessages(prev => {
-                const n = [...prev];
-                // Remove the empty AI message if it exists
-                if (n.length > 0 && n[n.length - 1].role === 'ai' && !n[n.length - 1].content) {
-                    n.pop();
-                }
-                return [...n, { role: 'ai', content: "Something went wrong. Let's try again." }];
-            });
-        } finally { setIsTyping(false); }
+            setMessages(prev => [...prev, { role: 'ai', content: "The connection to Intelligence was momentarily interrupted. Please repeat that." }]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     const extractJSONFromStream = (text: string) => {
@@ -807,56 +798,108 @@ export default function HeroCTA({
         setSacredPause(true);
         setIsConvoComplete(true);
         if (onGlassChange) onGlassChange(false);
-        if (onChatActive) onChatActive(false); 
+        // Do NOT set onChatActive(false) yet, we want to keep the UI for the sacred pause
         if (onGeneratingReport) onGeneratingReport(true);
         
         const reportPromise = fetch('/api/spiritual', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'generate_report', userState: state, conversationHistory: history }),
-        }).then(r => r.json()).catch(e => { console.error('Report failed', e); return {}; });
+        }).then(async r => {
+            if (r.status === 401) {
+                // Return success false but unauthorized to handle blurring on Page 2
+                return { success: false, error: 'Unauthorized' };
+            }
+            return r.json();
+        }).catch(e => { console.error('Report failed', e); return { success: false }; });
         
         setTimeout(async () => {
             const res = await reportPromise;
-            const finalState = { ...state, report: res?.data?.report, recommendedProducts: res?.data?.products || [], exchangeHistory: history };
-            try { localStorage.setItem('spiritualAiState', JSON.stringify(finalState)); } catch (_) { }
-            if (onGlassChange) onGlassChange(false);
+
+            const finalStateData = { 
+                ...state, 
+                report: res?.data?.report || null, 
+                recommendedProducts: res?.data?.products || [], 
+                exchangeHistory: history,
+                decodingProgress: 100,
+                isUnauthorized: res?.error === 'Unauthorized'
+            };
+            
+            setUserState(finalStateData);
+            try { localStorage.setItem('spiritualAiState', JSON.stringify(finalStateData)); } catch (_) { }
+            
             if (onGeneratingReport) onGeneratingReport(false);
+            
+            // Final state sync
+            setIsConvoComplete(true);
+            
+            // Start transition
             setIsTransitioning(true);
             setTimeout(() => {
-                if (onComplete) onComplete(finalState);
+                setShowChat(false);
+                if (onChatActive) onChatActive(false);
+                if (onComplete) onComplete(finalStateData);
+                
+                // Clear local typing/chat state
+                setRound(0);
+                setMessages([]);
+                
+                // Scroll to report
                 const page2 = document.getElementById('report-section');
-                if (page2) page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                else window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-            }, 500);
-        }, 2500);
+                if (page2) {
+                    page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    // Fallback scroll
+                    window.scrollTo({ top: window.innerHeight * 1.05, behavior: 'smooth' });
+                }
+            }, 800);
+        }, 3000);
     };
+
+    // Watch for sign-in during the process - Logic removed, now handled by report component
+    useEffect(() => {
+        if (isConvoComplete && !sacredPause && !showChat) {
+            // Flow complete
+        }
+    }, [isConvoComplete, sacredPause, showChat]);
 
     const updateStateWithTracking = (answer: string, currentState: UserState): UserState => {
         const now = Date.now();
         const responseTime = now - (currentState.tracking?.lastMessageTimestamp || now);
-        const words = analyzeWordChoice(answer);
-        const energy = detectEnergyLevel(answer, messages[messages.length - 1]?.content);
-        const shifted = isTopicShift(answer, messages[messages.length - 2]?.content);
+        
         return {
             ...currentState,
             tracking: {
                 ...currentState.tracking,
                 responseTimeMillis: [...(currentState.tracking?.responseTimeMillis || []), responseTime],
-                wordChoice: {
-                    emotional: (currentState.tracking?.wordChoice?.emotional || 0) + words.emotional,
-                    analytical: (currentState.tracking?.wordChoice?.analytical || 0) + words.analytical,
-                },
-                topicShifts: (currentState.tracking?.topicShifts || 0) + (shifted ? 1 : 0),
-                energyLevel: energy,
                 lastMessageTimestamp: now,
+                // These metrics are now handled by the server response in handleResponse
             }
         };
+    };
+
+    const [messageCount, setMessageCount] = useState(0);
+    const [lastReset, setLastReset] = useState(Date.now());
+
+    const checkRateLimit = () => {
+        const now = Date.now();
+        if (now - lastReset > 60000) {
+            setMessageCount(0);
+            setLastReset(now);
+            return true;
+        }
+        if (messageCount >= 12) {
+            alert("The silence is calling. Please wait a minute before speaking again.");
+            return false;
+        }
+        setMessageCount(prev => prev + 1);
+        return true;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputValue.trim() || isTyping || sacredPause) return;
+        if (!checkRateLimit()) return;
         maybePlaySound();
         setDecodedCount(prev => prev + 1);
         const text = inputValue.trim();
@@ -901,22 +944,18 @@ export default function HeroCTA({
         if (round === 0) {
             const initialMsgs = ["CONNECTION ESTABLISHED.", "PATTERN DETECTED.", "SIGNAL LOCKED.", "LINK ACTIVE."];
             const msg = initialMsgs[Math.floor(Math.random() * initialMsgs.length)];
-            setMessages(prev => [...prev, { role: 'ai', content: "" }]);
-            for (let j = 0; j <= msg.length; j++) {
-                const cur = msg.substring(0, j);
-                setMessages(prev => { const n = [...prev]; if (n.length > 0) n[n.length - 1].content = cur; return n; });
-                await new Promise(r => setTimeout(r, 10));
-            }
+            // Just use isTyping for visual feedback instead of adding a dummy message
+            setIsTyping(true);
+            await new Promise(r => setTimeout(r, 500));
         }
         const updatedHistory = [...conversationHistory, { role: 'user', content: text }];
         await sendToAI(text, newState.chipSelected, newState, updatedHistory, round);
-        if (userState.decodingProgress >= 100 || currentAiResponse?.type === 'final_share') {
-            setTimeout(() => triggerSacredPause(newState, updatedHistory), 1500);
-        }
+        // Note: round and completion check are handled inside sendToAI
     };
 
     const handleOptionClick = async (optionText: string) => {
         if (isTyping || sacredPause) return;
+        if (!checkRateLimit()) return;
         maybePlaySound();
         setMessages(prev => [...prev, { role: 'user', content: optionText }]);
         const tracked = updateStateWithTracking(optionText, userState);
@@ -937,42 +976,65 @@ export default function HeroCTA({
         }
 
         await sendToAI(optionText, tracked.chipSelected, tracked, updatedHistory, round);
-        if (userState.decodingProgress >= 100 || currentAiResponse?.type === 'final_share') {
-            setTimeout(() => triggerSacredPause(tracked, updatedHistory), 1500);
-        }
+        // Note: completion check is handled inside sendToAI
     };
     const handleStruggleClick = async (struggle: string) => {
         if (isTyping || sacredPause) return;
         maybePlaySound();
         const data = FIRST_QUESTIONS[struggle];
-        const q = data?.question || "What's weighing on you today?";
+        const q = "Recognition. Which pattern are you living right now?";
+        
         if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
         let i = 0; setInputValue("");
-        const next = () => { if (i <= struggle.length) { setInputValue(struggle.substring(0, i)); i++; typingIntervalRef.current = setTimeout(next, 40); } };
+        const next = () => { if (i <= struggle.length) { setInputValue(struggle.substring(0, i)); i++; typingIntervalRef.current = setTimeout(next, 30); } };
         next();
+        
         setTimeout(async () => {
-            setInputValue(""); setShowChat(true); setDecodedCount(prev => prev + 1);
+            setInputValue(""); 
+            setShowChat(true); 
+            setDecodedCount(prev => prev + 1);
             if (isLiveMode) speakText(q);
+            
             const newState = { ...DEFAULT_USER_STATE, chipSelected: struggle, firstAnswer: struggle, tracking: { ...DEFAULT_USER_STATE.tracking, lastMessageTimestamp: Date.now() } };
             setUserState(newState);
             setMessages([{ role: 'user', content: struggle }]);
-            setIsTyping(true); await new Promise(r => setTimeout(r, 800)); setIsTyping(false);
-            setMessages(prev => [...prev, { role: 'ai', content: "" }]);
+            
+            setIsTyping(true); 
+            await new Promise(r => setTimeout(r, 400)); 
+            
+            // SMOOTH TYPING: First AI message
+            setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
             for (let j = 0; j <= q.length; j++) {
                 const cur = q.substring(0, j);
-                setMessages(prev => { const n = [...prev]; if (n.length > 0) n[n.length - 1].content = cur; return n; });
-                await new Promise(r => setTimeout(r, 10));
+                setMessages(prev => { 
+                    const n = [...prev]; 
+                    if (n.length > 0) n[n.length - 1].content = cur; 
+                    return n; 
+                });
+                await new Promise(r => setTimeout(r, 15)); // Fast, smooth 60fps-like cadence
             }
-            if (data?.options) setMessages(prev => { const n = [...prev]; if (n.length > 0) n[n.length - 1].options = data.options; return n; });
+            setIsTyping(false);
+
+            // Show options after typing
+            if (data?.options) {
+                setMessages(prev => { 
+                    const n = [...prev]; 
+                    if (n.length > 0) n[n.length - 1].options = data.options; 
+                    return n; 
+                });
+            }
             
             const initialAIContext = lastReadArchitecture 
                 ? `[CONTEXT: User was reading "${lastReadArchitecture}" and chose struggle: "${struggle}"]`
                 : `[CONTEXT: User chose struggle: "${struggle}"]`;
-
-            setCurrentQuestion(q); 
-            setConversationHistory([{ role: 'user', content: struggle }, { role: 'ai', content: `${initialAIContext} ${q}` }]); 
+            
+            setConversationHistory([
+                { role: 'ai', content: initialAIContext },
+                { role: 'user', content: struggle },
+                { role: 'ai', content: q }
+            ]);
             setRound(1);
-        }, struggle.length * 40 + 300);
+        }, 500);
     };
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -1030,18 +1092,49 @@ export default function HeroCTA({
     const speakText = (text: string) => {
         if (!isLiveMode) return;
         window.speechSynthesis.cancel();
+        
         const u = new SpeechSynthesisUtterance(text);
+        
+        // --- PREMIUM VOICE SELECTION ---
+        const voices = window.speechSynthesis.getVoices();
+        // Priority list for high-quality, human-sounding free voices
+        const premiumVoices = [
+            "Google US English",
+            "Microsoft Aria",
+            "Microsoft Guy",
+            "Apple Samantha",
+            "English United States"
+        ];
+
+        const selectedVoice = voices.find(v => premiumVoices.some(p => v.name.includes(p))) || voices[0];
+        if (selectedVoice) u.voice = selectedVoice;
+
+        u.pitch = 1.0;
+        u.rate = 0.95; // Slightly slower for "Spiritual Intelligence" feel
+        u.volume = 1.0;
+
         u.onstart = () => setIsAiTalking(true);
-        u.onend = () => { setIsAiTalking(false); if (isLiveMode && !isConvoComplete) setTimeout(() => toggleListening(), 500); };
+        u.onend = () => { 
+            setIsAiTalking(false); 
+            if (isLiveMode && !isConvoComplete) {
+                // Short delay before listening again to avoid AI hearing itself
+                setTimeout(() => toggleListening(), 400); 
+            }
+        };
         window.speechSynthesis.speak(u);
     };
 
     return (
         <div className={`${styles.mbtiContainer} ${showChat ? styles.chatActive : ''}`}>
-            {/* Full Height Glass Background when chat is active */}
-            {showChat && !isTransitioning && !isConvoComplete && (
-                <div className={styles.glassEffect} />
-            )}
+
+            <AnimatePresence>
+                {showAuthGate && (
+                    <AuthGate 
+                        onClose={() => setShowAuthGate(false)} 
+                        mode="signup"
+                    />
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {isLiveMode && showChat && (
@@ -1061,7 +1154,7 @@ export default function HeroCTA({
                 {!showChat && (
                     <div style={{ width: '100%', position: 'relative' }}>
                         <div className={styles.ctaPromptText}>
-                            {userState.name ? `Talk to Chaitanya, ${userState.name} ↓ It will guide you step-by-step` : "Talk to Chaitanya below ↓ It will guide you step-by-step"}
+                            {userState.name ? `Talk to Intelligence, ${userState.name} ↓ It will guide you step-by-step` : "Talk to Intelligence below ↓ It will guide you step-by-step"}
                         </div>
                         <div className={styles.staticCounter}>
                             <span className={styles.counterHighlight}>{decodedCount.toLocaleString()}</span> patterns decoded. Yours is next.
@@ -1150,7 +1243,14 @@ export default function HeroCTA({
                                     )}
                                 </motion.div>
                             ))}
-                            {isTyping && <div className={`${styles.messageRow} ${styles.aiRow}`}><div className={styles.typingDots}><span /><span /><span /></div></div>}
+                            {isTyping && (
+                                <div className={`${styles.messageRow} ${styles.aiRow}`}>
+                                    <div className={styles.chatBubble} style={{ opacity: 0.6, fontSize: '0.8rem', fontStyle: 'italic', background: 'transparent', border: '1px dashed rgba(0, 242, 255, 0.2)' }}>
+                                        {thinkingMessage}
+                                        <div className={styles.typingDots} style={{ marginTop: '8px' }}><span /><span /><span /></div>
+                                    </div>
+                                </div>
+                            )}
                             <div ref={chatEndRef} />
 
                             <AnimatePresence>
@@ -1175,25 +1275,42 @@ export default function HeroCTA({
                     <AudioVisualizer isActive={isListening} />
                     <div className={styles.inputLeftIcon}><img src="/images/logo.png" alt="Logo" /></div>
                     {showDatePicker ? (
-                        <div style={{ display: 'flex', gap: '10px', width: '100%', alignItems: 'center' }}>
-                            <input type="date" className={styles.messageInput} onChange={(e) => setUserState(s => ({...s, birthDate: e.target.value}))}/>
-                            <input type="time" className={styles.messageInput} onChange={(e) => setUserState(s => ({...s, birthTime: e.target.value}))}/>
-                            <input type="text" className={styles.messageInput} placeholder="City" onChange={(e) => setUserState(s => ({...s, birthPlace: e.target.value}))}/>
-                            <button type="button" style={{ background: '#00f2ff', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold' }} onClick={async () => {
-                                const answer = `Born: ${userState.birthDate} at ${userState.birthTime} in ${userState.birthPlace}.`; setShowDatePicker(false); setMessages(p => [...p, { role: 'user', content: answer }]);
-                                const tracked = updateStateWithTracking(answer, userState); setUserState(tracked); await sendToAI(answer, tracked.chipSelected, tracked, conversationHistory, round);
-                            }}>SET</button>
-                        </div>
-                    ) : showTimePicker ? (
-                        <div style={{ display: 'flex', gap: '10px', width: '100%', alignItems: 'center' }}>
-                            <input type="time" className={styles.messageInput} onChange={(e) => setInputValue(e.target.value)} autoFocus/>
-                            <button type="button" style={{ background: '#00f2ff', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold' }} onClick={async () => {
-                                if (!inputValue) return; const answer = `Time: ${inputValue}`; setShowTimePicker(false); setInputValue(""); setMessages(p => [...p, { role: 'user', content: answer }]);
-                                const tracked = updateStateWithTracking(answer, userState); const ns = { ...tracked, birthTime: inputValue }; setUserState(ns); await sendToAI(answer, ns.chipSelected, ns, conversationHistory, round);
+                        <div style={{ display: 'flex', gap: '8px', width: '100%', alignItems: 'center' }}>
+                            <input 
+                                type="date" 
+                                className={styles.messageInput} 
+                                style={{ width: 'auto', flex: 1 }}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setUserState(s => ({...s, birthDate: val}));
+                                    if (val && userState.birthTime && userState.birthPlace) {
+                                        // Auto-submit if all 3 are filled
+                                    }
+                                }}
+                            />
+                            <input 
+                                type="time" 
+                                className={styles.messageInput} 
+                                style={{ width: 'auto', flex: 1 }}
+                                onChange={(e) => setUserState(s => ({...s, birthTime: e.target.value}))}
+                            />
+                            <input 
+                                type="text" 
+                                className={styles.messageInput} 
+                                placeholder="City" 
+                                style={{ width: 'auto', flex: 1 }}
+                                onChange={(e) => setUserState(s => ({...s, birthPlace: e.target.value}))}
+                            />
+                            <button type="button" className={styles.okButton} onClick={async () => {
+                                if (!userState.birthDate) return alert("Select date");
+                                const answer = `Born: ${userState.birthDate} at ${userState.birthTime || 'unknown time'} in ${userState.birthPlace || 'unknown place'}.`; 
+                                setShowDatePicker(false); 
+                                setMessages(p => [...p, { role: 'user', content: answer }]);
+                                await sendToAI(answer, userState.chipSelected, userState, conversationHistory, round);
                             }}>OK</button>
                         </div>
                     ) : isConvoComplete ? (<div style={{ flex: 1, display: 'flex', alignItems: 'center' }}><SacredStatus /></div>) : (
-                      <input ref={inputRef} type="text" value={inputValue} onChange={handleInputChange} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life no matter how many times you think you've fixed it?"} disabled={isTyping || sacredPause}/>
+                      <input ref={inputRef} type="text" value={inputValue} onChange={handleInputChange} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life?"} disabled={isTyping || sacredPause}/>
                     )}                    <div className={styles.neuralStatus}>
                         {canShowCalendar && (<button type="button" className={styles.micButton} onClick={() => setShowDatePicker(!showDatePicker)} style={{ borderColor: showDatePicker ? '#00f2ff' : 'rgba(255,255,255,0.2)', background: showDatePicker ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)' }}><Calendar size={18} /></button>)}
                         <button type="button" className={`${styles.micButton} ${isLiveMode ? styles.liveActive : ''}`} onClick={() => { if (isLiveMode) { setIsLiveMode(false); window.speechSynthesis.cancel(); } else { setIsLiveMode(true); if (showChat && currentQuestion) speakText(currentQuestion); } }} title="Live Vocal Interaction"><Radio size={18} /></button>

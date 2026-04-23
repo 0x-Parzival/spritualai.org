@@ -207,8 +207,22 @@ function ChatContent() {
                 )}
             </AnimatePresence>
 
-            {/* Progress Dots */}
+            {/* Decoding Progress Bar */}
             <div className={styles.progressContainer}>
+                <div className={styles.progressLabel}>
+                    <span>CONSCIOUSNESS DECODING IN PROGRESS</span>
+                    <span>{Math.min(100, questionCount * 20)}% IDENTIFIED</span>
+                </div>
+                <div className={styles.progressBarTrack}>
+                    <div 
+                        className={styles.progressBarFill} 
+                        style={{ width: `${Math.min(100, questionCount * 20)}%` }}
+                    />
+                </div>
+            </div>
+
+            {/* Progress Dots (Optional, keeping them for now but moving below) */}
+            <div className={styles.dotsContainer}>
                 {[1, 2, 3, 4, 5].map((num) => (
                     <div 
                         key={num} 

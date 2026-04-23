@@ -88,24 +88,18 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             >
                 <defs>
                     <linearGradient id={`waveBackGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                        <animate attributeName="y1" values="0%;-100%" dur="16s" repeatCount="indefinite" />
-                        <animate attributeName="y2" values="100%;0%" dur="16s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.back[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.back[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
                     <linearGradient id={`waveMidGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                        <animate attributeName="y1" values="0%;-100%" dur="20s" repeatCount="indefinite" />
-                        <animate attributeName="y2" values="100%;0%" dur="20s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.mid[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.mid[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
                     <linearGradient id={`waveFrontGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                        <animate attributeName="y1" values="0%;-100%" dur="24s" repeatCount="indefinite" />
-                        <animate attributeName="y2" values="100%;0%" dur="24s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.front[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.front[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.front[2], stopOpacity: 1 }}></stop>
@@ -125,46 +119,45 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                     )}
                 </defs>
                 <g mask={variant === 'black' ? 'url(#fadeMask)' : undefined}>
-                    <use xlinkHref={`#waveShape-${variant}`} fill={`url(#waveBackGradient-${variant})`} opacity=".24">
-                        <animateTransform
-                            attributeName="transform"
-                            attributeType="XML"
-                            type="translate"
-                            dur="12s"
-                            calcMode="spline"
-                            values="270 25; -334 15; 270 25"
-                            keyTimes="0; .5; 1"
-                            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
-                            repeatCount="indefinite"
-                        />
-                    </use>
-                    <use xlinkHref={`#waveShape-${variant}`} fill={`url(#waveMidGradient-${variant})`} opacity=".42">
-                        <animateTransform
-                            attributeName="transform"
-                            attributeType="XML"
-                            type="translate"
-                            dur="10s"
-                            calcMode="spline"
-                            values="-270 25;243 15;-270 25"
-                            keyTimes="0; .6; 1"
-                            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
-                            repeatCount="indefinite"
-                        />
-                    </use>
-                    <use xlinkHref={`#waveShape-${variant}`} fill={`url(#waveFrontGradient-${variant})`} opacity=".58">
-                        <animateTransform
-                            attributeName="transform"
-                            attributeType="XML"
-                            type="translate"
-                            dur="8s"
-                            calcMode="spline"
-                            values="0 25;-140 15;0 25"
-                            keyTimes="0; .4; 1"
-                            keySplines="0.42, 0, 0.58, 1.0;0.42, 0, 0.58, 1.0"
-                            repeatCount="indefinite"
-                        />
-                    </use>
+                    <use 
+                        xlinkHref={`#waveShape-${variant}`} 
+                        fill={`url(#waveBackGradient-${variant})`} 
+                        opacity=".24"
+                        style={{
+                            animation: 'waveFloat1 12s ease-in-out infinite'
+                        }}
+                    />
+                    <use 
+                        xlinkHref={`#waveShape-${variant}`} 
+                        fill={`url(#waveMidGradient-${variant})`} 
+                        opacity=".42"
+                        style={{
+                            animation: 'waveFloat2 10s ease-in-out infinite'
+                        }}
+                    />
+                    <use 
+                        xlinkHref={`#waveShape-${variant}`} 
+                        fill={`url(#waveFrontGradient-${variant})`} 
+                        opacity=".58"
+                        style={{
+                            animation: 'waveFloat3 8s ease-in-out infinite'
+                        }}
+                    />
                 </g>
+                <style>{`
+                    @keyframes waveFloat1 {
+                        0%, 100% { transform: translate(270px, 25px); }
+                        50% { transform: translate(-334px, 15px); }
+                    }
+                    @keyframes waveFloat2 {
+                        0%, 100% { transform: translate(-270px, 25px); }
+                        60% { transform: translate(243px, 15px); }
+                    }
+                    @keyframes waveFloat3 {
+                        0%, 100% { transform: translate(0px, 25px); }
+                        40% { transform: translate(-140px, 15px); }
+                    }
+                `}</style>
             </svg>
         </motion.div>
     );

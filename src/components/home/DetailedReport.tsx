@@ -6,33 +6,9 @@ import styles from './DetailedReport.module.css';
 import { UserState } from '@/lib/spiritual-conversation-engine';
 import PretextWrapper from './PretextWrapper';
 import { Skeleton } from 'boneyard-js/react';
-import { Share2, MessageCircle, Twitter } from 'lucide-react';
-
-const FREE_PRODUCTS = [
-  {
-    id: 'free_pattern_guide',
-    name: 'Your Pattern Decoded — 1-Page Guide',
-    headline: 'The one page that explains more than most books.',
-    description: 'A concise breakdown of your unconscious pattern, its root cause, and the single most important thing to understand about it.',
-    format: 'PDF + Audio (5 minutes)',
-    price: 0,
-    gate: 'social_follow',
-    gateText: 'Follow Spiritual AI to unlock',
-    platforms: ['instagram', 'whatsapp', 'discord'],
-    imageQuery: 'sacred geometry lotus minimal',
-  },
-  {
-    id: 'free_morning_reset',
-    name: '7-Minute Morning Pattern Reset',
-    headline: 'Interrupt the pattern before it runs today.',
-    description: 'A 7-minute guided audio that interrupts your specific pattern type before it activates. Works within 3 days of consistent use.',
-    format: 'Audio (7 minutes)',
-    price: 0,
-    gate: 'email',
-    gateText: 'Enter your email to unlock',
-    imageQuery: 'morning sunrise meditation calm',
-  }
-];
+import { Share2, MessageCircle, Twitter, Lock } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
+import AuthGate from '../AuthGate';
 
 interface DetailedReportProps {
     userState: UserState | null;
@@ -40,6 +16,7 @@ interface DetailedReportProps {
 }
 
 export default function DetailedReport({ userState, onClose }: DetailedReportProps) {
+    const { isLoaded, isSignedIn } = useUser();
     const [isVisible, setIsVisible] = useState(false);
     const [containerWidth, setContainerWidth] = useState(1200);
     const reportRef = useRef<HTMLDivElement>(null);
@@ -55,9 +32,12 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    if (!userState || !userState.report) return null;
+    if (!userState) return null;
 
-    const report: any = userState.report;
+    // Report is considered "Locked" if user is not signed in OR if the API explicitly said Unauthorized
+    const isLocked = !isSignedIn || (userState as any).isUnauthorized;
+
+    const report: any = userState.report || {};
     const { header, meta, vedicOverview, validation, realCause, patternLoop, frequencyDoorway, teaching, witnessQuestion } = report;
     const originPoint = userState?.originPoint;
     const products = userState.recommendedProducts || report.products || [];
@@ -68,8 +48,21 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
     const urgencyPercent = header?.urgencyPercent || 87;
 
     return (
-        <div className={styles.reportContainer} id="report-section" ref={reportRef}>
-            <div className={styles.reportContent}>
+        <div className={`${styles.reportContainer} ${isLocked ? styles.lockedReport : ''}`} id="report-section" ref={reportRef}>
+            
+            <AnimatePresence>
+                {isLocked && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className={styles.lockOverlay}
+                    >
+                        <AuthGate mode="signup" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className={`${styles.reportContent} ${isLocked ? styles.blurredContent : ''}`}>
                 {/* I. ARCHITECTURAL IDENTITY */}
                 <header className={styles.reportHeader}>
                     <div className={styles.headerTop}>

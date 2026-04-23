@@ -37,6 +37,7 @@
     flex-direction: column;
     align-items: center;
     width: fit-content; /* Constrain width to the size of the h1 */
+    filter: brightness(0.8);
 }
 
 .title {
