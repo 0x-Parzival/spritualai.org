@@ -10,7 +10,7 @@
 2. **Install the required Node version** (reads the `.nvmrc` file):
    ```bashvb
    cd /home/parzival/spritualai.org 
-   nvm install   # installs 20.9.0 as specified in .nvmrc 
+   nvm install   # installs 20.9.0 as specified in .nvmrc  
    nvm use       # switches to 20.9.0 for this session
    ```
    *Tip:* Add `nvm use` to your shell's `cd` hook so the correct version is automatically selected when you `cd` into the project.
