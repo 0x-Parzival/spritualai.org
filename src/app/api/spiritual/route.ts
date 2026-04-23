@@ -17,7 +17,7 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const MODELS = {
-  chat: "llama-3.1-8b-instant", // Ultra-fast and cheap for the 4-6 turn conversation
+  chat: "llama-3.1-70b-versatile", // Higher tier for better TPM and quality
   report: "llama-3.3-70b-versatile", // High-reasoning and deep for the final blueprint
   reasoning: "llama-3.3-70b-versatile", // For latent reasoning loops
 };
