@@ -16,7 +16,7 @@ export default function OceanBackground() {
     const backgroundGradient = useTransform(
         scrollYProgress,
         [0, 1],
-        ['#0a0a1a', '#0a0a1a']
+        ['#0a0a1a', '#001e50'] // Deep midnight to dark oceanic indigo
     );
 
     useEffect(() => {
