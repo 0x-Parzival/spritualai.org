@@ -88,18 +88,24 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             >
                 <defs>
                     <linearGradient id={`waveBackGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <animate attributeName="y1" values="0%;-100%" dur="16s" repeatCount="indefinite" />
+                        <animate attributeName="y2" values="100%;0%" dur="16s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.back[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.back[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
                     <linearGradient id={`waveMidGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <animate attributeName="y1" values="0%;-100%" dur="20s" repeatCount="indefinite" />
+                        <animate attributeName="y2" values="100%;0%" dur="20s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.mid[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.mid[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
                     <linearGradient id={`waveFrontGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <animate attributeName="y1" values="0%;-100%" dur="24s" repeatCount="indefinite" />
+                        <animate attributeName="y2" values="100%;0%" dur="24s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.front[0], stopOpacity: 1 }}></stop>
                         <stop offset="35%" style={{ stopColor: activeColors.front[1], stopOpacity: 1 }}></stop>
                         <stop offset="70%" style={{ stopColor: activeColors.front[2], stopOpacity: 1 }}></stop>
