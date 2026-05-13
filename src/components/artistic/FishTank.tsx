@@ -203,7 +203,7 @@ const FishTank: React.FC = () => {
         };
 
         const update = () => {
-            if (fishesRef.current.length < 500) {
+            if (fishesRef.current.length < 30) {
                 fishesRef.current.push(new Fish(fishesRef.current.length));
             }
 

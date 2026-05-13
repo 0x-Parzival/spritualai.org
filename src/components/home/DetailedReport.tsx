@@ -8,7 +8,7 @@ import PretextWrapper from './PretextWrapper';
 import { Skeleton } from 'boneyard-js/react';
 import { Share2, MessageCircle, Twitter, Lock } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
-import AuthGate from '../AuthGate';
+import LegacyLogin from '../LegacyLogin';
 
 interface DetailedReportProps {
     userState: UserState | null;
@@ -35,7 +35,16 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
     if (!userState) return null;
 
     // Report is considered "Locked" if user is not signed in OR if the API explicitly said Unauthorized
-    const isLocked = !isSignedIn || (userState as any).isUnauthorized;
+    // We wait for isLoaded to be true before deciding if it's locked
+    const isLocked = isLoaded && (!isSignedIn || (userState as any).isUnauthorized);
+
+    if (isLocked) {
+        return (
+            <div id="report-section" style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <LegacyLogin isEmbedded={true} />
+            </div>
+        );
+    }
 
     const report: any = userState.report || {};
     const { header, meta, vedicOverview, validation, realCause, patternLoop, frequencyDoorway, teaching, witnessQuestion } = report;
@@ -46,28 +55,26 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
     const patternName = header?.patternName || meta?.coreShadowPattern || "Unconscious Pattern";
     const architecture = header?.architecture || userState.confirmedMBTI || "Decoding...";
     const urgencyPercent = header?.urgencyPercent || 87;
+    const archetype = userState.activeArchetype?.toLowerCase() || 'seeker';
 
     return (
-        <div className={`${styles.reportContainer} ${isLocked ? styles.lockedReport : ''}`} id="report-section" ref={reportRef}>
-            
-            <AnimatePresence>
-                {isLocked && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className={styles.lockOverlay}
-                    >
-                        <AuthGate mode="signup" />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+        <div className={`${styles.reportContainer}`} id="report-section" ref={reportRef} style={{
+            '--archetype-primary': ARCHETYPE_THEMES[archetype]?.primary || '#7c4dff',
+            '--archetype-glow': ARCHETYPE_THEMES[archetype]?.glow || 'rgba(124, 77, 255, 0.4)'
+        } as React.CSSProperties}>
 
-            <div className={`${styles.reportContent} ${isLocked ? styles.blurredContent : ''}`}>
+            <div className={`${styles.reportContent}`}>
                 {/* I. ARCHITECTURAL IDENTITY */}
-                <header className={styles.reportHeader}>
+                <motion.header 
+                    className={styles.reportHeader}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                >
                     <div className={styles.headerTop}>
                         <div>
-                            <div className={styles.originBadge}>ORIGIN POINT ETCHED • CSN #{originPoint?.csn || 'PENDING'}</div>
+                            <div className={styles.originBadge}>ORIGIN POINT ETCHED • {userState.csn || (userState as any).originPoint?.csn ? `CSN #${userState.csn || (userState as any).originPoint?.csn}` : 'CSN PENDING'}</div>
                             <h1 className={styles.blueprintTitle}>{userName.toUpperCase()}'S INDIVIDUATION BLUEPRINT</h1>
                             <div className={styles.metadataRow}>
                                 <span>ARCH: {architecture}</span>
@@ -76,34 +83,54 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                         <div className={styles.urgencySection}>
                             <div className={styles.urgencyLabel}>URGENCY PROTOCOL</div>
                             <div className={styles.urgencyBar}>
-                                <div className={styles.urgencyFill} style={{ width: `${urgencyPercent}%` }}></div>
+                                <motion.div 
+                                    className={styles.urgencyFill} 
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: `${urgencyPercent}%` }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+                                ></motion.div>
                             </div>
                         </div>
                     </div>
-                </header>
+                </motion.header>
 
                 {/* II. THE PSYCHIC MAP */}
-                <div className={styles.metaGrid}>
-                    <div className={styles.metaItem}>
-                        <label>FREQUENCY ESTIMATE</label>
-                        <div className={styles.metaValue}>{meta?.frequencyEstimate}</div>
-                    </div>
-                    <div className={styles.metaItem}>
-                        <label>CORE SHADOW PATTERN</label>
-                        <div className={styles.metaValue}>{meta?.coreShadowPattern}</div>
-                    </div>
-                    <div className={styles.metaItem}>
-                        <label>ROOT BELIEF</label>
-                        <div className={styles.metaValue}>{meta?.rootBelief}</div>
-                    </div>
-                    <div className={styles.metaItem}>
-                        <label>DHARMA PHASE</label>
-                        <div className={styles.metaValue}>{meta?.dharmaPhase}</div>
-                    </div>
-                </div>
+                <motion.div 
+                    className={styles.metaGrid}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ staggerChildren: 0.2, delayChildren: 1 }}
+                >
+                    {[
+                        { label: "FREQUENCY ESTIMATE", value: meta?.frequencyEstimate },
+                        { label: "CORE SHADOW PATTERN", value: meta?.coreShadowPattern },
+                        { label: "ROOT BELIEF", value: meta?.rootBelief },
+                        { label: "DHARMA PHASE", value: meta?.dharmaPhase }
+                    ].map((item, i) => (
+                        <motion.div 
+                            key={i} 
+                            className={styles.metaItem}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 1 + i * 0.2 }}
+                        >
+                            <label>{item.label}</label>
+                            <div className={styles.metaValue}>{item.value}</div>
+                        </motion.div>
+                    ))}
+                </motion.div>
 
                 {/* III. VEDIC BLUEPRINT */}
-                <div className={styles.vedicSection}>
+                <motion.div 
+                    className={styles.vedicSection}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 1.8 }}
+                >
                     <h2 className={styles.sectionTitle}>III. VEDIC BLUEPRINT</h2>
                     <div className={styles.vedicGrid}>
                         <div className={styles.vedicItem}>
@@ -120,11 +147,17 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                             ⚠️ SATURN STATUS: {vedicOverview.saturnStatus}
                         </div>
                     )}
-                </div>
+                </motion.div>
 
                 {/* IV. CONTENT SECTIONS */}
                 <div className={styles.sectionsGrid}>
-                    <section className={styles.fullWidthSection}>
+                    <motion.section 
+                        className={styles.fullWidthSection}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 2.2 }}
+                    >
                         <h2 className={styles.smallHeading}>IV. THE VALIDATION</h2>
                         <PretextWrapper 
                             text={validation || ""}
@@ -134,9 +167,15 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                             className={styles.pretextBody}
                             centerExclusion={true}
                         />
-                    </section>
+                    </motion.section>
 
-                    <section className={styles.textSection}>
+                    <motion.section 
+                        className={styles.textSection}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 2.6 }}
+                    >
                         <h2 className={styles.smallHeading}>V. THE REAL CAUSE</h2>
                         <PretextWrapper 
                             text={realCause || ""}
@@ -146,10 +185,16 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                             className={styles.pretextBody}
                             centerExclusion={true}
                         />
-                    </section>
+                    </motion.section>
 
                     {/* VI. THE PATTERN LOOP */}
-                    <section className={styles.fullWidthSection}>
+                    <motion.section 
+                        className={styles.fullWidthSection}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 3 }}
+                    >
                         <h2 className={styles.smallHeading}>VI. THE PATTERN LOOP</h2>
                         <div className={styles.loopVisual}>
                             <div className={styles.loopItem}>
@@ -167,9 +212,15 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                                 <div className={styles.loopValue}>{patternLoop?.humanCost}</div>
                             </div>
                         </div>
-                    </section>
+                    </motion.section>
 
-                    <section className={styles.fullWidthSection}>
+                    <motion.section 
+                        className={styles.fullWidthSection}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 3.4 }}
+                    >
                         <h2 className={styles.smallHeading}>VII. THE FREQUENCY DOORWAY</h2>
                         <div className={styles.doorwayBox}>
                             <PretextWrapper 
@@ -192,14 +243,20 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
                                 centerExclusion={true}
                             />
                         </blockquote>
-                    </section>
+                    </motion.section>
 
-                    <section className={styles.fullWidthSection}>
+                    <motion.section 
+                        className={styles.fullWidthSection}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 3.8 }}
+                    >
                         <h2 className={styles.smallHeading}>VIII. THE WITNESS QUESTION</h2>
                         <div className={styles.witnessBox}>
                             <p className={styles.witnessQuestion}>{witnessQuestion}</p>
                         </div>
-                    </section>
+                    </motion.section>
                 </div>
 
                 {/* 5. SHARE ACTIONS */}

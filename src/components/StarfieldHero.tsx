@@ -18,7 +18,7 @@ export default function StarfieldHero({ boost = false }: { boost?: boolean }) {
         let centerY = canvasHeight * 0.5;
 
         // Configuration
-        const PARTICLE_NUM = 200;
+        const PARTICLE_NUM = 120;
         const PARTICLE_BASE_RADIUS = 0.5;
         const FL = 500;
         const DEFAULT_SPEED = 2;

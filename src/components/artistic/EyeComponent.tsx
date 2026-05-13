@@ -9,11 +9,10 @@ export default function EyeComponent() {
     const irisRef = useRef<HTMLDivElement>(null);
     const pupilRef = useRef<HTMLDivElement>(null);
 
-    const [anger, setAnger] = useState(0);
-    const [boredom, setBoredom] = useState(0);
-    const [blinkFlag, setBlinkFlag] = useState(false);
-
     const stateRef = useRef({
+        anger: 0,
+        boredom: 0,
+        blinkFlag: false,
         lidMax: 76,
         skinColor: '#0a0a1a',
         eyeColor: [220, 245, 255], // Cooler white
@@ -44,10 +43,10 @@ export default function EyeComponent() {
             const s = stateRef.current;
             
             // Blink Logic
-            s.blinkTimer -= 1 + anger / 50;
+            s.blinkTimer -= 1 + s.anger / 50;
             if (s.blinkTimer <= 0) {
                 s.blinkTimer = randomInt(120, 600);
-                setBlinkFlag(true);
+                s.blinkFlag = true;
             }
 
             // Distraction Logic
@@ -83,22 +82,22 @@ export default function EyeComponent() {
             s.iris.x = s.xp;
             s.iris.y = s.yp;
 
-            // Update Emotions
-            setBoredom(prev => Math.min(170, prev + 0.1));
-            setAnger(prev => Math.max(0, prev - 0.15));
+            // Update Emotions (Internal to ref)
+            s.boredom = Math.min(170, s.boredom + 0.1);
+            s.anger = Math.max(0, s.anger - 0.15);
 
             // Interpolate Eyelids
-            if (blinkFlag) {
+            if (s.blinkFlag) {
                 s.lidTop.pos = interpolate(s.lidTop.pos, s.lidMax, 0.6);
                 s.lidBottom.pos = interpolate(s.lidBottom.pos, s.lidMax, 0.6);
                 if (s.lidTop.pos >= s.lidMax - 1 && s.lidBottom.pos >= s.lidMax - 1) {
-                    setBlinkFlag(false);
+                    s.blinkFlag = false;
                 }
             } else {
-                if (anger >= 50) {
+                if (s.anger >= 50) {
                     s.lidTop.goalPos = s.lidTop.angry / s.lidTop.modifier;
                     s.lidBottom.goalPos = s.lidBottom.angry / s.lidBottom.modifier;
-                } else if (boredom >= 50) {
+                } else if (s.boredom >= 50) {
                     s.lidTop.goalPos = s.lidTop.bored / s.lidTop.modifier;
                     s.lidBottom.goalPos = s.lidBottom.bored / s.lidBottom.modifier;
                 } else {
@@ -132,7 +131,7 @@ export default function EyeComponent() {
 
         frameId = requestAnimationFrame(animate);
         return () => cancelAnimationFrame(frameId);
-    }, [anger, boredom, blinkFlag]);
+    }, []);
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -158,7 +157,7 @@ export default function EyeComponent() {
             s.lidTop.modifier = lidMod;
             s.lidBottom.modifier = lidMod;
             s.pupil.sizeGoal = distance < 100 ? lidMod * 30 : 30;
-            setBoredom(prev => prev - 1);
+            s.boredom -= 1;
         };
 
         window.addEventListener('mousemove', handleMouseMove);
@@ -166,7 +165,7 @@ export default function EyeComponent() {
     }, []);
 
     const handlePoke = () => {
-        setAnger(prev => prev + 100);
+        stateRef.current.anger += 100;
         stateRef.current.blinkTimer = 1;
         // Audio omitted to keep it clean, but logic is here
     };

@@ -107,12 +107,50 @@
     font-weight: 500;
 }
 
-.struggleBubbles {
+.trustSignals {
     display: flex;
-    flex-direction: row;
+    gap: 20px;
+    position: absolute;
+    bottom: calc(100% + 45px);
+    left: 0;
+    width: 100%;
+}
+
+.trustItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.trustIcon {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 1024px) {
+    .trustSignals {
+        flex-direction: column;
+        gap: 8px;
+        bottom: calc(100% + 80px);
+    }
+}
+
+.struggleBubbles {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     gap: 8px;
     width: 100%;
-    justify-content: space-between;
+}
+
+@media (max-width: 1024px) {
+    .struggleBubbles {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .bubble {
@@ -123,7 +161,7 @@
     background-origin: border-box;
     background-clip: padding-box, border-box;
     color: rgba(255, 255, 255, 0.8);
-    padding: 10px 20px;
+    padding: 10px 15px;
     border-radius: 9999px;
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
@@ -131,8 +169,11 @@
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     text-transform: uppercase;
-    flex: 1;
     text-align: center;
+    white-space: normal; /* Let the text wrap inside the button if needed, but the button stays in grid */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .bubble:hover {
@@ -263,6 +304,49 @@
     text-transform: uppercase;
 }
 
+.checklist {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.checkItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    transition: all 0.5s ease;
+}
+
+.checkItemActive {
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 242, 255, 0.8), 0 0 5px #fff;
+    font-weight: 600;
+}
+
+.checkIcon {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkIconActive {
+    background: #00f2ff;
+    border-color: #fff;
+    box-shadow: 0 0 15px #00f2ff, 0 0 5px #fff;
+    transform: scale(1.2);
+}
+
 .progressBarTrack {
     width: 100%;
     height: 8px; /* Slightly thicker for better water effect */
@@ -334,7 +418,7 @@
     margin-top: 15px;
     position: relative;
     pointer-events: auto;
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    /* mask-image removed to ensure full visibility during debug */
 }
 
 .staticOptionsContainer {
@@ -355,7 +439,7 @@
     display: flex;
     gap: 12px;
     width: max-content;
-    animation: optionsMarquee 180s linear infinite;
+    animation: optionsMarquee 240s linear infinite;
 }
 
 @keyframes optionsMarquee {
@@ -404,20 +488,29 @@
 /* 4. Popups */
 .promptPopup {
     position: fixed; 
-    top: 15%; 
-    right: 30px;
-    width: 280px; 
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    width: 320px; 
+    max-width: 90vw;
     height: auto;
     background: rgba(0, 0, 0, 0.95); 
     backdrop-filter: blur(30px);
     border: 1.5px solid rgba(53, 248, 255, 0.35); 
-    border-radius: 1.25rem;
-    padding: 28px;
+    border-radius: 1.5rem;
+    padding: 32px;
     z-index: 10000;
     text-align: center;
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     pointer-events: auto;
-    filter: brightness(0.85);
+    filter: brightness(1);
+}
+
+@media (max-width: 768px) {
+    .promptPopup {
+        width: 300px;
+        padding: 24px;
+    }
 }
 
 .closePopup { position: absolute; top: 12px; right: 12px; background: none; border: none; color: rgba(255, 255, 255, 0.3); cursor: pointer; font-size: 1rem; }
@@ -514,4 +607,234 @@
     background: #fff;
     transform: translateY(-1px);
     box-shadow: 0 0 25px rgba(0, 242, 255, 0.5);
+}
+
+/* Retention UI */
+.csnNotification {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    color: #00f2ff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 2000;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.emailCaptureOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+.emailCaptureTitle {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 300;
+}
+
+.emailCaptureText {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 25px;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+.emailInputWrapper {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.emailInput {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 18px;
+    color: #fff;
+    outline: none;
+}
+
+.emailSubmitBtn {
+    background: #00f2ff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.emailSubmitBtn:hover {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+}
+
+.emailSkipBtn {
+    margin-top: 15px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.retentionModalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(40px);
+    z-index: 15000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.retentionModal {
+    width: 450px;
+    max-width: 90vw;
+    background: rgba(15, 15, 25, 0.8);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+}
+
+.modalHeadline {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 15px;
+    font-weight: 400;
+}
+
+.modalBody {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+
+.modalCta {
+    width: 100%;
+    padding: 16px;
+    background: #00f2ff;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.modalCta:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
+}
+
+.modalDismiss {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.modalDismiss:hover {
+    color: #fff;
+}
+
+.csnBadge {
+    font-family: 'Mono', monospace;
+    color: #00f2ff;
+    background: rgba(0, 242, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Intelligence Notification Stack */
+.notificationStack {
+    position: fixed;
+    top: 150px;
+    right: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.miniNotification {
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.notificationDot {
+    width: 6px;
+    height: 6px;
+    background: #00f2ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00f2ff;
+}
+
+.miniNotification.success { border-color: rgba(53, 248, 255, 0.6); color: #00f2ff; }
+.miniNotification.csn { border-color: rgba(255, 0, 234, 0.4); color: #ff00ea; }
+.miniNotification.csn .notificationDot { background: #ff00ea; box-shadow: 0 0 10px #ff00ea; }
+.miniNotification.pulse { animation: notifyPulse 2s infinite; }
+
+@keyframes notifyPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); border-color: rgba(0, 242, 255, 0.8); }
+}
+
+@media (max-width: 768px) {
+    .notificationStack {
+        top: 130px;
+        right: 20px;
+        left: 20px;
+        align-items: center;
+    }
 }

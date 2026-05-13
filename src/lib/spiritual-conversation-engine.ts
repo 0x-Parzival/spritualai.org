@@ -41,6 +41,7 @@ export interface UserState {
 
   // Pattern detection (Now semantically driven)
   detectedPattern: string | null;
+  monetizableProblem: string | null;
   shadowPattern: string | null;
   activeArchetype: string | null;
   personaMask: string | null;
@@ -49,6 +50,10 @@ export interface UserState {
   decodingProgress: number; // 0 to 100
   unconsciousPatterns: string[];
   triggerWords: string[];
+  
+  // Core Pillars for Blueprint
+  hawkinsLevel?: number;
+  jungianArchetype?: string;
 
   // Problem Worth
   problemWorth?: {

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import styles from './Page2Landing.module.css';
+import { DECODE_PROMPT } from '../lib/decodePrompt';
 
 const SIGNATURE_ARCHITECTURES = [
   { id: "01", title: "The Theoretical Titan", description: "Generates brilliant ideas but creates complexity to avoid launching them." },
@@ -19,6 +20,13 @@ const SIGNATURE_ARCHITECTURES = [
 
 export default function Page2Landing({ onArchitectureView }: { onArchitectureView?: (title: string) => void }) {
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const copyDecoderPrompt = () => {
+    navigator.clipboard.writeText(DECODE_PROMPT);
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 3000);
+  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -83,6 +91,7 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
                 className={styles.smallExampleCard}
                 whileHover={{ scale: 1.05, y: -10, zIndex: 100 }}
                 onViewportEnter={() => onArchitectureView?.(arch.title)}
+                viewport={{ once: true, amount: 0.5 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
                 <div className={styles.smallLabel}>Signature Architecture #{arch.id}</div>
@@ -90,6 +99,37 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
                 <p className={styles.smallDescription}>{arch.description}</p>
               </motion.div>
             ))}
+          </div>
+        </motion.div>
+      </section>
+
+      <section className={styles.section} style={{ marginTop: '4vh', marginBottom: '4vh' }}>
+        <motion.div 
+          className={styles.blueprintBanner}
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className={styles.bannerGlow} />
+          <div className={styles.bannerContent}>
+            <div className={styles.bannerLeft}>
+              <h3 className={styles.bannerTitle}>Unlock Your Consciousness Blueprint</h3>
+              <p className={styles.bannerText}>
+                Copy this neural prompt and paste it into your preferred AI (ChatGPT, Claude, Gemini, or Grok).
+                Then, paste the AI's analysis back into the decoder at the bottom of the page.
+              </p>
+            </div>
+            <div className={styles.bannerRight}>
+              <button className={styles.bannerCopyBtn} onClick={copyDecoderPrompt}>
+                {copySuccess ? "✓ PROMPT COPIED" : "COPY NEURAL PROMPT"}
+              </button>
+              <div className={styles.bannerLinks}>
+                <a href="https://chatgpt.com" target="_blank">ChatGPT</a>
+                <a href="https://claude.ai" target="_blank">Claude</a>
+                <a href="https://gemini.google.com" target="_blank">Gemini</a>
+                <a href="https://grok.com" target="_blank">Grok</a>
+              </div>
+            </div>
           </div>
         </motion.div>
       </section>

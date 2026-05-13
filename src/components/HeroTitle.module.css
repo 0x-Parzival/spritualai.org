@@ -58,7 +58,7 @@
     text-transform: uppercase;
     letter-spacing: clamp(2px, 1.3vw, 8px);
     white-space: nowrap;
-    background: linear-gradient(150deg, rgba(153, 235, 255, 0.22), rgba(162, 110, 243, 0.18) 42%, rgba(88, 49, 177, 0.16) 72%, rgba(12, 40, 107, 0.14));
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.15), rgba(100, 100, 100, 0.1) 42%, rgba(50, 50, 50, 0.08) 72%, rgba(0, 0, 0, 0.05));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

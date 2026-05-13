@@ -7,9 +7,11 @@ import styles from './portal.module.css';
 
 interface PortalResultProps {
     mbtiType: string;
+    autoStart?: boolean;
+    customRedirect?: string;
 }
 
-export default function PortalResult({ mbtiType }: PortalResultProps) {
+export default function PortalResult({ mbtiType, autoStart = false, customRedirect }: PortalResultProps) {
     const router = useRouter();
     const cardRef = useRef<HTMLDivElement>(null);
     const cardBgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -334,7 +336,11 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
 
     // Redirect function
     const proceedToResult = () => {
-        router.push(`/MBTI/personality/${mbtiType.toLowerCase()}.html`);
+        if (customRedirect) {
+            router.push(customRedirect);
+        } else {
+            router.push(`/MBTI/personality/${mbtiType.toLowerCase()}.html`);
+        }
     };
 
     const startPortal = () => {
@@ -384,6 +390,16 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
         }
     };
 
+    // Auto-start if requested
+    useEffect(() => {
+        if (autoStart) {
+            const timer = setTimeout(() => {
+                startPortal();
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [autoStart]);
+
     // Use the hover image from the new assets folder
     const imagePath = `/MBTI/HOVER/${mbtiType.toUpperCase()}.png`;
     const description = descriptions[mbtiType] || "Your unique perspective shapes your world.";
@@ -422,14 +438,16 @@ export default function PortalResult({ mbtiType }: PortalResultProps) {
 
     return (
         <div className={styles.container}>
-            <div id="portalCard" className={styles.portalCard} ref={cardRef}>
-                <div className={styles.gooeyEffect}>
-                    <div className={styles.gooeyBlob}></div>
-                    <div className={styles.gooeyBlob}></div>
-                    <div className={styles.gooeyBlob}></div>
-                    <div className={styles.gooeyBlob}></div>
-                </div>
-                <div className={styles.portalContent}>
+            <div id="portalCard" className={`${styles.portalCard} ${autoStart ? styles.autoStarted : ''}`} ref={cardRef}>
+                {!autoStart && (
+                    <div className={styles.gooeyEffect}>
+                        <div className={styles.gooeyBlob}></div>
+                        <div className={styles.gooeyBlob}></div>
+                        <div className={styles.gooeyBlob}></div>
+                        <div className={styles.gooeyBlob}></div>
+                    </div>
+                )}
+                <div className={styles.portalContent} style={autoStart ? { opacity: 0, pointerEvents: 'none' } : {}}>
 
                     <h2>Your pattern aligns with</h2>
                     <h1>{mbtiType}</h1>

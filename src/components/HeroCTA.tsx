@@ -8,7 +8,6 @@ import { playOmSound } from '../utils/audio';
 import styles from './HeroCTA.module.css';
 import HeroTitle from './HeroTitle';
 import PretextWrapper from './home/PretextWrapper';
-import AuthGate from './AuthGate';
 import { useUser } from '@clerk/nextjs';
 import { UserState } from '../lib/spiritual-conversation-engine';
 import { DECODE_PROMPT } from '../lib/decodePrompt';
@@ -21,9 +20,71 @@ interface ChatMessage {
     options?: { text: string; subLabel: string }[];
     type?: 'question' | 'final_share';
 }
-const SacredStatus = () => {
+
+const DEFAULT_USER_STATE: UserState = {
+    chipSelected: 'typed',
+    firstAnswer: '',
+    gender: 'unknown',
+    ageRange: 'unknown',
+    lifeStage: 'THE AWAKENING',
+    birthDate: undefined,
+    birthTime: undefined,
+    birthPlace: undefined,
+    mbtiSignals: {
+        E_I: { signal: null, confidence: 0 },
+        N_S: { signal: null, confidence: 0 },
+        T_F: { signal: null, confidence: 0 },
+        J_P: { signal: null, confidence: 0 },
+    },
+    confirmedMBTI: null,
+    detectedPattern: null,
+    shadowPattern: null,
+    activeArchetype: null,
+    personaMask: null,
+    complexIdentified: null,
+    patternConfidence: 0,
+    decodingProgress: 0,
+    unconsciousPatterns: [],
+    triggerWords: [],
+    hawkinsLevel: undefined,
+    jungianArchetype: undefined,
+    budget: 'unknown',
+    questionCount: 0,
+    exchangeHistory: [],
+    finalShare: null,
+    tracking: {
+        responseTimeMillis: [],
+        wordChoice: { emotional: 0, analytical: 0 },
+        topicShifts: 0,
+        energyLevel: 'neutral',
+        lastMessageTimestamp: Date.now(),
+        engagementScore: 100,
+        isFatigued: false,
+        sessionStartTime: Date.now(),
+    },
+    sessionConfig: {
+        targetQuestions: 5,
+        maxQuestions: 8,
+        pacingMode: 'deep',
+    },
+    report: null,
+    recommendedProducts: [],
+};
+
+const SacredStatus = ({ stage }: { stage?: number }) => {
     const [statusIdx, setStatusIdx] = useState(0);
-    const statuses = [
+    
+    const STAGE_MESSAGES = [
+        ["Reading the frequency beneath your words...", "Neural Link Ready..."],
+        ["Locating the root signal...", "Surface Pattern Detected..."],
+        ["Mapping the cognitive architecture...", "Root Signal Located..."],
+        ["Calculating your cosmic coordinates...", "Architecture Forming..."],
+        ["Cross-referencing shadow patterns...", "Cosmic Coordinates Locked..."],
+        ["Etching your Consciousness Blueprint...", "Blueprint Crystallising..."],
+        ["Finalizing your reflection...", "Consciousness Identity Ready..."]
+    ];
+
+    const messages = stage !== undefined ? STAGE_MESSAGES[Math.min(stage, STAGE_MESSAGES.length - 1)] : [
         "Identifying the thread in the fabric...",
         "The Seeker is tracing your linguistic patterns...",
         "The Shadow Witness is observing the unspoken...",
@@ -39,10 +100,10 @@ const SacredStatus = () => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setStatusIdx(prev => (prev + 1) % statuses.length);
-        }, 800);
+            setStatusIdx(prev => (prev + 1) % messages.length);
+        }, 1200);
         return () => clearInterval(timer);
-    }, [statuses.length]);
+    }, [messages.length]);
 
     return (
         <motion.div 
@@ -53,7 +114,7 @@ const SacredStatus = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
         >
-            {statuses[statusIdx]}
+            {messages[statusIdx]}
         </motion.div>
     );
 };
@@ -112,7 +173,7 @@ const AudioVisualizer = ({ isActive }: { isActive: boolean }) => {
             justifyContent: 'center', 
             gap: '4px',
             pointerEvents: 'none',
-            zIndex: 5,
+            zIndex: '5',
             padding: '0 60px'
         }}>
             {volumes.map((vol, i) => (
@@ -218,56 +279,7 @@ const LiveAIBlob = ({ isTalking, isListening, isThinking, isActive, lastAiMessag
     );
 };
 
-const DEFAULT_USER_STATE: UserState = {
-    chipSelected: 'typed',
-    firstAnswer: '',
-    gender: 'unknown',
-    ageRange: 'unknown',
-    lifeStage: 'THE AWAKENING',
-    birthDate: 'unknown',
-    birthTime: 'unknown',
-    birthPlace: 'unknown',
-    mbtiSignals: {
-        E_I: { signal: null, confidence: 0 },
-        N_S: { signal: null, confidence: 0 },
-        T_F: { signal: null, confidence: 0 },
-        J_P: { signal: null, confidence: 0 },
-    },
-    confirmedMBTI: null,
-    detectedPattern: null,
-    shadowPattern: null,
-    activeArchetype: null,
-    personaMask: null,
-    complexIdentified: null,
-    patternConfidence: 0,
-    decodingProgress: 0,
-    unconsciousPatterns: [],
-    triggerWords: [],
-    budget: 'unknown',
-    questionCount: 0,
-    exchangeHistory: [],
-    finalShare: null,
-    tracking: {
-        responseTimeMillis: [],
-        wordChoice: { emotional: 0, analytical: 0 },
-        topicShifts: 0,
-        energyLevel: 'neutral',
-        lastMessageTimestamp: Date.now(),
-        engagementScore: 100,
-        isFatigued: false,
-        sessionStartTime: Date.now(),
-    },
-    sessionConfig: {
-        targetQuestions: 5,
-        maxQuestions: 8,
-        pacingMode: 'deep',
-    },
-    report: null,
-    recommendedProducts: [],
-};
-
 const STRUGGLES = [
-    "I don't even know",
     "Feeling lost",
     "Relationship pain",
     "Spiritual disconnection",
@@ -341,7 +353,6 @@ export default function HeroCTA({
     onComplete,
     onChatActive,
     onGeneratingReport,
-    hidePopup = false,
     lastReadArchitecture = null
 }: { 
     onGlassChange?: (active: boolean) => void,
@@ -349,7 +360,6 @@ export default function HeroCTA({
     onComplete?: (state: any) => void,
     onChatActive?: (active: boolean) => void,
     onGeneratingReport?: (active: boolean) => void,
-    hidePopup?: boolean,
     lastReadArchitecture?: string | null
 }) {
     const router = useRouter();
@@ -374,7 +384,6 @@ export default function HeroCTA({
     const [decodedCount, setDecodedCount] = useState(14847);
 
     const [showChat, setShowChat] = useState(false);
-    const [showAuthGate, setShowAuthGate] = useState(false);
 
     useEffect(() => {
         if (onChatActive) {
@@ -427,11 +436,122 @@ export default function HeroCTA({
     const [canShowCalendar, setCanShowCalendar] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [isConvoComplete, setIsConvoComplete] = useState(false);
-    const [soundPlayed, setSoundPlayed] = useState(false);
     const [showPromptPopup, setShowPromptPopup] = useState(false);
+    const [soundPlayed, setSoundPlayed] = useState(false);
     const [isLiveMode, setIsLiveMode] = useState(false);
     const [isAiTalking, setIsAiTalking] = useState(false);
     const lastActivityRef = useRef<number>(Date.now());
+
+    // --- Predictive Generation State ---
+    const [preGeneratedReport, setPreGeneratedReport] = useState<any>(null);
+    const [isPreGenerating, setIsPreGenerating] = useState(false);
+
+    // --- Intelligence Notifications ---
+    const [notifications, setNotifications] = useState<{ id: string; text: string; type: string }[]>([]);
+    
+    const pushNotification = (text: string, type: string = 'info') => {
+        const id = Math.random().toString(36).substr(2, 9);
+        setNotifications(prev => [...prev, { id, text, type }]);
+        setTimeout(() => {
+            setNotifications(prev => prev.filter(n => n.id !== id));
+        }, 4000);
+    };
+
+    // --- Retention Engine State ---
+    const [csn, setCsn] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const [showEmailCapture, setShowEmailCapture] = useState(false);
+    const [showExitModal, setShowExitModal] = useState(false);
+    const [showReturnModal, setShowReturnModal] = useState(false);
+    const [savedSession, setSavedSession] = useState<any>(null);
+    const [csnExpiry, setCsnExpiry] = useState<string>("24:00:00");
+
+    const assignCSN = () => {
+        const newCsn = 'CSN-' + Math.floor(Math.random() * 9000 + 1000);
+        setCsn(newCsn);
+        pushNotification(`${newCsn} RESERVED`, 'csn');
+        localStorage.setItem('spiritual_ai_csn', newCsn);
+        localStorage.setItem('spiritual_ai_csn_time', Date.now().toString());
+        return newCsn;
+    };
+
+    const saveSession = (state: UserState, history: any[], completion: number) => {
+        const session = {
+            messages,
+            history,
+            userState: state,
+            completion,
+            csn,
+            email,
+            exchanges: round,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('spiritual_ai_session', JSON.stringify(session));
+        localStorage.setItem('spiritualAiState', JSON.stringify(state));
+    };
+
+    // CSN Expiry Timer
+    useEffect(() => {
+        if (!csn) return;
+        const timer = setInterval(() => {
+            const startTime = parseInt(localStorage.getItem('spiritual_ai_csn_time') || Date.now().toString());
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, (24 * 60 * 60 * 1000) - elapsed);
+            
+            const hours = Math.floor(remaining / 3600000);
+            const minutes = Math.floor((remaining % 3600000) / 60000);
+            const seconds = Math.floor((remaining % 60000) / 1000);
+            
+            setCsnExpiry(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            
+            if (remaining === 0) {
+                localStorage.removeItem('spiritual_ai_csn');
+                localStorage.removeItem('spiritual_ai_csn_time');
+                setCsn(null);
+            }
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [csn]);
+
+    // Restore state and session on mount
+    useEffect(() => {
+        const savedState = localStorage.getItem('spiritualAiState');
+        const savedCsn = localStorage.getItem('spiritual_ai_csn');
+        
+        if (savedCsn) setCsn(savedCsn);
+
+        if (savedState) {
+            try {
+                const parsed = JSON.parse(savedState);
+                setUserState(parsed);
+                if (parsed.report) {
+                    setIsConvoComplete(true);
+                    if (onComplete) onComplete(parsed);
+                }
+            } catch (e) {
+                console.error("Failed to parse saved state", e);
+            }
+        }
+    }, []);
+
+    // Idle Detection (90s)
+    useEffect(() => {
+        if (!showChat || isConvoComplete || isTyping) return;
+        
+        const idleTimer = setTimeout(() => {
+            const now = Date.now();
+            if (now - lastActivityRef.current >= 90000) {
+                const idleMsg = { 
+                    role: 'ai' as const, 
+                    content: "Still there? That hesitation — whatever you're sitting with right now — is itself part of the pattern. Take your time.",
+                    contextLine: "Observing the stillness."
+                };
+                setMessages(prev => [...prev, idleMsg]);
+            }
+        }, 90000);
+
+        return () => clearTimeout(idleTimer);
+    }, [showChat, isConvoComplete, isTyping, messages.length]);
 
     // Pre-warm next question while user types
     useEffect(() => {
@@ -457,47 +577,19 @@ export default function HeroCTA({
     }, [inputValue, showChat, isTyping]);
 
     const [scrollY, setScrollY] = useState(0);
+    const [hasScrolled, setHasScrolled] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => setScrollY(window.scrollY);
+        const handleScroll = () => {
+            const currentScroll = window.scrollY;
+            setScrollY(currentScroll);
+            if (currentScroll > 10) {
+                setHasScrolled(true);
+            }
+        };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    useEffect(() => {
-        if (showChat || isConvoComplete || showPromptPopup) return;
-        const timer = setInterval(() => {
-            const now = Date.now();
-            // Only show popup if user is inactive AND on Page 1 (scrollY < 300)
-            if (now - lastActivityRef.current > 15000 && window.scrollY < 300) { 
-                setShowPromptPopup(true);
-            }
-        }, 1000);
-        const resetTimer = () => {
-            lastActivityRef.current = Date.now();
-        };
-        window.addEventListener('mousemove', resetTimer);
-        window.addEventListener('keypress', resetTimer);
-        window.addEventListener('touchstart', resetTimer);
-        return () => {
-            clearInterval(timer);
-            window.removeEventListener('mousemove', resetTimer);
-            window.removeEventListener('keypress', resetTimer);
-            window.removeEventListener('touchstart', resetTimer);
-        };
-    }, [showChat, isConvoComplete, showPromptPopup]);
-
-    useEffect(() => {
-        if (showPromptPopup && scrollY > 300) {
-            setShowPromptPopup(false);
-        }
-    }, [scrollY, showPromptPopup]);
-
-    useEffect(() => {
-        if (showChat && showPromptPopup) {
-            setShowPromptPopup(false);
-        }
-    }, [showChat, showPromptPopup]);
 
     const maybePlaySound = () => {
         if (!soundPlayed) {
@@ -531,67 +623,74 @@ export default function HeroCTA({
         if (!showChat) {
             setShowChat(true);
             if (messages.length === 0) {
-                const quizResult = localStorage.getItem('mbti_quiz_result');
-                if (quizResult) {
-                    setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
-                }
+                // Check if we have existing progress
+                const savedSessionStr = localStorage.getItem('spiritual_ai_session');
+                let existingSession: any = null;
+                try {
+                    if (savedSessionStr) existingSession = JSON.parse(savedSessionStr);
+                } catch (e) {}
 
-                const greeting = "I see a soul in a moment of transition. Your arrival here was not an accident—it was a recognition. Which of these sounds most like the silent pattern your life is whispering right now?";
-                const greetingOptions = [
-                    { text: "I know I can do more, but I keep delaying.", subLabel: "Resistance" },
-                    { text: "I feel lost and unsure about my direction.", subLabel: "Uncertainty" },
-                    { text: "Things look fine, but I feel empty inside.", subLabel: "Soul thirst" },
-                    { text: "I’m stuck on someone or something from the past.", subLabel: "Lingering ties" },
-                    { text: "I don’t feel good enough, no matter what I do.", subLabel: "Worthiness" },
-                    { text: "I overthink so much that I don’t act.", subLabel: "Analysis paralysis" },
-                    { text: "I feel tired, disconnected, or mentally drained.", subLabel: "Burnout" },
-                    { text: "I have achieved my goals, yet I feel no fulfillment.", subLabel: "Arrival Fallacy" },
-                    { text: "I feel a calling I can't name yet, a pull toward something more.", subLabel: "Awakening" },
-                    { text: "I'm living someone else's life, and my own is waiting.", subLabel: "Inauthenticity" },
-                    { text: "I feel like a wanderer with no home to return to.", subLabel: "Rootlessness" },
-                    { text: "I'm searching for a meaning that transcends the daily grind.", subLabel: "Existential Thirst" },
-                    { text: "My mind is a storm of ideas, but my hands are still.", subLabel: "Creative Blockage" },
-                    { text: "I fear my best work is behind me, or perhaps it never was.", subLabel: "Imposter Syndrome" },
-                    { text: "I'm obsessed with perfection to the point of stagnation.", subLabel: "Perfectionism" },
-                    { text: "I have the map, but I’m terrified to take the first step.", subLabel: "Fear of Failure" },
-                    { text: "The world feels too loud for my quiet thoughts to breathe.", subLabel: "Overstimulation" },
-                    { text: "I give so much to others that I have nothing left for myself.", subLabel: "Self-Neglect" },
-                    { text: "I'm surrounded by people, yet I feel completely alone.", subLabel: "Isolation" },
-                    { text: "I’m holding onto a ghost that no longer wants to be held.", subLabel: "Grief" },
-                    { text: "I fear if people saw the real me, they would leave.", subLabel: "Vulnerability" },
-                    { text: "I keep repeating the same painful patterns in my heart.", subLabel: "Karmic Cycles" },
-                    { text: "I feel trapped by responsibilities that no longer fit.", subLabel: "Confinement" },
-                    { text: "Money and security are my anchors, but they’ve become my cage.", subLabel: "Materialism" },
-                    { text: "I feel like a cog in a machine that doesn't care if I break.", subLabel: "Dehumanization" },
-                    { text: "I’m hiding a part of myself that I’m too ashamed to face.", subLabel: "Shadow Work" },
-                    { text: "I feel a deep, old anger that I don't know how to release.", subLabel: "Suppression" },
-                    { text: "I’m constantly bracing for a blow that hasn't come yet.", subLabel: "Hypervigilance" },
-                    { text: "I feel like I'm broken beyond repair, just keeping up appearances.", subLabel: "Internal Fracture" },
-                    { text: "I seek distractions because I’m afraid of the silence.", subLabel: "Avoidance" },
-                    { text: "I’m outgrowing my environment, and the friction is painful.", subLabel: "Expansion Pain" },
-                    { text: "I’m learning to love the person I’m becoming.", subLabel: "Self-Actualization" },
-                    { text: "I’m standing at a threshold, and I can’t go back.", subLabel: "Point of No Return" }
-                ];
-                setMessages([{ role: 'ai', content: "", options: greetingOptions }]);
-                setCurrentQuestion(greeting);
-                
-                const initialContext = lastReadArchitecture 
-                    ? `[CONTEXT: User was just reading about "${lastReadArchitecture}"] ${greeting}`
-                    : greeting;
+                if (existingSession && existingSession.completion > 0 && existingSession.messages?.length > 0) {
+                    // Restore existing session instead of showing greeting
+                    setMessages(existingSession.messages);
+                    setConversationHistory(existingSession.history);
+                    setUserState(existingSession.userState);
+                    setRound(existingSession.exchanges);
+                    setCsn(existingSession.csn);
+                    setEmail(existingSession.email);
                     
-                setConversationHistory([{ role: 'ai', content: initialContext }]);
-                setRound(0);
+                    pushNotification(`DECODE RESUMED: ${existingSession.completion}%`, 'info');
+                } else {
+                    const quizResult = localStorage.getItem('mbti_quiz_result');
+                    if (quizResult) {
+                        setUserState(prev => ({ ...prev, confirmedMBTI: quizResult }));
+                    }
 
-                for (let j = 0; j <= greeting.length; j++) {
-                    const currentText = greeting.substring(0, j);
-                    setMessages(prev => {
-                        const next = [...prev];
-                        if (next.length > 0) {
-                            next[0] = { ...next[0], content: currentText };
-                        }
-                        return next;
-                    });
-                    await new Promise(r => setTimeout(r, 10));
+                    const greeting = "I see a soul in a moment of transition. Your arrival here was not an accident—it was a recognition. Which of these sounds most like the silent pattern your life is whispering right now?";
+                    const greetingOptions = [
+                        { text: "I know I can do more, but I keep delaying.", subLabel: "Resistance" },
+                        { text: "I feel lost and unsure about my direction.", subLabel: "Uncertainty" },
+                        { text: "Things look fine, but I feel empty inside.", subLabel: "Soul thirst" },
+                        { text: "I’m stuck on someone or something from the past.", subLabel: "Lingering ties" },
+                        { text: "I don’t feel good enough, no matter what I do.", subLabel: "Worthiness" },
+                        { text: "I overthink so much that I don’t act.", subLabel: "Analysis paralysis" },
+                        { text: "I feel tired, disconnected, or mentally drained.", subLabel: "Burnout" },
+                        { text: "I have achieved my goals, yet I feel no fulfillment.", subLabel: "Arrival Fallacy" },
+                        { text: "I feel a calling I can't name yet, a pull toward something more.", subLabel: "Awakening" },
+                        { text: "I'm living someone else's life, and my own is waiting.", subLabel: "Inauthenticity" },
+                        { text: "I feel like a wanderer with no home to return to.", subLabel: "Rootlessness" },
+                        { text: "I'm searching for a meaning that transcends the daily grind.", subLabel: "Existential Thirst" },
+                        { text: "My mind is a storm of ideas, but my hands are still.", subLabel: "Creative Blockage" },
+                        { text: "I fear my best work is behind me, or perhaps it never was.", subLabel: "Imposter Syndrome" },
+                        { text: "I'm obsessed with perfection to the point of stagnation.", subLabel: "Perfectionism" },
+                        { text: "I have the map, but I’m terrified to take the first step.", subLabel: "Fear of Failure" },
+                        { text: "The world feels too loud for my quiet thoughts to breathe.", subLabel: "Overstimulation" },
+                        { text: "I give so much to others that I have nothing left for myself.", subLabel: "Self-Neglect" },
+                        { text: "I'm surrounded by people, yet I feel completely alone.", subLabel: "Isolation" },
+                        { text: "I’m holding onto a ghost that no longer wants to be held.", subLabel: "Grief" },
+                        { text: "I fear if people saw the real me, they would leave.", subLabel: "Vulnerability" },
+                        { text: "I keep repeating the same painful patterns in my heart.", subLabel: "Karmic Cycles" },
+                        { text: "I feel trapped by responsibilities that no longer fit.", subLabel: "Confinement" },
+                        { text: "Money and security are my anchors, but they’ve become my cage.", subLabel: "Materialism" },
+                        { text: "I feel like a cog in a machine that doesn't care if I break.", subLabel: "Dehumanization" },
+                        { text: "I’m hiding a part of myself that I’m too ashamed to face.", subLabel: "Shadow Work" },
+                        { text: "I feel a deep, old anger that I don't know how to release.", subLabel: "Suppression" },
+                        { text: "I’m constantly bracing for a blow that hasn't come yet.", subLabel: "Hypervigilance" },
+                        { text: "I feel like I'm broken beyond repair, just keeping up appearances.", subLabel: "Internal Fracture" },
+                        { text: "I seek distractions because I’m afraid of the silence.", subLabel: "Avoidance" },
+                        { text: "I’m outgrowing my environment, and the friction is painful.", subLabel: "Expansion Pain" },
+                        { text: "I’m learning to love the person I’m becoming.", subLabel: "Self-Actualization" },
+                        { text: "I’m standing at a threshold, and I can’t go back.", subLabel: "Point of No Return" }
+                    ];
+                    setMessages([{ role: 'ai', content: greeting, options: greetingOptions }]);
+                    setCurrentQuestion(greeting);
+                    
+                    const initialContext = lastReadArchitecture 
+                        ? `[CONTEXT: User was just reading about "${lastReadArchitecture}"] ${greeting}`
+                        : greeting;
+                        
+                    setConversationHistory([{ role: 'ai', content: initialContext }]);
+                    setRound(0);
                 }
             }
         }
@@ -725,9 +824,28 @@ export default function HeroCTA({
                 setConversationHistory(newHistory);
                 setRound(nextRound);
 
+                // RETENTION HOOKS
+                if (nextRound === 2 && !csn) {
+                    assignCSN();
+                }
+
                 // Map state extraction to UserState (Moved after typing to prevent UI jumps)
+                let latestProgress = userState.decodingProgress;
+                let latestState = { ...userState };
                 setUserState(prev => {
                     const updated = { ...prev, ...aiData };
+                    
+                    // Trigger Notifications based on discovery
+                    if (!prev.detectedPattern && aiData.detectedPattern) {
+                        pushNotification(`PATTERN IDENTIFIED: ${aiData.detectedPattern}`, 'success');
+                    }
+                    if (!prev.activeArchetype && aiData.activeArchetype) {
+                        pushNotification(`ARCHETYPE ASSIGNED: ${aiData.activeArchetype}`, 'info');
+                    }
+                    if (JSON.stringify(prev.mbtiSignals) !== JSON.stringify(aiData.mbtiSignals)) {
+                        pushNotification(`MBTI SIGNAL DETECTED`, 'pulse');
+                    }
+
                     if (aiData.mbtiSignals) updated.mbtiSignals = aiData.mbtiSignals;
                     if (aiData.detectedPattern) updated.detectedPattern = aiData.detectedPattern;
                     if (aiData.activeArchetype) updated.activeArchetype = aiData.activeArchetype;
@@ -735,22 +853,48 @@ export default function HeroCTA({
                     if (aiData.type === 'final_share') {
                         updated.decodingProgress = 100;
                     } else if (aiData.decodingProgress === undefined) {
-                        const floorProgress = Math.min(nextRound * 15, 92);
-                        updated.decodingProgress = floorProgress;
+                        // Fallback if API doesn't return it
+                        updated.decodingProgress = prev.decodingProgress;
                     } else {
                         updated.decodingProgress = aiData.decodingProgress;
                     }
+                    latestProgress = updated.decodingProgress;
+                    latestState = updated;
                     return updated;
                 });
 
+                // PREDICTIVE GENERATION
+                if (aiData.reportScore >= 50 && !preGeneratedReport && !isPreGenerating) {
+                    setIsPreGenerating(true);
+                    fetch('/api/spiritual', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'pre_generate_report',
+                            userState: latestState,
+                            conversationHistory: newHistory,
+                        }),
+                    })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success && result.data) {
+                            // Save the {report, products} object
+                            setPreGeneratedReport(result.data);
+                        }
+                    })
+                    .catch(e => console.error("Predictive background generation failed", e));
+                }
+
+                // Small delay to ensure state is accessible or just pass calculated values
+                setTimeout(() => {
+                    saveSession({ ...latestState }, newHistory, latestProgress);
+                }, 100);
+
                 if (aiData.type === 'final_share' || aiData.decodingProgress >= 100) {
                     setIsConvoComplete(true);
+                    // Use a delay and re-check latest state to avoid side-effects in render
                     setTimeout(() => {
-                        // Re-fetch latest userState for the pause
-                        setUserState(s => {
-                            triggerSacredPause(s, newHistory);
-                            return s;
-                        });
+                        triggerSacredPause(latestState, newHistory);
                     }, 1500);
                 }
             }
@@ -794,20 +938,25 @@ export default function HeroCTA({
         return parsed;
     };
 
+    const [isEtching, setIsEtching] = useState(false);
+
     const triggerSacredPause = (state: UserState, history: any[]) => {
         setSacredPause(true);
         setIsConvoComplete(true);
         if (onGlassChange) onGlassChange(false);
-        // Do NOT set onChatActive(false) yet, we want to keep the UI for the sacred pause
         if (onGeneratingReport) onGeneratingReport(true);
         
         const reportPromise = fetch('/api/spiritual', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'generate_report', userState: state, conversationHistory: history }),
+            body: JSON.stringify({ 
+                action: 'generate_report', 
+                userState: state, 
+                conversationHistory: history,
+                preGeneratedReport // Passed in if predictive generation finished
+            }),
         }).then(async r => {
             if (r.status === 401) {
-                // Return success false but unauthorized to handle blurring on Page 2
                 return { success: false, error: 'Unauthorized' };
             }
             return r.json();
@@ -818,50 +967,41 @@ export default function HeroCTA({
 
             const finalStateData = { 
                 ...state, 
+                csn: res?.data?.csn || csn, // Ensure final CSN is stored
                 report: res?.data?.report || null, 
                 recommendedProducts: res?.data?.products || [], 
                 exchangeHistory: history,
-                decodingProgress: 100,
-                isUnauthorized: res?.error === 'Unauthorized'
+                decodingProgress: 100
             };
             
             setUserState(finalStateData);
-            try { localStorage.setItem('spiritualAiState', JSON.stringify(finalStateData)); } catch (_) { }
+            localStorage.setItem('spiritualAiState', JSON.stringify(finalStateData));
             
-            if (onGeneratingReport) onGeneratingReport(false);
+            // --- BLUEPRINT CEREMONY ---
+            setIsEtching(true);
             
-            // Final state sync
-            setIsConvoComplete(true);
-            
-            // Start transition
-            setIsTransitioning(true);
             setTimeout(() => {
-                setShowChat(false);
-                if (onChatActive) onChatActive(false);
-                if (onComplete) onComplete(finalStateData);
-                
-                // Clear local typing/chat state
-                setRound(0);
-                setMessages([]);
-                
-                // Scroll to report
-                const page2 = document.getElementById('report-section');
-                if (page2) {
-                    page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const finalCsn = res?.data?.csn || csn || "SAI-PENDING";
+                // Wait, aiData might not be defined here because we're inside triggerSacredPause. 
+                // We should use state.confirmedMBTI instead.
+                const mbti = state.confirmedMBTI || "";
+                if (mbti) {
+                    router.push(`/mbti-transition?mbti=${mbti}&redirect=/blueprint/${finalCsn}`);
                 } else {
-                    // Fallback scroll
-                    window.scrollTo({ top: window.innerHeight * 1.05, behavior: 'smooth' });
+                    router.push(`/blueprint/${finalCsn}`);
                 }
-            }, 800);
+                
+                // Cleanup after redirect (slight delay)
+                setTimeout(() => {
+                    setIsEtching(false);
+                    setSacredPause(false);
+                    setShowChat(false);
+                    if (onChatActive) onChatActive(false);
+                    if (onGeneratingReport) onGeneratingReport(false);
+                }, 1000);
+            }, 4500); // 4.5s for the horizontal etch ceremony
         }, 3000);
     };
-
-    // Watch for sign-in during the process - Logic removed, now handled by report component
-    useEffect(() => {
-        if (isConvoComplete && !sacredPause && !showChat) {
-            // Flow complete
-        }
-    }, [isConvoComplete, sacredPause, showChat]);
 
     const updateStateWithTracking = (answer: string, currentState: UserState): UserState => {
         const now = Date.now();
@@ -873,7 +1013,6 @@ export default function HeroCTA({
                 ...currentState.tracking,
                 responseTimeMillis: [...(currentState.tracking?.responseTimeMillis || []), responseTime],
                 lastMessageTimestamp: now,
-                // These metrics are now handled by the server response in handleResponse
             }
         };
     };
@@ -916,7 +1055,6 @@ export default function HeroCTA({
                         const missingNames = data.missingFields.join(", ").replace(/_/g, " ").toLowerCase();
                         setMessages(prev => [...prev, { role: 'ai', content: `Decryption partial. The external AI identified your architecture, but some fragments are still missing: ${missingNames}. Shall we fill these in, or would you like to proceed with the partial report?` }]);
                         
-                        // Use messages as the source of truth for the options
                         setMessages(prev => {
                             const n = [...prev];
                             n[n.length - 1].options = [
@@ -926,7 +1064,6 @@ export default function HeroCTA({
                             return n;
                         });
                         
-                        // Update state to be aware of the external report context
                         const newState = { ...userState, ...data.data, isExternalReport: true, missingFields: data.missingFields };
                         setUserState(newState);
                     } else {
@@ -942,15 +1079,11 @@ export default function HeroCTA({
         const newState = round === 0 ? { ...trackedState, chipSelected: 'typed', firstAnswer: text } : trackedState;
         setUserState(newState);
         if (round === 0) {
-            const initialMsgs = ["CONNECTION ESTABLISHED.", "PATTERN DETECTED.", "SIGNAL LOCKED.", "LINK ACTIVE."];
-            const msg = initialMsgs[Math.floor(Math.random() * initialMsgs.length)];
-            // Just use isTyping for visual feedback instead of adding a dummy message
             setIsTyping(true);
             await new Promise(r => setTimeout(r, 500));
         }
         const updatedHistory = [...conversationHistory, { role: 'user', content: text }];
         await sendToAI(text, newState.chipSelected, newState, updatedHistory, round);
-        // Note: round and completion check are handled inside sendToAI
     };
 
     const handleOptionClick = async (optionText: string) => {
@@ -976,8 +1109,8 @@ export default function HeroCTA({
         }
 
         await sendToAI(optionText, tracked.chipSelected, tracked, updatedHistory, round);
-        // Note: completion check is handled inside sendToAI
     };
+
     const handleStruggleClick = async (struggle: string) => {
         if (isTyping || sacredPause) return;
         maybePlaySound();
@@ -1002,7 +1135,6 @@ export default function HeroCTA({
             setIsTyping(true); 
             await new Promise(r => setTimeout(r, 400)); 
             
-            // SMOOTH TYPING: First AI message
             setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
             for (let j = 0; j <= q.length; j++) {
                 const cur = q.substring(0, j);
@@ -1011,11 +1143,10 @@ export default function HeroCTA({
                     if (n.length > 0) n[n.length - 1].content = cur; 
                     return n; 
                 });
-                await new Promise(r => setTimeout(r, 15)); // Fast, smooth 60fps-like cadence
+                await new Promise(r => setTimeout(r, 15));
             }
             setIsTyping(false);
 
-            // Show options after typing
             if (data?.options) {
                 setMessages(prev => { 
                     const n = [...prev]; 
@@ -1095,9 +1226,7 @@ export default function HeroCTA({
         
         const u = new SpeechSynthesisUtterance(text);
         
-        // --- PREMIUM VOICE SELECTION ---
         const voices = window.speechSynthesis.getVoices();
-        // Priority list for high-quality, human-sounding free voices
         const premiumVoices = [
             "Google US English",
             "Microsoft Aria",
@@ -1110,14 +1239,13 @@ export default function HeroCTA({
         if (selectedVoice) u.voice = selectedVoice;
 
         u.pitch = 1.0;
-        u.rate = 0.95; // Slightly slower for "Spiritual Intelligence" feel
+        u.rate = 0.95;
         u.volume = 1.0;
 
         u.onstart = () => setIsAiTalking(true);
         u.onend = () => { 
             setIsAiTalking(false); 
             if (isLiveMode && !isConvoComplete) {
-                // Short delay before listening again to avoid AI hearing itself
                 setTimeout(() => toggleListening(), 400); 
             }
         };
@@ -1128,16 +1256,70 @@ export default function HeroCTA({
         <div className={`${styles.mbtiContainer} ${showChat ? styles.chatActive : ''}`}>
 
             <AnimatePresence>
-                {showAuthGate && (
-                    <AuthGate 
-                        onClose={() => setShowAuthGate(false)} 
-                        mode="signup"
-                    />
+                {isEtching && (
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            background: '#030303',
+                            zIndex: 20000,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: '80%' }}
+                            transition={{ duration: 3.5, ease: "easeInOut" }}
+                            style={{
+                                height: '2px',
+                                background: 'linear-gradient(90deg, transparent, #00f2ff, transparent)',
+                                boxShadow: '0 0 30px #00f2ff',
+                                position: 'relative'
+                            }}
+                        >
+                            <motion.div 
+                                animate={{ opacity: [0.3, 1, 0.3] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '-40px',
+                                    left: 0,
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    color: '#00f2ff',
+                                    fontFamily: 'Orbitron',
+                                    fontSize: '0.8rem',
+                                    letterSpacing: '0.3em',
+                                    textTransform: 'uppercase'
+                                }}
+                            >
+                                Etching Consciousness Blueprint
+                            </motion.div>
+                        </motion.div>
+                        
+                        <div className={styles.cosmicBackground}></div>
+                    </motion.div>
                 )}
             </AnimatePresence>
 
             <AnimatePresence>
-                {isLiveMode && showChat && (
+                {csn && showChat && !isConvoComplete && (
+                    <motion.div className={styles.csnNotification} initial={{ x: -100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -100, opacity: 0 }}>
+                        {csn} RESERVED · EXPIRES IN {csnExpiry}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {csn && showChat && !isConvoComplete && (
+
                     <LiveAIBlob 
                         isActive={true} 
                         isTalking={isAiTalking} 
@@ -1156,6 +1338,7 @@ export default function HeroCTA({
                         <div className={styles.ctaPromptText}>
                             {userState.name ? `Talk to Intelligence, ${userState.name} ↓ It will guide you step-by-step` : "Talk to Intelligence below ↓ It will guide you step-by-step"}
                         </div>
+                        
                         <div className={styles.staticCounter}>
                             <span className={styles.counterHighlight}>{decodedCount.toLocaleString()}</span> patterns decoded. Yours is next.
                         </div>
@@ -1168,30 +1351,63 @@ export default function HeroCTA({
                 )}
 
                 <AnimatePresence>
-                    {showPromptPopup && !hidePopup && (
-                        <motion.div className={styles.promptPopup} initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}>
-                            <button className={styles.closePopup} onClick={() => setShowPromptPopup(false)}>✕</button>
-                            <h2 className={styles.popupTitle}>Unlock Your Blueprint</h2>
-                            <p className={styles.popupText}>
-                                1. Copy this neural prompt.<br />
-                                2. Paste it in your preferred AI.<br />
-                                3. Paste the AI's response in the box below.
-                            </p>
-                            <button className={styles.copyMainBtn} onClick={copyDecoderPrompt}>{copySuccess ? "✓ PROMPT COPIED" : "COPY NEURAL PROMPT"}</button>
-                            <div className={styles.platformGrid}>
-                                <a href="https://chatgpt.com" target="_blank" className={styles.platformBtn}>ChatGPT</a>
-                                <a href="https://claude.ai" target="_blank" className={styles.platformBtn}>Claude</a>
-                                <a href="https://gemini.google.com" target="_blank" className={styles.platformBtn}>Gemini</a>
-                                <a href="https://grok.com" target="_blank" className={styles.platformBtn}>Grok</a>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <AnimatePresence>
                     {showChat && !isTransitioning && !isConvoComplete && (
                         <motion.div ref={chatThreadRef} className={styles.chatThread} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-                            {/* Close Chat Button */}
+                            
+                            {/* Intelligence Notifications Toast Container */}
+                            <div className={styles.notificationStack}>
+                                <AnimatePresence>
+                                    {notifications.map((n) => (
+                                        <motion.div 
+                                            key={n.id}
+                                            className={`${styles.miniNotification} ${styles[n.type]}`}
+                                            initial={{ opacity: 0, x: 50, scale: 0.8 }}
+                                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                                            exit={{ opacity: 0, x: 50, scale: 0.8 }}
+                                        >
+                                            <div className={styles.notificationDot} />
+                                            {n.text}
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+
+                            {showEmailCapture && (
+                                <div className={styles.emailCaptureOverlay}>
+                                    <h3 className={styles.emailCaptureTitle}>Your blueprint is being built in real time.</h3>
+                                    <p className={styles.emailCaptureText}>
+                                        Where should I send the complete version — 
+                                        including your <span className={styles.csnBadge}>{csn || 'CSN'}</span> and full dissolution path?
+                                    </p>
+                                    <div className={styles.emailInputWrapper}>
+                                        <input 
+                                            type="email" 
+                                            className={styles.emailInput} 
+                                            placeholder="your@email.com"
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                        <button className={styles.emailSubmitBtn} onClick={async () => {
+                                            if (!email || !email.includes('@')) return alert("Enter valid email");
+                                            await fetch('/api/spiritual', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ action: 'save_email', email, sessionId: csn })
+                                            });
+                                            setUserState(prev => {
+                                                const updated = { ...prev, email: email };
+                                                localStorage.setItem('spiritualAiState', JSON.stringify(updated));
+                                                return updated;
+                                            });
+                                            setShowEmailCapture(false);
+                                        }}>
+                                            SEND MY BLUEPRINT →
+                                        </button>
+                                    </div>
+                                    <button className={styles.emailSkipBtn} onClick={() => setShowEmailCapture(false)}>
+                                        Continue without saving
+                                    </button>
+                                </div>
+                            )}
                             <button 
                                 className={styles.closeChatBtn} 
                                 onClick={() => {
@@ -1204,11 +1420,32 @@ export default function HeroCTA({
                                 <X size={20} />
                             </button>
 
-                            {/* Decoding Progress Bar */}
                             <div className={styles.decodingProgressContainer}>
                                 <div className={styles.progressLabel}>
                                     <span>CONSCIOUSNESS DECODING IN PROGRESS</span>
                                     <span>{userState.decodingProgress}% IDENTIFIED</span>
+                                </div>
+                                <div className={styles.checklist}>
+                                    <div className={`${styles.checkItem} ${userState.detectedPattern ? styles.checkItemActive : ''}`}>
+                                        <div className={`${styles.checkIcon} ${userState.detectedPattern ? styles.checkIconActive : ''}`} />
+                                        Pattern
+                                    </div>
+                                    <div className={`${styles.checkItem} ${userState.confirmedMBTI ? styles.checkItemActive : ''}`}>
+                                        <div className={`${styles.checkIcon} ${userState.confirmedMBTI ? styles.checkIconActive : ''}`} />
+                                        MBTI
+                                    </div>
+                                    <div className={`${styles.checkItem} ${userState.birthDate ? styles.checkItemActive : ''}`}>
+                                        <div className={`${styles.checkIcon} ${userState.birthDate ? styles.checkIconActive : ''}`} />
+                                        Cosmic
+                                    </div>
+                                    <div className={`${styles.checkItem} ${userState.hawkinsLevel ? styles.checkItemActive : ''}`}>
+                                        <div className={`${styles.checkIcon} ${userState.hawkinsLevel ? styles.checkIconActive : ''}`} />
+                                        Hawkins
+                                    </div>
+                                    <div className={`${styles.checkItem} ${userState.jungianArchetype ? styles.checkItemActive : ''}`}>
+                                        <div className={`${styles.checkIcon} ${userState.jungianArchetype ? styles.checkIconActive : ''}`} />
+                                        Jungian
+                                    </div>
                                 </div>
                                 <div className={styles.progressBarTrack}>
                                     <div 
@@ -1218,7 +1455,6 @@ export default function HeroCTA({
                                 </div>
                             </div>
                             <div className={styles.chatHeaderTitle}>
-                                {/* Redundant HeroTitle removed for cleaner chat interface */}
                             </div>
                             {messages.map((msg, idx) => (
                                 <motion.div key={idx} className={`${styles.messageRow} ${msg.role === 'ai' ? styles.aiRow : styles.userRow}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: (idx + 1) / messages.length, y: 0 }}>
@@ -1257,7 +1493,7 @@ export default function HeroCTA({
                                 {sacredPause && (
                                     <motion.div className={styles.sacredPauseOverlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                         <div className={styles.sacredLotus}>🪷</div>
-                                        <SacredStatus />
+                                        <SacredStatus stage={6} />
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -1265,12 +1501,12 @@ export default function HeroCTA({
                     )}
                 </AnimatePresence>
 
-                {!isTransitioning && (
+                {!isTransitioning && !sacredPause && (
                     <form 
                         className={`${styles.gradientFlowBtn} cta-message-box`} 
                         onSubmit={handleSubmit} 
                         onClick={() => { if (!showChat) handleInputFocus(); }}
-                        style={{ position: 'relative', pointerEvents: 'auto', zIndex: 2000 }}
+                        style={{ position: 'relative', pointerEvents: 'auto', zIndex: '2000' }}
                     >
                     <AudioVisualizer isActive={isListening} />
                     <div className={styles.inputLeftIcon}><img src="/images/logo.png" alt="Logo" /></div>
@@ -1283,9 +1519,6 @@ export default function HeroCTA({
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setUserState(s => ({...s, birthDate: val}));
-                                    if (val && userState.birthTime && userState.birthPlace) {
-                                        // Auto-submit if all 3 are filled
-                                    }
                                 }}
                             />
                             <input 
@@ -1309,7 +1542,7 @@ export default function HeroCTA({
                                 await sendToAI(answer, userState.chipSelected, userState, conversationHistory, round);
                             }}>OK</button>
                         </div>
-                    ) : isConvoComplete ? (<div style={{ flex: 1, display: 'flex', alignItems: 'center' }}><SacredStatus /></div>) : (
+                    ) : isConvoComplete ? (<div style={{ flex: 1, display: 'flex', alignItems: 'center' }}><SacredStatus stage={6} /></div>) : (
                       <input ref={inputRef} type="text" value={inputValue} onChange={handleInputChange} onFocus={handleInputFocus} className={styles.messageInput} placeholder={showChat ? "Speak or type your truth..." : "What keeps showing up in your life?"} disabled={isTyping || sacredPause}/>
                     )}                    <div className={styles.neuralStatus}>
                         {canShowCalendar && (<button type="button" className={styles.micButton} onClick={() => setShowDatePicker(!showDatePicker)} style={{ borderColor: showDatePicker ? '#00f2ff' : 'rgba(255,255,255,0.2)', background: showDatePicker ? 'rgba(0, 242, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)' }}><Calendar size={18} /></button>)}

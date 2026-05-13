@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { playOmSound } from '../../utils/audio';
@@ -8,6 +8,14 @@ import styles from './blueprint.module.css';
 import { useUser } from '@clerk/nextjs';
 
 export default function BlueprintPage() {
+    return (
+        <Suspense fallback={<div className={styles.container} style={{ justifyContent: 'center', alignItems: 'center' }}>Synchronizing architecture...</div>}>
+            <BlueprintContent />
+        </Suspense>
+    );
+}
+
+function BlueprintContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { isLoaded, isSignedIn, user: clerkUser } = useUser();
@@ -68,6 +76,12 @@ export default function BlueprintPage() {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
+    const handlePurchase = () => {
+        // Play sound and redirect to checkout/store
+        playOmSound();
+        router.push('/store');
     };
 
     return (

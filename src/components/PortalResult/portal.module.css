@@ -40,6 +40,18 @@
     /* Slightly scaled down to fit viewport if needed */
 }
 
+.portalCard.autoStarted {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.portalCard.autoStarted::before,
+.portalCard.autoStarted::after {
+    display: none;
+}
+
 /* ... (previous styles) ... */
 
 

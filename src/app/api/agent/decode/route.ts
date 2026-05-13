@@ -7,8 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { 
   recommendProducts, 
   MBTI_PROFILES,
-  PATTERNS,
-  detectPattern
+  PATTERNS
 } from '@/lib/spiritual-conversation-engine';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;

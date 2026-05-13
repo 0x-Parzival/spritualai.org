@@ -130,7 +130,7 @@ export default function ProfilePage() {
                         SPIRITUAL <span className="text-cyan-500">AI</span>
                     </Link>
                     <div className="flex items-center gap-6">
-                        <UserButton afterSignOutUrl="/" />
+                        <UserButton />
                         <button onClick={() => signOut()} className="text-xs uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors duration-300 font-bold">
                             Terminate Session
                         </button>

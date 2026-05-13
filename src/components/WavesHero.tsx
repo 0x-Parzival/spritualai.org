@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from 'react';
 import { motion, useTransform, useMotionValue } from 'framer-motion';
 
 interface WavesHeroProps {
@@ -10,6 +11,7 @@ interface WavesHeroProps {
 }
 
 export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, variant = 'default' }: WavesHeroProps) {
+    const id = useId().replace(/:/g, "");
     // Parallax effect for waves - fallback to constant MotionValue if props are missing
     const fallbackX = useMotionValue(mousePos.x);
     const fallbackY = useMotionValue(mousePos.y);
@@ -40,9 +42,9 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             front: ['#888888', '#555555', '#333333', '#111111', '#000000'],
         },
         black: {
-            back: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
-            mid: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
-            front: ['#0a0a1a', '#0a0a1a', '#0a0a1a'],
+            back: ['#030303', '#030303', '#030303'],
+            mid: ['#030303', '#030303', '#030303'],
+            front: ['#030303', '#030303', '#030303'],
         },
         spiritual: {
             back: [themeColors.magenta, themeColors.cyan, themeColors.white],
@@ -62,7 +64,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             height: '100%',
             position: 'absolute',
             top: 0,
-            left: 0,
+            left: '0',
             zIndex: 'inherit',
             pointerEvents: 'none',
             translateX: xOffset,
@@ -82,12 +84,12 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                 style={{
                     position: 'absolute',
                     top: '50px', 
-                    left: 0,
+                    left: '0',
                     display: 'block',
                 }}
             >
                 <defs>
-                    <linearGradient id={`waveBackGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id={`waveBackGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                         <animate attributeName="y1" values="0%;-100%" dur="16s" repeatCount="indefinite" />
                         <animate attributeName="y2" values="100%;0%" dur="16s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
@@ -95,7 +97,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         <stop offset="70%" style={{ stopColor: activeColors.back[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.back[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
-                    <linearGradient id={`waveMidGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id={`waveMidGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                         <animate attributeName="y1" values="0%;-100%" dur="20s" repeatCount="indefinite" />
                         <animate attributeName="y2" values="100%;0%" dur="20s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
@@ -103,7 +105,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         <stop offset="70%" style={{ stopColor: activeColors.mid[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.mid[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
-                    <linearGradient id={`waveFrontGradient-${variant}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id={`waveFrontGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                         <animate attributeName="y1" values="0%;-100%" dur="24s" repeatCount="indefinite" />
                         <animate attributeName="y2" values="100%;0%" dur="24s" repeatCount="indefinite" />
                         <stop offset="0%" style={{ stopColor: activeColors.front[0], stopOpacity: 1 }}></stop>
@@ -111,11 +113,11 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         <stop offset="70%" style={{ stopColor: activeColors.front[2], stopOpacity: 1 }}></stop>
                         <stop offset="100%" style={{ stopColor: activeColors.front[0], stopOpacity: 1 }}></stop>
                     </linearGradient>
-                    <path id={`waveShape-${variant}`} d={pathD} />
+                    <path id={`waveShape-${id}`} d={pathD} />
                     {variant === 'black' && (
-                        <mask id="fadeMask">
-                            <rect x="0" y="0" width="100%" height="100%" fill="url(#maskGradient)" />
-                            <linearGradient id="maskGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <mask id={`fadeMask-${id}`}>
+                            <rect x="0" y="0" width="100%" height="100%" fill={`url(#maskGradient-${id})`} />
+                            <linearGradient id={`maskGradient-${id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" stopColor="white" stopOpacity="1" />
                                 <stop offset="60%" stopColor="white" stopOpacity="1" />
                                 <stop offset="85%" stopColor="white" stopOpacity="0.5" />
@@ -124,27 +126,27 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         </mask>
                     )}
                 </defs>
-                <g mask={variant === 'black' ? 'url(#fadeMask)' : undefined}>
+                <g mask={variant === 'black' ? `url(#fadeMask-${id})` : undefined}>
                     <use 
-                        xlinkHref={`#waveShape-${variant}`} 
-                        fill={`url(#waveBackGradient-${variant})`} 
-                        opacity=".24"
+                        xlinkHref={`#waveShape-${id}`} 
+                        fill={`url(#waveBackGradient-${id})`} 
+                        opacity={variant === 'black' ? ".6" : ".24"}
                         style={{
                             animation: 'waveFloat1 12s ease-in-out infinite'
                         }}
                     />
                     <use 
-                        xlinkHref={`#waveShape-${variant}`} 
-                        fill={`url(#waveMidGradient-${variant})`} 
-                        opacity=".42"
+                        xlinkHref={`#waveShape-${id}`} 
+                        fill={`url(#waveMidGradient-${id})`} 
+                        opacity={variant === 'black' ? ".8" : ".42"}
                         style={{
                             animation: 'waveFloat2 10s ease-in-out infinite'
                         }}
                     />
                     <use 
-                        xlinkHref={`#waveShape-${variant}`} 
-                        fill={`url(#waveFrontGradient-${variant})`} 
-                        opacity=".58"
+                        xlinkHref={`#waveShape-${id}`} 
+                        fill={`url(#waveFrontGradient-${id})`} 
+                        opacity={variant === 'black' ? ".95" : ".58"}
                         style={{
                             animation: 'waveFloat3 8s ease-in-out infinite'
                         }}

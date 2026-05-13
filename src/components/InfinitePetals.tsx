@@ -19,17 +19,16 @@ export default function InfinitePetals() {
     const leftY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
     const rightY = useTransform(scrollYProgress, [0, 1], ['0%', '-30%']);
 
-    const petalCount = 8;
+    const petalCount = 6;
     const petals = Array.from({ length: petalCount });
 
     const frostedStyle: React.CSSProperties = {
-        color: 'rgba(255, 255, 255, 0.15)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        width: '12vw',
+        color: 'rgba(255, 255, 255, 0.1)',
+        // Removed backdrop-filter: expensive for performance
+        border: '1px solid rgba(255, 255, 255, 0.05)',
+        width: '10vw',
         height: 'auto',
-        maxWidth: '180px',
+        maxWidth: '150px',
         position: 'absolute',
     };
 

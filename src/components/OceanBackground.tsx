@@ -16,7 +16,7 @@ export default function OceanBackground() {
     const backgroundGradient = useTransform(
         scrollYProgress,
         [0, 1],
-        ['#0a0a1a', '#001e50'] // Deep midnight to dark oceanic indigo
+        ['#050510', '#0a0a1f'] // Darker blue/purple for better visibility
     );
 
     useEffect(() => {
@@ -75,14 +75,14 @@ export default function OceanBackground() {
         };
     }, [mounted]);
 
-    if (!mounted) return <div style={{ position: 'fixed', inset: 0, background: '#0a0a1a', zIndex: 0 }} />;
+    if (!mounted) return <div style={{ position: 'fixed', inset: 0, background: '#030303', zIndex: 0 }} />;
 
     return (
         <motion.div style={{
             position: 'fixed',
             top: 0,
-            left: 0,
-            width: '100%',
+            left: '-1%', // Shift slightly left
+            width: '102%', // Overfill both sides
             height: '100vh',
             background: backgroundGradient,
             zIndex: 0,

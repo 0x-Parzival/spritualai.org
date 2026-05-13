@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String      @id @default(cuid())
+  uid       String      @unique // browser fingerprint
+  email     String?     @unique
+  plane_x   Int?        @unique // Assigned from PlaneXCounter
+  createdAt DateTime    @default(now())
+  
+  sessions   Session[]
+  blueprints Blueprint[]
+}
+
+model PlaneXCounter {
+  id Int @id @default(autoincrement())
+}
+
+model Blueprint {
+  csn            String   @id // SAI-{sequenceNumber}-{MBTI}-{symbol}-{verifyCode}
+  sequenceNumber Int      @default(autoincrement())
+  userId         String
+  plane_x        Int      // Denormalized from User
+  plane_y        Int      // User's nth blueprint
+  prev_block_hash String? // SHA-256 of prev reportData
+  
+  mbti           String   // e.g. "INTJ"
+  archetype      String   // e.g. "sovereign"
+  symbol         String   // e.g. "Ω"
+  verifyCode     String   @unique // 4-char hex
+  
+  reportData     Json
+  isComplete     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  sessions Session[]
+
+  @@unique([plane_x, plane_y], name: "blockplain_coordinate_unique")
+  @@index([plane_y])
+  @@index([mbti, plane_y])
+  @@index([archetype, plane_y])
+}
+
+model Session {
+  id                String    @id @default(cuid())
+  userId            String
+  blueprintCsn      String?
+  messages          Json      @default("[]")
+  completionPercent Int       @default(0)
+  startedAt         DateTime  @default(now())
+  lastActiveAt      DateTime  @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+  blueprint Blueprint? @relation(fields: [blueprintCsn], references: [csn])
+}
