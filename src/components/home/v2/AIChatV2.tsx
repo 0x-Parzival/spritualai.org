@@ -26,7 +26,7 @@ export default function AIChatV2({ personality }: AIChatProps) {
         // Initial greeting
         setMessages([{
             role: 'ai',
-            text: `Greetings, ${personality}. I am your personalized growth architect. I understand your unique cognitive filters. What challenge are you facing today that we can solve with optimized digital tools?`
+            text: `Greetings. I am your growth architect. What challenge can we solve today?`
         }]);
         
         // Mock products for now - in real implementation, these come from API

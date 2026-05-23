@@ -1,0 +1,567 @@
+/* ConsciousnessBlueprint.module.css */
+/* Single-page report: dark, minimal, astronomical */
+
+.root {
+  --bg: #050508;
+  --surface: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.06);
+  --teal: #00e5ff;
+  --violet: #7c4dff;
+  --pink: #ff00ea;
+  --text: #e8e8e8;
+  --muted: rgba(255, 255, 255, 0.45);
+  --glow-teal: 0 0 30px rgba(0, 229, 255, 0.15);
+  --glow-violet: 0 0 40px rgba(124, 77, 255, 0.12);
+
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Identity Seal (hero) ── */
+.seal {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px 80px;
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(124, 77, 255, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
+}
+
+.seal::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+}
+
+.badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 4px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  padding: 8px 20px;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(0, 229, 255, 0.04);
+  box-shadow: var(--glow-teal);
+}
+
+.csn {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.identity {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #fff 0%, #b0b0b0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mbtiRow {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.chip {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--border);
+}
+
+.chipMbti {
+  color: var(--teal);
+  border-color: rgba(0, 229, 255, 0.25);
+  background: rgba(0, 229, 255, 0.06);
+}
+
+.chipHawkins {
+  color: var(--violet);
+  border-color: rgba(124, 77, 255, 0.25);
+  background: rgba(124, 77, 255, 0.06);
+}
+
+.chipDharma {
+  color: var(--pink);
+  border-color: rgba(255, 0, 234, 0.2);
+  background: rgba(255, 0, 234, 0.05);
+}
+
+.urgency {
+  margin-top: 16px;
+}
+
+.urgencyBar {
+  width: 200px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 8px auto 0;
+  overflow: hidden;
+}
+
+.urgencyFill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--violet));
+  transition: width 2s ease;
+}
+
+/* ── Section layout ── */
+.section {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  position: relative;
+}
+
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+
+.sectionLabel {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 4px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.sectionTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 20px;
+  line-height: 1.3;
+}
+
+.body {
+  font-size: 1rem;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+
+.bodyMuted {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.highlight {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ── Mirror (2-sentence recognition) ── */
+.mirror {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  text-align: center;
+  position: relative;
+}
+
+.mirror::before,
+.mirror::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+}
+
+.mirror::before {
+  top: 40px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.3), transparent);
+}
+
+.mirror::after {
+  bottom: 40px;
+  background: linear-gradient(90deg, transparent, rgba(124, 77, 255, 0.3), transparent);
+}
+
+.mirrorText {
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  line-height: 1.6;
+  color: #fff;
+  font-style: italic;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── Psychic Map (grid) ── */
+.psychicGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 24px 0;
+}
+
+@media (max-width: 560px) {
+  .psychicGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mapCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.mapLabel {
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-family: 'Orbitron', monospace;
+}
+
+.mapValue {
+  font-size: 0.95rem;
+  color: #fff;
+  line-height: 1.5;
+}
+
+/* ── Vedic section ── */
+.vedicCard {
+  background: linear-gradient(135deg, rgba(124, 77, 255, 0.06), rgba(0, 229, 255, 0.04));
+  border: 1px solid rgba(124, 77, 255, 0.15);
+  border-radius: 16px;
+  padding: 28px;
+  margin: 24px 0;
+  box-shadow: var(--glow-violet);
+}
+
+/* ── Shadow / Complex ── */
+.complexCard {
+  background: var(--surface);
+  border-left: 3px solid var(--violet);
+  border-radius: 0 14px 14px 0;
+  padding: 24px 28px;
+  margin: 24px 0;
+}
+
+.complexLabel {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  color: var(--violet);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── Pattern Loop (3 cards) ── */
+.loopGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+
+@media (max-width: 640px) {
+  .loopGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loopCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.loopIcon {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.loopTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.loopText {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Frequency Doorway ── */
+.doorway {
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.doorwayText {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  color: #fff;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.doorwaySub {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+/* ── Witness Question ── */
+.witness {
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.witness::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 234, 0.3), transparent);
+}
+
+.witnessLabel {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 4px;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.witnessText {
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+}
+
+/* ── Scripture ── */
+.scripture {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.scriptureLabel {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.scriptureText {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.8;
+  font-style: italic;
+}
+
+/* ── Products ── */
+.productsSection {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.productsHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.productsTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.productsSub {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.productCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: border-color 0.3s ease;
+}
+
+.productCard:hover {
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.productIcon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.productInfo {
+  flex: 1;
+}
+
+.productName {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.productHeadline {
+  font-size: 0.9rem;
+  color: var(--teal);
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+.productWhy {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.productPriceRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.productOldPrice {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.productPrice {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.1rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.productCta {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(124, 77, 255, 0.15));
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 8px;
+  color: var(--teal);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.productCta:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(124, 77, 255, 0.25));
+  box-shadow: var(--glow-teal);
+}
+
+/* ── Share bar ── */
+.shareBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.shareLabel {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.shareBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.shareBtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  box-shadow: var(--glow-teal);
+}
+
+/* ── Print / single-page constraint ── */
+@media print {
+  .root {
+    background: #fff;
+    color: #000;
+  }
+  .seal { min-height: auto; padding: 40px 0; }
+  .section { padding: 30px 0; }
+  .productCta { border: 1px solid #000; }
+}

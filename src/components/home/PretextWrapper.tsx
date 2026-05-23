@@ -108,7 +108,7 @@ export default function PretextWrapper({
   }, [prepared, width, lineHeight, centerExclusion, scrollPos]);
 
   if (lines.length === 0) {
-    return <div ref={containerRef} className={className} style={{ width, font, opacity: 0 }}>{text}</div>;
+    return <div ref={containerRef} className={className} style={{ width: `${width}px`, font: font, opacity: '0' }}>{text}</div>;
   }
 
   return (
@@ -117,12 +117,12 @@ export default function PretextWrapper({
       className={className} 
       style={{ 
         position: 'relative', 
-        height: lines.length * lineHeight, // Use full height to prevent clipping
+        height: `${lines.length * lineHeight}px`, 
         width: '100%', 
-        maxWidth: width,
+        maxWidth: `${width}px`,
         font: font,
         margin: align === 'center' ? '0 auto' : '0',
-        minHeight: lineHeight,
+        minHeight: `${lineHeight}px`,
         textAlign: align,
         ...style
       }}

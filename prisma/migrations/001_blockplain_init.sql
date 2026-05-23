@@ -1,62 +1,75 @@
 -- 001_blockplain_init.sql
+-- Blockplain schema migration for Spiritual AI
+-- Compatible with Neon (Postgres serverless)
 
--- 1. Create PlaneXCounter
-CREATE TABLE "PlaneXCounter" (
-    "id" SERIAL NOT NULL,
-    CONSTRAINT "PlaneXCounter_pkey" PRIMARY KEY ("id")
+BEGIN;
+
+-- 1. PlaneXCounter table (must be created before User)
+CREATE TABLE IF NOT EXISTS "PlaneXCounter" (
+    "id" SERIAL PRIMARY KEY
 );
 
--- 2. Create User
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "uid" TEXT NOT NULL,
-    "email" TEXT,
-    "plane_x" INTEGER,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-CREATE UNIQUE INDEX "User_uid_key" ON "User"("uid");
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-CREATE UNIQUE INDEX "User_plane_x_key" ON "User"("plane_x");
+-- 2. User table
+CREATE TABLE IF NOT EXISTS "User" (
+    "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    "uid" TEXT NOT NULL UNIQUE,
+    "email" TEXT UNIQUE,
+    "plane_x" INTEGER UNIQUE,
+    "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
 
--- 3. Create Blueprint
-CREATE TABLE "Blueprint" (
-    "csn" TEXT NOT NULL,
-    "sequenceNumber" SERIAL NOT NULL,
-    "userId" TEXT NOT NULL,
+    CONSTRAINT "User_plane_x_check" CHECK ("plane_x" IS NULL OR "plane_x" >= 1)
+);
+
+-- 3. Blueprint table (the "blocks" of the blockplain)
+CREATE TABLE IF NOT EXISTS "Blueprint" (
+    "csn" TEXT PRIMARY KEY,
+    "sequence_number" SERIAL NOT NULL UNIQUE,
+    "user_id" TEXT NOT NULL,
     "plane_x" INTEGER NOT NULL,
     "plane_y" INTEGER NOT NULL,
     "prev_block_hash" TEXT,
     "mbti" TEXT NOT NULL,
     "archetype" TEXT NOT NULL,
     "symbol" TEXT NOT NULL,
-    "verifyCode" TEXT NOT NULL,
-    "reportData" JSONB NOT NULL,
-    "isComplete" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "Blueprint_pkey" PRIMARY KEY ("csn"),
+    "verify_code" TEXT NOT NULL UNIQUE,
+    "report_data" JSONB NOT NULL DEFAULT '{}',
+    "is_complete" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    -- Foreign keys
+    CONSTRAINT "Blueprint_user_fk" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE,
+
+    -- Blockplain coordinate constraint (sacred)
     CONSTRAINT "Blueprint_blockplain_coordinate_unique" UNIQUE ("plane_x", "plane_y"),
-    CONSTRAINT "Blueprint_plane_x_check" CHECK (plane_x >= 1),
-    CONSTRAINT "Blueprint_plane_y_check" CHECK (plane_y >= 1)
-);
-CREATE UNIQUE INDEX "Blueprint_verifyCode_key" ON "Blueprint"("verifyCode");
-CREATE INDEX "Blueprint_plane_y_idx" ON "Blueprint"("plane_y");
-CREATE INDEX "Blueprint_mbti_plane_y_idx" ON "Blueprint"("mbti", "plane_y");
-CREATE INDEX "Blueprint_archetype_plane_y_idx" ON "Blueprint"("archetype", "plane_y");
 
--- 4. Create Session
-CREATE TABLE "Session" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "blueprintCsn" TEXT,
+    -- Check constraints
+    CONSTRAINT "Blueprint_plane_y_check" CHECK ("plane_y" >= 1),
+    CONSTRAINT "Blueprint_plane_x_check" CHECK ("plane_x" >= 1)
+);
+
+-- 4. Session table
+CREATE TABLE IF NOT EXISTS "Session" (
+    "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_id" TEXT NOT NULL,
+    "blueprint_csn" TEXT,
     "messages" JSONB NOT NULL DEFAULT '[]',
-    "completionPercent" INTEGER NOT NULL DEFAULT 0,
-    "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "lastActiveAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+    "completion_percent" INTEGER NOT NULL DEFAULT 0,
+    "started_at" TIMESTAMP NOT NULL DEFAULT NOW(),
+    "last_active_at" TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT "Session_user_fk" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE,
+    CONSTRAINT "Session_blueprint_fk" FOREIGN KEY ("blueprint_csn") REFERENCES "Blueprint"("csn") ON DELETE SET NULL
 );
 
--- Add Foreign Keys
-ALTER TABLE "Blueprint" ADD CONSTRAINT "Blueprint_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "Session" ADD CONSTRAINT "Session_blueprintCsn_fkey" FOREIGN KEY ("blueprintCsn") REFERENCES "Blueprint"("csn") ON DELETE SET NULL ON UPDATE CASCADE;
+-- 5. Indexes (performance for blockplain queries)
+CREATE INDEX IF NOT EXISTS "Blueprint_plane_y_idx" ON "Blueprint"("plane_y");
+CREATE INDEX IF NOT EXISTS "Blueprint_mbti_plane_y_idx" ON "Blueprint"("mbti", "plane_y");
+CREATE INDEX IF NOT EXISTS "Blueprint_archetype_plane_y_idx" ON "Blueprint"("archetype", "plane_y");
+CREATE INDEX IF NOT EXISTS "Blueprint_user_id_idx" ON "Blueprint"("user_id");
+CREATE INDEX IF NOT EXISTS "Blueprint_verify_code_idx" ON "Blueprint"("verify_code");
+CREATE INDEX IF NOT EXISTS "Session_user_id_idx" ON "Session"("user_id");
+CREATE INDEX IF NOT EXISTS "Session_blueprint_csn_idx" ON "Session"("blueprint_csn");
+CREATE INDEX IF NOT EXISTS "User_uid_idx" ON "User"("uid");
+CREATE INDEX IF NOT EXISTS "User_plane_x_idx" ON "User"("plane_x");
+
+COMMIT;

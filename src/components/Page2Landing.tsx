@@ -147,15 +147,14 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
         </div>
         
         <div className={styles.invitationCtaWrapper}>
-          <motion.button 
+          <motion.button
             onClick={scrollToTop}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={styles.ctaButton}
           >
-            Reveal My Pattern
-          </motion.button>
-        </div>
+            Chat with AI
+          </motion.button>        </div>
       </motion.div>
     </div>
   );

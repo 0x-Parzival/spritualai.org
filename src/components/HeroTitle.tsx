@@ -53,7 +53,7 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                             className={styles.subtitleText}
                         />
                         <PretextWrapper 
-                            text="The only system decoding you through astrology, analytical psychology, and MBTI architecture."
+                            text="The only AI that helps you understand who you are beneath your thoughts, habits, fears, personality, and inner conflicts."
                             font="400 clamp(12px, 1.5vw, 20px) 'Inter', sans-serif"
                             width={1100}
                             centerExclusion={true}

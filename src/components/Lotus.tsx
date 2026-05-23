@@ -306,8 +306,18 @@ export default function Lotus({ quizMode = false, lotusOffset = 0, isChatActive 
 
     return (
         <>
-        <div style={{ ...cssVars, opacity: quizMode ? 0.2 : 0.83, transition: 'opacity 0.8s ease', pointerEvents: isChatActive ? 'none' : 'auto' }} className={styles.stage} ref={containerRef}>
-            <div className={styles.lightWash}></div>
+        <div style={{ 
+            ...cssVars, 
+            opacity: quizMode ? 0.2 : 0.83, 
+            transition: 'opacity 0.8s ease, filter 0.8s ease', 
+            pointerEvents: isChatActive ? 'none' : 'auto',
+            filter: page === 3 ? 'brightness(1.4)' : 'brightness(0.7)'
+        }} className={styles.stage} ref={containerRef}>
+            <div className={styles.lightWash} style={{ 
+                opacity: page === 3 ? 1.0 : 0.6,
+                transform: `translateX(-50%) scale(${page === 3 ? 2.5 : 1})`,
+                transition: 'all 1.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}></div>
             <svg width="0" height="0" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
                 <defs>
                     <radialGradient id="neonGrad" cx="50%" cy="10%" r="110%">

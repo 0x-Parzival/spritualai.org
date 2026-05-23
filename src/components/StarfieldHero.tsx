@@ -22,7 +22,7 @@ export default function StarfieldHero({ boost = false }: { boost?: boolean }) {
         const PARTICLE_BASE_RADIUS = 0.5;
         const FL = 500;
         const DEFAULT_SPEED = 2;
-        const BOOST_SPEED = 300;
+        const BOOST_SPEED = 150; // 50% slower than original 300
 
         // State
         let speed = DEFAULT_SPEED;
@@ -96,6 +96,10 @@ export default function StarfieldHero({ boost = false }: { boost?: boolean }) {
             const activeBoost = boost || targetSpeed === BOOST_SPEED;
             const currentTarget = activeBoost ? BOOST_SPEED : DEFAULT_SPEED;
             speed += (currentTarget - speed) * (activeBoost ? 0.05 : 0.01);
+
+            // Dynamic transparency based on boost state
+            // User requested 80% transparent (0.2 alpha) by default.
+            context.globalAlpha = activeBoost ? 0.1 : 0.2;
 
             let p: Particle;
             let cx, cy;

@@ -37,15 +37,19 @@
 
 .lightWash {
     position: absolute;
-    bottom: 50%;
+    bottom: 0%;
     left: 50%;
     transform: translateX(-50%);
-    width: 600px;
-    height: 800px;
-    background: radial-gradient(ellipse at bottom, rgba(53, 248, 255, 0.12), rgba(255, 60, 245, 0.05) 40%, transparent 70%);
-    filter: blur(40px);
+    width: 1200px; /* Increased from 600px */
+    height: 1200px; /* Increased from 800px */
+    background: radial-gradient(circle at bottom, 
+        rgba(53, 248, 255, 0.45) 0%, 
+        rgba(255, 60, 245, 0.25) 30%, 
+        rgba(112, 0, 255, 0.1) 60%,
+        transparent 80%);
+    filter: blur(80px);
     pointer-events: none;
-    z-index: -2;
+    z-index: -1; /* Behind petals but above stage background */
 }
 
 
