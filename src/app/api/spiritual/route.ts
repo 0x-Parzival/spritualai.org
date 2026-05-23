@@ -552,12 +552,117 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
 }
 
 async function preGenerateReport(userState: any, history: any[]) {
-    // Build the report entirely in code -- no LLM needed for structure
-    // Only use LLM for creative sections (scripture, validation, teaching)
+    // Build the entire report in code — zero LLM dependency for structure
+    // This guarantees the report always generates successfully
     
     const mbtiType = userState.confirmedMBTI || 'SEEKER';
     const mbtiProfile = MBTI_PROFILES[mbtiType] || MBTI_PROFILES['INFP'];
-    const patternName = (userState.detectedPattern || 'unknown').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const patternName = (userState.detectedPattern || 'unknown')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (c: string) => c.toUpperCase());
+    const problem = userState.monetizableProblem || 'Unfulfilled potential';
+    const shadow = userState.jungianArchetype || 'The Hidden Self';
+    const birthDate = userState.birthDate;
+    const hawkinsLevel = userState.hawkinsLevel || 0;
+    const lifeStage = userState.lifeStage || 'The Journey';
+    const csn = userState.csn || 'PENDING';
+    const gender = userState.gender || 'unknown';
+    const budget = userState.budget || 'mid';
+
+    // ── Build products from catalog (deterministic, no LLM) ──
+    let products: any[] = [];
+    try {
+      products = recommendProducts(
+        userState.detectedPattern || 'self_sabotage',
+        mbtiType,
+        budget,
+        gender
+      );
+    } catch (e) {
+      console.error('Product recommendation failed:', e);
+    }
+    // Ensure we always have 3 products
+    if (products.length < 3) {
+      const fallbacks = [
+        { id: 'consciousness_blueprint', name: 'The Complete Consciousness Blueprint', headline: 'Your complete transformation system — all patterns, all paths.', whyYou: `Built for your architecture: ${mbtiType} with ${patternName}.`, formats: ['ebook', 'audiobook', 'ai_chatbot', 'mini_app'], price: 97, originalPrice: 197, urgencyLine: 'Complete system. Limited founding member pricing.', ctaText: 'Get My Blueprint', imageQuery: 'consciousness stars universe transformation', patternMatch: 'all' },
+        { id: 'perfectionism_blueprint', name: 'The Perfectionism Dissolution Blueprint', headline: 'From paralysis to precision in 21 days.', whyYou: 'A systematic framework for the architecture behind your perfectionism.', formats: ['ebook', 'audiobook', 'mini_app'], price: 67, originalPrice: 127, urgencyLine: '89 people with your cognitive profile started this week.', ctaText: 'Start The System', imageQuery: 'mountain clarity precision', patternMatch: 'perfectionism' },
+        { id: 'shadow_work_journal', name: 'The Shadow Work Journal', headline: "Break the pattern you've been carrying for years.", whyYou: 'Built for the exact pattern running beneath your surface.', formats: ['ebook', 'audiobook', 'ai_chatbot'], price: 47, originalPrice: 97, urgencyLine: 'Downloaded by 247 people with your pattern this week.', ctaText: 'Begin The Break', imageQuery: 'shadow light transformation lotus', patternMatch: userState.detectedPattern || 'self_sabotage' },
+      ];
+      for (const fb of fallbacks) {
+        if (!products.find((p: any) => p.id === fb.id)) products.push(fb);
+        if (products.length >= 3) break;
+      }
+    }
+    products = products.slice(0, 3);
+
+    // ── Try LLM for creative content (non-critical, short timeout) ──
+    let scripture = `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`;
+    let validation = `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`;
+    let teaching = `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}. The dissolution protocol is: one imperfect action per day for 21 days.`;
+
+    // Extract user's own words from history for personalization
+    const userWords = history
+      .filter((h: any) => h.role === 'user')
+      .map((h: any) => h.content)
+      .join(' ')
+      .slice(0, 500);
+
+    try {
+      const shortPrompt = `You are Chaitanya. Write a 2-sentence "validation" for a ${mbtiType} user whose pattern is "${patternName}" and core problem is "${problem}". Use their own words where possible: "${userWords.slice(0, 200)}". Output JSON: { "validation": "..." }`;
+      const creativeContent = await groqChat(shortPrompt, "Write validation only.", 0.3, MODELS.report);
+      const cleaned = creativeContent.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
+      const creative = JSON.parse(cleaned);
+      if (creative.validation) validation = creative.validation;
+    } catch (e) {
+      // Use default validation — already set above
+    }
+
+    // ── Build the complete report ──
+    const report = {
+      header: { architecture: mbtiType, patternName, urgencyPercent: 75, loc: hawkinsLevel, csn },
+      meta: {
+        frequencyEstimate: 'High — this pattern activates daily',
+        coreShadowPattern: shadow,
+        rootBelief: 'I am not enough as I am',
+        dharmaPhase: lifeStage,
+        identifiedProblem: problem,
+      },
+      vedicOverview: birthDate
+        ? { lagnaAndMoon: `Born ${birthDate}`, currentDasha: 'Active transformation period', saturnStatus: 'Growth through discipline' }
+        : { lagnaAndMoon: '[Add birth date to unlock Vedic insights]', currentDasha: 'Unknown', saturnStatus: 'Unknown' },
+      validation,
+      realCause: 'A pattern installed before conscious choice was possible. Your mind made a decision to survive your environment. That decision became automatic.',
+      patternLoop: {
+        trigger: 'New opportunity or challenge',
+        copingMechanism: 'Initial excitement followed by avoidance when difficulty arises',
+        humanCost: 'Years of unfinished potential and growing self-doubt',
+      },
+      frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
+      teaching,
+      witnessQuestion: 'What would you do if you knew you could not fail?',
+      scriptureOfTheSelf: scripture,
+    };
+
+    return NextResponse.json({ success: true, data: { report, products } });
+}
+
+async function generateReport(userState: any, history: any[], userId: string, preGeneratedReport?: any) {
+    // Use pre-generated report if available (from preGenerateReport)
+    if (preGeneratedReport?.report) {
+        return NextResponse.json({
+            success: true,
+            data: {
+                report: preGeneratedReport.report,
+                products: preGeneratedReport.products || [],
+                csn: userState.csn || '',
+            },
+        });
+    }
+
+    // Otherwise, build report in code (same as preGenerateReport)
+    const mbtiType = userState.confirmedMBTI || 'SEEKER';
+    const mbtiProfile = MBTI_PROFILES[mbtiType] || MBTI_PROFILES['INFP'];
+    const patternName = (userState.detectedPattern || 'unknown').replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
     const problem = userState.monetizableProblem || 'Unfulfilled potential';
     const shadow = userState.jungianArchetype || 'The Hidden Self';
     const birthDate = userState.birthDate;
@@ -565,248 +670,60 @@ async function preGenerateReport(userState: any, history: any[]) {
     const lifeStage = userState.lifeStage || 'The Journey';
     const csn = userState.csn || 'PENDING';
 
-    // Try to get creative content from LLM (non-critical, fallback available)
-    let scripture = `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`;
-    let validation = 'What you have been calling a weakness is actually an unmet depth.';
-    let teaching = `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}.`;
-
+    // Build products
+    let products: any[] = [];
     try {
-        const creativePrompt = `You are Chaitanya, a Spiritual Intelligence. The user has been identified as:
-- Consciousness Identity: ${patternName}
-- MBTI: ${mbtiType} (${mbtiProfile.name})
-- Core Problem: ${problem}
-- Shadow: ${shadow}
-- Birth: ${birthDate || 'Unknown'}
-
-Write THREE short creative sections (2-3 sentences each):
-1. SCRIPTURE OF THE SELF: A mythic story about this pattern using their exact words from the conversation
-2. VALIDATION: A precise observation that makes them feel deeply seen
-3. TEACHING: What their specific architecture needs to learn next
-
-Output JSON only: { "scripture": "...", "validation": "...", "teaching": "..." }
-
-Conversation history: ${JSON.stringify(history).slice(0, 3000)}`;
-
-        const creativeContent = await groqChat(creativePrompt, "Write the creative sections.", 0.3, MODELS.report);
-        let cleaned = creativeContent.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
-        const creative = JSON.parse(cleaned);
-        if (creative.scripture) scripture = creative.scripture;
-        if (creative.validation) validation = creative.validation;
-        if (creative.teaching) teaching = creative.teaching;
-    } catch (e) {
-        console.error('Creative content generation failed, using defaults:', e);
-    }
-
-    // Build products from catalog
-    let products = [];
-    try {
-        products = recommendProducts(
-            userState.detectedPattern || 'self_sabotage',
-            mbtiType,
-            userState.budget || 'mid',
-            userState.gender || 'unknown'
-        );
-    } catch (e) {
-        console.error('Product recommendation failed:', e);
-        // Fallback products
-        products = [
-            { id: 'consciousness_blueprint', name: 'The Complete Consciousness Blueprint', headline: 'Your complete transformation system — all patterns, all paths.', whyYou: `Built for your architecture: ${mbtiType}.`, formats: ['ebook', 'audiobook', 'ai_chatbot', 'mini_app'], price: 97, originalPrice: 197, urgencyLine: 'Complete system. Limited founding member pricing.', ctaText: 'Get My Blueprint', imageQuery: 'consciousness stars universe transformation', patternMatch: 'all' },
-            { id: 'perfectionism_blueprint', name: 'The Perfectionism Dissolution Blueprint', headline: 'From paralysis to precision in 21 days.', whyYou: 'A systematic framework for your perfectionism.', formats: ['ebook', 'audiobook', 'mini_app'], price: 67, originalPrice: 127, urgencyLine: '89 people with your cognitive profile started this week.', ctaText: 'Start The System', imageQuery: 'mountain clarity precision', patternMatch: 'perfectionism' },
-            { id: 'shadow_work_journal', name: 'The Shadow Work Journal', headline: "Break the pattern you've been carrying for years.", whyYou: 'Built for the exact pattern running beneath your surface.', formats: ['ebook', 'audiobook', 'ai_chatbot'], price: 47, originalPrice: 97, urgencyLine: 'Downloaded by 247 people with your pattern this week.', ctaText: 'Begin The Break', imageQuery: 'shadow light transformation lotus', patternMatch: userState.detectedPattern || 'self_sabotage' }
+        products = recommendProducts(userState.detectedPattern || 'self_sabotage', mbtiType, userState.budget || 'mid', userState.gender || 'unknown');
+    } catch (e) { console.error('Product recommendation failed:', e); }
+    if (products.length < 3) {
+        const fallbacks = [
+            { id: 'consciousness_blueprint', name: 'The Complete Consciousness Blueprint', headline: 'Your complete transformation system.', whyYou: `Built for ${mbtiType}.`, formats: ['ebook', 'audiobook', 'ai_chatbot', 'mini_app'], price: 97, originalPrice: 197, urgencyLine: 'Limited founding member pricing.', ctaText: 'Get My Blueprint', imageQuery: 'consciousness stars universe', patternMatch: 'all' },
+            { id: 'perfectionism_blueprint', name: 'The Perfectionism Dissolution Blueprint', headline: 'From paralysis to precision in 21 days.', whyYou: 'A systematic framework for your perfectionism.', formats: ['ebook', 'audiobook', 'mini_app'], price: 67, originalPrice: 127, urgencyLine: '89 people started this week.', ctaText: 'Start The System', imageQuery: 'mountain clarity precision', patternMatch: 'perfectionism' },
+            { id: 'shadow_work_journal', name: 'The Shadow Work Journal', headline: "Break the pattern you've been carrying.", whyYou: 'Built for your exact pattern.', formats: ['ebook', 'audiobook', 'ai_chatbot'], price: 47, originalPrice: 97, urgencyLine: '247 people this week.', ctaText: 'Begin The Break', imageQuery: 'shadow light lotus', patternMatch: userState.detectedPattern || 'self_sabotage' },
         ];
+        for (const fb of fallbacks) {
+            if (!products.find((p: any) => p.id === fb.id)) products.push(fb);
+            if (products.length >= 3) break;
+        }
     }
+    products = products.slice(0, 3);
 
     const report = {
-        header: {
-            architecture: mbtiType,
-            patternName,
-            urgencyPercent: 75,
-            loc: hawkinsLevel,
-            csn
-        },
-        meta: {
-            frequencyEstimate: 'High — this pattern activates daily',
-            coreShadowPattern: shadow,
-            rootBelief: 'I am not enough as I am',
-            dharmaPhase: lifeStage,
-            identifiedProblem: problem
-        },
-        vedicOverview: birthDate ? {
-            lagnaAndMoon: `Born ${birthDate}`,
-            currentDasha: 'Active transformation period',
-            saturnStatus: 'Growth through discipline'
-        } : {
-            lagnaAndMoon: '[Add birth date to unlock Vedic insights]',
-            currentDasha: 'Unknown',
-            saturnStatus: 'Unknown'
-        },
-        validation,
+        header: { architecture: mbtiType, patternName, urgencyPercent: 75, loc: hawkinsLevel, csn },
+        meta: { frequencyEstimate: 'High — this pattern activates daily', coreShadowPattern: shadow, rootBelief: 'I am not enough as I am', dharmaPhase: lifeStage, identifiedProblem: problem },
+        vedicOverview: birthDate ? { lagnaAndMoon: `Born ${birthDate}`, currentDasha: 'Active transformation period', saturnStatus: 'Growth through discipline' } : { lagnaAndMoon: '[Add birth date to unlock Vedic insights]', currentDasha: 'Unknown', saturnStatus: 'Unknown' },
+        validation: `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`,
         realCause: 'A pattern installed before conscious choice was possible. Your mind made a decision to survive. That decision became automatic.',
-        patternLoop: {
-            trigger: 'New opportunity or challenge',
-            copingMechanism: 'Initial excitement followed by avoidance when difficulty arises',
-            humanCost: 'Years of unfinished potential and growing self-doubt'
-        },
+        patternLoop: { trigger: 'New opportunity or challenge', copingMechanism: 'Initial excitement followed by avoidance when difficulty arises', humanCost: 'Years of unfinished potential and growing self-doubt' },
         frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
-        teaching,
+        teaching: `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}.`,
         witnessQuestion: 'What would you do if you knew you could not fail?',
-        scriptureOfTheSelf: scripture
+        scriptureOfTheSelf: `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`,
     };
+
+    // Save to blueprints table
+    let finalCsn = userState.csn || '';
+    let verifyCode = '';
+    try {
+        const insertRes = await sql`
+            INSERT INTO blueprints (user_id, mbti, archetype, symbol, verify_code, csn, report_data, products_data)
+            VALUES (${userId}, ${userState.confirmedMBTI || 'SEEKER'}, ${userState.activeArchetype || 'seeker'}, 'Ψ', 'PENDING', 'TEMP-' || gen_random_uuid(), ${JSON.stringify(report)}, ${JSON.stringify(products)})
+            RETURNING sequence_number, id
+        `;
+        const seq = insertRes[0].sequence_number;
+        const dbId = insertRes[0].id;
+        const { createHash } = await import('crypto');
+        const raw = `${seq}${userState.confirmedMBTI || 'SEEKER'}${Date.now()}`;
+        verifyCode = createHash('sha256').update(raw).digest('hex').slice(0, 4).toUpperCase();
+        const symbol = userState.activeArchetype === 'sovereign' ? 'Ω' : userState.activeArchetype === 'seeker' ? 'Ψ' : userState.activeArchetype === 'catalyst' ? 'Δ' : userState.activeArchetype === 'architect' ? 'Σ' : userState.activeArchetype === 'visionary' ? 'Φ' : 'Λ';
+        finalCsn = `SAI-${seq}-${userState.confirmedMBTI || 'SEEKER'}-${symbol}-${verifyCode}`;
+        await sql`UPDATE blueprints SET csn = ${finalCsn}, verify_code = ${verifyCode}, symbol = ${symbol} WHERE id = ${dbId}`;
+    } catch (e) {
+        console.error('Blueprint Storage Error:', e);
+    }
 
     return NextResponse.json({
         success: true,
-        data: {
-            report,
-            products
-        }
-    });
-}
-
-async function generateReport(userState: any, history: any[], userId: string, preGeneratedReport?: any) {
-    let reportData = preGeneratedReport;
-
-    if (!reportData) {
-        const topStruggle = userState.monetizableProblem || history.slice(-2).map((h: any) => h.content).join(' ');
-        let finalRagContext = '';
-        try {
-            const finalRagResults = await searchKnowledge(topStruggle, 5);
-            if (finalRagResults && finalRagResults.length > 0) {
-                finalRagContext = finalRagResults.map(r => "[Source: " + (r.metadata?.source || "unknown") + "]: " + r.content).join('\n');
-            }
-        } catch (e) {
-            console.error('searchKnowledge failed in generateReport:', e);
-        }
-
-        const safeHistory = JSON.stringify(history).length > 8000 ? JSON.stringify(history).substring(0, 8000) : JSON.stringify(history);
-
-        const reportPrompt = `You are Intelligence. Final Synthesis.
-Generate a Spiritual Blueprint report as JSON. Keep each field concise.
-
-CORE DATA:
-- Pattern: ${userState.detectedPattern || 'Unknown'}
-- MBTI: ${userState.confirmedMBTI || 'Unknown'}
-- Problem: ${userState.monetizableProblem || 'Unknown'}
-- Consciousness Level: ${userState.hawkinsLevel || 'Unknown'}
-- Birth Date: ${userState.birthDate || 'Not provided'}
-
-${finalRagContext ? `WISDOM:\n${finalRagContext.slice(0, 2000)}` : ''}
-
-History: ${safeHistory}
-
-OUTPUT ONLY valid JSON (no markdown, no code fences):
-{
-  "report": {
-    "header": { "architecture": "${userState.confirmedMBTI || 'SEEKER'}", "patternName": "${(userState.detectedPattern || 'Unknown').replace(/_/g, ' ')}", "urgencyPercent": 75, "loc": ${userState.hawkinsLevel || 0} },
-    "meta": { "frequencyEstimate": "High", "coreShadowPattern": "${userState.jungianArchetype || 'The Hidden Self'}", "rootBelief": "Installed early", "dharmaPhase": "${userState.lifeStage || 'The Journey'}", "identifiedProblem": "${userState.monetizableProblem || 'Unknown'}" },
-    "vedicOverview": { "lagnaAndMoon": "${userState.birthDate ? 'Born ' + userState.birthDate : 'Add birth date to unlock'}", "currentDasha": "Active growth period", "saturnStatus": "Discipline brings rewards" },
-    "validation": "Your pattern is known. It was installed before you had the cognitive capacity to reject it.",
-    "realCause": "A survival mechanism that became automatic.",
-    "patternLoop": { "trigger": "New challenge", "copingMechanism": "Excitement then avoidance", "humanCost": "Unfinished potential" },
-    "frequencyDoorway": "Ship before you feel ready.",
-    "teaching": "Your path is through disciplined action.",
-    "witnessQuestion": "What would you do if you knew you could not fail?",
-    "scriptureOfTheSelf": "There was a mind that could see every possibility but committed to none. One day it realized: the door was not locked. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish."
-  },
-  "products": [
-    { "id": "consciousness_blueprint", "name": "The Complete Consciousness Blueprint", "headline": "Your complete transformation system.", "whyYou": "Built for your architecture: ${userState.confirmedMBTI || 'seeker'}.", "formats": ["ebook", "audiobook", "ai_chatbot", "mini_app"], "price": 97, "originalPrice": 197, "urgencyLine": "Limited founding member pricing.", "ctaText": "Get My Blueprint", "imageQuery": "consciousness stars universe transformation", "patternMatch": "all" },
-    { "id": "perfectionism_blueprint", "name": "The Perfectionism Dissolution Blueprint", "headline": "From paralysis to precision in 21 days.", "whyYou": "A systematic framework for your perfectionism.", "formats": ["ebook", "audiobook", "mini_app"], "price": 67, "originalPrice": 127, "urgencyLine": "89 people started this week.", "ctaText": "Start The System", "imageQuery": "mountain clarity precision", "patternMatch": "perfectionism" },
-    { "id": "shadow_work_journal", "name": "The Shadow Work Journal", "headline": "Break the pattern you've been carrying.", "whyYou": "Built for your exact pattern.", "formats": ["ebook", "audiobook", "ai_chatbot"], "price": 47, "originalPrice": 97, "urgencyLine": "247 people with your pattern this week.", "ctaText": "Begin The Break", "imageQuery": "shadow light transformation lotus", "patternMatch": "${userState.detectedPattern || 'self_sabotage'}" }
-  ]
-}`;
-        // Try with retries
-        for (let attempt = 0; attempt < 3; attempt++) {
-            try {
-                const responseContent = await groqChat(reportPrompt, "Generate the report JSON only.", 0.1, MODELS.report);
-                let cleaned = responseContent.trim();
-                cleaned = cleaned.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
-                reportData = JSON.parse(cleaned);
-                if (reportData?.report && reportData?.products) break;
-            } catch (e) {
-                console.error(`generateReport attempt ${attempt + 1} failed:`, e);
-            }
-        }
-        if (!reportData) reportData = { report: null, products: [] };
-    }
-
-    // Ensure products exist even if report was pre-generated without them
-    if (!reportData.products || reportData.products.length === 0) {
-        try {
-            reportData.products = recommendProducts(
-                userState.detectedPattern || 'self_sabotage',
-                userState.confirmedMBTI || 'INFP',
-                userState.budget || 'mid',
-                userState.gender || 'unknown'
-            );
-        } catch (e) { console.error('Fallback products failed:', e); }
-    }
-
-    // VIRAL ENGINE: Save to blueprints table
-    let finalCsn = userState.csn || "";
-    let verifyCode = "";
-
-    try {
-        // 1. Insert initial record to get sequence number
-        const insertRes = await sql`
-            INSERT INTO blueprints (
-                user_id, 
-                mbti, 
-                archetype, 
-                symbol, 
-                verify_code, 
-                csn, 
-                report_data, 
-                products_data
-            ) VALUES (
-                ${userId}, 
-                ${userState.confirmedMBTI || "SEEKER"}, 
-                ${userState.activeArchetype || "seeker"}, 
-                'Ψ', 
-                'PENDING', 
-                'TEMP-' || gen_random_uuid(), 
-                ${JSON.stringify(reportData.report)}, 
-                ${JSON.stringify(reportData.products)}
-            ) RETURNING sequence_number, id
-        `;
-
-        const seq = insertRes[0].sequence_number;
-        const dbId = insertRes[0].id;
-
-        // 2. Generate official CSN
-        const { csn, hash } = await generateCSN(
-            seq, 
-            userState.confirmedMBTI || "SEEKER", 
-            userState.activeArchetype || "seeker"
-        );
-        finalCsn = csn;
-        verifyCode = hash;
-
-        // 3. Update record with final CSN
-        await sql`
-            UPDATE blueprints 
-            SET csn = ${finalCsn}, verify_code = ${verifyCode}, symbol = ${finalCsn.split('-')[3]}
-            WHERE id = ${dbId}
-        `;
-
-    } catch (e) {
-        console.error("Blueprint Storage Error:", e);
-    }
-
-    if (userId) {
-        try {
-            const memoryAnchor = await groqChat("Summarize user breakthrough in 1 surgical sentence.", JSON.stringify(history.slice(-6)), 0.1, MODELS.chat);
-            await addUserMemory(userId, JSON.parse(memoryAnchor).summary || memoryAnchor, { archetype: userState.activeArchetype });
-            const evolution = await groqChat("Reflect on this interaction. Output JSON {reflection, human_pattern_observed, evolution_shift}.", "Reflect.", 0.1, MODELS.chat);
-            const evo = JSON.parse(evolution);
-            await addAiMemory(evo.reflection, evo.human_pattern_observed, evo.evolution_shift);
-        } catch (e) {}
-    }
-
-    return NextResponse.json({ 
-        success: true, 
-        data: { 
-            report: reportData.report, 
-            products: reportData.products,
-            csn: finalCsn
-        } 
+        data: { report, products, csn: finalCsn },
     });
 }
