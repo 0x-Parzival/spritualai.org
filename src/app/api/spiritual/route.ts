@@ -222,10 +222,10 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
     let isReady = parsedArchitect.ready_for_report === true;
     
     // Initialize dimensions with existing state merged with new deductions
-    const dimensions = {
+    const dimensions: Record<string, number> = {
         pattern: 0, problem: 0, mbti: 0, jungian: 0, loc: 0, vedic: 0,
-        ...(userState.identifiedLayers?.scoringDimensions || {}),
-        ...(parsedArchitect.dimensions || {})
+        ...((userState.identifiedLayers?.scoringDimensions || {}) as Record<string, number>),
+        ...((parsedArchitect.dimensions || {}) as Record<string, number>),
     };
 
     const isTrivial = userAnswer.trim().length < 5 || userAnswer.toLowerCase().match(/^(hi|hello|hey|test|idk)$/);
@@ -369,6 +369,19 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
         userState.forcedQuestionsAsked = fq;
     }
 
+    // ASSIGN CSN early so it's available for the completion response
+    let assignedCSN = userState.csn || null;
+    if (!assignedCSN && (reportScore >= 78 || round >= 3)) {
+        try {
+            const countResult = await sql`SELECT last_value + 1 as next_val FROM blueprints_sequence_number_seq`;
+            const nextVal = countResult[0]?.next_val || 1000;
+            const { csn } = await generateCSN(nextVal, parsedArchitect.confirmed_mbti || userState.confirmedMBTI || "SEEKER", archetype);
+            assignedCSN = csn;
+        } catch (e) {
+            console.error("CSN Generation Error:", e);
+        }
+    }
+
     if (shouldComplete) {
         // Pre-generate report so it's ready for immediate display
         let report = null;
@@ -476,19 +489,7 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
         decodingProgress = Math.min(decodingProgress, 5);
     }
 
-    // ASSIGN CSN only when confidence is high (78%+) or we are deep in the conversation
-    let assignedCSN = userState.csn || null;
-    if (!assignedCSN && (reportScore >= 78 || round >= 3)) {
-        try {
-            // Get next sequence number
-            const countResult = await sql`SELECT last_value + 1 as next_val FROM blueprints_sequence_number_seq`;
-            const nextVal = countResult[0]?.next_val || 1000; // Fallback
-            const { csn } = await generateCSN(nextVal, parsedArchitect.confirmed_mbti || userState.confirmedMBTI || "SEEKER", archetype);
-            assignedCSN = csn;
-        } catch (e) {
-            console.error("CSN Generation Error:", e);
-        }
-    }
+    // (assignedCSN already computed above for completion response)
 
     // PERSISTENCE FOR LOGGED-IN USERS: Store identified pillars in real-time
     if (userId) {

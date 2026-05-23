@@ -627,9 +627,144 @@
     top: 50%;
     left: 10%; 
     transform: translateY(-50%);
-    z-index: -1; 
+    z-index: -1;
     pointer-events: none;
-    opacity: 0.075; 
+    opacity: 0.075;
     filter: blur(2px);
     transition: opacity 1.5s ease;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════ */
+
+@media (max-width: 767px) {
+    .buttonGroup {
+        width: calc(100vw - 32px);
+        margin-bottom: 16px;
+    }
+
+    .ctaPromptText {
+        font-size: 0.7rem;
+        bottom: calc(100% + 12px);
+    }
+
+    .staticCounter {
+        font-size: 0.55rem;
+        padding: 6px 12px;
+        bottom: calc(100% + 10px);
+    }
+
+    .struggleBubbles {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px;
+    }
+
+    .bubble {
+        padding: 8px 14px;
+        font-size: 0.65rem;
+    }
+
+    .startInteractiveBtn {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        margin-top: 8px;
+        width: 100%;
+        font-size: 0.55rem;
+        padding: 10px 16px;
+    }
+
+    .startInteractiveBtn:hover {
+        transform: none;
+    }
+
+    .progressModule {
+        padding: 10px 14px;
+    }
+
+    .progressLabel {
+        font-size: 0.6rem;
+    }
+
+    .pillarsModule {
+        padding: 10px 14px;
+    }
+
+    .pillarLabel {
+        font-size: 0.5rem;
+    }
+
+    .pillarIndicator {
+        width: 6px;
+        height: 6px;
+    }
+
+    .proofTooltip {
+        display: none;
+    }
+
+    .chatThread {
+        max-height: 50vh;
+        padding: 12px;
+    }
+
+    .messageRow {
+        margin-bottom: 10px;
+    }
+
+    .chatBubble {
+        font-size: 0.85rem;
+        padding: 10px 14px;
+        max-width: 85%;
+    }
+
+    .optionBubble {
+        padding: 8px 14px;
+        font-size: 0.7rem;
+    }
+
+    .inputLayout {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .messageInput {
+        font-size: 0.85rem;
+        padding: 12px 16px;
+    }
+
+    .handoverText {
+        font-size: 1rem;
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .struggleBubbles {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 4px;
+    }
+
+    .bubble {
+        padding: 7px 10px;
+        font-size: 0.6rem;
+    }
+
+    .chatBubble {
+        font-size: 0.8rem;
+        max-width: 90%;
+    }
+}
+
+/* Touch-friendly tap targets */
+@media (hover: none) and (pointer: coarse) {
+    .bubble,
+    .optionBubble,
+    .startInteractiveBtn,
+    .shareBtn,
+    .productCta {
+        min-height: 44px;
+    }
 }

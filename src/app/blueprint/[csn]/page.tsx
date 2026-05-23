@@ -11,12 +11,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { csn } = await params;
   const blueprint = await prisma.blueprint.findUnique({
     where: { csn },
-    select: { header: true, meta: true },
+    select: { reportData: true, archetype: true, mbti: true },
   });
 
   if (!blueprint) return { title: 'Blueprint Not Found · Spiritual AI' };
 
-  const patternName = (blueprint as any).header?.patternName || 'Unknown';
+  const rd = blueprint.reportData as any;
+  const patternName = rd?.header?.patternName || blueprint.archetype.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
   return {
     title: `${patternName} · Consciousness Blueprint · Spiritual AI`,
     description: `Decoded consciousness blueprint: ${patternName}. See the full psychic map, Vedic coordinates, and pattern dissolution path.`,

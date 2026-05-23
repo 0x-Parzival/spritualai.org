@@ -37,10 +37,21 @@ const DEFAULT_USER_STATE: UserState = {
     },
     confirmedMBTI: null,
     detectedPattern: null,
+    shadowPattern: null,
+    activeArchetype: null,
+    personaMask: null,
+    complexIdentified: null,
+    monetizableProblem: null,
+    jungianArchetype: undefined,
+    hawkinsLevel: undefined,
     patternConfidence: 0,
     decodingProgress: 0,
     unconsciousPatterns: [],
     triggerWords: [],
+    budget: 'unknown',
+    questionCount: 0,
+    exchangeHistory: [],
+    finalShare: null,
     interestScore: 50,
     estimatedTargetQuestions: 10,
     sessionConfig: {
@@ -63,6 +74,9 @@ const DEFAULT_USER_STATE: UserState = {
     },
     report: null,
     recommendedProducts: [],
+    csn: undefined,
+    vedicDeclined: undefined,
+    forcedQuestionsAsked: [],
 };
 
 const STRUGGLES = ["Peace", "Abundance", "Love", "Energy", "Purpose", "Clarity"];
@@ -286,8 +300,8 @@ export default function HeroCTA({
                 if (aiData.emotionScore !== undefined) setUserEmotion(aiData.emotionScore);
                 
                 const transmission = aiData.mirroringLine ? `${aiData.mirroringLine}\n\n${aiData.question}` : (aiData.question || "Continue...");
-                const prevPillars = Object.values(userState.identifiedLayers?.scoringDimensions || {}).filter(v => v >= 78).length;
-                const nextPillars = Object.values(aiData.identifiedLayers?.scoringDimensions || {}).filter(v => (v as number) >= 78).length;
+                const prevPillars = Object.values(userState.identifiedLayers?.scoringDimensions || {}).filter((v: any) => v >= 78).length;
+                const nextPillars = Object.values(aiData.identifiedLayers?.scoringDimensions || {}).filter((v: any) => (v as number) >= 78).length;
                 if (nextPillars > prevPillars) setInsightTrigger(prev => prev + 1);
                 
                 setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
@@ -374,7 +388,7 @@ export default function HeroCTA({
                                             { id: 'loc', label: 'Consciousness' },
                                             { id: 'vedic', label: 'Vedic' }
                                         ].map((pillar) => {
-                                            const confidence = userState.identifiedLayers?.scoringDimensions?.[pillar.id] || 0;
+                                            const confidence = (userState.identifiedLayers?.scoringDimensions as any)?.[pillar.id] || 0;
                                             const isActive = confidence >= 78;
                                             return (
                                                 <div key={pillar.id} className={styles.pillarWrapper}>

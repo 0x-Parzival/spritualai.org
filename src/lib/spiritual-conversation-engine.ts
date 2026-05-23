@@ -99,8 +99,8 @@ export interface UserState {
   };
 
   // Intelligence Layers
-  identifiedLayers?: Record<string, string>;
-  identifiedVedic?: Record<string, string>;
+  identifiedLayers?: Record<string, any>;
+  identifiedVedic?: Record<string, any>;
   currentBranch?: 'Relationship' | 'Career' | 'Purpose' | 'Health' | 'unknown';
   currentEvent?: string;
   currentReason?: string;
@@ -108,6 +108,9 @@ export interface UserState {
   // Output
   report: ConsciousnessReport | null;
   recommendedProducts: Product[];
+  vedicDeclined?: boolean;
+  forcedQuestionsAsked?: string[];
+  csn?: string;
   originPoint?: {
     csn: string;
     hash: string;
@@ -684,6 +687,9 @@ export function createInitialUserState(chip: string): UserState {
     activeArchetype: null,
     personaMask: null,
     complexIdentified: null,
+    jungianArchetype: undefined,
+    monetizableProblem: null,
+    hawkinsLevel: undefined,
     patternConfidence: 0,
     decodingProgress: 0,
     unconsciousPatterns: [],
