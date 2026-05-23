@@ -31,8 +31,8 @@ export interface UserState {
 }
 
 export const INITIAL_QUESTIONS = [
-  "If you woke up tomorrow with one thing resolved, what would it be?",
-  "Before I go deeper — so I can be precise rather than generic — are you more the type who leads with your heart or your head? And roughly what season of life are you in — early twenties, thirties, forties or beyond?",
+  "Welcome. What area of your life needs transformation: peace, abundance, love, energy, purpose, or clarity?",
+  "Before I go deeper — are you more heart or head? And what season of life are you in: twenties, thirties, forties or beyond?",
   "PATTERN_DEEP_DIVE", // Placeholder for dynamic Q3
   "People come here at different points in their journey. Some need a quick tool — others are ready for a complete transformation. If the right solution existed, would you be looking at something under $30, around $50-100, or are you serious enough to invest beyond that?",
   "Last thing — is there anything you haven't told me yet that feels important? Sometimes the thing we hold back is the thing that changes everything."

@@ -14,7 +14,9 @@ export default function MobileHome() {
         function generateStars(element: HTMLDivElement | null, count: number, maxSize = 2000) {
             if (!element) return;
             const stars = [];
-            for (let i = 0; i < count; i++) {
+            // Reduced count for mobile performance
+            const safeCount = Math.min(count, 150); 
+            for (let i = 0; i < safeCount; i++) {
                 const x = Math.floor(Math.random() * maxSize);
                 const y = Math.floor(Math.random() * maxSize);
                 stars.push(`${x}px ${y}px #FFF`);
@@ -30,8 +32,8 @@ export default function MobileHome() {
             }
         }
 
-        generateStars(stars2Ref.current, 400);
-        generateStars(stars3Ref.current, 400);
+        generateStars(stars2Ref.current, 150);
+        generateStars(stars3Ref.current, 150);
 
         // ---------------- SHOOTING STARS ----------------
         const createShootingStar = () => {

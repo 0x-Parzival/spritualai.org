@@ -67,6 +67,18 @@ function BlueprintContent() {
         return <div className={styles.container} style={{ justifyContent: 'center', alignItems: 'center' }}>Synchronizing architecture...</div>;
     }
 
+    if (!userState) {
+        return (
+            <div className={styles.container} style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '20px' }}>
+                <h1 className={styles.headline}>Architectural signature not found.</h1>
+                <p className={styles.paragraph}>We could not retrieve your blueprint. Please ensure you have completed the decoding process.</p>
+                <button className={styles.ctaButton} onClick={() => router.push('/')} style={{ marginTop: '20px' }}>
+                    Begin My Reading
+                </button>
+            </div>
+        );
+    }
+
     const mbti = userState.confirmed_mbti || userState.confirmedMBTI || "INFP";
     const pattern = userState.pain_pattern || userState.detectedPattern || "The Unconscious Loop";
     const report = userState.report || {};

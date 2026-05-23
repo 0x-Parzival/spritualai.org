@@ -3,11 +3,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './EyeComponent.module.css';
 
-export default function EyeComponent() {
+export default function EyeComponent({ isThinking = false, insight = 0, emotion = 50 }: { isThinking?: boolean, insight?: number, emotion?: number }) {
     const eyeRef = useRef<HTMLDivElement>(null);
     const lidsRef = useRef<HTMLDivElement>(null);
     const irisRef = useRef<HTMLDivElement>(null);
     const pupilRef = useRef<HTMLDivElement>(null);
+
+    const [flash, setFlash] = useState(false);
+
+    // Map emotion (0-100) to a color spectrum (Red to Green)
+    const getIrisBackground = (score: number) => {
+        // Simple linear interpolation between Red (#ff4d4d) and Green (#00ff7f)
+        const r = Math.round(255 * (1 - score / 100) + 0 * (score / 100));
+        const g = Math.round(77 * (1 - score / 100) + 255 * (score / 100));
+        const b = Math.round(77 * (1 - score / 100) + 127 * (score / 100));
+        const baseColor = `rgb(${r}, ${g}, ${b})`;
+        return `radial-gradient(circle, ${baseColor} 30%, #000 95%)`;
+    };
+
+    useEffect(() => {
+        if (insight > 0) {
+            setFlash(true);
+            const timer = setTimeout(() => setFlash(false), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [insight]);
 
     const stateRef = useRef({
         anger: 0,
@@ -173,7 +193,11 @@ export default function EyeComponent() {
     return (
         <div className={styles.eyeContainer}>
             <div className={styles.eye} ref={eyeRef}>
-                <div className={styles.iris} ref={irisRef}>
+                <div 
+                    className={`${styles.iris} ${isThinking ? styles.thinkingIris : ''} ${flash ? styles.insightFlare : ''}`} 
+                    ref={irisRef}
+                    style={{ background: getIrisBackground(emotion) }}
+                >
                     <div className={styles.pupil} ref={pupilRef}>
                         <div className={styles.pupilShine} />
                     </div>

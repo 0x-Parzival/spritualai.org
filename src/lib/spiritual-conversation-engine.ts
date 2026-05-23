@@ -15,6 +15,7 @@ export interface UserState {
 
   // Demographics (collected naturally)
   gender: 'male' | 'female' | 'unknown';
+  preferredLanguage?: string;
   ageRange: '15-21' | '22-28' | '28-35' | '35-42' | '42-50' | '50+' | 'unknown';
   lifeStage: string;
   birthDate?: string;
@@ -85,6 +86,10 @@ export interface UserState {
     hesitationDetected?: boolean;
     linguisticFlags?: string[];
   };
+
+  // Interest Scoring
+  interestScore: number;
+  estimatedTargetQuestions: number;
 
   // Session Config
   sessionConfig: {
@@ -664,6 +669,7 @@ export function createInitialUserState(chip: string): UserState {
     chipSelected: chip,
     firstAnswer: '',
     gender: 'unknown',
+    preferredLanguage: 'English',
     ageRange: 'unknown',
     lifeStage: 'The Journey',
     mbtiSignals: {
@@ -696,17 +702,81 @@ export function createInitialUserState(chip: string): UserState {
       isFatigued: false,
       sessionStartTime: Date.now(),
     },
+    interestScore: 50,
+    estimatedTargetQuestions: 10,
     sessionConfig: {
-      targetQuestions: 5,
-      maxQuestions: 8,
+      targetQuestions: 10,
+      maxQuestions: 18,
       pacingMode: 'deep',
     },
     identifiedLayers: {},
+    forcedQuestionsAsked: [],
     identifiedVedic: {},
     report: null,
     recommendedProducts: [],
     originPoint: undefined,
   };
+}
+
+// ============================================================
+// INTEREST SCORING ENGINE
+// ============================================================
+
+export function calculateInterestScore(userAnswer: string, state: UserState): number {
+  let score = state.interestScore || 50;
+  const history = state.exchangeHistory;
+  const round = state.questionCount;
+  
+  // 1. QUANTITATIVE SIGNALS
+  
+  // Message Length (High Weight)
+  const wordCount = userAnswer.split(/\s+/).filter(w => w.length > 0).length;
+  if (wordCount > 20) score += 10;
+  else if (wordCount > 12) score += 5;
+  else if (wordCount < 5) score -= 10;
+  
+  // Response Time (Medium Weight)
+  if (state.tracking?.lastMessageTimestamp) {
+    const responseTime = (Date.now() - state.tracking.lastMessageTimestamp) / 1000;
+    if (responseTime < 15) score += 5;
+    else if (responseTime > 45) score -= 5;
+  }
+  
+  // Session Duration (High Weight)
+  const sessionStartTime = state.tracking?.sessionStartTime || Date.now();
+  const sessionDuration = (Date.now() - sessionStartTime) / 1000 / 60; // minutes
+  if (sessionDuration > 4) score += 10;
+  else if (sessionDuration < 1.5 && round > 3) score -= 10;
+  
+  // Rounds (Messages Sent)
+  if (round > 8) score += 10;
+  else if (round < 3 && round > 0) score -= 5;
+  
+  // 2. QUALITATIVE SIGNALS (Keywords & Patterns)
+  
+  const lowCase = userAnswer.toLowerCase();
+  
+  // Spiritual / Emotional Language
+  const spiritualKeywords = ["feel", "energy", "healing", "purpose", "soul", "spirit", "universe", "vibration", "trauma", "pattern"];
+  const hasSpiritual = spiritualKeywords.some(k => lowCase.includes(k));
+  if (hasSpiritual) score += 10;
+  
+  // Positive Feedback / Engagement
+  const engagementKeywords = ["thank", "helpful", "wow", "wow", "amazing", "insight", "true", "exactly"];
+  if (engagementKeywords.some(k => lowCase.includes(k))) score += 8;
+  
+  // Questions Asked by User
+  if (userAnswer.includes("?")) score += 10;
+  
+  // Pricing / Action Inquiry
+  const actionKeywords = ["price", "cost", "how does it work", "tell me more", "buy", "purchase"];
+  if (actionKeywords.some(k => lowCase.includes(k))) score += 15;
+  
+  // Personal Info Shared (Check state)
+  if (state.birthDate || state.name || state.monetizableProblem) score += 15;
+
+  // Cap the score
+  return Math.min(100, Math.max(0, score));
 }
 
 // ============================================================

@@ -40,21 +40,17 @@ async function groqChat(systemPrompt: string, userMessage: string, model = "llam
  * Generates a hyper-personalized greeting based on MBTI.
  */
 export async function generateGreeting(mbti: string, userName: string = "User"): Promise<string> {
-    const fallback = `Hey ${userName}, as an ${mbti}, you're wired differently — and that’s your superpower. Your architecture is designed for depth and precision. Let's unlock your next version.`;
+    const fallback = `Hey ${userName}. As an ${mbti}, you are wired for depth. Let's unlock your next version.`;
 
     try {
         const prompt = `System: You are an ultra-premium AI brand consultant for SpiritualAI.store. 
     Task: Write a hyper-personalized greeting for a user with MBTI type [${mbti}].
     Tone: Visionary, Revolutionary, Emotionally intelligent, Ultra-premium.
-    Length: Short, impactful (3-4 sentences).
+    Length: Very short, punchy (1-2 sentences).
     
     Structure:
-    "Hey ${userName}, as an ${mbti}, you're wired differently — and that’s your superpower."
-    Follow with:
-    - Core strengths
-    - Core internal conflict
-    - Hidden frustration
-    - Untapped advantage
+    "Hey ${userName}. As an ${mbti}, you are wired for depth."
+    Follow with one punchy line about their core advantage or path.
     
     Make them feel: Seen, Understood, Emotionally validated. 
     Avoid generic language. Make it intimate and trillion-dollar global quality.

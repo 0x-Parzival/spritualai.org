@@ -9,6 +9,7 @@ import { Skeleton } from 'boneyard-js/react';
 import { Share2, MessageCircle, Twitter, Lock } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
 import LegacyLogin from '../LegacyLogin';
+import { ARCHETYPE_THEMES } from '../CosmicBackground';
 
 interface DetailedReportProps {
     userState: UserState | null;

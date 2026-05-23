@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useSpring, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useSpring, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import HeroTitle from './HeroTitle';
 import HeroCTA from './HeroCTA';
 import NavButtons from './NavButtons';
@@ -11,6 +11,8 @@ import MiniHeroBranding from './home/MiniHeroBranding';
 import PretextWrapper from './home/PretextWrapper';
 import dynamic from 'next/dynamic';
 import { useUser } from '@clerk/nextjs';
+import { useIsMobile } from '@/lib/useIsMobile';
+import MobileHome from '@/app/mobile-home/page';
 
 const FishTank = dynamic(() => import('./artistic/FishTank'), { ssr: false });
 const Lotus = dynamic(() => import('./Lotus'), { ssr: false });
@@ -22,11 +24,9 @@ const InfinitePetals = dynamic(() => import('./InfinitePetals'), { ssr: false })
 const PatternDeconstruction = dynamic(() => import('./home/PatternDeconstruction'), { ssr: false });
 const EyeComponent = dynamic(() => import('./artistic/EyeComponent'), { ssr: false });
 const DetailedReport = dynamic(() => import('./home/DetailedReport'), { ssr: false });
-const ProductsKit = dynamic(() => import('./home/ProductsKit'), { ssr: false });
-const SatyalokaArrival = dynamic(() => import('./home/SatyalokaArrival'), { ssr: false });
 
 export default function SpiritualAIComponent() {
-    const { isSignedIn } = useUser();
+    const { isLoaded, isSignedIn } = useUser();
     const [isGlassActive, setIsGlassActive] = useState(false);
     const [finalState, setFinalState] = useState<any>(null);
     const [chatRound, setChatRound] = useState(0);
@@ -40,7 +40,11 @@ export default function SpiritualAIComponent() {
     const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
     const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
 
+    const [mounted, setMounted] = useState(false);
+    const isMobile = useIsMobile();
+
     useEffect(() => {
+        setMounted(true);
         const handleMouseMove = (e: MouseEvent) => {
             mouseX.set((e.clientX / window.innerWidth) - 0.5);
             mouseY.set((e.clientY / window.innerHeight) - 0.5);
@@ -50,12 +54,6 @@ export default function SpiritualAIComponent() {
     }, [mouseX, mouseY]);
 
     useEffect(() => {
-        // We no longer restore state on mount to keep the home page fresh as per user request.
-        // The report is accessible via the "My Profile" section for logged-in users.
-        localStorage.removeItem('spiritualAiState'); 
-    }, []);
-
-    useEffect(() => {
         if (isChatActive) {
             document.body.style.overflow = 'hidden';
             document.body.style.height = '100vh';
@@ -63,10 +61,6 @@ export default function SpiritualAIComponent() {
             document.body.style.overflow = '';
             document.body.style.height = '';
         }
-        return () => {
-            document.body.style.overflow = '';
-            document.body.style.height = '';
-        };
     }, [isChatActive]);
 
     const handleChatComplete = React.useCallback((state: any) => {
@@ -81,10 +75,6 @@ export default function SpiritualAIComponent() {
     }, []);
 
     useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        const totalHeight = finalState ? 4 : 3;
-        const currentVh = latest * totalHeight;
-
-        // Optimized state updates
         if (latest >= 0.995) {
             if (!atBottom) setAtBottom(true);
         } else {
@@ -92,9 +82,15 @@ export default function SpiritualAIComponent() {
         }
     });
 
-    const handleArchitectureView = React.useCallback((title: string) => {
-        setLastReadArchitecture(title);
-    }, []);
+    if (!mounted) return <div style={{ background: '#000', width: '100vw', height: '100vh' }} />;
+
+    // ─── MOBILE REDIRECT ───
+    if (isMobile) {
+        return <MobileHome />;
+    }
+
+    // Determine if we should show the CTA
+    const showHeroCTA = isLoaded && (!finalState || isSignedIn);
 
     return (
         <main style={{ 
@@ -102,45 +98,38 @@ export default function SpiritualAIComponent() {
             height: isChatActive ? '100vh' : '300vh', 
             width: '100%',
             maxWidth: '100%',
-            background: '#030303',
+            backgroundColor: '#030303',
             overflowX: 'clip',
             overflowY: isChatActive ? 'hidden' : 'clip'
         }}>
             {/* Nav Buttons (Absolute at top) */}
-            <AnimatePresence>
-                {!isChatActive && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        style={{ position: 'absolute', top: 0, left: '0', width: '100%', zIndex: '1000', pointerEvents: 'none' }}
-                    >
-                        <div style={{ pointerEvents: 'auto' }}>
-                            <NavButtons />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ position: 'absolute', top: '0px', left: '0px', width: '100%', zIndex: '10000', pointerEvents: 'none' }}
+            >
+                <div style={{ pointerEvents: 'auto' }}>
+                    <NavButtons />
+                </div>
+            </motion.div>
 
-            {/* Background Layer 0: Dynamic Ocean */}
             <OceanBackground />
 
-            {/* Background Layer 1: Stars (Single fixed instance) */}
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', zIndex: '3500', pointerEvents: 'none', opacity: 0.8 }}>
+            <div style={{ position: 'fixed', top: '0px', left: '0px', width: '100%', height: '100vh', zIndex: '3500', pointerEvents: 'none', opacity: '0.8' }}>
                 <StarfieldHero boost={!!finalState} />
             </div>
 
-            {/* Shared HeroCTA (Persistent across pages) */}
-            {(!finalState || isSignedIn) && (
+            {/* Shared HeroCTA */}
+            {showHeroCTA && (
                 <div style={{
                     position: 'fixed', 
-                    bottom: 0, 
-                    left: '0', 
+                    bottom: '0px', 
+                    left: '0px', 
                     width: '100%',
                     display: 'flex', 
                     justifyContent: 'center', 
                     pointerEvents: 'none',
-                    zIndex: isChatActive ? '9500' : '9000' // Move above EVERYTHING during chat
+                    zIndex: isChatActive ? '9500' : '9000'
                 }}>
                     <HeroCTA 
                         onGlassChange={setIsGlassActive} 
@@ -157,7 +146,7 @@ export default function SpiritualAIComponent() {
                 {!isChatActive && <InfinitePetals />}
             </AnimatePresence>
 
-            {/* Background Waves Layer 1: Colorful (Page 1 & 2) */}
+            {/* Background Waves */}
             <AnimatePresence>
                 {!isChatActive && (
                     <motion.div 
@@ -179,7 +168,6 @@ export default function SpiritualAIComponent() {
                 )}
             </AnimatePresence>
 
-            {/* Background Waves Layer 2: Matte Black (Ends at P2) */}
             <div style={{
                 position: 'absolute',
                 top: 'calc(148vh + 7.04cm - 2cm)', 
@@ -196,7 +184,6 @@ export default function SpiritualAIComponent() {
 
             {/* CONTENT SECTIONS */}
             <div style={{ position: 'relative', width: '100%', maxWidth: '100%', overflow: 'visible' }}>
-                {/* Transition Overlay to bring background forward over waves */}
                 <div style={{
                     position: 'absolute',
                     top: '180vh',
@@ -208,7 +195,6 @@ export default function SpiritualAIComponent() {
                     pointerEvents: 'none'
                 }} />
 
-                {/* PAGE 1: AI INTERACTION */}
                 <section style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: '3100' }}>
                     <AnimatePresence>
                         {!isChatActive && (
@@ -224,42 +210,51 @@ export default function SpiritualAIComponent() {
                         <FishTank />
                     </div>
                     {!finalState ? (
-                        <Page2Landing onArchitectureView={handleArchitectureView} />
+                        <Page2Landing onArchitectureView={(title) => setLastReadArchitecture(title)} />
                     ) : (
                         <DetailedReport userState={finalState} />
                     )}
                 </section>
 
-                {/* PAGE 3: EXTRA CONTEXT */}
-                <section style={{ 
-                    height: '100vh', 
+                <section style={{
+                    height: '100vh',
                     width: '100%',
-                    background: '#030303',
+                    backgroundColor: '#030303',
                     position: 'relative',
                     zIndex: '3150',
                     overflow: 'hidden',
-                    marginTop: '-2vh' // Pull up to touch the bottom of invitation container
+                    marginTop: '-2vh'
                     }}>
-                    {/* Background Waves Layer 3: Colorful (Page 3 Foreground) - Moved inside to manage stacking */}
+
                     <div style={{
                         position: 'absolute',
-                        top: 'calc(48vh + 3.04cm)', // Same as page 1
-                        left: '0',
-                        width: '100%',
-                        height: '152vh', // Same as page 1
-                        zIndex: '100',
- 
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '100vw',
+                        height: '100vh',
+                        background: 'radial-gradient(circle at center, rgba(53, 248, 255, 0.1) 0%, transparent 60%)',
+                        zIndex: '50',
                         pointerEvents: 'none',
-                        opacity: 0.77,
+                    }} />
+
+                    <div style={{
+                        position: 'absolute',
+                        top: 'calc(48vh + 3.04cm)',
+                        left: '0px',
+                        width: '100%',
+                        height: '152vh',
+                        zIndex: '100',
+                        pointerEvents: 'none',
+                        opacity: '0.77',
                         overflow: 'hidden'
                     }}>
                         <WavesHero variant="spiritual" />
                     </div>
 
-                    {/* Branding (Centered on Page 3) */}
                     <div style={{
                         position: 'absolute',
-                        top: '60px',
+                        top: '22px', 
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: '8000',
@@ -270,7 +265,7 @@ export default function SpiritualAIComponent() {
                         textAlign: 'center'
                     }}>
                         <MiniHeroBranding />
-                        <div style={{ marginTop: '-0.5cm', width: '100%' }}>
+                        <div style={{ marginTop: '0.5rem', width: '100%' }}>
                             <PretextWrapper
                                 text="Your pattern is not the problem. The way you’re trying to solve it is."
                                 font="300 clamp(10px, 1vw, 15.4px) 'Inter', sans-serif"
@@ -280,24 +275,23 @@ export default function SpiritualAIComponent() {
                                     color: 'rgba(53, 248, 255, 0.85)',
                                     letterSpacing: '0.4em',
                                     textTransform: 'uppercase',
-                                    opacity: 0.9,
+                                    opacity: '0.9',
                                     filter: 'drop-shadow(0 0 10px rgba(53, 248, 255, 0.3))'
                                 }}
                             />
                         </div>
                     </div>
-
-                    <div style={{ position: 'absolute', bottom: 'calc(15vh + 3cm)', left: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
-                        <PatternDeconstruction startIndex={0} initialDelay={5000} />
+                    
+                    <div style={{ position: 'absolute', bottom: 'calc(19vh + 3cm)', left: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
+                        <PatternDeconstruction startIndex={0} initialDelay={5000} randomize={true} />
                     </div>
 
-                    <div style={{ position: 'absolute', bottom: 'calc(15vh + 3cm)', right: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
-                        <PatternDeconstruction startIndex={2} initialDelay={10000} />
+                    <div style={{ position: 'absolute', bottom: 'calc(19vh + 3cm)', right: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
+                        <PatternDeconstruction startIndex={2} initialDelay={10000} randomize={true} />
                     </div>
 
                     <EyeComponent />
 
-                    {/* Social Links (Top Right on Page 3) */}
                     <div style={{
                         position: 'absolute',
                         top: '60px',
@@ -309,7 +303,6 @@ export default function SpiritualAIComponent() {
                 </section>
             </div>
 
-            {/* Fixed Floating Elements */}
             <FallingMan mouseX={mouseX} mouseY={mouseY} />
             {!isGeneratingReport && (!finalState || isSignedIn) && (
                 <Lotus quizMode={isChatActive} lotusOffset={lotusOffset} isChatActive={isChatActive} />
