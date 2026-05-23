@@ -157,8 +157,10 @@ export default function FullBlueprint({ userState }: FullBlueprintProps) {
             <AnimatePresence>
                 {!isAuthenticated && (
                     <AuthGate 
-                        onAuthenticated={handleAuthenticated} 
-                        mbtiType={confirmedMBTI} 
+                        {...({
+                            onAuthenticated: handleAuthenticated,
+                            mbtiType: confirmedMBTI
+                        } as any)}
                     />
                 )}
             </AnimatePresence>

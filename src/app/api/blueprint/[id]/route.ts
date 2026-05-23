@@ -3,10 +3,10 @@ import { sql } from '@/lib/db';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: Promise<{ csn: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { csn } = await params;
+        const { id: csn } = await params;
 
         // Fetch blueprint by CSN
         const result = await sql`

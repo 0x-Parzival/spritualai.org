@@ -9,7 +9,7 @@ import NavButtons from '@/components/NavButtons';
 import LiquidBackground from '@/components/artistic/LiquidBackground';
 
 export default function MBTISignupPage() {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp() as any;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
