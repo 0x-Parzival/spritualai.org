@@ -38,7 +38,7 @@ export default function LegacySignup({ isEmbedded = false }: { isEmbedded?: bool
                   footerActionLink: { color: '#00f2ff' }
                 }
               }}
-              routing="virtual"
+              routing={"path" as any}
               fallbackRedirectUrl="/#report-section"
             />
         </div>
