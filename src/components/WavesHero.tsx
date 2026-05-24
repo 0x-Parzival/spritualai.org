@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from 'react';
+import { useId, useEffect, useState } from 'react';
 import { motion, useTransform, useMotionValue } from 'framer-motion';
 
 interface WavesHeroProps {
@@ -21,7 +21,15 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
 
     const xOffset = useTransform(xBase as any, (x: number) => x * 10);
     const yOffset = useTransform(yBase as any, (y: number) => y * 10);
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
+
+    // For layout selection, we are never "mobile"
+    const isMobile = false;
+
+    // But for wave scaling, we want to know if it's a mobile device
+    const [isMobileDevice, setIsMobileDevice] = useState(false);
+    useEffect(() => {
+        setIsMobileDevice(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    }, []);
 
     // Standardized 3-stop theme colors
     const themeColors = {
@@ -69,7 +77,7 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
             pointerEvents: 'none',
             translateX: xOffset,
             translateY: yOffset,
-            scale: isMobile ? 1.5 : 1.1,
+            scale: isMobileDevice ? 1.5 : 1.1,
         }}>
             <svg
                 version="1.1"

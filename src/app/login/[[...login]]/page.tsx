@@ -9,7 +9,7 @@ import NavButtons from '@/components/NavButtons';
 import LiquidBackground from '@/components/artistic/LiquidBackground';
 
 export default function MBTILoginPage() {
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded, signIn, setActive } = useSignIn() as any;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

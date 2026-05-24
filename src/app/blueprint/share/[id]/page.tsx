@@ -15,7 +15,7 @@ export default function PublicBlueprintPage({ params }: { params: Promise<{ id: 
     const [error, setError] = useState(false);
 
     useEffect(() => {
-        fetch(`/api/blueprint/${id}`)
+        fetch(`/api/blueprint/${id}`) // Note: [csn] directory handles this
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
