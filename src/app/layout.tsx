@@ -76,6 +76,11 @@ export const metadata: Metadata = {
   }
 };
 
+export const viewport = {
+  width: 1280,
+  initialScale: 1,
+};
+
 // Comprehensive Schema Markup for SEO/GEO
 const websiteSchema = {
   "@context": "https://schema.org",
@@ -182,6 +187,15 @@ export default function RootLayout({
           <meta name="theme-color" content="#000000" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                  document.documentElement.classList.add('is-mobile-device');
+                }
+              `,
+            }}
+          />
         </head>
         <body
           suppressHydrationWarning
