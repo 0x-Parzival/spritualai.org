@@ -84,11 +84,6 @@ export default function SpiritualAIComponent() {
 
     if (!mounted) return <div style={{ background: '#000', width: '100vw', height: '100vh' }} />;
 
-    // ─── MOBILE REDIRECT ───
-    if (isMobile) {
-        return <MobileHome />;
-    }
-
     // Determine if we should show the CTA
     const showHeroCTA = isLoaded && (!finalState || isSignedIn);
 
