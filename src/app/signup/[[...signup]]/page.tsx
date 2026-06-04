@@ -228,6 +228,6 @@ export default function MBTISignupPage() {
         </motion.div>
       </div>
     </div>
-    </>
+    </div>
   );
 }
