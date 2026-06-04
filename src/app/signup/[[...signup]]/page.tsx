@@ -2,14 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from 'framer-motion';
 import styles from '../../quiz/quiz.module.css';
 import NavButtons from '@/components/NavButtons';
 import LiquidBackground from '@/components/artistic/LiquidBackground';
 
 export default function MBTISignupPage() {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { signUp } = useSignUp();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get('redirect') || '/blueprint';
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,30 +28,31 @@ export default function MBTISignupPage() {
     }
   }, []);
 
-  const signInWith = (strategy: string) => {
-    if (!isLoaded) return;
-    return signUp.authenticateWithRedirect({
-      strategy: strategy as any,
-      redirectUrl: "/sso-callback",
-      redirectUrlComplete: "/profile",
-    });
+  const signInWith = (_strategy: string) => {
+    // Clerk v7 OAuth: use Clerk's built-in flow
+    if (typeof window !== 'undefined') {
+      const clerkInstance = (window as any).__clerk;
+      if (clerkInstance?.redirectToSignUp) {
+        clerkInstance.redirectToSignUp({ signUpMode: 'oauth_google' });
+      }
+    }
   };
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    if (!isLoaded) return;
+    if (!signUp) return;
     
     setIsJoining(true);
     try {
-      await signUp.create({
+      const clerkSignUp: any = signUp;
+      await clerkSignUp.create({
         emailAddress: email,
         password,
       });
-
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      router.push("/verify-email"); 
+      await clerkSignUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      router.push(`/verify-email?redirect=${encodeURIComponent(redirectPath)}`); 
     } catch (err: any) {
       console.error(err);
       setError(err.errors?.[0]?.message || "Something went wrong.");
@@ -189,7 +192,7 @@ export default function MBTISignupPage() {
 
                 <button 
                     type="submit" 
-                    disabled={!isLoaded || isJoining}
+                    disabled={isJoining}
                     className={styles.optionBtn}
                     style={{ 
                         marginTop: '10px',
@@ -215,7 +218,7 @@ export default function MBTISignupPage() {
                 <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
                     Already recognized? 
                     <span 
-                        onClick={() => router.push('/login')}
+                        onClick={() => router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`)}
                         style={{ color: '#00e5ff', marginLeft: '8px', cursor: 'pointer', fontWeight: '600' }}
                     >
                         Access Identity

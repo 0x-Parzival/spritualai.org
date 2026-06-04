@@ -9,6 +9,8 @@ interface AuthGateProps {
   mode?: 'signin' | 'signup';
   onClose?: () => void;
   noOverlay?: boolean;
+  onAuthenticated?: (email: string) => void;
+  mbtiType?: string;
 }
 
 export default function AuthGate({ mode = 'signup', onClose, noOverlay = false }: AuthGateProps) {

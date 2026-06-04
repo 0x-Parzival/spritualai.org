@@ -10,7 +10,7 @@ export async function GET(
 
         // Fetch blueprint by Verify Code OR CSN
         const result = await sql`
-            SELECT * FROM blueprints WHERE verify_code = ${code.toUpperCase()} OR csn = ${code}
+            SELECT * FROM "Blueprint" WHERE "verifyCode" = ${code.toUpperCase()} OR csn = ${code}
         `;
 
         if (!result || result.length === 0) {
@@ -25,8 +25,8 @@ export async function GET(
                 csn: blueprint.csn,
                 mbti: blueprint.mbti,
                 archetype: blueprint.archetype,
-                createdAt: blueprint.created_at,
-                patternName: blueprint.report_data?.header?.patternName || "The Pattern"
+                createdAt: blueprint.createdAt,
+                patternName: blueprint.reportData?.report?.header?.patternName || blueprint.reportData?.header?.patternName || "The Pattern"
             } 
         });
     } catch (e) {

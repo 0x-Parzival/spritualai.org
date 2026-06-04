@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+/* ═══════════════════════════════════════════════════════════
+   SYNTHWAVE BLUEPRINT REPORT — GLOBAL STYLES
+   (Import this in layout.tsx or page.tsx)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --c1: hsl(219, 79%, 66%);
+  --c2: hsl(319, 100%, 60%);
+  --c3: hsl(266, 49%, 25%);
+  --c4: hsl(60, 82%, 58%);
+  --c5: hsl(0, 67%, 55%);
+  --c6: hsl(213, 96%, 11%);
+  --c2hsl: 319, 100%, 60%;
+  --neon-pink: #ff00ff;
+  --neon-cyan: #00ffff;
+  --neon-purple: #bf00ff;
+  --neon-yellow: #ffff00;
+  --neon-red: #ff3333;
+  --dark-bg: #0a0a1a;
+  --card-bg: rgba(15, 10, 30, 0.85);
+  --card-bg-hover: rgba(25, 15, 50, 0.95);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-dim: rgba(255, 255, 255, 0.4);
+  --radius: 19px;
+  --radius-sm: 12px;
+  --radius-lg: 28px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100vh;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--dark-bg);
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Synthwave Background ── */
+@property --outrun {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+
+@keyframes outrun {
+  to { --outrun: 1; }
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  filter: brightness(1.125);
+  animation: outrun 0.6s linear infinite;
+  background:
+    linear-gradient(transparent 20%, var(--c5) 60%, var(--c3) 60% 70%, hsla(var(--c2hsl), 0.75), transparent 150%),
+    repeating-linear-gradient(90deg, transparent 0px 2px, var(--c3) 3px 4px),
+    radial-gradient(circle at center, transparent min(45vh, 45vw), hsla(var(--c2hsl), 0.75) min(65vh, 65vw), var(--c3) 120%),
+    linear-gradient(
+      transparent 30vh,
+      var(--c5) 30vh 30.2vh,
+      transparent 30.2vh 35.2vh,
+      var(--c5) 35.2vh 36vh,
+      transparent 36vh 40vh,
+      var(--c5) 40vh 41.6vh,
+      transparent 41.6vh 45.1vh,
+      var(--c5) 45.1vh 48.6vh,
+      transparent 48.6vh 52.5vh,
+      var(--c5) 52.5vh 57.5vh,
+      transparent 57.5vh
+    ),
+    radial-gradient(circle at center, var(--c4) min(45vh, 45vw), transparent min(45vh, 45vw)),
+    linear-gradient(var(--c5) 60%, var(--c3) 60%, var(--c2) 150%);
+}

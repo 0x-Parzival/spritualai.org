@@ -3,14 +3,14 @@ import { sql } from '@/lib/db';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: Promise<{ csn: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { csn } = await params;
+        const { id: csn } = await params;
 
         // Fetch blueprint by CSN
         const result = await sql`
-            SELECT * FROM blueprints WHERE csn = ${csn}
+            SELECT * FROM "Blueprint" WHERE csn = ${csn}
         `;
 
         if (!result || result.length === 0) {
@@ -18,6 +18,14 @@ export async function GET(
         }
 
         const blueprint = result[0];
+        const reportDataRaw = blueprint.reportData || blueprint.report_data;
+        const reportData = typeof reportDataRaw === 'string' 
+            ? JSON.parse(reportDataRaw) 
+            : reportDataRaw;
+
+        if (!reportData) {
+             return NextResponse.json({ error: 'Report data missing' }, { status: 404 });
+        }
 
         return NextResponse.json({ 
             success: true, 
@@ -26,9 +34,9 @@ export async function GET(
                 mbti: blueprint.mbti,
                 archetype: blueprint.archetype,
                 symbol: blueprint.symbol,
-                createdAt: blueprint.created_at,
-                report: blueprint.report_data,
-                products: blueprint.products_data
+                createdAt: blueprint.createdAt || blueprint.created_at,
+                report: reportData.report || reportData, // Fallback to whole object if not nested
+                products: reportData.products || blueprint.products_data || []
             } 
         });
     } catch (e) {

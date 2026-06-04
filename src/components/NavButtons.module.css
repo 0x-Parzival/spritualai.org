@@ -290,3 +290,21 @@
     background: rgba(225, 48, 108, 0.1);
     border-color: #e1306c;
 }
+@media (max-width: 768px) {
+    .navLinkContrast {
+        font-size: 0.7rem;
+        letter-spacing: 0.4px;
+        padding: 0; 
+        gap: 0;
+    }
+
+    .navLinkContrast > span {
+        display: none; /* Hide text on mobile */
+    }
+
+    .iconWrapper,
+    .contactIconWrapper {
+        width: 32px; 
+        height: 32px;
+    }
+}

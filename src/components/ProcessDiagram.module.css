@@ -93,35 +93,46 @@
 @media (max-width: 640px) {
     .processSteps {
         flex-direction: row;
-        gap: 6px;
+        flex-wrap: nowrap;
+        gap: 4px;
         width: 100%;
         align-items: flex-start;
+        justify-content: center;
     }
-    
+
     .stepContainer {
         gap: 2px;
         flex: 1;
+        max-width: none;
+        width: auto;
     }
 
     .stepArrow {
+        display: block;
         transform: rotate(0deg);
-        font-size: 12px;
-        margin-top: 6px;
+        margin: 6px 0 0;
+        font-size: 0.6rem;
     }
 
     .processStep {
-        font-size: 7px;
-        padding: 0;
-        background: none;
-        border: none;
+        font-size: 6px;
+        padding: 2px 4px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: none;
-        backdrop-filter: none;
         text-align: center;
-        line-height: 1.2;
+        line-height: 1.1;
+        width: 100%;
+        white-space: normal;
     }
 
     .icon {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .iconWrapper {
+        width: 14px;
+        height: 14px;
     }
 }

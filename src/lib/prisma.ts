@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaNeon } from '@prisma/adapter-neon'
-import { Pool, neonConfig } from '@neondatabase/serverless'
+import { neonConfig } from '@neondatabase/serverless'
 import ws from 'ws'
 
 // Set up WebSocket for Node.js environment
@@ -10,8 +10,7 @@ if (typeof window === 'undefined') {
 
 const connectionString = process.env.DATABASE_URL || 'postgresql://user:pass@host/dbname?sslmode=require'
 
-const pool = new Pool({ connectionString })
-const adapter = new PrismaNeon(pool)
+const adapter = new PrismaNeon({ connectionString } as any)
 
 const prismaClientSingleton = () => {
   return new PrismaClient({ adapter })

@@ -115,23 +115,37 @@ export default function QuizPage() {
             setIsTransitioning(true);
             
             // Calculate Final MBTI
-            // conversation_signals (60% weight) + quiz_answers (40% weight)
-            // For now, we'll use a simplified version: predominantly quiz but influenced by state
             const quizMbti = calculateMBTI(newSignals);
             
             // Update state in localStorage
+            let finalState;
             if (userState) {
                 userState.confirmed_mbti = quizMbti;
                 userState.quiz_signals = newSignals;
-                localStorage.setItem('spiritualAiState', JSON.stringify(userState));
+                finalState = userState;
             } else {
-                localStorage.setItem('spiritualAiState', JSON.stringify({ confirmed_mbti: quizMbti, quiz_signals: newSignals }));
+                finalState = { confirmed_mbti: quizMbti, quiz_signals: newSignals };
             }
+            localStorage.setItem('spiritualAiState', JSON.stringify(finalState));
 
-            // Transition delay
-            setTimeout(() => {
+            // Trigger report generation (Blockplain Save)
+            fetch('/api/blockplain/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userState: finalState }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    router.push(`/blueprint/${data.data.csn}`);
+                } else {
+                    router.push('/blueprint');
+                }
+            })
+            .catch(err => {
+                console.error("Save error:", err);
                 router.push('/blueprint');
-            }, 3000);
+            });
         }
     };
 

@@ -6,24 +6,25 @@ import { motion, useTransform, useMotionValue } from 'framer-motion';
 interface WavesHeroProps {
     mouseX?: any;
     mouseY?: any;
-    mousePos?: { x: number; y: number }; // Fallback for backward compatibility
+    mousePos?: { x: number; y: number };
     variant?: 'default' | 'dark' | 'black' | 'spiritual';
+    isMobile?: boolean | null;
 }
 
-export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, variant = 'default' }: WavesHeroProps) {
+export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, variant = 'default', isMobile: isMobileProp }: WavesHeroProps) {
     const id = useId().replace(/:/g, "");
-    // Parallax effect for waves - fallback to constant MotionValue if props are missing
     const fallbackX = useMotionValue(mousePos.x);
     const fallbackY = useMotionValue(mousePos.y);
-    
+
     const xBase = mouseX || fallbackX;
     const yBase = mouseY || fallbackY;
 
     const xOffset = useTransform(xBase as any, (x: number) => x * 10);
     const yOffset = useTransform(yBase as any, (y: number) => y * 10);
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
 
-    // Standardized 3-stop theme colors
+    // Use prop if provided, otherwise fallback to window check
+    const isMobile = isMobileProp ?? (typeof window !== 'undefined' && window.innerWidth <= 768);
+
     const themeColors = {
         white: 'rgba(255, 255, 255, 0.75)',
         cyan: 'rgba(53, 248, 255, 0.55)',
@@ -55,8 +56,13 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
 
     const activeColors = colors[variant];
 
-    // Reverting to previous shape but keeping it normalized (no newlines)
-    const pathD = "M-363.852,50 c0,0,236.988-40.498,505.475,0 s371.981,39.499,575.971,0 s293.985-39.639,505.474,2.929 s493.475,44.184,716.963-2.497 v5000 H-363.852 V50 z";
+    // Reference values from 0x-Parzival/spritualai.org
+    const pathDDesktop = "M-363.852,50 c0,0,236.988-40.498,505.475,0 s371.981,39.499,575.971,0 s293.985-39.639,505.474,2.929 s493.475,44.184,716.963-2.497 v5000 H-363.852 V50 z";
+    const pathDMobile = "M 0 2000 0 500 Q 120 420 300 500 t 300 0 300 0 300 0 300 0 300 0 v700 z";
+
+    const pathD = isMobile ? pathDMobile : pathDDesktop;
+    const viewBox = isMobile ? "0 0 1000 700" : "0 0 1600 5200";
+    const preserveAspectRatio = isMobile ? "none" : "xMidYMin slice";
 
     return (
         <motion.div style={{
@@ -79,11 +85,11 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                 y="0px"
                 width="100%"
                 height="100%"
-                viewBox="0 0 1600 5200"
-                preserveAspectRatio="xMidYMin slice"
+                viewBox={viewBox}
+                preserveAspectRatio={preserveAspectRatio}
                 style={{
                     position: 'absolute',
-                    top: '50px', 
+                    top: isMobile ? '0px' : '50px',
                     left: '0',
                     display: 'block',
                 }}
@@ -132,26 +138,45 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         fill={`url(#waveBackGradient-${id})`} 
                         opacity={variant === 'black' ? ".6" : ".24"}
                         style={{
-                            animation: 'waveFloat1 12s ease-in-out infinite'
+                            animation: isMobile ? 'none' : 'waveFloat1 12s ease-in-out infinite'
                         }}
-                    />
+                    >
+                        {isMobile && (
+                            <animateMotion dur="10s" repeatCount="indefinite">
+                                <mpath xlinkHref={`#wave-path-${id}`} />
+                            </animateMotion>
+                        )}
+                    </use>
                     <use 
                         xlinkHref={`#waveShape-${id}`} 
                         fill={`url(#waveMidGradient-${id})`} 
                         opacity={variant === 'black' ? ".8" : ".42"}
                         style={{
-                            animation: 'waveFloat2 10s ease-in-out infinite'
+                            animation: isMobile ? 'none' : 'waveFloat2 10s ease-in-out infinite'
                         }}
-                    />
+                    >
+                        {isMobile && (
+                            <animateMotion dur="6s" repeatCount="indefinite">
+                                <mpath xlinkHref={`#wave-path-${id}`} />
+                            </animateMotion>
+                        )}
+                    </use>
                     <use 
                         xlinkHref={`#waveShape-${id}`} 
                         fill={`url(#waveFrontGradient-${id})`} 
                         opacity={variant === 'black' ? ".95" : ".58"}
                         style={{
-                            animation: 'waveFloat3 8s ease-in-out infinite'
+                            animation: isMobile ? 'none' : 'waveFloat3 8s ease-in-out infinite'
                         }}
-                    />
+                    >
+                        {isMobile && (
+                            <animateMotion dur="14s" repeatCount="indefinite">
+                                <mpath xlinkHref={`#wave-path-${id}`} />
+                            </animateMotion>
+                        )}
+                    </use>
                 </g>
+                <path id={`wave-path-${id}`} d="M -600 0 0 0" style={{ display: 'none' }} />
                 <style>{`
                     @keyframes waveFloat1 {
                         0%, 100% { transform: translate(270px, 25px); }

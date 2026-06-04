@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playOmSound } from '../../utils/audio';
 import styles from './chat.module.css';
@@ -15,6 +16,7 @@ const PAUSE_TEXTS = [
 function ChatContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const { isLoaded, isSignedIn } = useAuth();
     const initialMessage = searchParams.get('initial');
     
     const [messages, setMessages] = useState<{role: 'user' | 'ai', content: string}[]>([]);
@@ -46,7 +48,20 @@ function ChatContent() {
         exchange_history: [],
         recommended_products: [],
         final_summary: null,
-        price_point: null
+        price_point: null,
+        // Fields from the spiritual engine
+        confirmedMBTI: null,
+        detectedPattern: null,
+        jungianArchetype: null,
+        hawkinsLevel: null,
+        monetizableProblem: null,
+        birthDate: null,
+        preferredLanguage: 'English',
+        activeArchetype: 'seeker',
+        interestScore: 0,
+        sessionConfig: {},
+        identifiedLayers: {},
+        csn: null,
     });
 
     useEffect(() => {
@@ -73,7 +88,82 @@ function ChatContent() {
         setIsTyping(true);
 
         try {
-            const response = await fetch('/api/chat', {
+            // Try the spiritual API first (Groq-powered), fallback to Gemini chat API
+            let response;
+            let data;
+            
+            try {
+                response = await fetch('/api/spiritual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'process_answer',
+                        userState,
+                        conversationHistory: [...messages, userMsg],
+                        userAnswer: text,
+                    }),
+                });
+                data = await response.json();
+                
+                if (data.success && data.data) {
+                    const d = data.data;
+                    
+                    // Update userState with the spiritual engine's analysis
+                    setUserState((prev: any) => ({
+                        ...prev,
+                        confirmed_mbti: d.confirmedMBTI || prev.confirmed_mbti,
+                        confirmedMBTI: d.confirmedMBTI || prev.confirmedMBTI,
+                        detectedPattern: d.detectedPattern || prev.detectedPattern,
+                        pain_pattern: d.detectedPattern || prev.pain_pattern,
+                        jungianArchetype: d.jungianArchetype || prev.jungianArchetype,
+                        hawkinsLevel: d.hawkinsLevel || prev.hawkinsLevel,
+                        monetizableProblem: d.monetizableProblem || prev.monetizableProblem,
+                        birthDate: d.birthDate || prev.birthDate,
+                        activeArchetype: d.activeArchetype || prev.activeArchetype,
+                        question_count: (prev.question_count || 0) + 1,
+                        interestScore: d.interestScore || prev.interestScore,
+                        exchange_history: [...(prev.exchange_history || []), userMsg, { role: 'ai', content: d.question || d.mirroringLine }],
+                        csn: d.csn || prev.csn,
+                    }));
+                    
+                    setMessages(prev => [...prev, { role: 'ai', content: d.question || d.mirroringLine || d.contextLine }]);
+                    
+                    // Check if the AI has completed the decoding (final_share type)
+                    if (d.type === 'final_share' || d.decodingProgress >= 100) {
+                        // Update state with final data including report and products
+                        const finalState = {
+                            ...userState,
+                            confirmed_mbti: d.confirmedMBTI || userState.confirmed_mbti,
+                            confirmedMBTI: d.confirmedMBTI || userState.confirmedMBTI,
+                            detectedPattern: d.detectedPattern || userState.detectedPattern,
+                            pain_pattern: d.detectedPattern || userState.pain_pattern,
+                            jungianArchetype: d.jungianArchetype || userState.jungianArchetype,
+                            hawkinsLevel: d.hawkinsLevel || userState.hawkinsLevel,
+                            monetizableProblem: d.monetizableProblem || userState.monetizableProblem,
+                            birthDate: d.birthDate || userState.birthDate,
+                            activeArchetype: d.activeArchetype || userState.activeArchetype,
+                            report: d.report,
+                            recommended_products: d.recommendedProducts || [],
+                            csn: d.csn || userState.csn,
+                            question_count: questionCount + 1,
+                        };
+                        
+                        localStorage.setItem('spiritualAiState', JSON.stringify(finalState));
+                        
+                        setTimeout(() => {
+                            triggerSacredPause(finalState, d.report, d.recommendedProducts);
+                        }, 2000);
+                    }
+                    
+                    setIsTyping(false);
+                    return;
+                }
+            } catch (spiritualErr) {
+                console.error('Spiritual API error, falling back to chat API:', spiritualErr);
+            }
+
+            // Fallback to Gemini chat API
+            response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -82,7 +172,7 @@ function ChatContent() {
                 })
             });
 
-            const data = await response.json();
+            data = await response.json();
             
             if (data.state) {
                 setUserState(data.state);
@@ -95,7 +185,7 @@ function ChatContent() {
                 // If we've reached Q5 (or summary phase), trigger sacred pause
                 if (data.state && data.state.question_count >= 5) {
                     setTimeout(() => {
-                        triggerSacredPause(data.state);
+                        triggerSacredPause(data.state, null, null);
                     }, 2000);
                 }
             }
@@ -107,12 +197,26 @@ function ChatContent() {
         }
     };
 
-    const triggerSacredPause = async (finalState: any) => {
+    const triggerSacredPause = async (finalState: any, preGeneratedReport: any, preGeneratedProducts: any) => {
         setSacredPause(true);
-        // Save state to localStorage to pass to the next page
-        localStorage.setItem('spiritualAiState', JSON.stringify(finalState));
         
-        // Start generating questions in background
+        // Save state to localStorage
+        const stateToSave = { ...finalState };
+        if (preGeneratedReport) stateToSave.report = preGeneratedReport;
+        if (preGeneratedProducts) stateToSave.recommended_products = preGeneratedProducts;
+        localStorage.setItem('spiritualAiState', JSON.stringify(stateToSave));
+        
+        // Trigger report generation (Blockplain Save)
+        const savePromise = fetch('/api/blockplain/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userState: finalState, report: preGeneratedReport, products: preGeneratedProducts }),
+        }).then(res => res.json()).catch(err => {
+            console.error("Save error:", err);
+            return { success: false };
+        });
+
+        // Pre-generate quiz in background
         try {
             fetch('/api/quiz/generate', {
                 method: 'POST',
@@ -128,13 +232,29 @@ function ChatContent() {
         }
         
         let cycle = 0;
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
             cycle++;
             if (cycle < PAUSE_TEXTS.length) {
                 setPauseTextIndex(cycle);
             } else {
                 clearInterval(interval);
-                router.push('/quiz');
+                
+                // Wait for save to complete if it hasn't already
+                const saveResult = await savePromise;
+                
+                // Check auth status
+                if (isLoaded && !isSignedIn) {
+                    const redirectPath = saveResult.success 
+                        ? `/blueprint/${saveResult.data.csn}` 
+                        : '/blueprint';
+                    router.push(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+                } else {
+                    if (saveResult.success) {
+                        router.push(`/blueprint/${saveResult.data.csn}`);
+                    } else {
+                        router.push('/blueprint');
+                    }
+                }
             }
         }, 3000);
     };
@@ -221,7 +341,7 @@ function ChatContent() {
                 </div>
             </div>
 
-            {/* Progress Dots (Optional, keeping them for now but moving below) */}
+            {/* Progress Dots */}
             <div className={styles.dotsContainer}>
                 {[1, 2, 3, 4, 5].map((num) => (
                     <div 
@@ -282,7 +402,7 @@ function ChatContent() {
                         className={`${styles.micBtn} ${isListening ? styles.micBtnActive : ''}`}
                         onClick={toggleListening}
                     >
-                        {isListening ? '⏺' : '🎤'}
+                        {isListening ? '⏹' : '🎤'}
                     </button>
                     
                     <input 

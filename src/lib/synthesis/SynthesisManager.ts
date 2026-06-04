@@ -22,7 +22,7 @@ export class SynthesisManager {
     console.log('--- STARTING OPTIMIZED PRODUCT SYNTHESIS ---');
 
     // 1. Generate Visual Seed for the entire book (Consistency)
-    const visualSeed = await callAI([], "Generate a 5-word visual aesthetic seed for a spiritual digital product based on MBTI " + userProfile.mbti);
+    const visualSeed = await callAI("Generate a 5-word visual aesthetic seed for a spiritual digital product based on MBTI " + userProfile.mbti);
     console.log(`Visual Seed: ${visualSeed}`);
 
     // 2. Retrieve Market Themes & Grounding Data from Vector DB

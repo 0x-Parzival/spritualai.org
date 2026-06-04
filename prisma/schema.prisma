@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -10,39 +7,80 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  uid       String      @unique // browser fingerprint
-  email     String?     @unique
-  plane_x   Int?        @unique // Assigned from PlaneXCounter
-  createdAt DateTime    @default(now())
-  
-  sessions   Session[]
-  blueprints Blueprint[]
+  id            String          @id @default(cuid())
+  uid           String          @unique
+  email         String?         @unique
+  plane_x       Int?            @unique
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt @default(now())
+  blueprints    Blueprint[]
+  sessions      Session[]
+  summary       UserSummary?
+  purchases     Purchase[]
+  events        Event[]
 }
 
 model PlaneXCounter {
   id Int @id @default(autoincrement())
 }
 
-model Blueprint {
-  csn            String   @id // SAI-{sequenceNumber}-{MBTI}-{symbol}-{verifyCode}
-  sequenceNumber Int      @default(autoincrement())
-  userId         String
-  plane_x        Int      // Denormalized from User
-  plane_y        Int      // User's nth blueprint
-  prev_block_hash String? // SHA-256 of prev reportData
-  
-  mbti           String   // e.g. "INTJ"
-  archetype      String   // e.g. "sovereign"
-  symbol         String   // e.g. "Ω"
-  verifyCode     String   @unique // 4-char hex
-  
-  reportData     Json
-  isComplete     Boolean  @default(false)
-  createdAt      DateTime @default(now())
+model UserSummary {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
 
-  user User @relation(fields: [userId], references: [id])
-  sessions Session[]
+  // Evolving narrative summary — refined after each conversation
+  narrative       String   @default("")     // "A 34-year-old INTP who intellectualizes to avoid feelings of inadequacy..."
+  lastRefinedAt   DateTime @default(now())
+
+  // Refined identifiers (JSON for flexibility)
+  identifiers     Json     @default("{}")   // { mbti: {type: "INTP", confidence: 0.92, evidence: [...], refinedAt: "..."}, shadow: {...}, ... }
+
+  // Problems explored across sessions
+  problemsExplored Json    @default("[]")   // [{problem: "paralysis", sessionId: "...", resolved: false}, ...]
+
+  // Engagement tracking
+  totalSessions   Int      @default(0)
+  totalMessages   Int      @default(0)
+  avgResponseLength Float  @default(0)
+  lastEngagementScore Int  @default(50)
+
+  // What to explore next (for repeat users)
+  suggestedNextTopic String @default("")
+  unexploredAreas    Json   @default("[]")   // ["Career purpose", "Intimacy patterns", "Health anxiety"]
+
+  // Metadata
+  firstBlueprintCsn  String?
+  lastBlueprintCsn   String?
+  purchaseCount      Int @default(0)
+  totalSpent         Float @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Blueprint {
+  csn             String    @id
+  sequenceNumber  Int       @default(autoincrement())
+  userId          String
+  plane_x         Int
+  plane_y         Int
+  prev_block_hash String?
+  mbti            String
+  archetype       String
+  symbol          String
+  verifyCode      String    @unique
+  reportData      Json
+  isComplete      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  user            User      @relation(fields: [userId], references: [id])
+  sessions        Session[]
+
+  // NEW: Store the identifiers at time of creation for historical tracking
+  identifiers     Json      @default("{}")   // Snapshot of all 6 identifiers when this blueprint was created
+  summary         String    @default("")     // Short text summary of this specific session's findings
+  conversationDepth Int     @default(0)      // How deep the conversation went (0-100)
+  engagementScore   Int     @default(0)      // User engagement during this specific session
 
   @@unique([plane_x, plane_y], name: "blockplain_coordinate_unique")
   @@index([plane_y])
@@ -51,14 +89,52 @@ model Blueprint {
 }
 
 model Session {
-  id                String    @id @default(cuid())
+  id                String     @id @default(cuid())
   userId            String
   blueprintCsn      String?
-  messages          Json      @default("[]")
-  completionPercent Int       @default(0)
-  startedAt         DateTime  @default(now())
-  lastActiveAt      DateTime  @default(now())
+  messages          Json       @default("[]")
+  completionPercent Int        @default(0)
+  startedAt         DateTime   @default(now())
+  lastActiveAt      DateTime   @default(now())
+  blueprint         Blueprint? @relation(fields: [blueprintCsn], references: [csn])
+  user              User       @relation(fields: [userId], references: [id])
 
-  user      User       @relation(fields: [userId], references: [id])
-  blueprint Blueprint? @relation(fields: [blueprintCsn], references: [csn])
+  // NEW: Session-level summary and identifiers
+  summary           String     @default("")     // What was discovered in this session
+  identifiers       Json       @default("{}")   // Identifiers updated during this session
+  isRepeatUser      Boolean    @default(false)  // True if user had prior sessions
+  previousSessionRef String?                    // Link to previous session for continuity
+  problemExplored   String     @default("")     // The specific problem this session focused on
+  newProblemFound   String     @default("")     // Any new problem discovered during conversation
+  engagementQuality Int        @default(0)      // 0-100 how engaged the user was
+
+  @@index([userId, startedAt])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  eventType   String
+  eventData   Json     @default("{}")
+  sessionId   String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId, eventType])
+  @@index([createdAt])
+}
+
+model Purchase {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  productId     String
+  productName   String
+  amount        Float
+  currency      String   @default("USD")
+  status        String   @default("completed")
+  purchasedAt   DateTime @default(now())
+
+  @@index([userId, purchasedAt])
+  @@index([status])
 }

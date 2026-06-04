@@ -735,11 +735,20 @@ export function calculateInterestScore(userAnswer: string, state: UserState): nu
   
   // 1. QUANTITATIVE SIGNALS
   
-  // Message Length (High Weight)
-  const wordCount = userAnswer.split(/\s+/).filter(w => w.length > 0).length;
+  // Message Length (High Weight) — UPDATED: short answers that are clear binary choices are ENGAGEMENT
+  const wordCount = userAnswer.trim().split(/\s+/).filter(w => w.length > 0).length;
   if (wordCount > 20) score += 10;
   else if (wordCount > 12) score += 5;
-  else if (wordCount < 5) score -= 10;
+  else if (wordCount >= 6) score += 2;
+  // Short answers (1-5 words): NOT penalized — they can be decisive engagement
+  // Only penalize if it's a non-answer like "idk" or "test"
+  const lowerAnswer = userAnswer.toLowerCase().trim();
+  const nonAnswers = ['idk', 'test', 'asdf', 'lol', 'haha', 'ok', 'kk'];
+  if (wordCount < 4 && nonAnswers.some(na => lowerAnswer.includes(na))) {
+    score -= 15; // Only penalize actual non-answers
+  } else if (wordCount < 6) {
+    score += 3; // Short but real answers get a small bonus for decisiveness
+  }
   
   // Response Time (Medium Weight)
   if (state.tracking?.lastMessageTimestamp) {
@@ -760,26 +769,30 @@ export function calculateInterestScore(userAnswer: string, state: UserState): nu
   
   // 2. QUALITATIVE SIGNALS (Keywords & Patterns)
   
-  const lowCase = userAnswer.toLowerCase();
-  
   // Spiritual / Emotional Language
   const spiritualKeywords = ["feel", "energy", "healing", "purpose", "soul", "spirit", "universe", "vibration", "trauma", "pattern"];
-  const hasSpiritual = spiritualKeywords.some(k => lowCase.includes(k));
+  const hasSpiritual = spiritualKeywords.some(k => lowerAnswer.includes(k));
   if (hasSpiritual) score += 10;
   
   // Positive Feedback / Engagement
   const engagementKeywords = ["thank", "helpful", "wow", "wow", "amazing", "insight", "true", "exactly"];
-  if (engagementKeywords.some(k => lowCase.includes(k))) score += 8;
+  if (engagementKeywords.some(k => lowerAnswer.includes(k))) score += 8;
   
   // Questions Asked by User
   if (userAnswer.includes("?")) score += 10;
   
   // Pricing / Action Inquiry
   const actionKeywords = ["price", "cost", "how does it work", "tell me more", "buy", "purchase"];
-  if (actionKeywords.some(k => lowCase.includes(k))) score += 15;
+  if (actionKeywords.some(k => lowerAnswer.includes(k))) score += 15;
   
   // Personal Info Shared (Check state)
   if (state.birthDate || state.name || state.monetizableProblem) score += 15;
+
+  // 3. BINARY CHOICE BONUS — Clear short answers to binary questions show decisiveness
+  const binaryChoices = ["withdraw", "reach", "reach out", "concrete", "vibration", "steps", "illogical", "unlovable", "alone", "blueprint", "exploring"];
+  if (binaryChoices.some(bc => lowerAnswer.includes(bc))) {
+    score += 8; // They made a clear choice — this is engagement
+  }
 
   // Cap the score
   return Math.min(100, Math.max(0, score));
@@ -904,5 +917,368 @@ export function calculateProblemWorth(years: number, weeklyHours: number, age: n
     urgencyMultiplier: multiplier,
     tier,
     suggestedPriceRange
+  };
+}
+
+// ============================================================
+// IDENTIFIER PERSISTENCE & REFINEMENT ENGINE
+// ============================================================
+
+export interface IdentifierSnapshot {
+  mbti?: { type: string; confidence: number; evidence: string[]; refinedAt: string };
+  shadow?: { pattern: string; confidence: number; evidence: string[]; refinedAt: string };
+  astrology?: { sunSign: string; vedicRashi: string; nakshatra: string; confidence: number; refinedAt: string };
+  coreProblem?: { problem: string; confidence: number; evidence: string[]; refinedAt: string };
+  blindspot?: { pattern: string; confidence: number; evidence: string[]; refinedAt: string };
+  productVector?: { category: string; confidence: number; evidence: string[]; refinedAt: string };
+}
+
+export interface UserSummaryData {
+  narrative: string;
+  identifiers: IdentifierSnapshot;
+  problemsExplored: Array<{ problem: string; sessionId: string; resolved: boolean; date: string }>;
+  totalSessions: number;
+  totalMessages: number;
+  avgResponseLength: number;
+  lastEngagementScore: number;
+  suggestedNextTopic: string;
+  unexploredAreas: string[];
+  firstBlueprintCsn?: string;
+  lastBlueprintCsn?: string;
+  purchaseCount: number;
+  totalSpent: number;
+}
+
+/**
+ * Merge new identifier evidence with existing identifiers.
+ * Confidence increases with repeated evidence, decreases with contradictory evidence.
+ * This is the core refinement engine — each conversation makes the profile MORE accurate.
+ */
+export function mergeIdentifiers(
+  existing: IdentifierSnapshot,
+  newEvidence: IdentifierSnapshot
+): IdentifierSnapshot {
+  const merged = { ...existing };
+  const now = new Date().toISOString();
+
+  // MBTI: Weighted average of confidence, capped at 0.98
+  if (newEvidence.mbti) {
+    if (existing.mbti && existing.mbti.type === newEvidence.mbti.type) {
+      // Same type confirmed — increase confidence
+      merged.mbti = {
+        ...existing.mbti,
+        confidence: Math.min(0.98, existing.mbti.confidence + (1 - existing.mbti.confidence) * 0.3),
+        evidence: [...Array.from(new Set([...existing.mbti.evidence, ...newEvidence.mbti.evidence]))],
+        refinedAt: now,
+      };
+    } else if (!existing.mbti) {
+      merged.mbti = { ...newEvidence.mbti, refinedAt: now };
+    } else {
+      // Contradictory — keep higher confidence but add evidence
+      if (newEvidence.mbti.confidence > existing.mbti.confidence) {
+        merged.mbti = { ...newEvidence.mbti, refinedAt: now, evidence: [...existing.mbti.evidence, ...newEvidence.mbti.evidence] };
+      } else {
+        merged.mbti = { ...existing.mbti, evidence: [...existing.mbti.evidence, ...newEvidence.mbti.evidence], refinedAt: now };
+      }
+    }
+  }
+
+  // Shadow: Same pattern — boost confidence. New pattern — keep both, higher confidence wins
+  if (newEvidence.shadow) {
+    if (existing.shadow && existing.shadow.pattern === newEvidence.shadow.pattern) {
+      merged.shadow = {
+        ...existing.shadow,
+        confidence: Math.min(0.98, existing.shadow.confidence + (1 - existing.shadow.confidence) * 0.25),
+        evidence: [...Array.from(new Set([...existing.shadow.evidence, ...newEvidence.shadow.evidence]))],
+        refinedAt: now,
+      };
+    } else if (!existing.shadow) {
+      merged.shadow = { ...newEvidence.shadow, refinedAt: now };
+    } else {
+      // Different shadow pattern — could be a new layer or a refinement
+      // Keep the one with higher confidence, but store the other as evidence
+      if (newEvidence.shadow.confidence > existing.shadow.confidence) {
+        merged.shadow = { ...newEvidence.shadow, refinedAt: now };
+      }
+    }
+  }
+
+  // Astrology: Deterministic from birth date — always 100% if birth date exists
+  if (newEvidence.astrology) {
+    merged.astrology = { ...newEvidence.astrology, confidence: 1.0, refinedAt: now };
+  }
+
+  // Core Problem: Can have multiple problems — track the primary one
+  if (newEvidence.coreProblem) {
+    if (existing.coreProblem && existing.coreProblem.problem === newEvidence.coreProblem.problem) {
+      merged.coreProblem = {
+        ...existing.coreProblem,
+        confidence: Math.min(0.98, existing.coreProblem.confidence + (1 - existing.coreProblem.confidence) * 0.25),
+        evidence: [...Array.from(new Set([...existing.coreProblem.evidence, ...newEvidence.coreProblem.evidence]))],
+        refinedAt: now,
+      };
+    } else if (!existing.coreProblem) {
+      merged.coreProblem = { ...newEvidence.coreProblem, refinedAt: now };
+    } else {
+      // New problem discovered — this is valuable for repeat users
+      // Keep existing as primary, but the new one becomes the "suggested next topic"
+      if (newEvidence.coreProblem.confidence > existing.coreProblem.confidence) {
+        merged.coreProblem = { ...newEvidence.coreProblem, refinedAt: now };
+      }
+    }
+  }
+
+  // Blindspot: Same refinement logic as shadow
+  if (newEvidence.blindspot) {
+    if (existing.blindspot && existing.blindspot.pattern === newEvidence.blindspot.pattern) {
+      merged.blindspot = {
+        ...existing.blindspot,
+        confidence: Math.min(0.98, existing.blindspot.confidence + (1 - existing.blindspot.confidence) * 0.25),
+        evidence: [...Array.from(new Set([...existing.blindspot.evidence, ...newEvidence.blindspot.evidence]))],
+        refinedAt: now,
+      };
+    } else if (!existing.blindspot) {
+      merged.blindspot = { ...newEvidence.blindspot, refinedAt: now };
+    } else if (newEvidence.blindspot.confidence > existing.blindspot.confidence) {
+      merged.blindspot = { ...newEvidence.blindspot, refinedAt: now };
+    }
+  }
+
+  // Product Vector: Refine based on engagement signals
+  if (newEvidence.productVector) {
+    if (existing.productVector && existing.productVector.category === newEvidence.productVector.category) {
+      merged.productVector = {
+        ...existing.productVector,
+        confidence: Math.min(0.98, existing.productVector.confidence + (1 - existing.productVector.confidence) * 0.2),
+        evidence: [...Array.from(new Set([...existing.productVector.evidence, ...newEvidence.productVector.evidence]))],
+        refinedAt: now,
+      };
+    } else if (!existing.productVector) {
+      merged.productVector = { ...newEvidence.productVector, refinedAt: now };
+    } else if (newEvidence.productVector.confidence > existing.productVector.confidence) {
+      merged.productVector = { ...newEvidence.productVector, refinedAt: now };
+    }
+  }
+
+  return merged;
+}
+
+/**
+ * Generate a human-readable narrative summary of the user.
+ * This evolves with each conversation — getting more precise and insightful.
+ */
+export function generateNarrativeSummary(
+  identifiers: IdentifierSnapshot,
+  problemsExplored: Array<{ problem: string; resolved: boolean }>,
+  sessionCount: number,
+  avgResponseLength: number
+): string {
+  const parts: string[] = [];
+
+  // Opening: MBTI + core identity
+  if (identifiers.mbti && identifiers.mbti.confidence > 0.5) {
+    const mbtiType = identifiers.mbti.type;
+    const profile = MBTI_PROFILES[mbtiType];
+    if (profile) {
+      parts.push(`A ${mbtiType} — ${profile.name}. ${profile.archetype}`);
+    } else {
+      parts.push(`Identified as ${mbtiType}.`);
+    }
+  }
+
+  // Core problem
+  if (identifiers.coreProblem && identifiers.coreProblem.confidence > 0.5) {
+    parts.push(`Primary struggle: ${identifiers.coreProblem.problem}.`);
+  }
+
+  // Shadow pattern
+  if (identifiers.shadow && identifiers.shadow.confidence > 0.5) {
+    parts.push(`Shadow pattern: ${identifiers.shadow.pattern}.`);
+  }
+
+  // Blindspot
+  if (identifiers.blindspot && identifiers.blindspot.confidence > 0.5) {
+    parts.push(`Blindspot: ${identifiers.blindspot.pattern}.`);
+  }
+
+  // Communication style
+  if (avgResponseLength < 5) {
+    parts.push(`Communicates minimally — decisive or avoidant.`);
+  } else if (avgResponseLength > 50) {
+    parts.push(`Processes externally through detailed sharing.`);
+  }
+
+  // Session history context
+  if (sessionCount > 1) {
+    const resolvedCount = problemsExplored.filter(p => p.resolved).length;
+    parts.push(`Completed ${sessionCount} sessions. ${resolvedCount > 0 ? `${resolvedCount} patterns addressed.` : 'Still exploring.'}`);
+  }
+
+  return parts.join(' ') || 'New seeker. Profile forming.';
+}
+
+/**
+ * Determine the next topic to explore for a repeat user.
+ * Based on what HASN'T been explored yet.
+ */
+export function suggestNextTopic(
+  identifiers: IdentifierSnapshot,
+  problemsExplored: Array<{ problem: string }>,
+  unexploredAreas: string[]
+): string {
+  // If there are unexplored areas, suggest the first one
+  if (unexploredAreas.length > 0) {
+    return unexploredAreas[0];
+  }
+
+  // If core problem is identified but blindspot isn't, explore the blindspot
+  if (identifiers.coreProblem && identifiers.coreProblem.confidence > 0.7 && (!identifiers.blindspot || identifiers.blindspot.confidence < 0.5)) {
+    return "Explore the blindspot — what they can't see about their own pattern";
+  }
+
+  // If shadow is identified, explore the root cause
+  if (identifiers.shadow && identifiers.shadow.confidence > 0.7) {
+    return "Dig into the origin story — when did this pattern first install?";
+  }
+
+  // Default: go deeper on the core problem
+  if (identifiers.coreProblem) {
+    return `New dimension of "${identifiers.coreProblem.problem}" — how it shows up in a different life area`;
+  }
+
+  return "Explore a new life area — career, relationships, health, or purpose";
+}
+
+/**
+ * Detect if this is a repeat user and what we know about them.
+ */
+export function detectReturnUser(
+  sessionCount: number,
+  previousBlueprintCsn?: string
+): { isReturnUser: boolean; hasBlueprint: boolean; continuityNote: string } {
+  const isReturnUser = sessionCount > 0;
+  const hasBlueprint = !!previousBlueprintCsn;
+
+  let continuityNote = '';
+  if (isReturnUser && hasBlueprint) {
+    continuityNote = `RETURNING USER: This user has ${sessionCount} previous session(s) and at least one blueprint. DO NOT re-decode what's already known. Instead: (1) Reference what we already discovered, (2) Ask what's NEW or DIFFERENT since last time, (3) Go deeper on unexplored areas, (4) Keep the conversation SHORT — they already know the format.`;
+  } else if (isReturnUser) {
+    continuityNote = `RETURNING USER: This user has ${sessionCount} previous session(s) but no completed blueprint. They may have abandoned before. Acknowledge: "You've been here before. What brought you back this time?" Keep it SHORT and get to the new problem FAST.`;
+  } else {
+    continuityNote = 'NEW USER: First conversation. Build trust. Go at their pace.';
+  }
+
+  return { isReturnUser, hasBlueprint, continuityNote };
+}
+
+/**
+ * Calculate conversation depth score (0-100) based on multiple signals.
+ * Used for progress bar and engagement tracking.
+ */
+export function calculateConversationDepth(
+  exchangeCount: number,
+  avgResponseLength: number,
+  emotionalWords: number,
+  defenseBreaches: number,
+  identifierConfidence: number
+): number {
+  // Exchange depth: more exchanges = more depth (up to 40 points)
+  const exchangeScore = Math.min(40, exchangeCount * 4);
+
+  // Response quality: longer responses = more engagement (up to 15 points)
+  const responseScore = Math.min(15, avgResponseLength / 5);
+
+  // Emotional engagement: emotional words = vulnerability (up to 20 points)
+  const emotionalScore = Math.min(20, emotionalWords * 4);
+
+  // Defense breakthroughs: each breach = major depth gain (up to 15 points)
+  const breachScore = Math.min(15, defenseBreaches * 5);
+
+  // Identifier confidence: how sure we are about the profile (up to 10 points)
+  const identifierScore = identifierConfidence * 10;
+
+  return Math.min(100, Math.round(exchangeScore + responseScore + emotionalScore + breachScore + identifierScore));
+}
+
+/**
+ * Detect crisis signals in user input.
+ * Returns crisis level and recommended response type.
+ */
+export function detectCrisis(message: string): {
+  isCrisis: boolean;
+  level: 'none' | 'moderate' | 'severe';
+  responseType: 'normal' | 'supportive' | 'immediate';
+  resources: string[];
+} {
+  const lower = message.toLowerCase();
+
+  // Severe crisis keywords
+  const severeKeywords = [
+    'kill myself', 'suicide', 'end my life', 'want to die', 'better off dead',
+    'hurt myself', 'self-harm', 'cutting', 'overdose', 'no reason to live',
+    'can\'t go on', 'end it all', 'not worth living'
+  ];
+
+  // Moderate crisis keywords
+  const moderateKeywords = [
+    'hopeless', 'worthless', 'can\'t take it', 'breaking down', 'falling apart',
+    'no way out', 'trapped', 'giving up', 'lost everything', 'nobody cares',
+    'want to disappear', 'can\'t sleep', 'can\'t eat', 'panic attack',
+    'anxiety is killing me', 'depression is winning'
+  ];
+
+  const hasSevere = severeKeywords.some(k => lower.includes(k));
+  const hasModerate = moderateKeywords.some(k => lower.includes(k));
+
+  if (hasSevere) {
+    return {
+      isCrisis: true,
+      level: 'severe',
+      responseType: 'immediate',
+      resources: [
+        'National Suicide Prevention Lifeline: 988 (US)',
+        'Crisis Text Line: Text HOME to 741741',
+        'International Association for Suicide Prevention: https://www.iasp.info/resources/Crisis_Centres/'
+      ]
+    };
+  }
+
+  if (hasModerate) {
+    return {
+      isCrisis: true,
+      level: 'moderate',
+      responseType: 'supportive',
+      resources: [
+        'Consider speaking with a mental health professional',
+        'Crisis Text Line: Text HOME to 741741'
+      ]
+    };
+  }
+
+  return { isCrisis: false, level: 'none', responseType: 'normal', resources: [] };
+}
+
+/**
+ * Detect atheist/skeptic framing and adapt language accordingly.
+ */
+export function detectSkepticMode(message: string): {
+  isSkeptic: boolean;
+  recommendedFraming: string;
+} {
+  const lower = message.toLowerCase();
+  const skepticSignals = [
+    'don\'t believe', 'bullshit', 'pseudoscience', 'not real', 'doesn\'t work',
+    'skeptic', 'atheist', 'rational', 'evidence', 'proof', 'science',
+    'astrology is', 'mbti is', 'personality test', 'horoscope', 'woo',
+    'woo-woo', 'new age', 'placebo', 'confirmation bias', 'barnum effect'
+  ];
+
+  const isSkeptic = skepticSignals.some(s => lower.includes(s));
+
+  return {
+    isSkeptic,
+    recommendedFraming: isSkeptic
+      ? 'PSYCHOLOGY_MODE: Drop all spiritual/astrology language. Use cognitive psychology, behavioral science, and neuroscience framing. Reference studies, not traditions. Say "research shows" not "the ancients knew." Keep the depth, change the vocabulary.'
+      : 'SPIRITUAL_MODE: Use full spiritual framing — Vedic, Jungian, archetypal language is appropriate.'
   };
 }

@@ -4,6 +4,9 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Image from "next/image";
 import "./mobile-home.css";
+import dynamic from 'next/dynamic';
+
+const WavesHero = dynamic(() => import('@/components/WavesHero'), { ssr: false });
 
 export default function MobileHome() {
     const stars2Ref = useRef<HTMLDivElement>(null);
@@ -126,6 +129,20 @@ export default function MobileHome() {
             </div>
             <div id="stars2" ref={stars2Ref}></div>
             <div id="stars3" ref={stars3Ref}></div>
+
+            {/* 🌊 Background Waves */}
+            <div style={{
+                position: 'fixed',
+                bottom: '0',
+                left: '0',
+                width: '100%',
+                height: '50vh',
+                zIndex: -1,
+                opacity: 0.8,
+                pointerEvents: 'none'
+            }}>
+                <WavesHero variant="spiritual" />
+            </div>
 
             {/* 🏛️ Glass Header */}
             <header className="glass-header">

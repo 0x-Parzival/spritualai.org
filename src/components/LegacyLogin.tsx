@@ -38,7 +38,7 @@ export default function LegacyLogin({ isEmbedded = false }: { isEmbedded?: boole
                   footerActionLink: { color: '#00f2ff' }
                 }
               }}
-              routing="virtual"
+              routing={'path' as any}
               fallbackRedirectUrl="/#report-section"
             />
         </div>

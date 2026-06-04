@@ -110,7 +110,7 @@ export default function PublicBlueprintPage({ params }: { params: Promise<{ id: 
                     >
                         <CosmicBackground archetype={blueprintData?.archetype} />
                         <div style={{ position: 'relative', zIndex: 10 }}>
-                            <DetailedReport userState={mockState} />
+                            <DetailedReport userState={mockState} publicView={true} />
                         </div>
                         
                         <div style={{ 

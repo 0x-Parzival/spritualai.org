@@ -17,8 +17,7 @@
 
 @media (max-width: 640px) {
     .stage {
-        width: 140px;
-        height: 140px;
+        bottom: calc(180px - var(--lotus-offset, 0px));
         transform: translateX(-50%) scale(0.65);
     }
 }

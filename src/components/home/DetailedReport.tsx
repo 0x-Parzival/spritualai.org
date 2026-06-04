@@ -14,9 +14,10 @@ import { ARCHETYPE_THEMES } from '../CosmicBackground';
 interface DetailedReportProps {
     userState: UserState | null;
     onClose?: () => void;
+    publicView?: boolean;
 }
 
-export default function DetailedReport({ userState, onClose }: DetailedReportProps) {
+export default function DetailedReport({ userState, onClose, publicView = false }: DetailedReportProps) {
     const { isLoaded, isSignedIn } = useUser();
     const [isVisible, setIsVisible] = useState(false);
     const [containerWidth, setContainerWidth] = useState(1200);
@@ -35,13 +36,12 @@ export default function DetailedReport({ userState, onClose }: DetailedReportPro
 
     if (!userState) return null;
 
-    // Report is considered "Locked" if user is not signed in OR if the API explicitly said Unauthorized
-    // We wait for isLoaded to be true before deciding if it's locked
-    const isLocked = isLoaded && (!isSignedIn || (userState as any).isUnauthorized);
+    // Report is considered "Locked" if user is not signed in AND it's not a public view
+    const isLocked = isLoaded && (!isSignedIn && !publicView);
 
     if (isLocked) {
         return (
-            <div id="report-section" style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div id="report-section" style={{ width: '100vw', minHeight: '100vh', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <LegacyLogin isEmbedded={true} />
             </div>
         );

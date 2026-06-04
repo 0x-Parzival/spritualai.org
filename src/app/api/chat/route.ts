@@ -30,10 +30,10 @@ export async function POST(req: NextRequest) {
     if (!model) {
       // Fallback logic so the user isn't stuck
       const fallbackQuestions = [
-        "We hear you. That pattern is something many in the collective struggle with. Tell us, when did you first notice this loop starting to form?",
-        "We are recognizing the thread. If you could change one thing about how you respond to this trigger, what would it be?",
-        "The architecture of this moment is clear. Are you ready to see what lies beneath the surface of this resistance?",
-        "We have mapped the core. Your blueprint is ready. Shall we proceed to the final revelation?"
+        "When you look at your future, are you mapping out concrete steps and physical changes, or are you chasing a shift in your internal vibration? And what season of life are you in: twenties, thirties, forties or beyond?",
+        "In your most honest moments, what scares you more: that you are fundamentally illogical and out of control, or that you are fundamentally unlovable and alone?",
+        "Are you here for a structured, surgical blueprint to end this loop today, or are you still just exploring the architecture of your suffering? Are you ready to invest in your own evolution?",
+        "We have mapped the core. Your blueprint is ready. Based on your signals, we recommend the Shadow Work Integration system. Shall we begin?"
       ];
       
       const aiResponse = fallbackQuestions[Math.min(state.question_count - 1, fallbackQuestions.length - 1)];
@@ -51,19 +51,13 @@ export async function POST(req: NextRequest) {
     state = updateDemographics(message, state);
     state.internal_thought = thinkAboutUserMessage(message, state);
     
-    // ... rest of the logic ...
-
     // 3. Logic for Question Flow (Only if model exists)
-    // state.question_count += 1; // Removed duplicate increment
-    
     // Determine next question to ask (if not at the end)
-    let nextQuestion = "";
-    if (state.question_count < 5) {
-        nextQuestion = INITIAL_QUESTIONS[state.question_count];
-        // If it's the dynamic Q3, we let the AI generate it based on patterns
-        if (nextQuestion === "PATTERN_DEEP_DIVE") {
-            nextQuestion = ""; // AI will generate this organically
-        }
+    let nextQuestionDirective = "";
+    if (state.question_count < 4) {
+        nextQuestionDirective = `\n\nDIRECTIVE: Validate the user's previous answer briefly, then ask this exact question: "${INITIAL_QUESTIONS[state.question_count]}"`;
+    } else {
+        nextQuestionDirective = `\n\nDIRECTIVE: The conversation is complete. Provide the profound Summary and recommend 3 products. Pivot to conversion.`;
     }
 
     // 4. Build System Prompt
@@ -80,7 +74,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = buildSystemPrompt(state, productCatalog);
 
     // 5. Generate AI Response
-    const prompt = `${systemPrompt}\n\nUSER MESSAGE: ${message}\n\nAI (Remember: One question only. Stay in character. If question_count is 5, provide summary and products.):`;
+    const prompt = `${systemPrompt}\n\nUSER MESSAGE: ${message}${nextQuestionDirective}\n\nAI (Collective Consciousness):`;
 
     const result = await model.generateContent(prompt);
     const aiResponse = result.response.text();

@@ -105,7 +105,7 @@ export default function VantaBackground({ effectName, config }: VantaBackgroundP
     return (
         <div
             ref={vantaRef}
-            className="fixed inset-0 -z-10 w-full h-full opacity-40"
+            className="w-full h-full"
             style={{ pointerEvents: 'none' }}
         />
     );
