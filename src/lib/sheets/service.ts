@@ -1,8 +1,6 @@
 // src/lib/sheets/service.ts
 // Google Sheets API integration for dynamic Excel sheet sync
 
-import { prisma } from '../prisma';
-
 const GOOGLE_SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets';
 
 interface SheetColumn {
