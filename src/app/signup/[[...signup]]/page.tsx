@@ -9,7 +9,7 @@ import NavButtons from '@/components/NavButtons';
 import LiquidBackground from '@/components/artistic/LiquidBackground';
 
 export default function MBTISignupPage() {
-  const { signUp, isLoaded: signUpLoaded } = useSignUp();
+  const { signUp, isLoaded: signUpLoaded } = useSignUp() as any;
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get('redirect') || searchParams.get('redirect_url') || '/blueprint';
   const [email, setEmail] = useState("");

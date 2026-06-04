@@ -309,10 +309,29 @@ export default function HeroCTA({
         setIsTyping(true);
         const nextRound = round + 1;
         try {
-            const res = await fetch('/api/spiritual', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'process_answer', userState: { ...userState, questionCount: nextRound }, conversationHistory: history, userAnswer: text }) });
-            const data = await res.json();
-            if (data.success && data.data) {
-                const aiData = data.data;
+            // Retry logic for rate limits (429) — up to 3 retries with server-specified wait
+            let res: Response | null = null;
+            let data: any = null;
+            const maxRetries = 3;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                res = await fetch('/api/spiritual', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'process_answer', userState: { ...userState, questionCount: nextRound }, conversationHistory: history, userAnswer: text }) });
+                data = await res.json();
+                if (res.status === 429 && data.isRateLimit && attempt < maxRetries) {
+                    const waitMs = data.retryAfterMs || 5000;
+                    console.warn(`[HeroCTA] Rate limited. Waiting ${Math.ceil(waitMs/1000)}s before retry ${attempt+1}/${maxRetries}...`);
+                    // Show user-facing "waiting" message
+                    setMessages(prev => [...prev, { role: 'ai', content: `⏳ High demand — reconnecting in ${Math.ceil(waitMs/1000)}s...`, options: [] }]);
+                    await new Promise(r => setTimeout(r, waitMs + 500));
+                    // Remove the waiting message before retrying
+                    setMessages(prev => prev.slice(0, -1));
+                    continue;
+                }
+                break;
+            }
+            if (!data || !data.success || !data.data) {
+                throw new Error(data?.error || 'AI response failed');
+            }
+            const aiData = data.data;
                 if (aiData.emotionScore !== undefined) setUserEmotion(aiData.emotionScore);
                 
                 const transmission = aiData.mirroringLine ? `${aiData.mirroringLine}\n\n${aiData.question}` : (aiData.question || "Continue...");
@@ -346,7 +365,6 @@ export default function HeroCTA({
                         saveAndRedirect(finalState);
                     }, 2000);
                 }
-            }
         } catch (err) { console.error(err); } finally { setIsTyping(false); }
     };
 

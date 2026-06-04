@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
               ORDER BY "updatedAt" DESC
               LIMIT ${batchSize}
             `;
-            const rows = users.map(u => sheetsService.buildUserRow(u));
+            const rows = users.map((u: any) => sheetsService.buildUserRow(u));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'users', rows);
             }
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
               ORDER BY "createdAt" DESC
               LIMIT ${batchSize}
             `;
-            const rows = blueprints.map(bp => sheetsService.buildReportRow(bp));
+            const rows = blueprints.map((bp: any) => sheetsService.buildReportRow(bp));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'reports', rows);
             }
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
               ORDER BY "purchasedAt" DESC
               LIMIT ${batchSize}
             `;
-            const rows = purchases.map(p => sheetsService.buildPurchaseRow(p));
+            const rows = purchases.map((p: any) => sheetsService.buildPurchaseRow(p));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'products', rows);
             }
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
               ORDER BY "createdAt" DESC
               LIMIT ${batchSize}
             `;
-            const rows = events.map(e => sheetsService.buildEventRow(e));
+            const rows = events.map((e: any) => sheetsService.buildEventRow(e));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'events', rows);
             }

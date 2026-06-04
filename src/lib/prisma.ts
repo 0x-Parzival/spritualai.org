@@ -21,7 +21,7 @@ export const prisma = new Proxy({} as PrismaClient, {
         throw new Error('DATABASE_URL is not set')
       }
       const pool = new Pool({ connectionString })
-      const adapter = new PrismaNeon(pool)
+      const adapter = new PrismaNeon(pool as any)
       _prisma = new PrismaClient({ adapter, log: ['error'] })
       if (process.env.NODE_ENV !== 'production') {
         (globalThis as any).__prisma = _prisma

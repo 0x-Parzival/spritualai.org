@@ -7,6 +7,7 @@ import {
   getLifeStage, 
   MBTI_PROFILES,
   computeMBTI,
+  createInitialUserState,
   GeneratedQuestion,
   UserState,
   calculateInterestScore,
@@ -28,8 +29,15 @@ import { searchKnowledge, searchUserMemory, addUserMemory, addAiMemory, getLates
 import { generateCSN } from '@/lib/id-generator';
 import { generateFallbackProducts } from '@/lib/product-generator';
 
+// ── LLM PROVIDER ROUTER ──
+// Groq = primary (fast, free tier), Gemini = fallback when rate-limited
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+// Gemini fallback — accepts both GOOGLE_AI_STUDIO_KEY and GEMINI_API_KEY env vars
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_STUDIO_KEY || "";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const MODELS = {
   chat: "llama-3.1-8b-instant",
@@ -400,8 +408,17 @@ export async function POST(req: NextRequest) {
     }
 }
 
-async function groqChat(prompt: string, userMsg: string, temp: number, model: string, retries = 3) {
+/**
+ * Multi-provider LLM router
+ * 1. Try Groq (primary — fast, free)
+ * 2. On 429 rate limit, retry up to N times with backoff
+ * 3. If still rate-limited, fall back to Gemini (Google AI Studio)
+ * 4. Returns { text, provider } so callers can track which provider was used
+ */
+async function groqChat(prompt: string, userMsg: string, temp: number, model: string, retries = 3): Promise<{ text: string; provider: string }> {
     let lastError: any;
+
+    // ── Attempt 1: Groq (primary) ──
     for (let i = 0; i <= retries; i++) {
         try {
             const res = await fetch(GROQ_URL, {
@@ -416,50 +433,83 @@ async function groqChat(prompt: string, userMsg: string, temp: number, model: st
             });
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
-                // Handle 429 rate limit — parse Retry-After header or extract wait time from error message
                 if (res.status === 429) {
                     const retryAfter = res.headers.get('Retry-After');
                     let waitMs = 0;
                     if (retryAfter) {
                         waitMs = parseInt(retryAfter) * 1000;
                     } else {
-                        // Groq error message format: "Please try again in 17.059999999s"
                         const match = errorData.error?.message?.match(/try again in ([\d.]+)s/i);
                         if (match) waitMs = parseFloat(match[1]) * 1000;
                     }
-                    // Cap wait at 30s to avoid serverless timeout
                     waitMs = Math.min(waitMs || 5000, 30000);
                     if (i < retries) {
                         console.warn(`[groqChat] Rate limited. Waiting ${Math.ceil(waitMs/1000)}s before retry ${i+1}/${retries}...`);
                         await new Promise(r => setTimeout(r, waitMs + 500));
                         continue;
                     }
-                    // Last retry exhausted — throw with retry info for client-side handling
-                    throw Object.assign(new Error(`Rate limited. Retry after ${Math.ceil(waitMs/1000)}s`), {
-                        status: 429,
-                        retryAfterMs: waitMs,
-                        isRateLimit: true
-                    });
+                    // All retries exhausted — break to fallback
+                    console.warn(`[groqChat] Groq rate limit exhausted after ${retries} retries. Falling back to Gemini...`);
+                    lastError = Object.assign(new Error(`Groq rate limited`), { isRateLimit: true });
+                    break;
                 }
                 throw new Error(`Groq API error (${res.status}): ${errorData.error?.message || res.statusText}`);
             }
             const data = await res.json();
-            return data.choices[0].message.content;
+            return { text: data.choices[0].message.content, provider: 'groq' };
         } catch (e: any) {
             lastError = e;
-            // If it's a rate limit error with retry info, re-throw for client to handle
-            if (e.isRateLimit) throw e;
-            // Only retry on network errors — not on parsing errors
+            if (e.isRateLimit) break; // Fall through to Gemini
             if (i < retries && (e.name === 'TypeError' || e.message?.includes('fetch'))) {
                 const backoff = Math.pow(2, i) * 2000;
                 console.warn(`[groqChat] Network error, retry ${i+1}/${retries} after ${backoff/1000}s: ${e.message}`);
                 await new Promise(r => setTimeout(r, backoff));
             } else {
-                throw e;
+                break; // Fall through to Gemini
             }
         }
     }
-    throw lastError;
+
+    // ── Attempt 2: Gemini (fallback) ──
+    if (GEMINI_API_KEY && lastError?.isRateLimit) {
+        try {
+            console.log('[groqChat] Trying Gemini fallback...');
+            const geminiRes = await fetch(GEMINI_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        { role: 'user', parts: [{ text: prompt + '\n\n' + userMsg }] }
+                    ],
+                    generationConfig: {
+                        temperature: temp,
+                        responseMimeType: 'application/json'
+                    }
+                }),
+            });
+            if (geminiRes.ok) {
+                const geminiData = await geminiRes.json();
+                const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    console.log('[groqChat] Gemini fallback succeeded.');
+                    return { text, provider: 'gemini' };
+                }
+            }
+            console.warn(`[groqChat] Gemini fallback failed: ${geminiRes.status}`);
+        } catch (geminiErr: any) {
+            console.warn(`[groqChat] Gemini fallback error: ${geminiErr.message}`);
+        }
+    }
+
+    // ── All providers failed ──
+    if (lastError?.isRateLimit) {
+        throw Object.assign(new Error('All LLM providers rate-limited. Please try again in a moment.'), {
+            status: 429,
+            retryAfterMs: 10000,
+            isRateLimit: true
+        });
+    }
+    throw lastError || new Error('All LLM providers failed');
 }
 
 async function processAnswer(userState: UserState | null, history: any[], userAnswer: string) {
@@ -467,21 +517,7 @@ async function processAnswer(userState: UserState | null, history: any[], userAn
     
     // Initialize userState if null (first call)
     if (!userState) {
-        userState = {
-            currentRound: 0,
-            dimensions: {},
-            detectedPattern: '',
-            monetizableProblem: '',
-            confirmedMBTI: '',
-            jungianArchetype: '',
-            hawkinsLevel: 0,
-            birthDate: '',
-            preferredLanguage: 'English',
-            isFullyIdentified: false,
-            isReady: false,
-            overallProgress: 0,
-            exchangeHistory: [],
-        } as UserState;
+        userState = createInitialUserState('');
     }
     
     // 1. LANGUAGE DETECTION (ROUND 1)
@@ -642,7 +678,8 @@ async function processAnswer(userState: UserState | null, history: any[], userAn
     const unifiedPrompt = getUnifiedAgentPrompt(archetype, userState, aiEvolutionContext, memoryContext, ragContext);
     const userContext = `User Answer: "${userAnswer}"${answerEnrichment}${skepticContext}${repeatUserContextText}\nHistory: ${JSON.stringify(history.slice(-4))}\nCurrent Interest Score: ${userState.interestScore}`;
 
-    const unifiedRes = await groqChat(unifiedPrompt, userContext, 0.4, MODELS.architect);
+    const unifiedResult = await groqChat(unifiedPrompt, userContext, 0.4, MODELS.architect);
+    const unifiedRes = unifiedResult.text;
 
     let parsedUnified: any;
     try {
@@ -1235,7 +1272,8 @@ async function preGenerateReport(userState: any, history: any[]) {
 
     try {
       const shortPrompt = `You are Chaitanya. Write a 2-sentence "validation" for a ${mbtiType} user whose pattern is "${patternName}" and core problem is "${problem}". Use their own words where possible: "${userWords.slice(0, 200)}". Output JSON: { "validation": "..." }`;
-      const creativeContent = await groqChat(shortPrompt, "Write validation only.", 0.3, MODELS.report);
+      const creativeResult = await groqChat(shortPrompt, "Write validation only.", 0.3, MODELS.report);
+      const creativeContent = creativeResult.text;
       const cleaned = creativeContent.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
       const creative = JSON.parse(cleaned);
       if (creative.validation) validation = creative.validation;

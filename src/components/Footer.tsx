@@ -5,13 +5,13 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Footer() {
+export default function Footer(props: React.HTMLAttributes<HTMLElement>) {
     const pathname = usePathname();
 
     if (pathname === '/') return null;
 
     return (
-        <footer className="w-full bg-black text-neutral-400 py-16 border-t border-white/5 mt-auto relative overflow-hidden z-50">
+        <footer {...props} className={`w-full bg-black text-neutral-400 py-16 border-t border-white/5 mt-auto relative overflow-hidden z-50 ${props.className || ''}`}>
             {/* Subtle Grid Background */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                 style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '30px 30px' }}>
