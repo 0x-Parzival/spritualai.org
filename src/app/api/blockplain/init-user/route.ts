@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { sql } from '@/lib/db';
 import { assignPlaneX } from '@/lib/blockplain';
 
 export async function POST(req: NextRequest) {
@@ -15,13 +15,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user already exists
-    const existing = await prisma.user.findUnique({ where: { uid } });
-    if (existing) {
+    const existing = await sql`SELECT id, plane_x, uid FROM "User" WHERE uid = ${uid} LIMIT 1`;
+    if (existing && existing.length > 0) {
+      const user = existing[0];
       return NextResponse.json(
         {
-          userId: existing.id,
-          plane_x: existing.plane_x,
-          uid: existing.uid,
+          userId: user.id,
+          plane_x: user.plane_x,
+          uid: user.uid,
           message: 'User already exists.',
         },
         { status: 200 }
@@ -29,13 +30,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Create user and assign plane_x atomically
-    const user = await prisma.user.create({
-      data: {
-        uid,
-        email: email || null,
-        plane_x: 0, // temporary, will be overwritten by assignPlaneX
-      },
-    });
+    const id = crypto.randomUUID();
+    const newUserResult = await sql`
+      INSERT INTO "User" (id, uid, email, plane_x)
+      VALUES (${id}, ${uid}, ${email || null}, 0)
+      RETURNING id, uid, plane_x
+    `;
+    const user = newUserResult[0];
 
     const plane_x = await assignPlaneX(user.id);
 

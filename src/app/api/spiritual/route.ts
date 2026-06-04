@@ -1,5 +1,7 @@
 // /api/spiritual/route.ts
 
+export const maxDuration = 120; // 2 min for long AI generation + retries
+
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getLifeStage, 
@@ -22,9 +24,9 @@ import {
 import { detectEmotion, determineArchetype, ARCHETYPES } from '@/lib/eq-engine';
 import { auth } from '@clerk/nextjs/server';
 import { sql } from '@/lib/db';
-import { prisma } from '@/lib/prisma';
 import { searchKnowledge, searchUserMemory, addUserMemory, addAiMemory, getLatestAiEvolution } from '@/lib/vector-service';
 import { generateCSN } from '@/lib/id-generator';
+import { generateFallbackProducts } from '@/lib/product-generator';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -387,11 +389,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     } catch (e: any) {
         console.error('API Error:', e);
+        // Return 429 with retry info for rate limit errors
+        if (e.isRateLimit) {
+            return NextResponse.json(
+                { error: e.message, retryAfterMs: e.retryAfterMs, isRateLimit: true },
+                { status: 429, headers: { 'Retry-After': String(Math.ceil((e.retryAfterMs || 5000) / 1000)) } }
+            );
+        }
         return NextResponse.json({ error: e.message || 'Internal server error' }, { status: 500 });
     }
 }
 
-async function groqChat(prompt: string, userMsg: string, temp: number, model: string, retries = 2) {
+async function groqChat(prompt: string, userMsg: string, temp: number, model: string, retries = 3) {
     let lastError: any;
     for (let i = 0; i <= retries; i++) {
         try {
@@ -407,20 +416,73 @@ async function groqChat(prompt: string, userMsg: string, temp: number, model: st
             });
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
+                // Handle 429 rate limit — parse Retry-After header or extract wait time from error message
+                if (res.status === 429) {
+                    const retryAfter = res.headers.get('Retry-After');
+                    let waitMs = 0;
+                    if (retryAfter) {
+                        waitMs = parseInt(retryAfter) * 1000;
+                    } else {
+                        // Groq error message format: "Please try again in 17.059999999s"
+                        const match = errorData.error?.message?.match(/try again in ([\d.]+)s/i);
+                        if (match) waitMs = parseFloat(match[1]) * 1000;
+                    }
+                    // Cap wait at 30s to avoid serverless timeout
+                    waitMs = Math.min(waitMs || 5000, 30000);
+                    if (i < retries) {
+                        console.warn(`[groqChat] Rate limited. Waiting ${Math.ceil(waitMs/1000)}s before retry ${i+1}/${retries}...`);
+                        await new Promise(r => setTimeout(r, waitMs + 500));
+                        continue;
+                    }
+                    // Last retry exhausted — throw with retry info for client-side handling
+                    throw Object.assign(new Error(`Rate limited. Retry after ${Math.ceil(waitMs/1000)}s`), {
+                        status: 429,
+                        retryAfterMs: waitMs,
+                        isRateLimit: true
+                    });
+                }
                 throw new Error(`Groq API error (${res.status}): ${errorData.error?.message || res.statusText}`);
             }
             const data = await res.json();
             return data.choices[0].message.content;
         } catch (e: any) {
             lastError = e;
-            if (i < retries) await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+            // If it's a rate limit error with retry info, re-throw for client to handle
+            if (e.isRateLimit) throw e;
+            // Only retry on network errors — not on parsing errors
+            if (i < retries && (e.name === 'TypeError' || e.message?.includes('fetch'))) {
+                const backoff = Math.pow(2, i) * 2000;
+                console.warn(`[groqChat] Network error, retry ${i+1}/${retries} after ${backoff/1000}s: ${e.message}`);
+                await new Promise(r => setTimeout(r, backoff));
+            } else {
+                throw e;
+            }
         }
     }
     throw lastError;
 }
 
-async function processAnswer(userState: UserState, history: any[], userAnswer: string) {
+async function processAnswer(userState: UserState | null, history: any[], userAnswer: string) {
     const round = (history.filter(h => h.role === 'user').length) + 1;
+    
+    // Initialize userState if null (first call)
+    if (!userState) {
+        userState = {
+            currentRound: 0,
+            dimensions: {},
+            detectedPattern: '',
+            monetizableProblem: '',
+            confirmedMBTI: '',
+            jungianArchetype: '',
+            hawkinsLevel: 0,
+            birthDate: '',
+            preferredLanguage: 'English',
+            isFullyIdentified: false,
+            isReady: false,
+            overallProgress: 0,
+            exchangeHistory: [],
+        } as UserState;
+    }
     
     // 1. LANGUAGE DETECTION (ROUND 1)
     let currentLanguage = userState.preferredLanguage || 'English';
@@ -1152,8 +1214,7 @@ async function preGenerateReport(userState: any, history: any[]) {
     // Fallback: generate personalized products locally if LLM is unavailable
     if (products.length < 3) {
       try {
-        const fallbackRoute = require('../../api/generate-products/route');
-        products = fallbackRoute.generateFallbackProducts(
+        products = generateFallbackProducts(
           userState.detectedPattern || 'self_sabotage',
           mbtiType,
           mbtiProfile,

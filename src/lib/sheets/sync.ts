@@ -2,7 +2,7 @@
 // High-level sync functions: Prisma DB + local Excel file
 // Call these after DB mutations to keep the Excel sheet in sync.
 
-import { prisma } from "@/lib/prisma"
+import { sql } from "@/lib/db"
 import { excelClient } from "@/lib/sheets/excel-client"
 
 /**
@@ -14,10 +14,12 @@ export async function syncUserToExcel(userId: string, overrides: Record<string, 
     let user: any
     if (Object.keys(overrides).length <= 1) {
       // Fetch fresh from DB
-      user = await prisma.user.findUnique({ where: { id: userId } })
+      const result = await sql`SELECT * FROM "User" WHERE id = ${userId} LIMIT 1`;
+      user = result[0];
     } else {
       // Build from overrides + minimal DB fetch
-      const dbUser = await prisma.user.findUnique({ where: { id: userId } })
+      const result = await sql`SELECT * FROM "User" WHERE id = ${userId} LIMIT 1`;
+      const dbUser = result[0];
       user = { ...dbUser, ...overrides }
     }
     if (!user) return
@@ -54,12 +56,17 @@ export async function syncSessionToExcel(sessionId: string, overrides: Record<st
   try {
     let session: any
     if (Object.keys(overrides).length <= 1) {
-      session = await prisma.session.findUnique({
-        where: { id: sessionId },
-        include: { blueprint: { select: { csn: true } } },
-      })
+      const result = await sql`
+        SELECT s.*, b.csn as "blueprint_csn"
+        FROM "Session" s
+        LEFT JOIN "Blueprint" b ON s."blueprintCsn" = b.csn
+        WHERE s.id = ${sessionId}
+        LIMIT 1
+      `;
+      session = result[0] ? { ...result[0], blueprint: result[0].blueprint_csn ? { csn: result[0].blueprint_csn } : null } : null;
     } else {
-      const dbSession = await prisma.session.findUnique({ where: { id: sessionId } })
+      const result = await sql`SELECT * FROM "Session" WHERE id = ${sessionId} LIMIT 1`;
+      const dbSession = result[0];
       session = { ...dbSession, ...overrides }
     }
     if (!session) return
@@ -96,12 +103,17 @@ export async function syncReportToExcel(csn: string, overrides: Record<string, a
   try {
     let bp: any
     if (Object.keys(overrides).length <= 1) {
-      bp = await prisma.blueprint.findUnique({
-        where: { csn },
-        include: { sessions: { select: { id: true }, take: 1 } },
-      })
+      const result = await sql`
+        SELECT b.*, s.id as "session_id"
+        FROM "Blueprint" b
+        LEFT JOIN "Session" s ON s."blueprintCsn" = b.csn
+        WHERE b.csn = ${csn}
+        LIMIT 1
+      `;
+      bp = result[0] ? { ...result[0], sessions: result[0].session_id ? [{ id: result[0].session_id }] : [] } : null;
     } else {
-      const dbBp = await prisma.blueprint.findUnique({ where: { csn } })
+      const result = await sql`SELECT * FROM "Blueprint" WHERE csn = ${csn} LIMIT 1`;
+      const dbBp = result[0];
       bp = { ...dbBp, ...overrides }
     }
     if (!bp) return
@@ -181,36 +193,32 @@ export async function fullSyncToExcel(batchSize = 100) {
 
   try {
     // Users
-    const users = await prisma.user.findMany({ take: batchSize, orderBy: { updatedAt: "desc" } })
+    const users = await sql`SELECT id FROM "User" ORDER BY "updatedAt" DESC LIMIT ${batchSize}`;
     for (const u of users) {
       await syncUserToExcel(u.id)
     }
     results.users = users.length
 
     // Sessions
-    const sessions = await prisma.session.findMany({ take: batchSize, orderBy: { startedAt: "desc" } })
+    const sessions = await sql`SELECT id FROM "Session" ORDER BY "startedAt" DESC LIMIT ${batchSize}`;
     for (const s of sessions) {
       await syncSessionToExcel(s.id)
     }
     results.sessions = sessions.length
 
     // Reports
-    const blueprints = await prisma.blueprint.findMany({
-      take: batchSize,
-      orderBy: { createdAt: "desc" },
-      include: { sessions: { select: { id: true }, take: 1 } },
-    })
+    const blueprints = await sql`SELECT csn FROM "Blueprint" ORDER BY "createdAt" DESC LIMIT ${batchSize}`;
     for (const bp of blueprints) {
       await syncReportToExcel(bp.csn)
     }
     results.reports = blueprints.length
 
     // Products
-    const purchases = await prisma.purchase.findMany({ take: batchSize, orderBy: { purchasedAt: "desc" } })
+    const purchases = await sql`SELECT id FROM "Purchase" ORDER BY "purchasedAt" DESC LIMIT ${batchSize}`;
     results.products = purchases.length
 
     // Events
-    const events = await prisma.event.findMany({ take: batchSize, orderBy: { createdAt: "desc" } })
+    const events = await sql`SELECT * FROM "Event" ORDER BY "createdAt" DESC LIMIT ${batchSize}`;
     for (const e of events) {
       await syncEventToExcel({
         user_id: e.userId,

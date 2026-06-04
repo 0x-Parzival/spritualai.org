@@ -2,7 +2,7 @@
 // Full sync: push all pending changes from DB to Google Sheets
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { sql } from '@/lib/db';
 import { sheetsService } from '@/lib/sheets/service';
 
 export async function POST(req: NextRequest) {
@@ -23,10 +23,11 @@ export async function POST(req: NextRequest) {
 
         switch (type) {
           case 'users': {
-            const users = await prisma.user.findMany({
-              take: batchSize,
-              orderBy: { updatedAt: 'desc' },
-            });
+            const users = await sql`
+              SELECT * FROM "User"
+              ORDER BY "updatedAt" DESC
+              LIMIT ${batchSize}
+            `;
             const rows = users.map(u => sheetsService.buildUserRow(u));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'users', rows);
@@ -35,12 +36,18 @@ export async function POST(req: NextRequest) {
             break;
           }
           case 'sessions': {
-            const sessions = await prisma.session.findMany({
-              take: batchSize,
-              orderBy: { startedAt: 'desc' },
-              include: { blueprint: { select: { csn: true } } },
-            });
-            const rows = sessions.map(s => sheetsService.buildSessionRow(s));
+            const sessions = await sql`
+              SELECT s.*, b.csn as "blueprint_csn"
+              FROM "Session" s
+              LEFT JOIN "Blueprint" b ON s."blueprintCsn" = b.csn
+              ORDER BY s."startedAt" DESC
+              LIMIT ${batchSize}
+            `;
+            // Map the flat row to the expected structure for buildSessionRow
+            const rows = sessions.map((s: any) => sheetsService.buildSessionRow({
+              ...s,
+              blueprint: s.blueprint_csn ? { csn: s.blueprint_csn } : null
+            }));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'sessions', rows);
             }
@@ -48,11 +55,11 @@ export async function POST(req: NextRequest) {
             break;
           }
           case 'reports': {
-            const blueprints = await prisma.blueprint.findMany({
-              take: batchSize,
-              orderBy: { createdAt: 'desc' },
-              include: { sessions: { select: { id: true }, take: 1 } },
-            });
+            const blueprints = await sql`
+              SELECT * FROM "Blueprint"
+              ORDER BY "createdAt" DESC
+              LIMIT ${batchSize}
+            `;
             const rows = blueprints.map(bp => sheetsService.buildReportRow(bp));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'reports', rows);
@@ -61,10 +68,11 @@ export async function POST(req: NextRequest) {
             break;
           }
           case 'products': {
-            const purchases = await prisma.purchase.findMany({
-              take: batchSize,
-              orderBy: { purchasedAt: 'desc' },
-            });
+            const purchases = await sql`
+              SELECT * FROM "Purchase"
+              ORDER BY "purchasedAt" DESC
+              LIMIT ${batchSize}
+            `;
             const rows = purchases.map(p => sheetsService.buildPurchaseRow(p));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'products', rows);
@@ -73,10 +81,11 @@ export async function POST(req: NextRequest) {
             break;
           }
           case 'events': {
-            const events = await prisma.event.findMany({
-              take: batchSize,
-              orderBy: { createdAt: 'desc' },
-            });
+            const events = await sql`
+              SELECT * FROM "Event"
+              ORDER BY "createdAt" DESC
+              LIMIT ${batchSize}
+            `;
             const rows = events.map(e => sheetsService.buildEventRow(e));
             if (rows.length > 0) {
               await sheetsService.appendRows(spreadsheetId, 'events', rows);

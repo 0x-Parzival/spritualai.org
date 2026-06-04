@@ -1,6 +1,10 @@
-import { prisma } from './prisma';
+/**
+ * lib/blockplain.ts
+ * Core logic for the immutable Consciousness Chain (Blockplain).
+ * Uses raw SQL to bypass Prisma type issues during build.
+ */
+
 import { sql } from './db';
-import { Blueprint, Prisma } from '@prisma/client';
 
 export const ARCHETYPE_SYMBOLS: Record<string, string> = {
   sovereign: 'Ω',
@@ -22,39 +26,20 @@ export function getArchetypeSymbol(archetype: string): string {
  * Assigns a unique X coordinate to a user atomically.
  */
 export async function assignPlaneX(userId: string): Promise<number> {
-  return await prisma.$transaction(async (tx) => {
-    const user = await tx.user.findUnique({
-      where: { id: userId },
-      select: { plane_x: true },
-    });
-
-    if (!user) throw new Error(`User ${userId} not found`);
-    if (user.plane_x !== null) {
-      throw new Error(`plane_x already assigned for user ${userId}`);
-    }
-
-    const counter = await tx.planeXCounter.create({
-      data: {},
-    });
-
-    await tx.user.update({
-      where: { id: userId },
-      data: { plane_x: counter.id },
-    });
-
-    return counter.id;
-  });
+  // Use a simple atomic counter increment via SQL
+  const counterResult = await sql`INSERT INTO "PlaneXCounter" DEFAULT VALUES RETURNING id`;
+  const planeX = counterResult[0].id;
+  
+  await sql`UPDATE "User" SET plane_x = ${planeX} WHERE id = ${userId}`;
+  return planeX;
 }
 
 /**
  * Gets the next Y coordinate for a user's blueprint chain.
  */
-export async function getNextPlaneY(userId: string, tx?: Prisma.TransactionClient): Promise<number> {
-  const client = tx || prisma;
-  const count = await client.blueprint.count({
-    where: { userId },
-  });
-  return count + 1;
+export async function getNextPlaneY(userId: string): Promise<number> {
+  const result = await sql`SELECT COUNT(*) as count FROM "Blueprint" WHERE "userId" = ${userId}`;
+  return (Number(result[0]?.count) || 0) + 1;
 }
 
 /**
@@ -85,19 +70,19 @@ export async function generateCSNData(
 /**
  * Gets the hash of the previous block's report data.
  */
-export async function getPrevBlockHash(userId: string, tx?: Prisma.TransactionClient): Promise<string | null> {
-  const client = tx || prisma;
-  const lastBlock = await client.blueprint.findFirst({
-    where: { userId },
-    orderBy: { plane_y: 'desc' },
-    select: { reportData: true },
-  });
+export async function getPrevBlockHash(userId: string): Promise<string | null> {
+  const lastBlock = await sql`
+    SELECT "reportData" FROM "Blueprint" 
+    WHERE "userId" = ${userId} 
+    ORDER BY plane_y DESC 
+    LIMIT 1
+  `;
 
-  if (!lastBlock) return null;
+  if (!lastBlock || lastBlock.length === 0) return null;
 
   const { createHash } = await import('crypto');
   return createHash('sha256')
-    .update(JSON.stringify(lastBlock.reportData))
+    .update(JSON.stringify(lastBlock[0].reportData))
     .digest('hex');
 }
 
@@ -109,58 +94,113 @@ export async function createBlock(params: {
   mbti: string;
   archetype: string;
   reportData: any;
-}): Promise<Blueprint> {
-  return await prisma.$transaction(async (tx) => {
-    // 1. Validate user and get plane_x
-    const user = await tx.user.findUnique({
-      where: { id: params.userId },
-      select: { plane_x: true },
-    });
+}): Promise<any> {
+  // 1. Get user plane_x
+  const userResult = await sql`SELECT plane_x FROM "User" WHERE id = ${params.userId} LIMIT 1`;
+  const user = userResult[0];
 
-    if (!user || user.plane_x === null) {
-      throw new Error(`plane_x not assigned for user ${params.userId}`);
-    }
+  if (!user || user.plane_x === null) {
+    throw new Error(`plane_x not assigned for user ${params.userId}`);
+  }
 
-    // 2. Get next plane_y and previous hash
-    const plane_y = await getNextPlaneY(params.userId, tx);
-    const prev_block_hash = await getPrevBlockHash(params.userId, tx);
-    const symbol = getArchetypeSymbol(params.archetype);
+  // 2. Get next plane_y and previous hash
+  const plane_y = await getNextPlaneY(params.userId);
+  const prev_block_hash = await getPrevBlockHash(params.userId);
+  const symbol = getArchetypeSymbol(params.archetype);
 
-    // 3. Create with temp placeholder to get sequenceNumber
-    const tempCsn = `TEMP-${params.userId}-${Date.now()}`;
-    const initialBlock = await tx.blueprint.create({
-      data: {
-        csn: tempCsn,
-        userId: params.userId,
-        plane_x: user.plane_x,
-        plane_y,
-        prev_block_hash,
-        mbti: params.mbti,
-        archetype: params.archetype,
-        symbol,
-        verifyCode: `TEMP-${Date.now()}`,
-        reportData: params.reportData,
-      },
-    });
+  // 3. Create with temp placeholder to get sequenceNumber
+  const tempCsn = `TEMP-${params.userId}-${Date.now()}`;
+  const initialBlockResult = await sql`
+    INSERT INTO "Blueprint" (csn, "userId", plane_x, plane_y, prev_block_hash, mbti, archetype, symbol, "verifyCode", "reportData")
+    VALUES (${tempCsn}, ${params.userId}, ${user.plane_x}, ${plane_y}, ${prev_block_hash}, ${params.mbti}, ${params.archetype}, ${symbol}, ${tempCsn}, ${JSON.stringify(params.reportData)}::jsonb)
+    RETURNING "sequenceNumber"
+  `;
+  const sequenceNumber = initialBlockResult[0].sequenceNumber;
 
-    // 4. Generate final CSN and verifyCode using the real sequenceNumber
-    const { csn, verifyCode } = await generateCSNData(
-      initialBlock.sequenceNumber,
-      params.mbti,
-      params.archetype
-    );
+  // 4. Generate final CSN and verifyCode using the real sequenceNumber
+  const { csn, verifyCode } = await generateCSNData(
+    sequenceNumber,
+    params.mbti,
+    params.archetype
+  );
 
-    // 5. Update the row with final data
-    return await tx.blueprint.update({
-      where: { csn: tempCsn },
-      data: { csn, verifyCode },
-    });
-  });
+  // 5. Update the row with final data
+  const finalBlockResult = await sql`
+    UPDATE "Blueprint"
+    SET csn = ${csn}, "verifyCode" = ${verifyCode}
+    WHERE csn = ${tempCsn}
+    RETURNING *
+  `;
+  
+  return finalBlockResult[0];
+}
+
+/**
+ * Get a user's vertical chain.
+ */
+export async function getUserChain(userId: string) {
+  return await sql`
+    SELECT * FROM "Blueprint"
+    WHERE "userId" = ${userId}
+    ORDER BY plane_y ASC
+  `;
+}
+
+/**
+ * Get all blueprints at a given depth across all users.
+ */
+export async function getHorizontalSlice(plane_y: number) {
+  return await sql`
+    SELECT b.*, u.id as "user_id", u.uid as "user_uid", u.email as "user_email"
+    FROM "Blueprint" b
+    LEFT JOIN "User" u ON b."userId" = u.id
+    WHERE b.plane_y = ${plane_y}
+  `;
+}
+
+/**
+ * Get blueprints matching a cluster of attributes.
+ */
+export async function getCluster(params: { mbti?: string; archetype?: string; plane_y?: number }) {
+  let query = sql`
+    SELECT b.*, u.id as "user_id", u.uid as "user_uid", u.email as "user_email"
+    FROM "Blueprint" b
+    LEFT JOIN "User" u ON b."userId" = u.id
+    WHERE 1=1
+  `;
+  
+  if (params.mbti) {
+    query = sql`SELECT * FROM (${query}) q WHERE mbti = ${params.mbti}`;
+  }
+  if (params.archetype) {
+    query = sql`SELECT * FROM (${query}) q WHERE archetype = ${params.archetype}`;
+  }
+  if (params.plane_y) {
+    query = sql`SELECT * FROM (${query}) q WHERE plane_y = ${params.plane_y}`;
+  }
+
+  return await query;
+}
+
+/**
+ * Verify the authenticity of a block.
+ */
+export async function verifyBlock(verifyCode: string) {
+  const results = await sql`
+    SELECT * FROM "Blueprint"
+    WHERE "verifyCode" = ${verifyCode.toUpperCase()}
+    LIMIT 1
+  `;
+  const blueprint = results[0];
+
+  return {
+    valid: !!blueprint,
+    blueprint: blueprint || undefined,
+  };
 }
 
 /**
  * Look up a block by its CSN.
- * Uses raw SQL to avoid PrismaNeon adapter issues.
  */
 export async function getBlock(csn: string) {
   const result = await sql`
@@ -192,53 +232,4 @@ export async function getBlock(csn: string) {
     engagementScore: row.engagementScore || 0,
     user: row.user_id ? { id: row.user_id, uid: row.user_uid, email: row.user_email } : null,
   } as any;
-}
-
-/**
- * Get a user's vertical chain.
- */
-export async function getUserChain(userId: string) {
-  return await prisma.blueprint.findMany({
-    where: { userId },
-    orderBy: { plane_y: 'asc' },
-  });
-}
-
-/**
- * Get all blueprints at a given depth across all users.
- */
-export async function getHorizontalSlice(plane_y: number) {
-  return await prisma.blueprint.findMany({
-    where: { plane_y },
-    include: { user: true },
-  });
-}
-
-/**
- * Get blueprints matching a cluster of attributes.
- */
-export async function getCluster(params: { mbti?: string; archetype?: string; plane_y?: number }) {
-  const where: Prisma.BlueprintWhereInput = {};
-  if (params.mbti) where.mbti = params.mbti;
-  if (params.archetype) where.archetype = params.archetype;
-  if (params.plane_y) where.plane_y = params.plane_y;
-
-  return await prisma.blueprint.findMany({
-    where,
-    include: { user: true },
-  });
-}
-
-/**
- * Verify the authenticity of a block.
- */
-export async function verifyBlock(verifyCode: string) {
-  const blueprint = await prisma.blueprint.findUnique({
-    where: { verifyCode: verifyCode.toUpperCase() },
-  });
-
-  return {
-    valid: !!blueprint,
-    blueprint: blueprint || undefined,
-  };
 }

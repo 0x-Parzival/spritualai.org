@@ -2,7 +2,7 @@
 // Sync local DB data to the Excel file via the Python service
 
 import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { sql } from "@/lib/db"
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,20 +11,18 @@ export async function POST(req: NextRequest) {
 
     // If userId + mbti provided, update user's MBTI in DB and sync to Excel
     if (userId && mbti) {
-      const user = await prisma.user.update({
-        where: { id: userId },
-        data: { /* MBTI is stored on Blueprint, not User directly */ },
-      })
+      const userResult = await sql`SELECT * FROM "User" WHERE id = ${userId} LIMIT 1`;
+      const user = userResult[0];
+      
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
 
       // Log the MBTI change event
-      await prisma.event.create({
-        data: {
-          userId,
-          eventType: "mbti_change",
-          eventData: { mbti, previousMbti: user },
-          sessionId: sessionId || null,
-        },
-      })
+      await sql`
+        INSERT INTO "Event" (id, "userId", "eventType", "eventData", "sessionId")
+        VALUES (${crypto.randomUUID()}, ${userId}, 'mbti_change', ${JSON.stringify({ mbti, previousMbti: user })}::jsonb, ${sessionId || null})
+      `;
 
       // Sync to Excel via the Python service
       const excelRes = await fetch("http://127.0.0.1:8765/upsert/user", {
@@ -45,14 +43,10 @@ export async function POST(req: NextRequest) {
 
     // If eventType provided, log event to Excel
     if (eventType && userId) {
-      await prisma.event.create({
-        data: {
-          userId,
-          eventType,
-          eventData: eventData || {},
-          sessionId: sessionId || null,
-        },
-      })
+      await sql`
+        INSERT INTO "Event" (id, "userId", "eventType", "eventData", "sessionId")
+        VALUES (${crypto.randomUUID()}, ${userId}, ${eventType}, ${JSON.stringify(eventData || {})}::jsonb, ${sessionId || null})
+      `;
 
       await fetch("http://127.0.0.1:8765/append/event", {
         method: "POST",
