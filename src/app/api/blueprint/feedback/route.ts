@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/prisma';
+import { sql } from '@/lib/db';
 
 /**
  * POST /api/blueprint/feedback
@@ -25,36 +25,32 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify the blueprint belongs to this user
-    const blueprint = await prisma.blueprint.findFirst({
-      where: { csn, userId },
-    });
+    const blueprints = await sql`SELECT csn FROM "Blueprint" WHERE csn = ${csn} AND "userId" = ${userId} LIMIT 1`;
 
-    if (!blueprint) {
+    if (!blueprints || blueprints.length === 0) {
       return NextResponse.json({ error: 'Blueprint not found' }, { status: 404 });
     }
 
     // Store the feedback as an event
-    await prisma.event.create({
-      data: {
-        userId,
-        eventType: 'blueprint_feedback',
-        eventData: { csn, message: message.trim() },
-      },
-    });
+    await sql`
+      INSERT INTO "Event" (id, "userId", "eventType", "eventData")
+      VALUES (${crypto.randomUUID()}, ${userId}, 'blueprint_feedback', ${JSON.stringify({ csn, message: message.trim() })}::jsonb)
+    `;
 
     // Also update the session summary if a session exists
-    const session = await prisma.session.findFirst({
-      where: { blueprintCsn: csn },
-      orderBy: { lastActiveAt: 'desc' },
-    });
+    const sessions = await sql`
+      SELECT id FROM "Session" 
+      WHERE "blueprintCsn" = ${csn} 
+      ORDER BY "lastActiveAt" DESC 
+      LIMIT 1
+    `;
 
-    if (session) {
-      await prisma.session.update({
-        where: { id: session.id },
-        data: {
-          newProblemFound: message.trim().slice(0, 200),
-        },
-      });
+    if (sessions && sessions.length > 0) {
+      await sql`
+        UPDATE "Session"
+        SET "newProblemFound" = ${message.trim().slice(0, 200)}
+        WHERE id = ${sessions[0].id}
+      `;
     }
 
     return NextResponse.json({ success: true, message: 'Feedback recorded' });
