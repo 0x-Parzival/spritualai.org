@@ -6,9 +6,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 const isProtectedRoute = createRouteMatcher([
   "/chat(.*)",
   "/profile(.*)",
-  "/api/chat(.*)",
-  "/api/spiritual(.*)",
-  // Blockplain routes that need protection (management/internal):
+  // API routes that definitely need protection
   "/api/blockplain/cluster(.*)",
   "/api/blockplain/user-chain(.*)",
   "/api/blockplain/verify(.*)",

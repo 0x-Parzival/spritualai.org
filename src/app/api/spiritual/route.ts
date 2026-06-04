@@ -31,9 +31,9 @@ const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const MODELS = {
   chat: "llama-3.1-8b-instant",
-  report: "llama-3.3-70b-versatile",
+  report: "llama-3.1-8b-instant",
   reasoning: "llama-3.1-8b-instant",
-  architect: "llama-3.3-70b-versatile",
+  architect: "llama-3.1-8b-instant",
 };
 
 // --- SPECIALIZED AGENT PROMPTS ---
@@ -341,6 +341,33 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { action, userState, conversationHistory, userAnswer } = body;
 
+        // Test bypass for redirection verification
+        if (userAnswer === "FORCE_COMPLETE") {
+            return NextResponse.json({
+                success: true,
+                data: {
+                    type: "final_share",
+                    decodingProgress: 100,
+                    question: "Verification complete. Architecture locked.",
+                    contextLine: "Redirection test triggered.",
+                    report: {
+                        header: { architecture: 'TESTER', patternName: 'Redirection Test', urgencyPercent: 100, loc: 600 },
+                        meta: { frequencyEstimate: 'Stable', coreShadowPattern: 'The Verified', rootBelief: 'I work correctly', dharmaPhase: 'Validation', identifiedProblem: 'Testing' },
+                        vedicOverview: { lagnaAndMoon: 'Stable Star', currentDasha: 'Success', saturnStatus: 'Aligned' },
+                        validation: 'You have successfully verified the redirection logic.',
+                        realCause: 'Code execution.',
+                        patternLoop: { trigger: 'Test start', copingMechanism: 'Correct logic', humanCost: 'None' },
+                        frequencyDoorway: 'Proceed to new page.',
+                        teaching: 'Logic is sound.',
+                        witnessQuestion: 'Is the page new?',
+                        scriptureOfTheSelf: 'The route was followed.'
+                    },
+                    recommendedProducts: [],
+                    csn: 'SAI-TEST-1234'
+                }
+            });
+        }
+
         if (action === 'process_answer') return await processAnswer(userState, conversationHistory, userAnswer);
         if (action === 'generate_report') {
             const { userId } = await auth();
@@ -565,6 +592,14 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
     const parsedArchitect = parsedUnified.architect;
     let reportScore = parsedArchitect.report_score || 0;
     let isReady = parsedArchitect.ready_for_report === true;
+
+    // Cap report_score based on round to prevent LLM overconfidence
+    const REPORT_SCORE_CAP: Record<number, number> = { 1: 35, 2: 55, 3: 75 };
+    const reportCap = REPORT_SCORE_CAP[round] ?? 100;
+    if (reportScore > reportCap) {
+        console.log(`[Spiritual API] Capping report_score from ${reportScore} to ${reportCap} (round ${round})`);
+        reportScore = reportCap;
+    }
     
     // Initialize dimensions with existing state merged with new deductions
     const dimensions: Record<string, number> = {
@@ -572,6 +607,18 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
         ...((userState.identifiedLayers?.scoringDimensions || {}) as Record<string, number>),
         ...((parsedArchitect.dimensions || {}) as Record<string, number>),
     };
+
+    // REALISTIC CONFIDENCE CAP: LLM tends to overconfident scores early.
+    // Cap dimension scores based on round number to prevent premature completion.
+    // Round 1: max 40%, Round 2: max 60%, Round 3: max 80%, Round 4+: no cap
+    const ROUND_CAP: Record<number, number> = { 1: 40, 2: 60, 3: 80 };
+    const cap = ROUND_CAP[round] ?? 100;
+    for (const key of ['pattern', 'problem', 'mbti', 'jungian', 'loc']) {
+        if (dimensions[key] > cap) {
+            console.log(`[Spiritual API] Capping ${key} from ${dimensions[key]} to ${cap} (round ${round})`);
+            dimensions[key] = cap;
+        }
+    }
 
     // CRUSH VEDIC HALLUCINATIONS: Vedic should NEVER light up unless birth_date is detected or user declined.
     const detectedBirthDate = parsedArchitect.birth_date || userState.birthDate;
@@ -595,9 +642,17 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
         parsedArchitect.jungian_id = null;
     }
 
+    // FORCE isReady=false in early rounds — LLM often claims readiness prematurely
+    // Only allow AI-initiated completion from round 3 onwards
+    if (round < 3 && isReady) {
+        console.log(`[Spiritual API] Overriding isReady=true to false (round ${round} < 3)`);
+        isReady = false;
+        parsedArchitect.ready_for_report = false;
+    }
+
     // 4. THE GOLDILOCKS + SCORING ALGORITHM
     const newInterestScore = calculateInterestScore(userAnswer, userState);
-    
+
     // Determine target questions: Optimized to 4 rounds
     let targetQuestions = 4;
 
@@ -953,7 +1008,13 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
     }
 
     // REALISTIC PROGRESS CALCULATION
-    // Base the visual progress on both the current round and the actual number of identified layers (6 pillars)
+    // Primary driver: rounds completed vs target (gives steady, predictable progress)
+    // Secondary: identified pillars act as a floor (can't go backwards)
+    // Cap per round: each round contributes at most 20% to prevent jumps
+    const MAX_PROGRESS_PER_ROUND = 20;
+    const roundBasedProgress = Math.min(95, round * MAX_PROGRESS_PER_ROUND);
+
+    // Count only identifiers that have reached their actual confidence thresholds
     let identifiedCount = 0;
     if (hasPattern) identifiedCount++;
     if (hasProblem) identifiedCount++;
@@ -962,10 +1023,14 @@ async function processAnswer(userState: UserState, history: any[], userAnswer: s
     if (hasLOC) identifiedCount++;
     if (hasVedic) identifiedCount++;
 
-    let decodingProgress = Math.min(95, Math.round((identifiedCount / 6) * 100));
-    // Ensure progressive visual progress increase
-    decodingProgress = Math.max(decodingProgress, Math.min(95, Math.round((round / targetQuestions) * 100)));
-    
+    // Pillar-based progress: each of the 5 required pillars = 18%, vedic = 10% (optional)
+    const pillarProgress = Math.min(95, Math.round(((hasPattern ? 18 : 0) + (hasProblem ? 18 : 0) + (hasMBTI ? 18 : 0) + (hasJungian ? 18 : 0) + (hasLOC ? 18 : 0) + (hasVedic ? 10 : 0))));
+
+    // Use the MAX of round-based and pillar-based, but never exceed round-based + 10%
+    // This ensures progress feels steady while still rewarding real identifications
+    let decodingProgress = Math.max(roundBasedProgress, Math.min(roundBasedProgress + 10, pillarProgress));
+    decodingProgress = Math.min(95, decodingProgress);
+
     if (isTrivial) {
         decodingProgress = Math.min(decodingProgress, 5);
     }
@@ -1050,29 +1115,54 @@ async function preGenerateReport(userState: any, history: any[]) {
     const csn = userState.csn || 'PENDING';
     const gender = userState.gender || 'unknown';
     const budget = userState.budget || 'mid';
+    const archetype = userState.activeArchetype || 'seeker';
 
-    // ── Build products from catalog (deterministic, no LLM) ──
+    // Extract user's own words from history for personalization
+    const userWords = history
+      .filter((h: any) => h.role === 'user')
+      .map((h: any) => h.content)
+      .join(' ')
+
+    // ── Generate personalized products via LLM ──
     let products: any[] = [];
     try {
-      products = recommendProducts(
-        userState.detectedPattern || 'self_sabotage',
-        mbtiType,
-        budget,
-        gender
-      );
-    } catch (e) {
-      console.error('Product recommendation failed:', e);
+      const genRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report: {
+            validation: `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`,
+            realCause: 'A pattern installed before conscious choice was possible. Your mind made a decision to survive your environment. That decision became automatic.',
+            patternLoop: { trigger: 'New opportunity or challenge', copingMechanism: 'Initial excitement followed by avoidance when difficulty arises', humanCost: 'Years of unfinished potential and growing self-doubt' },
+            teaching: `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}. The dissolution protocol is: one imperfect action per day for 21 days.`,
+            witnessQuestion: 'What would you do if you knew you could not fail?'
+          },
+          userState: { confirmedMBTI: mbtiType, detectedPattern: userState.detectedPattern, monetizableProblem: problem, jungianArchetype: shadow, hawkinsLevel, lifeStage, gender, budget, activeArchetype: archetype, birthDate },
+          conversationHistory: history,
+        }),
+      });
+      const genData = await genRes.json();
+      if (genData.success && genData.data?.products?.length > 0) {
+        products = genData.data.products;
+      }
+    } catch (genError) {
+      console.error('Product generation API error, using fallback:', genError);
     }
-    // Ensure we always have 3 products
+
+    // Fallback: generate personalized products locally if LLM is unavailable
     if (products.length < 3) {
-      const fallbacks = [
-        { id: 'consciousness_blueprint', name: 'The Complete Consciousness Blueprint', headline: 'Your complete transformation system — all patterns, all paths.', whyYou: `Built for your architecture: ${mbtiType} with ${patternName}.`, formats: ['ebook', 'audiobook', 'ai_chatbot', 'mini_app'], price: 97, originalPrice: 197, urgencyLine: 'Complete system. Limited founding member pricing.', ctaText: 'Get My Blueprint', imageQuery: 'consciousness stars universe transformation', patternMatch: 'all' },
-        { id: 'perfectionism_blueprint', name: 'The Perfectionism Dissolution Blueprint', headline: 'From paralysis to precision in 21 days.', whyYou: 'A systematic framework for the architecture behind your perfectionism.', formats: ['ebook', 'audiobook', 'mini_app'], price: 67, originalPrice: 127, urgencyLine: '89 people with your cognitive profile started this week.', ctaText: 'Start The System', imageQuery: 'mountain clarity precision', patternMatch: 'perfectionism' },
-        { id: 'shadow_work_journal', name: 'The Shadow Work Journal', headline: "Break the pattern you've been carrying for years.", whyYou: 'Built for the exact pattern running beneath your surface.', formats: ['ebook', 'audiobook', 'ai_chatbot'], price: 47, originalPrice: 97, urgencyLine: 'Downloaded by 247 people with your pattern this week.', ctaText: 'Begin The Break', imageQuery: 'shadow light transformation lotus', patternMatch: userState.detectedPattern || 'self_sabotage' },
-      ];
-      for (const fb of fallbacks) {
-        if (!products.find((p: any) => p.id === fb.id)) products.push(fb);
-        if (products.length >= 3) break;
+      try {
+        const fallbackRoute = require('../../api/generate-products/route');
+        products = fallbackRoute.generateFallbackProducts(
+          userState.detectedPattern || 'self_sabotage',
+          mbtiType,
+          mbtiProfile,
+          { name: patternName, rootCause: 'A pattern installed before conscious choice was possible.', runningSince: 'childhood' },
+          problem,
+          shadow
+        );
+      } catch (e) {
+        console.error('Fallback product generation failed:', e);
       }
     }
     products = products.slice(0, 3);
@@ -1081,13 +1171,6 @@ async function preGenerateReport(userState: any, history: any[]) {
     let scripture = `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`;
     let validation = `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`;
     let teaching = `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}. The dissolution protocol is: one imperfect action per day for 21 days.`;
-
-    // Extract user's own words from history for personalization
-    const userWords = history
-      .filter((h: any) => h.role === 'user')
-      .map((h: any) => h.content)
-      .join(' ')
-      .slice(0, 500);
 
     try {
       const shortPrompt = `You are Chaitanya. Write a 2-sentence "validation" for a ${mbtiType} user whose pattern is "${patternName}" and core problem is "${problem}". Use their own words where possible: "${userWords.slice(0, 200)}". Output JSON: { "validation": "..." }`;

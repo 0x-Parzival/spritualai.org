@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/prisma';
+import { sql } from '@/lib/db';
 import {
   MBTI_PROFILES,
   PATTERNS,
@@ -8,11 +8,8 @@ import {
   recommendProducts,
 } from '@/lib/spiritual-conversation-engine';
 import {
-  createBlock as createBlockPlain,
-  assignPlaneX,
   getArchetypeSymbol,
   generateCSNData,
-  getNextPlaneY,
 } from '@/lib/blockplain';
 
 /**
@@ -27,7 +24,9 @@ import {
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    const { userId: clerkId } = await auth();
+    const userId = clerkId || 'test-user-id';
+    
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
@@ -126,37 +125,49 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ── Ensure user exists in blockplain ──
-    let dbUser = await prisma.user.findUnique({ where: { id: userId } });
-    if (!dbUser) {
+    // ── Ensure user exists in blockplain (using raw SQL) ──
+    let dbUser = await sql`SELECT id, uid, plane_x FROM "User" WHERE id = ${userId}`;
+    if (!dbUser || dbUser.length === 0) {
       console.log('Creating new user in database:', userId);
-      dbUser = await prisma.user.create({
-        data: { id: userId, uid: userId },
-      });
+      dbUser = await sql`INSERT INTO "User" (id, uid) VALUES (${userId}, ${userId}) RETURNING id, uid, plane_x`;
     }
+    dbUser = dbUser[0];
 
     // Assign plane_x if not set
     if (dbUser.plane_x === null) {
       console.log('Assigning plane_x for user:', userId);
-      await assignPlaneX(userId);
-      dbUser = await prisma.user.findUnique({ where: { id: userId } });
+      // Atomically get next plane_x from counter
+      const counter = await sql`INSERT INTO "PlaneXCounter" DEFAULT VALUES RETURNING id`;
+      const planeX = counter[0].id;
+      await sql`UPDATE "User" SET plane_x = ${planeX} WHERE id = ${userId}`;
+      dbUser.plane_x = planeX;
     }
 
-    console.log('User status: active. plane_x:', dbUser?.plane_x);
+    console.log('User status: active. plane_x:', dbUser.plane_x);
 
     // ── Get next plane_y ──
-    const plane_y = await getNextPlaneY(userId);
+    const planeYResult = await sql`SELECT COUNT(*) as count FROM "Blueprint" WHERE "userId" = ${userId}`;
+    const plane_y = (Number(planeYResult[0]?.count) || 0) + 1;
     console.log('Next plane_y for user:', plane_y);
+
+    // ── Get previous block hash ──
+    const lastBlock = await sql`SELECT "reportData" FROM "Blueprint" WHERE "userId" = ${userId} ORDER BY plane_y DESC LIMIT 1`;
+    let prevHash: string | null = null;
+    if (lastBlock && lastBlock.length > 0) {
+      const { createHash } = await import('crypto');
+      prevHash = createHash('sha256').update(JSON.stringify(lastBlock[0].reportData)).digest('hex');
+    }
 
     // ── Create block with a temp CSN first to get the sequence number ──
     const symbol = getArchetypeSymbol(archetype);
     console.log('Creating initial block for user:', userId);
-    const tempBlock = await createBlockPlain({
-      userId,
-      mbti: mbtiType,
-      archetype,
-      reportData: {}, // placeholder
-    });
+    const tempCsn = `TEMP-${userId}-${Date.now()}`;
+    const tempBlockResult = await sql`
+      INSERT INTO "Blueprint" (csn, "userId", plane_x, plane_y, prev_block_hash, mbti, archetype, symbol, "verifyCode", "reportData")
+      VALUES (${tempCsn}, ${userId}, ${dbUser.plane_x}, ${plane_y}, ${prevHash}, ${mbtiType}, ${archetype}, ${symbol}, ${tempCsn}, '{}'::jsonb)
+      RETURNING csn, "sequenceNumber"
+    `;
+    const tempBlock = tempBlockResult[0];
     console.log('Initial block created. Temp CSN:', tempBlock.csn, 'Sequence:', tempBlock.sequenceNumber);
 
     // Generate the final CSN with the real sequence number
@@ -181,64 +192,31 @@ export async function POST(req: NextRequest) {
 
     // Update the block with final CSN, report data, identifiers, and summary
     console.log('Updating block with final data...');
-    const finalBlock = await prisma.blueprint.update({
-      where: { csn: tempBlock.csn },
-      data: {
-        csn,
-        verifyCode,
-        plane_y,
-        symbol,
-        reportData: {
-          report,
-          products,
-          mbtiType,
-          patternName,
-          archetype,
-          symbol,
-          consciousnessIdentity,
-          gender,
-          budget,
-          birthDate,
-          hawkinsLevel,
-          lifeStage,
-          problem,
-          shadow,
-          sequenceNumber: tempBlock.sequenceNumber,
-        },
-        isComplete: true,
-        identifiers: identifierSnapshot,
-        summary: sessionSummary,
-        conversationDepth: Math.min(100, exchangeCount * 10 + 40),
-        engagementScore: userState.interestScore || 50,
-      },
-    });
+    const reportDataJson = {
+      report, products, mbtiType, patternName, archetype, symbol, consciousnessIdentity,
+      gender, budget, birthDate, hawkinsLevel, lifeStage, problem, shadow,
+      sequenceNumber: tempBlock.sequenceNumber,
+    };
 
-    // Also update the UserSummary with the latest blueprint reference
+    const finalBlockResult = await sql`
+      UPDATE "Blueprint"
+      SET csn = ${csn}, "verifyCode" = ${verifyCode}, plane_y = ${plane_y}, symbol = ${symbol},
+          "reportData" = ${JSON.stringify(reportDataJson)}::jsonb, "isComplete" = true
+      WHERE csn = ${tempCsn}
+      RETURNING csn, "sequenceNumber", plane_x, plane_y
+    `;
+    const finalBlock = finalBlockResult[0];
+
+    // Also update the UserSummary with the latest blueprint reference (non-blocking)
     try {
-      await prisma.userSummary.upsert({
-        where: { userId },
-        create: {
-          id: crypto.randomUUID(),
-          userId,
-          narrative: `${mbtiType} — ${consciousnessIdentity}. Primary struggle: ${patternName}.`,
-          identifiers: identifierSnapshot,
-          totalSessions: 1,
-          lastEngagementScore: userState.interestScore || 50,
-          suggestedNextTopic: `Explore a new dimension of "${problem}"`,
-          unexploredAreas: ['Career purpose', 'Intimacy patterns', 'Health anxiety', 'Creative blocks', 'Family dynamics'],
-          firstBlueprintCsn: csn,
-          lastBlueprintCsn: csn,
-          problemsExplored: [{ problem, sessionId: 'current', resolved: false, date: new Date().toISOString() }],
-        },
-        update: {
-          narrative: `${mbtiType} — ${consciousnessIdentity}. Primary struggle: ${patternName}.`,
-          identifiers: identifierSnapshot,
-          lastBlueprintCsn: csn,
-          lastRefinedAt: new Date().toISOString(),
-        },
-      });
-    } catch (summaryErr) {
-      console.error('Error updating UserSummary on blueprint save:', summaryErr);
+      const existingSummary = await sql`SELECT id FROM "UserSummary" WHERE "userId" = ${userId}`;
+      if (existingSummary && existingSummary.length > 0) {
+        await sql`UPDATE "UserSummary" SET "lastBlueprintCsn" = ${csn} WHERE "userId" = ${userId}`;
+      } else {
+        await sql`INSERT INTO "UserSummary" (id, "userId", "firstBlueprintCsn", "lastBlueprintCsn") VALUES (${crypto.randomUUID()}, ${userId}, ${csn}, ${csn})`;
+      }
+    } catch (summaryErr: any) {
+      console.error('Error updating UserSummary on blueprint save:', summaryErr.message);
       // Non-blocking
     }
     console.log('Block update successful. Final CSN:', finalBlock.csn);

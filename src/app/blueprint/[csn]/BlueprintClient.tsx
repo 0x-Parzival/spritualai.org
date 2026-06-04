@@ -584,38 +584,102 @@ export default function BlueprintClient({ data, csn }: Props) {
             >
               <div className={styles.solutionsPage}>
                 <div className={styles.solutionsHeader}>
-                  <h2 className={styles.solutionsTitle}>Recommended Solutions</h2>
+                  <h2 className={styles.solutionsTitle}>Your Personalized Solutions</h2>
                   <p className={styles.solutionsSubtitle}>
-                    3 hyper-personalized instruments designed for your {mbti} architecture
+                    3 instruments generated from your {mbti} blueprint — each targeting a different layer of your consciousness architecture
                   </p>
                 </div>
 
-                <div className={styles.cardGrid}>
-                  {(products || []).slice(0, 3).map((product, i) => (
-                    <FlipCard key={product.id} product={product} index={i} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {(products || []).map((product: any, i: number) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.15 }}
+                      style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(53, 248, 255, 0.1)',
+                        borderRadius: '16px',
+                        padding: '28px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                        <div>
+                          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#35f8ff', letterSpacing: '0.2em', marginBottom: '6px' }}>
+                            INSTRUMENT {String(i + 1).padStart(2, '0')}
+                          </div>
+                          <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.1rem', fontWeight: 700, marginBottom: '4px' }}>
+                            {product.name}
+                          </h3>
+                          <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                            {product.tagline}
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>₹{product.price?.original}</div>
+                          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.3rem', color: '#35f8ff', fontWeight: 700 }}>₹{product.price?.discounted}</div>
+                        </div>
+                      </div>
+
+                      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
+                        {product.targetProblem}
+                      </p>
+
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {product.whatYouGet?.slice(0, 3).map((item: string, j: number) => (
+                          <span key={j} style={{ fontSize: '0.7rem', padding: '4px 10px', background: 'rgba(53, 248, 255, 0.08)', borderRadius: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                            {item.split('—')[0].trim()}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                        <a
+                          href={`/blueprint/${encodeURIComponent(csn)}/product/${product.id}`}
+                          style={{
+                            display: 'inline-block',
+                            padding: '12px 28px',
+                            background: 'linear-gradient(135deg, #35f8ff 0%, #0080ff 100%)',
+                            color: '#0a0a1a',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            borderRadius: '8px',
+                            textDecoration: 'none',
+                            boxShadow: '0 4px 15px rgba(53, 248, 255, 0.25)',
+                          }}
+                        >
+                          {product.ctaText}
+                        </a>
+                        <a
+                          href={`/blueprint/${encodeURIComponent(csn)}/product/${product.id}`}
+                          style={{
+                            display: 'inline-block',
+                            padding: '12px 20px',
+                            background: 'transparent',
+                            color: 'rgba(255,255,255,0.6)',
+                            fontFamily: 'Orbitron, sans-serif',
+                            fontSize: '0.7rem',
+                            fontWeight: 500,
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            borderRadius: '8px',
+                            textDecoration: 'none',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                          }}
+                        >
+                          View Details
+                        </a>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
-
-                {/* Additional Products */}
-                {(products || []).length > 3 && (
-                  <div style={{ marginTop: '40px' }}>
-                    <h3 style={{
-                      fontFamily: 'Orbitron, sans-serif',
-                      fontSize: '1.2rem',
-                      textAlign: 'center',
-                      marginBottom: '24px',
-                      color: 'var(--text-secondary)',
-                      letterSpacing: '0.1em',
-                    }}>
-                      Additional Instruments
-                    </h3>
-                    <div className={styles.cardGrid}>
-                      {(products || []).slice(3).map((product, i) => (
-                        <FlipCard key={product.id} product={product} index={i + 3} />
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}

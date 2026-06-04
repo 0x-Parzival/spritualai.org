@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { sql } from './db';
 import { Blueprint, Prisma } from '@prisma/client';
 
 export const ARCHETYPE_SYMBOLS: Record<string, string> = {
@@ -159,12 +160,38 @@ export async function createBlock(params: {
 
 /**
  * Look up a block by its CSN.
+ * Uses raw SQL to avoid PrismaNeon adapter issues.
  */
 export async function getBlock(csn: string) {
-  return await prisma.blueprint.findUnique({
-    where: { csn },
-    include: { user: true },
-  });
+  const result = await sql`
+    SELECT b.*, u.id as "user_id", u.uid as "user_uid", u.email as "user_email"
+    FROM "Blueprint" b
+    LEFT JOIN "User" u ON b."userId" = u.id
+    WHERE b.csn = ${csn}
+    LIMIT 1
+  `;
+  if (!result || result.length === 0) return null;
+  const row = result[0];
+  return {
+    csn: row.csn,
+    sequenceNumber: row.sequenceNumber,
+    userId: row.userId,
+    plane_x: row.plane_x,
+    plane_y: row.plane_y,
+    prev_block_hash: row.prev_block_hash,
+    mbti: row.mbti,
+    archetype: row.archetype,
+    symbol: row.symbol,
+    verifyCode: row.verifyCode,
+    reportData: row.reportData,
+    isComplete: row.isComplete,
+    createdAt: row.createdAt,
+    identifiers: row.identifiers || {},
+    summary: row.summary || '',
+    conversationDepth: row.conversationDepth || 0,
+    engagementScore: row.engagementScore || 0,
+    user: row.user_id ? { id: row.user_id, uid: row.user_uid, email: row.user_email } : null,
+  } as any;
 }
 
 /**
