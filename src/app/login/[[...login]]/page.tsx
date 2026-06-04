@@ -9,10 +9,10 @@ import NavButtons from '@/components/NavButtons';
 import LiquidBackground from '@/components/artistic/LiquidBackground';
 
 export default function MBTILoginPage() {
-  const { signIn } = useSignIn();
+  const { signIn, isLoaded: signInLoaded } = useSignIn();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('redirect') || '/blueprint';
+  const redirectPath = searchParams.get('redirect') || searchParams.get('redirect_url') || '/blueprint';
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,16 +29,17 @@ export default function MBTILoginPage() {
     }
   }, []);
 
-  const signInWith = (_strategy: string) => {
-    // Clerk v7 handles OAuth through the <SignIn> component
-    // For the custom UI, we trigger a Google popup via Clerk's JS SDK
-    // The simplest approach: navigate to Clerk's standard OAuth flow
-    if (typeof window !== 'undefined') {
-      // Clerk v7 uses the clerk-js loaded on the page
-      const clerkInstance = (window as any).__clerk;
-      if (clerkInstance?.redirectToSignIn) {
-        clerkInstance.redirectToSignIn({ signInMode: 'oauth_google' });
-      }
+  const signInWith = async (strategy: string) => {
+    if (!signInLoaded || !signIn) return;
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: strategy as any,
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: redirectPath,
+      });
+    } catch (err: any) {
+      console.error("OAuth error:", err);
+      setError("Failed to initialize social login.");
     }
   };
 
@@ -49,8 +50,7 @@ export default function MBTILoginPage() {
     setIsLoggingIn(true);
     try {
       const result: any = await signIn.create({ identifier: email, password });
-      // Clerk v7: result status is in result.status
-      if (result.status === 'complete' || (result as any).status === 'complete') {
+      if (result.status === 'complete') {
         router.push(redirectPath);
       } else if (result.status === 'needs_first_factor' || result.status === 'needs_second_factor') {
         setError('Additional verification required. Check your email.');
@@ -82,14 +82,15 @@ export default function MBTILoginPage() {
     background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
     padding: '12px', borderRadius: '12px', color: '#fff', cursor: 'pointer',
     fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
+    position: 'relative', zIndex: 50, pointerEvents: 'auto',
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: '#000' }}>
       <LiquidBackground />
-      <div className={styles.container}>
+      <div className={styles.container} style={{ position: 'relative', zIndex: 10 }}>
         <NavButtons />
-        <div className={styles.quizContent} style={{ maxWidth: '450px' }}>
+        <div className={styles.quizContent} style={{ maxWidth: '450px', position: 'relative', zIndex: 20 }}>
           <div className={styles.header}>
             <h1 className={styles.title} style={{ fontSize: '1.8rem', lineHeight: '1.2' }}>
               Something in you already knows why you&apos;re here.
@@ -104,7 +105,7 @@ export default function MBTILoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={styles.questionCard}
-            style={{ animation: 'none', background: 'rgba(10,10,20,0.4)', padding: '30px' }}
+            style={{ animation: 'none', background: 'rgba(10,10,20,0.6)', padding: '30px', position: 'relative', zIndex: 30 }}
           >
             {error && (
               <div style={{
@@ -117,7 +118,7 @@ export default function MBTILoginPage() {
             )}
 
             {/* Social Logins */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px', position: 'relative', zIndex: 40 }}>
               <button onClick={() => signInWith('oauth_google')} style={socialBtnStyle}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>

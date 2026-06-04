@@ -40,7 +40,7 @@ export default function MobileHome() {
         <div className={styles.mobileWrapper}>
             {/* 🌌 Backgrounds */}
             <div className={styles.bgLayer}>
-                <Image src="/images/shiva_universe_realistic.png" alt="bg" fill style={{ objectFit: 'cover' }} quality={65} priority />
+                <Image src="/images/titleimage.png" alt="bg" fill style={{ objectFit: 'cover' }} quality={65} priority />
             </div>
 
             {/* 🌊 Ocean (Global Classes) */}

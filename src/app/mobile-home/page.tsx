@@ -110,7 +110,7 @@ export default function MobileHome() {
             {/* 🌌 Background Elements */}
             <div className="main-background">
                 <Image
-                    src="/images/shiva_universe_realistic.png"
+                    src="/images/titleimage.png"
                     alt="Space Background"
                     fill
                     priority

@@ -478,10 +478,9 @@ body {
 /* ---------------- STAR OCEAN BACKGROUND ---------------- */
 body {
   /* background:
-    linear-gradient(to top, rgba(0, 5, 20, 0.9), rgba(0, 10, 40, 0.7)),
-    url("/images/shiva_universe_realistic.png") no-repeat center center fixed;
-  background-size: cover; */
-  background: black;
+  linear-gradient(to top, rgba(0, 5, 20, 0.9), rgba(0, 10, 40, 0.7)),
+  url("/images/titleimage.png") no-repeat center center fixed;
+  background-size: cover; */  background: black;
 }
 
 /* Stars removed */

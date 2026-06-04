@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     siteName: 'Spiritual AI',
     images: [
       {
-        url: 'https://spiritualai.store/images/shiva_universe_realistic.png',
+        url: 'https://spiritualai.store/images/titleimage.png',
         width: 1200,
         height: 630,
         alt: 'Spiritual AI - Consciousness Blueprint Platform',
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Decode Your Consciousness — Spiritual AI',
     description: 'Get your permanent identity artifact combining Vedic, Jungian, and MBTI analysis.',
-    images: ['https://spiritualai.store/images/shiva_universe_realistic.png'],
+    images: ['https://spiritualai.store/images/titleimage.png'],
     creator: '@spiritualai',
   },
   robots: {
@@ -262,7 +262,7 @@ export default function RootLayout({
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link rel="icon" href="/images/logo.png" type="image/png" />
           <link rel="manifest" href="/manifest.json" />
-          <link rel="preload" href="/images/shiva_universe_realistic.png" as="image" />
+          <link rel="preload" href="/images/titleimage.png" as="image" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           {/* Geographic targeting */}
