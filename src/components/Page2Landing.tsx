@@ -3,30 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import styles from './Page2Landing.module.css';
-import { DECODE_PROMPT } from '../lib/decodePrompt';
 
 const SIGNATURE_ARCHITECTURES = [
-  { id: "01", title: "The Theoretical Titan", description: "Generates brilliant ideas but creates complexity to avoid launching them." },
-  { id: "02", title: "The Sovereign in Exile", description: "Knows its worth but waits for external permission that never comes." },
-  { id: "03", title: "The Sacred Giver", description: "Deeply compassionate but gives so much that their own identity vanishes." },
-  { id: "04", title: "The Analytical Ghost", description: "Solves every problem except the one that would make them happy." },
-  { id: "05", title: "The Untethered Visionary", description: "A vision that could change everything, but stays theoretical to avoid judgment." },
-  { id: "06", title: "The Chaos Catalyst", description: "Installs chaos the moment things get too peaceful or successful." },
-  { id: "07", title: "The Logic Shield", description: "Uses logic as a shield to avoid feeling the weight of their own existence." },
-  { id: "08", title: "The Underperformer", description: "Possesses elite skills but performs at 20% to avoid the burden of greatness." },
-  { id: "09", title: "The Pattern Prophet", description: "Expert at identifying everyone else's patterns while staying blind to their own." },
-  { id: "10", title: "The Chronic Student", description: "Constantly preparing, never arriving. The loop of one more course." },
+  { id: "01", title: "The Theoretical Titan", description: "Generates brilliant ideas but creates complexity to avoid launching them.", sampleProduct: "The Launch Catalyst (Ebook)" },
+  { id: "02", title: "The Sovereign in Exile", description: "Knows its worth but waits for external permission that never comes.", sampleProduct: "The Authority Blueprint (Audio)" },
+  { id: "03", title: "The Sacred Giver", description: "Deeply compassionate but gives so much that their own identity vanishes.", sampleProduct: "The Boundary Engine (AI Guide)" },
+  { id: "04", title: "The Analytical Ghost", description: "Solves every problem except the one that would make them happy.", sampleProduct: "The Embodiment Protocol (Course)" },
+  { id: "05", title: "The Untethered Visionary", description: "A vision that could change everything, but stays theoretical to avoid judgment.", sampleProduct: "The Reality Bridge (Tool)" },
+  { id: "06", title: "The Chaos Catalyst", description: "Installs chaos the moment things get too peaceful or successful.", sampleProduct: "The Peace Stabilizer (Audio)" },
+  { id: "07", title: "The Logic Shield", description: "Uses logic as a shield to avoid feeling the weight of their own existence.", sampleProduct: "The Feeling Body (AI System)" },
+  { id: "08", title: "The Underperformer", description: "Possesses elite skills but performs at 20% to avoid the burden of greatness.", sampleProduct: "The Full Velocity Path (Ebook)" },
+  { id: "09", title: "The Pattern Prophet", description: "Expert at identifying everyone else's patterns while staying blind to their own.", sampleProduct: "The Mirror Integration (Journal)" },
+  { id: "10", title: "The Chronic Student", description: "Constantly preparing, never arriving. The loop of one more course.", sampleProduct: "The Arrival Protocol (AI Guide)" },
 ];
 
 export default function Page2Landing({ onArchitectureView }: { onArchitectureView?: (title: string) => void }) {
   const mouseX = useSpring(useMotionValue(0), { stiffness: 50, damping: 20 });
-  const [copySuccess, setCopySuccess] = useState(false);
-
-  const copyDecoderPrompt = () => {
-    navigator.clipboard.writeText(DECODE_PROMPT);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 3000);
-  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -40,10 +32,7 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-        const input = document.querySelector('.cta-message-box input') as HTMLInputElement;
-        if (input) input.focus();
-    }, 800);
+    // Trigger chat activation in SpiritualAIComponent if needed
   };
 
   return (
@@ -65,8 +54,17 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
             You've read the books. Done the courses. Tried therapy. The same patterns still show up.
           </p>
           <p className={styles.bodyText}>
-            You are not broken. Most solutions fail because they were designed for an average mind that does not exist.
+            Because generic advice isn't built for your specific type. Your product is.
           </p>
+
+          <motion.button 
+            className={styles.mainSectionCta}
+            onClick={scrollToTop}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Find My Type
+          </motion.button>
         </motion.div>
       </section>
 
@@ -80,12 +78,12 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          You may already know your pattern. You just don't have a name for it yet.
+          Which one are you? The AI will tell you.
         </motion.p>
         
         <motion.div className={styles.marqueeSection} style={{ x: translateX, left: 0 }}>
           <div className={styles.marqueeTrack}>
-            {[...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES].map((arch, i) => (
+            {[...SIGNATURE_ARCHITECTURES, ...SIGNATURE_ARCHITECTURES].map((arch, i) => (
               <motion.div 
                 key={i} 
                 className={styles.smallExampleCard}
@@ -97,12 +95,20 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
                 <div className={styles.smallLabel}>Signature Architecture #{arch.id}</div>
                 <h4 className={styles.smallTitle}>{arch.title}</h4>
                 <p className={styles.smallDescription}>{arch.description}</p>
+                
+                <div className={styles.sampleProduct}>
+                    <div className={styles.productPreviewBox}>
+                        <div className={styles.productType}>CUSTOM OUTPUT:</div>
+                        <div className={styles.productName}>{arch.sampleProduct}</div>
+                    </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </motion.div>
       </section>
 
+      {/* SECTION 3 — CTA (replaced old Neural Prompt section) */}
       <section className={styles.section} style={{ marginTop: '4vh', marginBottom: '4vh' }}>
         <motion.div 
           className={styles.blueprintBanner}
@@ -113,28 +119,21 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
           <div className={styles.bannerGlow} />
           <div className={styles.bannerContent}>
             <div className={styles.bannerLeft}>
-              <h3 className={styles.bannerTitle}>Unlock Your Consciousness Blueprint</h3>
+              <h3 className={styles.bannerTitle}>Find My Type</h3>
               <p className={styles.bannerText}>
-                Copy this neural prompt and paste it into your preferred AI (ChatGPT, Claude, Gemini, or Grok).
-                Then, paste the AI's analysis back into the decoder at the bottom of the page.
+                Our AI decodes your exact psychological signature using astrology, Jungian psychology, and MBTI — then builds a personalized product made for how your mind works.
               </p>
             </div>
             <div className={styles.bannerRight}>
-              <button className={styles.bannerCopyBtn} onClick={copyDecoderPrompt}>
-                {copySuccess ? "✓ PROMPT COPIED" : "COPY NEURAL PROMPT"}
+              <button className={styles.bannerCopyBtn} onClick={scrollToTop}>
+                BEGIN DECODING
               </button>
-              <div className={styles.bannerLinks}>
-                <a href="https://chatgpt.com" target="_blank">ChatGPT</a>
-                <a href="https://claude.ai" target="_blank">Claude</a>
-                <a href="https://gemini.google.com" target="_blank">Gemini</a>
-                <a href="https://grok.com" target="_blank">Grok</a>
-              </div>
             </div>
           </div>
         </motion.div>
       </section>
 
-      {/* SECTION 5 — THE INVITATION (Absolute Bottom) */}
+      {/* SECTION 4 — THE INVITATION (Absolute Bottom) */}
       <motion.div 
         className={styles.invitationContainer}
         initial={{ opacity: 0 }}

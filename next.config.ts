@@ -6,9 +6,9 @@ const nextConfig: NextConfig = {
   compress: true, // Enable Gzip/Brotli compression
   // Using false here ensures we don't have unnecessary redirects interfering with local file serving
   trailingSlash: false,
-  /*turbopack: {
+  turbopack: {
     root: path.resolve(__dirname),
-  },*/
+  },
   experimental: {
     optimizePackageImports: ["gsap", "three", "framer-motion", "lucide-react"],
   },

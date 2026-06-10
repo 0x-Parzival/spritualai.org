@@ -776,3 +776,106 @@
   color: var(--text-secondary);
   letter-spacing: 0.1em;
 }
+
+/* ── Blueprint Page Mobile Fixes ── */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .twoColumn {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .idCard {
+    position: relative;
+    top: auto;
+  }
+
+  .idCardImage {
+    height: 200px;
+  }
+
+  .idCardTitle {
+    font-size: 1.1rem;
+  }
+
+  .idCardSubtitle {
+    font-size: 0.75rem;
+  }
+
+  .idCardMeta {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .reportContent {
+    padding: 20px;
+  }
+
+  .reportTitle {
+    font-size: 1.5rem;
+  }
+
+  .articleTitle {
+    font-size: 1.1rem;
+  }
+
+  .articleText {
+    font-size: 0.85rem;
+    text-align: left;
+  }
+
+  .textScramble {
+    font-size: 1.2rem;
+  }
+
+  .cyberHighlight,
+  .cyberHighlightDark {
+    font-size: 1rem;
+    padding: 4px 10px;
+  }
+
+  .shareButtons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .shareBtn {
+    padding: 6px 10px;
+    font-size: 0.6rem;
+  }
+
+  .pageNav {
+    top: 4px;
+    gap: 6px;
+  }
+
+  .pageTab {
+    padding: 8px 16px;
+    font-size: 0.6rem;
+  }
+
+  .solutionsTitle {
+    font-size: 1.2rem;
+  }
+
+  .solutionsSubtitle {
+    font-size: 0.8rem;
+  }
+
+  .messageBox {
+    padding: 16px;
+  }
+
+  .messageBoxInput {
+    font-size: 0.85rem;
+  }
+
+  .connectedFooter {
+    font-size: 0.55rem;
+  }
+}

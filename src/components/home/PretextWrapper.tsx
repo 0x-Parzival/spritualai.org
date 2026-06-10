@@ -55,17 +55,20 @@ export default function PretextWrapper({
 
   useEffect(() => {
     if (!prepared || !containerRef.current) return;
-    
+
     try {
       const rect = containerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      
-      // Lotus is fixed at bottom center
-      const lotusRadius = 240; // Increased radius
-      const lotusCenterX = window.innerWidth / 2;
-      const lotusCenterY = viewportHeight - 80; // Approximate lotus center in viewport
 
-      const result = layoutWithLines(prepared, width, lineHeight);
+      // Clamp to actual rendered width so text never overflows on mobile
+      const actualWidth = rect.width > 0 ? Math.min(width, rect.width) : width;
+
+      // Lotus is fixed at bottom center
+      const lotusRadius = 240;
+      const lotusCenterX = window.innerWidth / 2;
+      const lotusCenterY = viewportHeight - 80;
+
+      const result = layoutWithLines(prepared, actualWidth, lineHeight);
       let finalLines: any[] = [];
 
       if (centerExclusion) {
@@ -77,28 +80,26 @@ export default function PretextWrapper({
           const dist = Math.abs(dy);
           
           if (dist < lotusRadius) {
-            // Calculate horizontal "hole" width at this Y level
             const holeHalfWidth = Math.sqrt(lotusRadius * lotusRadius - dy * dy);
-            const safeSideWidth = (width / 2) - holeHalfWidth - 20; 
+            const safeSideWidth = (actualWidth / 2) - holeHalfWidth - 20;
 
             if (safeSideWidth > 30) {
               const words = line.text.split(' ');
               const mid = Math.floor(words.length / 2);
               const leftText = words.slice(0, mid).join(' ');
               const rightText = words.slice(mid).join(' ');
-              
+
               finalLines.push({ text: leftText, width: safeSideWidth, left: 0, top: i * lineHeight });
-              finalLines.push({ text: rightText, width: safeSideWidth, left: width - safeSideWidth, top: i * lineHeight });
+              finalLines.push({ text: rightText, width: safeSideWidth, left: actualWidth - safeSideWidth, top: i * lineHeight });
             } else {
-              // Push to one side if too narrow
-              finalLines.push({ ...line, width: width * 0.4, left: i % 2 === 0 ? 0 : width * 0.6, top: i * lineHeight });
+              finalLines.push({ ...line, width: actualWidth * 0.4, left: i % 2 === 0 ? 0 : actualWidth * 0.6, top: i * lineHeight });
             }
           } else {
-            finalLines.push({ ...line, top: i * lineHeight, left: 0, width: width });
+            finalLines.push({ ...line, top: i * lineHeight, left: 0, width: actualWidth });
           }
         });
       } else {
-        finalLines = result.lines.map((l: any, i: number) => ({ ...l, top: i * lineHeight, left: 0, width: width }));
+        finalLines = result.lines.map((l: any, i: number) => ({ ...l, top: i * lineHeight, left: 0, width: actualWidth }));
       }
 
       setLines(finalLines);
@@ -108,7 +109,7 @@ export default function PretextWrapper({
   }, [prepared, width, lineHeight, centerExclusion, scrollPos]);
 
   if (lines.length === 0) {
-    return <div ref={containerRef} className={className} style={{ width: `${width}px`, font: font, opacity: '0' }}>{text}</div>;
+    return <div ref={containerRef} className={className} style={{ width: '100%', maxWidth: `${width}px`, font: font, opacity: '0' }}>{text}</div>;
   }
 
   return (

@@ -17,7 +17,7 @@ export default function ProcessDiagram() {
             </svg>
 
             <div className={styles.processSteps}>
-                {/* STEP 1: AI ASKS QUESTIONS */}
+                {/* STEP 1: TALK TO AI */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -29,34 +29,14 @@ export default function ProcessDiagram() {
                             <path d="M8 13h6"></path>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>AI asks 5-7 questions</div>
+                    <div className={styles.processStep}>1. Talk to AI</div>
+                    <div className={styles.stepDescription}>Initiate the decoding below</div>
+                    <div className={styles.downArrow}>↓</div>
                 </div>
                 
                 <span className={styles.stepArrow}>→</span>
                 
-                {/* STEP 2: DECODING */}
-                <div className={styles.stepContainer}>
-                    <div className={styles.iconWrapper}>
-                        <div className={styles.particles}>
-                            {[...Array(3)].map((_, i) => <div key={i} className={styles.particle} />)}
-                        </div>
-                        <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 2v4"></path>
-                            <path d="M12 18v4"></path>
-                            <path d="M4.93 4.93l2.83 2.83"></path>
-                            <path d="M16.24 16.24l2.83 2.83"></path>
-                            <path d="M2 12h4"></path>
-                            <path d="M18 12h4"></path>
-                            <path d="M4.93 19.07l2.83-2.83"></path>
-                            <path d="M16.24 7.76l2.83-2.83"></path>
-                        </svg>
-                    </div>
-                    <div className={styles.processStep}>Patterns Decoded</div>
-                </div>
-                
-                <span className={styles.stepArrow}>→</span>
-                
-                {/* STEP 3: CONSCIOUSNESS IDENTIFIED */}
+                {/* STEP 2: GET YOUR BLUEPRINT */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -67,12 +47,13 @@ export default function ProcessDiagram() {
                             <path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7l-.7.7m0 11.4l.7.7m-12.1-.7l-.7.7"></path>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>Consciousness Identified</div>
+                    <div className={styles.processStep}>2. Get Blueprint</div>
+                    <div className={styles.stepDescription}>Identify your Pattern, MBTI, Astrology, and Archetype</div>
                 </div>
-
+                
                 <span className={styles.stepArrow}>→</span>
-
-                {/* STEP 4: PERSONALISED REPORT */}
+                
+                {/* STEP 3: RECEIVE YOUR CUSTOM PRODUCT */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -86,22 +67,8 @@ export default function ProcessDiagram() {
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>Personalised Report</div>
-                </div>
-
-                <span className={styles.stepArrow}>→</span>
-
-                {/* STEP 5: REFUND GUARANTEE */}
-                <div className={styles.stepContainer}>
-                    <div className={styles.iconWrapper}>
-                        <div className={styles.particles}>
-                            {[...Array(3)].map((_, i) => <div key={i} className={styles.particle} />)}
-                        </div>
-                        <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                    </div>
-                    <div className={styles.processStep}>Working Solutions</div>
+                    <div className={styles.processStep}>3. Personalized Tool</div>
+                    <div className={styles.stepDescription}>Receive custom solutions built to solve your exact problem</div>
                 </div>
             </div>
         </div>

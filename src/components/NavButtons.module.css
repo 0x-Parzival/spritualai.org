@@ -38,20 +38,29 @@
     .creatorSection,
     .contactSection {
         top: 10px;
-        padding: 4px 10px;
-        transform: scale(0.75);
-    }
-    
-    .creatorSection {
-        left: 5px;
-    }
-    
-    .contactSection {
-        right: 5px;
+        padding: 6px 10px;
+        transform: scale(1);   /* Remove scale — it causes transform-origin layout bugs */
+        max-width: calc(50vw - 20px);
     }
 
-    .navLinkContrast span {
+    .creatorSection { left: 8px; }
+    .contactSection { right: 8px; }
+
+    /* Hide text on BOTH buttons — show icon only */
+    .navLinkContrast span,
+    .navLinkContrast > *:not(.iconWrapper):not(.contactIconWrapper) {
         display: none;
+    }
+
+    /* Contact button: text is directly in span.navLinkContrast, not a child span */
+    .contactSection .navLinkContrast {
+        display: none;
+    }
+
+    .iconWrapper,
+    .contactIconWrapper {
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -299,7 +308,7 @@
     }
 
     .navLinkContrast > span {
-        display: none; /* Hide text on mobile */
+        display: none;
     }
 
     .iconWrapper,

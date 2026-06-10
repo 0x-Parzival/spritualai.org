@@ -58,11 +58,12 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
 
     // Reference values from 0x-Parzival/spritualai.org
     const pathDDesktop = "M-363.852,50 c0,0,236.988-40.498,505.475,0 s371.981,39.499,575.971,0 s293.985-39.639,505.474,2.929 s493.475,44.184,716.963-2.497 v5000 H-363.852 V50 z";
-    const pathDMobile = "M 0 2000 0 500 Q 120 420 300 500 t 300 0 300 0 300 0 300 0 300 0 v700 z";
+    // Fixed mobile path: visible wave crest with proper amplitude
+    const pathDMobile = "M 0 420 Q 80 300 200 380 t 200 0 200 0 200 0 200 0 v400 H 0 z";
 
     const pathD = isMobile ? pathDMobile : pathDDesktop;
-    const viewBox = isMobile ? "0 0 1000 700" : "0 0 1600 5200";
-    const preserveAspectRatio = isMobile ? "none" : "xMidYMin slice";
+    const viewBox = isMobile ? "0 0 900 600" : "0 0 1600 5200";
+    const preserveAspectRatio = isMobile ? "xMidYMin slice" : "xMidYMin slice";
 
     return (
         <motion.div style={{
@@ -138,45 +139,32 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                         fill={`url(#waveBackGradient-${id})`} 
                         opacity={variant === 'black' ? ".6" : ".24"}
                         style={{
-                            animation: isMobile ? 'none' : 'waveFloat1 12s ease-in-out infinite'
+                            animation: isMobile
+                                ? 'mobileWave1 6s ease-in-out infinite'
+                                : 'waveFloat1 12s ease-in-out infinite'
                         }}
-                    >
-                        {isMobile && (
-                            <animateMotion dur="10s" repeatCount="indefinite">
-                                <mpath xlinkHref={`#wave-path-${id}`} />
-                            </animateMotion>
-                        )}
-                    </use>
+                    />
                     <use 
                         xlinkHref={`#waveShape-${id}`} 
                         fill={`url(#waveMidGradient-${id})`} 
                         opacity={variant === 'black' ? ".8" : ".42"}
                         style={{
-                            animation: isMobile ? 'none' : 'waveFloat2 10s ease-in-out infinite'
+                            animation: isMobile
+                                ? 'mobileWave2 8s ease-in-out infinite'
+                                : 'waveFloat2 10s ease-in-out infinite'
                         }}
-                    >
-                        {isMobile && (
-                            <animateMotion dur="6s" repeatCount="indefinite">
-                                <mpath xlinkHref={`#wave-path-${id}`} />
-                            </animateMotion>
-                        )}
-                    </use>
+                    />
                     <use 
                         xlinkHref={`#waveShape-${id}`} 
                         fill={`url(#waveFrontGradient-${id})`} 
                         opacity={variant === 'black' ? ".95" : ".58"}
                         style={{
-                            animation: isMobile ? 'none' : 'waveFloat3 8s ease-in-out infinite'
+                            animation: isMobile
+                                ? 'mobileWave3 7s ease-in-out infinite'
+                                : 'waveFloat3 8s ease-in-out infinite'
                         }}
-                    >
-                        {isMobile && (
-                            <animateMotion dur="14s" repeatCount="indefinite">
-                                <mpath xlinkHref={`#wave-path-${id}`} />
-                            </animateMotion>
-                        )}
-                    </use>
+                    />
                 </g>
-                <path id={`wave-path-${id}`} d="M -600 0 0 0" style={{ display: 'none' }} />
                 <style>{`
                     @keyframes waveFloat1 {
                         0%, 100% { transform: translate(270px, 25px); }
@@ -189,6 +177,18 @@ export default function WavesHero({ mouseX, mouseY, mousePos = { x: 0, y: 0 }, v
                     @keyframes waveFloat3 {
                         0%, 100% { transform: translate(0px, 25px); }
                         40% { transform: translate(-140px, 15px); }
+                    }
+                    @keyframes mobileWave1 {
+                        0%, 100% { transform: translateY(0px) translateX(20px); }
+                        50% { transform: translateY(-40px) translateX(-20px); }
+                    }
+                    @keyframes mobileWave2 {
+                        0%, 100% { transform: translateY(-20px) translateX(-30px); }
+                        50% { transform: translateY(30px) translateX(30px); }
+                    }
+                    @keyframes mobileWave3 {
+                        0%, 100% { transform: translateY(10px); }
+                        50% { transform: translateY(-35px); }
                     }
                 `}</style>
             </svg>

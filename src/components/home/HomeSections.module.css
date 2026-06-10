@@ -576,3 +576,69 @@
         background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
     }
 }
+
+@media (max-width: 768px) {
+    .loka2Layout {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .gridSide {
+        grid-template-columns: 1fr;     /* was repeat(2, 1fr) */
+        gap: 16px;
+    }
+
+    .vDivider {
+        display: none;                   /* hide vertical divider */
+    }
+
+    .contentSide {
+        align-items: center;
+        text-align: center;
+        gap: 24px;
+    }
+
+    .loka3Layout {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .previewSide,
+    .textSide {
+        width: 100%;
+        flex: unset;
+    }
+
+    .glassWindow {
+        height: clamp(200px, 50vw, 320px);
+    }
+
+    .previewIframe {
+        width: 250%;
+        height: 250%;
+        transform: scale(0.4);
+    }
+
+    .loka4Layout {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .labWindow {
+        height: 380px;
+    }
+
+    .protocolContainer {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .section {
+        padding: 60px 4%;
+    }
+
+    .sectionSubtitle {
+        font-size: clamp(1rem, 4vw, 1.4rem);
+        margin-bottom: 32px;
+    }
+}

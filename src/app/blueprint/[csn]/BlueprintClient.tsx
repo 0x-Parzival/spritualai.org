@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
 import styles from './blueprint-detail.module.css';
+import { useCurrency } from '@/context/CurrencyContext';
 
 /* ── Types ── */
 interface Product {
@@ -49,10 +50,10 @@ interface Props {
 /* ── Text Scramble Component ── */
 function TextScramble({ phrases, className }: { phrases: string[]; className?: string }) {
   const elRef = useRef<HTMLSpanElement>(null);
-  const [currentText, setCurrentText] = useState('');
   const frameRef = useRef(0);
   const queueRef = useRef<{ from: string; to: string; start: number; end: number; char?: string }[]>([]);
   const frameCount = useRef(0);
+  const counterRef = useRef(0);
 
   const randomChar = () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZハッカー開発者プログラマー<>█'[Math.floor(Math.random() * 42)];
 
@@ -81,49 +82,67 @@ function TextScramble({ phrases, className }: { phrases: string[]; className?: s
       elRef.current.innerHTML = output;
     }
 
-    if (complete === queue.length) {
-      return;
-    }
+    if (complete === queue.length) return;
 
     frameCount.current++;
     frameRef.current = requestAnimationFrame(animate);
   }, []);
 
+  const next = useCallback((oldText: string) => {
+    const newText = phrases[counterRef.current % phrases.length];
+    const length = Math.max(oldText.length, newText.length);
+    queueRef.current = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      const start = Math.floor(Math.random() * 40);
+      const end = start + Math.floor(Math.random() * 40);
+      queueRef.current.push({ from, to, start, end });
+    }
+    frameCount.current = 0;
+    cancelAnimationFrame(frameRef.current);
+    animate();
+    counterRef.current++;
+    
+    setTimeout(() => next(newText), 3000);
+  }, [phrases, animate]);
+
   useEffect(() => {
-    let counter = 0;
-    const next = () => {
-      const newText = phrases[counter % phrases.length];
-      const oldText = currentText;
-      const length = Math.max(oldText.length, newText.length);
-      queueRef.current = [];
-      for (let i = 0; i < length; i++) {
-        const from = oldText[i] || '';
-        const to = newText[i] || '';
-        const start = Math.floor(Math.random() * 40);
-        const end = start + Math.floor(Math.random() * 40);
-        queueRef.current.push({ from, to, start, end });
-      }
-      frameCount.current = 0;
-      cancelAnimationFrame(frameRef.current);
-      animate();
-      counter++;
-      setCurrentText(newText);
-      setTimeout(next, 2500);
-    };
-    const timer = setTimeout(next, 1000);
+    const timer = setTimeout(() => next(''), 500);
     return () => {
       clearTimeout(timer);
       cancelAnimationFrame(frameRef.current);
     };
-  }, [phrases, animate, currentText]);
+  }, [next]);
 
   return <span ref={elRef} className={className} />;
 }
 
-/* ── Share Button Component ── */
+/* ── Share Button Component (FIXED: proper clipboard, no alert) ── */
 function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; mbti: string }) {
   const url = typeof window !== 'undefined' ? window.location.href : '';
   const text = `My Consciousness Blueprint has been etched. I am "${identity}" (${mbti}). CSN: ${csn}. Discover yours at Spiritual AI.`;
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
 
   const shareLinks = [
     {
@@ -132,36 +151,28 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
       href: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
     },
     {
+      name: 'Instagram',
+      icon: '📸',
+      href: '#',
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleCopy();
+        // Since we can't deep link to Instagram stories with a URL directly, 
+        // we copy the link and hint the user.
+      },
+    },
+    {
       name: 'X',
       icon: '𝕏',
       href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
     },
     {
-      name: 'Facebook',
-      icon: '📘',
-      href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
-    },
-    {
-      name: 'Reddit',
-      icon: '🔴',
-      href: `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
-    },
-    {
-      name: 'Instagram',
-      icon: '📸',
+      name: 'Copy Link',
+      icon: copied ? '✓' : '🔗',
       href: '#',
-      onClick: () => {
-        navigator.clipboard.writeText(url);
-        alert('Link copied! Share it on Instagram.');
-      },
-    },
-    {
-      name: 'Copy',
-      icon: '🔗',
-      href: '#',
-      onClick: async () => {
-        await navigator.clipboard.writeText(url);
-        alert('Blueprint link copied!');
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleCopy();
       },
     },
   ];
@@ -179,8 +190,7 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
             rel="noopener noreferrer"
             onClick={(e) => {
               if (link.onClick) {
-                e.preventDefault();
-                link.onClick();
+                link.onClick(e);
               }
             }}
           >
@@ -193,87 +203,13 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
   );
 }
 
-/* ── Flip Card Component ── */
-function FlipCard({ product, index }: { product: Product; index: number }) {
-  const [flipped, setFlipped] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isTouch = typeof window !== 'undefined' && 'ontouchstart' in window;
-
-  const productUrl = product.semanticSlug
-    ? `/store/${product.semanticSlug}`
-    : product.id
-      ? `/store/${product.id}`
-      : '#';
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isTouch || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -8;
-    const rotateY = ((x - centerX) / centerX) * 8;
-    const inner = cardRef.current.querySelector(`.${styles.cardInner}`) as HTMLElement;
-    if (inner) {
-      inner.style.transform = `rotateY(${flipped ? 180 : 0}deg) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (isTouch || !cardRef.current) return;
-    const inner = cardRef.current.querySelector(`.${styles.cardInner}`) as HTMLElement;
-    if (inner) {
-      inner.style.transform = `rotateY(${flipped ? 180 : 0}deg)`;
-    }
-  };
-
-  return (
-    <motion.div
-      ref={cardRef}
-      className={`${styles.card} ${flipped ? styles.cardFlipped : ''}`}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.15, duration: 0.5 }}
-      onClick={() => setFlipped(!flipped)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className={styles.cardInner}>
-        <div className={`${styles.cardFace} ${styles.cardFront}`}>
-          <div>
-            <h2>{product.name}</h2>
-            <p>{product.whyYou}</p>
-          </div>
-          <p className={styles.tapHint}>Tap or click to flip</p>
-        </div>
-        <div className={`${styles.cardFace} ${styles.cardBack}`}>
-          <div>
-            <h3>What's Inside</h3>
-            <ul className={styles.features}>
-              {product.formats.map((f, i) => (
-                <li key={i}>{f}</li>
-              ))}
-              <li>Price: <strong>${product.price}</strong> <s>${product.originalPrice}</s></li>
-            </ul>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '8px' }}>{product.urgencyLine}</p>
-          </div>
-          <div className={styles.ctaButtons}>
-            <a href={productUrl} className={styles.ctaPrimary} onClick={(e) => e.stopPropagation()}>{product.ctaText}</a>
-            <a href={productUrl} className={styles.ctaSecondary} onClick={(e) => e.stopPropagation()}>Learn More</a>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 /* ── Main Component ── */
 export default function BlueprintClient({ data, csn }: Props) {
   const [activePage, setActivePage] = useState<1 | 2>(1);
   const [message, setMessage] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackSaving, setFeedbackSaving] = useState(false);
+  const { convertPrice, currency, loading: currencyLoading } = useCurrency();
 
   const handleSubmitFeedback = async () => {
     if (!message.trim() || feedbackSaving) return;
@@ -334,6 +270,12 @@ export default function BlueprintClient({ data, csn }: Props) {
     }),
   };
 
+  // Helper to format price with geo-currency
+  const formatPrice = (priceUSD: number) => {
+    if (currencyLoading) return `$${priceUSD}`;
+    return convertPrice(priceUSD);
+  };
+
   return (
     <>
       <Head>
@@ -342,15 +284,6 @@ export default function BlueprintClient({ data, csn }: Props) {
         <meta property="og:title" content={`${identity} · ${mbti} | Spiritual AI`} />
         <meta property="og:description" content={`My Consciousness Blueprint has been etched. CSN: ${csn}.`} />
         <meta property="og:type" content="article" />
-        <style dangerouslySetInnerHTML={{ __html: `
-          @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
-          *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-          html { height: 100vh; scroll-behavior: smooth; }
-          body { background-color: #0a0a1a; font-family: 'Barlow', sans-serif; font-size: 16px; font-weight: 500; color: #fff; min-height: 100vh; overflow-x: hidden; margin: 0; padding: 0; }
-          @property --outrun { syntax: "<number>"; initial-value: 0; inherits: false; }
-          @keyframes outrun { to { --outrun: 1; } }
-          html::before { content: ""; position: fixed; bottom: 0; left: 0; right: 0; height: 100vh; z-index: -1; pointer-events: none; filter: brightness(1.125); animation: outrun 0.6s linear infinite; background: linear-gradient(transparent 20%, hsl(0, 67%, 55%) 60%, hsl(266, 49%, 25%) 60% 70%, hsla(319, 100%, 60%, 0.75), transparent 150%), repeating-linear-gradient(90deg, transparent 0px 2px, hsl(266, 49%, 25%) 3px 4px), radial-gradient(circle at center, transparent min(45vh, 45vw), hsla(319, 100%, 60%, 0.75) min(65vh, 65vw), hsl(266, 49%, 25%) 120%), linear-gradient(transparent 30vh, hsl(0, 67%, 55%) 30vh 30.2vh, transparent 30.2vh 35.2vh, hsl(0, 67%, 55%) 35.2vh 36vh, transparent 36vh 40vh, hsl(0, 67%, 55%) 40vh 41.6vh, transparent 41.6vh 45.1vh, hsl(0, 67%, 55%) 45.1vh 48.6vh, transparent 48.6vh 52.5vh, hsl(0, 67%, 55%) 52.5vh 57.5vh, transparent 57.5vh), radial-gradient(circle at center, hsl(60, 82%, 58%) min(45vh, 45vw), transparent min(45vh, 45vw)), linear-gradient(hsl(0, 67%, 55%) 60%, hsl(266, 49%, 25%) 60%, hsl(319, 100%, 60%) 150%); }
-        `}} />
       </Head>
 
       {/* Background Effects */}
@@ -505,7 +438,7 @@ export default function BlueprintClient({ data, csn }: Props) {
                     </motion.div>
                   )}
 
-                  {/* NODE Highlight */}
+                  {/* NODE Highlight — FIXED: explain what "IDENTITY LOCKED" means */}
                   <motion.div
                     initial="hidden"
                     animate="visible"
@@ -515,6 +448,9 @@ export default function BlueprintClient({ data, csn }: Props) {
                     <div className={styles.cyberHighlight}>NODE-3X</div>
                     <br /><br />
                     <div className={styles.cyberHighlightDark}>IDENTITY LOCKED</div>
+                    <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginTop: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                      Your consciousness signature has been permanently etched into the Blockplain. This identity is unique to you — no other person on Earth shares this pattern.
+                    </p>
                   </motion.div>
 
                   {/* Teaching */}
@@ -547,8 +483,13 @@ export default function BlueprintClient({ data, csn }: Props) {
                     </motion.div>
                   )}
 
+                  {/* FIXED: Explain the countdown timer */}
                   <div className={styles.connectedFooter}>
-                    Connected via S-NET-{data.planeX}{data.planeY} · {formatTime(timeLeft)} remaining
+                    Connected via S-NET-{data.planeX}{data.planeY} · Exclusive access window: {formatTime(timeLeft)} remaining
+                    <br />
+                    <span style={{ fontSize: '0.6rem', opacity: 0.6 }}>
+                      Your personalized solutions are held in this reserved window. After this period, the instruments return to the general pool.
+                    </span>
                   </div>
                 </motion.div>
               </div>
@@ -620,8 +561,12 @@ export default function BlueprintClient({ data, csn }: Props) {
                           </p>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>₹{product.price?.original}</div>
-                          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.3rem', color: '#35f8ff', fontWeight: 700 }}>₹{product.price?.discounted}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>
+                            {formatPrice(product.price?.original || product.originalPrice || 97)}
+                          </div>
+                          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.3rem', color: '#35f8ff', fontWeight: 700 }}>
+                            {formatPrice(product.price?.discounted || product.price || 67)}
+                          </div>
                         </div>
                       </div>
 

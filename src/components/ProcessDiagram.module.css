@@ -73,21 +73,50 @@
 .processStep {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 6px 16px;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: #fff;
     backdrop-filter: blur(8px);
-    font-weight: 500;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    letter-spacing: 1px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+}
+
+.stepDescription {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    margin-top: 8px;
+    max-width: 200px;
+    line-height: 1.4;
+}
+
+.downArrow {
+    color: #35f8ff;
+    font-size: 1.5rem;
+    margin-top: 10px;
+    animation: bounce 2s infinite;
+    text-shadow: 0 0 10px rgba(53, 248, 255, 0.5);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
 }
 
 .stepArrow {
     color: #35f8ff;
-    font-size: 1.2em;
+    font-size: 2rem;
     opacity: 0.6;
     text-shadow: 0 0 8px rgba(53, 248, 255, 0.5);
-    margin-bottom: 8px; /* Align arrow vertically with the text inside the pills */
+    align-self: center;
+    margin-bottom: 2rem;
 }
 
 @media (max-width: 640px) {

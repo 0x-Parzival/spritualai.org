@@ -902,4 +902,62 @@
     .startInteractiveBtn:hover {
         transform: none;
     }
+
+    /* Chat thread: reduce padding on mobile, override 767px max-height */
+    .chatThread {
+        padding: 90px 14px 180px;  /* was 180px 25px 240px */
+        gap: 20px;                  /* was 40px */
+        max-height: none;           /* override 767px block's max-height: 50vh */
+    }
+
+    .chatBubble {
+        max-width: 92%;
+        padding: 14px 18px;         /* was 22px 32px */
+        font-size: 0.95rem;
+    }
+
+    /* Options list: scrollable, max height so they don't overflow */
+    .optionsContainer,
+    .verticalOptions {
+        max-height: 55vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+    }
+
+    /* Tabs row: horizontal scroll instead of overflow */
+    .decodingTabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+        padding-bottom: 2px;
+    }
+    .decodingTabs::-webkit-scrollbar { display: none; }
+
+    /* Reduce tab font size */
+    .decodingTab {
+        font-size: 0.55rem;
+        padding: 4px 8px;
+        white-space: nowrap;
+    }
+
+    /* Reduce the struggle bubbles from 3-col to 2-col */
+    .struggleBubbles {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px;
+    }
+
+    /* Input row: padding-right is too wide for the button */
+    .messageInput {
+        padding-right: 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Eye: shrink the decorative background eye so it doesn't eat 40% of mobile viewport */
+    .backgroundEye {
+        left: -5%;
+        transform: translateY(-50%) scale(0.45);
+        opacity: 0.04;
+    }
 }

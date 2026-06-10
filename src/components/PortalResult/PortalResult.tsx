@@ -109,21 +109,29 @@ export default function PortalResult({ mbtiType, autoStart = false, customRedire
         let pct = 0;
         let pct2 = 0;
 
-        // Config
+        // Config — reduced for performance
         const cameraSpeed = 0.00015;
         const lightSpeed = 0.001;
-        const tubularSegments = 1200;
-        const radialSegments = 12;
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const tubularSegments = isMobile ? 300 : 600;
+        const radialSegments = 8;
         const tubeRadius = 3;
+        const starsCount = isMobile ? 500 : 1000;
 
         function initTunnel() {
             if (!tunnelCanvasRef.current) return;
 
-            renderer = new THREE.WebGLRenderer({
-                canvas: tunnelCanvasRef.current,
-                antialias: true,
-                alpha: true
-            });
+            try {
+                renderer = new THREE.WebGLRenderer({
+                    canvas: tunnelCanvasRef.current,
+                    antialias: !isMobile,
+                    alpha: true,
+                    powerPreference: 'low-power'
+                });
+            } catch (e) {
+                console.warn('WebGL not available, skipping tunnel effect');
+                return;
+            }
             renderer.setSize(window.innerWidth, window.innerHeight);
 
             scene = new THREE.Scene();
@@ -132,9 +140,9 @@ export default function PortalResult({ mbtiType, autoStart = false, customRedire
             camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
             // Stars/Particles
-            const starsCount = 2000;
-            const starsPositions = new Float32Array(starsCount * 3);
-            for (let i = 0; i < starsCount; i++) {
+            const starsCountLocal = starsCount;
+            const starsPositions = new Float32Array(starsCountLocal * 3);
+            for (let i = 0; i < starsCountLocal; i++) {
                 starsPositions[i * 3] = THREE.MathUtils.randFloatSpread(1500);
                 starsPositions[i * 3 + 1] = THREE.MathUtils.randFloatSpread(1500);
                 starsPositions[i * 3 + 2] = THREE.MathUtils.randFloatSpread(1500);

@@ -6,7 +6,7 @@
     margin-bottom: 0.5vh;
     width: 100%;
     perspective: 1000px;
-    overflow: visible;
+    overflow: hidden;
     padding: 0 12px;
 }
 

@@ -14,6 +14,7 @@ import CursorArrow from "@/components/CursorArrow";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
   themeColor: "#000000",
 };
 

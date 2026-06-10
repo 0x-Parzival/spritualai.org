@@ -19,6 +19,7 @@ interface ChatMessage {
     contextLine?: string;
     options?: { text: string; subLabel: string; whisper?: string }[];
     type?: 'question' | 'final_share';
+    inputType?: 'options' | 'freetext' | 'date';
 }
 
 const DEFAULT_USER_STATE: UserState = {
@@ -126,10 +127,15 @@ export default function HeroCTA({
     const [insightTrigger, setInsightTrigger] = useState(0);
     const [isInteractiveMode, setIsInteractiveMode] = useState(false);
     const [userEmotion, setUserEmotion] = useState(50); // 0 (Red) to 100 (Green)
+    const [showExitWarning, setShowExitWarning] = useState(false);
+    const [emailCaptured, setEmailCaptured] = useState(false);
+    const [showEmailCapture, setShowEmailCapture] = useState(false);
+    const [emailValue, setEmailValue] = useState("");
+    const [reportGenerated, setReportGenerated] = useState(false);
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [selectedVoiceIndex, setSelectedVoiceIndex] = useState(0);
     const decodedCount = 14847;
-
+    void decodedCount;
     const inputRef = useRef<HTMLInputElement>(null);
     const chatThreadRef = useRef<HTMLDivElement>(null);
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -187,21 +193,21 @@ export default function HeroCTA({
         
         if (hour >= 5 && hour < 12) {
             timeDesc = "morning";
-            cultureVibe = "The day awakens.";
+            cultureVibe = "Good morning.";
         } else if (hour >= 12 && hour < 17) {
-            timeDesc = "noon";
-            cultureVibe = "Clarity is here.";
+            timeDesc = "afternoon";
+            cultureVibe = "Good afternoon.";
         } else if (hour >= 17 && hour < 21) {
             timeDesc = "evening";
-            cultureVibe = "The twilight reveals.";
+            cultureVibe = "Good evening.";
         } else {
             timeDesc = "night";
-            cultureVibe = "The darkness mirrors.";
+            cultureVibe = "The night reveals what the day hides.";
         }
 
         const greeting = langInfo.autoSkip 
-            ? `${cultureVibe} Why have you stopped running?`
-            : `${cultureVibe} Why have you stopped running?\n\nChoose your language to begin.`;
+            ? `${cultureVibe} Tell me what's blocking you — and I'll help you break through it. To give you the most accurate reading, what's your date of birth?`
+            : `${cultureVibe} Tell me what's blocking you — and I'll help you break through it. To give you the most accurate reading, what's your date of birth?\n\nChoose your language to begin.`;
         
         const options = langInfo.autoSkip ? [] : [
             { text: "English", subLabel: "Universal vibration" },
@@ -262,6 +268,13 @@ export default function HeroCTA({
             setConversationHistory([{ role: 'ai', content: greeting }]);
         }
         setIsTyping(false);
+    };
+
+    const getProgressLabel = (progress: number): string => {
+        if (progress >= 75) return "Generating your blueprint now...";
+        if (progress >= 50) return "Architecture locked. Almost there.";
+        if (progress >= 25) return "Shadow detected — keep going";
+        return "Pattern emerging...";
     };
 
     const handleStruggleClick = async (struggle: string) => {
@@ -360,7 +373,7 @@ export default function HeroCTA({
             const nextPillars = Object.values(aiData.identifiedLayers?.scoringDimensions || {}).filter((v: any) => (v as number) >= 78).length;
             if (nextPillars > prevPillars) setInsightTrigger(prev => prev + 1);
             
-            setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
+            setMessages(prev => [...prev, { role: 'ai', content: "", options: [], inputType: aiData.inputType || 'options' }]);
             
             // Speak if in interactive mode
             speakChaitanya(transmission);
@@ -369,11 +382,17 @@ export default function HeroCTA({
                 setMessages(prev => { const n = [...prev]; n[n.length - 1].content = transmission.substring(0, j); return n; });
                 await new Promise(r => setTimeout(r, 15));
             }
-            setMessages(prev => { const n = [...prev]; n[n.length - 1].options = aiData.options || []; return n; });
+            setMessages(prev => { const n = [...prev]; n[n.length - 1].options = aiData.options || []; n[n.length - 1].inputType = aiData.inputType || 'options'; return n; });
             setConversationHistory([...history, { role: 'ai', content: transmission }]);
             setRound(nextRound);
             if (onRoundChange) onRoundChange(nextRound);
             setUserState(prev => ({ ...prev, ...aiData, questionCount: nextRound }));
+
+            // Trigger email capture at 50% progress
+            if (aiData.decodingProgress >= 50 && !emailCaptured && !showEmailCapture) {
+                setShowEmailCapture(true);
+            }
+
             if (aiData.decodingProgress >= 100) {
                 if (onGeneratingReport) onGeneratingReport(true);
                 // Capture aiData in a local variable so the setTimeout callback
@@ -493,7 +512,7 @@ export default function HeroCTA({
                                 <div className={styles.progressModule}>
                                     <div className={styles.progressLabel}>
                                         <span>CONSCIOUSNESS DECODING</span>
-                                        <span>{userState.decodingProgress || 0}% IDENTIFIED</span>
+                                        <span>{getProgressLabel(userState.decodingProgress || 0)}</span>
                                     </div>
                                     <div className={styles.progressBarTrack}><div className={styles.progressBarFill} style={{ width: `${userState.decodingProgress || 0}%` }} /></div>
                                 </div>
@@ -569,7 +588,13 @@ export default function HeroCTA({
                                         Vibration Sync
                                     </div>
                                 </motion.div>
-                                <button className={styles.closeChatBtn} onClick={() => setShowChat(false)}><X size={20} /></button>
+                                <button className={styles.closeChatBtn} onClick={() => {
+                                    if (userState.decodingProgress > 20 && !reportGenerated && !emailCaptured) {
+                                        setShowExitWarning(true);
+                                    } else {
+                                        setShowChat(false);
+                                    }
+                                }}><X size={20} /></button>
                                 
                                 {/* Voice Selector Dropdown (Fixed during chat) */}
                                 {isInteractiveMode && (
@@ -590,7 +615,8 @@ export default function HeroCTA({
                                 {messages.map((msg, idx) => (
                                     <motion.div key={idx} className={`${styles.messageRow} ${msg.role === 'ai' ? styles.aiRow : styles.userRow}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                                         <div className={`${styles.chatBubble} ${msg.role === 'ai' ? styles.aiBubble : styles.userBubble}`}>{msg.content}</div>
-                                        {msg.options && idx === messages.length - 1 && !isTyping && (
+                                        {/* Show option buttons only for inputType="options" */}
+                                        {msg.options && msg.inputType !== 'freetext' && msg.inputType !== 'date' && idx === messages.length - 1 && !isTyping && (
                                             <div className={(round === 0) ? styles.verticalOptions : styles.optionsMarqueeContainer}>
                                                 <div className={(round === 0) ? "" : styles.optionsMarqueeTrack}>
                                                     {msg.options.map((opt, oi) => (
@@ -600,6 +626,45 @@ export default function HeroCTA({
                                                         </motion.button>
                                                     ))}
                                                 </div>
+                                            </div>
+                                        )}
+                                        {/* Show date picker for inputType="date" */}
+                                        {msg.inputType === 'date' && idx === messages.length - 1 && !isTyping && (
+                                            <div style={{ marginTop: '12px', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                <input
+                                                    type="date"
+                                                    ref={inputRef}
+                                                    className={styles.dateInput}
+                                                    style={{
+                                                        background: 'rgba(255,255,255,0.05)',
+                                                        border: '1px solid rgba(53, 248, 255, 0.3)',
+                                                        borderRadius: '8px',
+                                                        padding: '8px 12px',
+                                                        color: '#fff',
+                                                        fontSize: '0.85rem',
+                                                        fontFamily: 'JetBrains Mono, monospace',
+                                                        colorScheme: 'dark',
+                                                    }}
+                                                    onChange={(e) => {
+                                                        if (e.target.value) {
+                                                            handleOptionClick(e.target.value);
+                                                        }
+                                                    }}
+                                                />
+                                                <button
+                                                    onClick={() => handleOptionClick('skip')}
+                                                    style={{
+                                                        background: 'transparent',
+                                                        border: '1px solid rgba(255,255,255,0.15)',
+                                                        borderRadius: '8px',
+                                                        padding: '8px 16px',
+                                                        color: 'rgba(255,255,255,0.5)',
+                                                        fontSize: '0.75rem',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    Skip for now
+                                                </button>
                                             </div>
                                         )}
                                     </motion.div>
@@ -661,6 +726,112 @@ export default function HeroCTA({
                     </div>
                 </div>
             </div>
+
+            {/* Exit Warning Overlay */}
+            {showExitWarning && (
+                <div style={{
+                    position: 'absolute', inset: 0, zIndex: 10001,
+                    background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    padding: '24px', textAlign: 'center', borderRadius: '16px',
+                }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '12px' }}>⚠️</div>
+                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1rem', fontWeight: 700, marginBottom: '8px', color: '#fff' }}>
+                        Your blueprint will be lost
+                    </h3>
+                    <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginBottom: '20px', maxWidth: '280px', lineHeight: 1.5 }}>
+                        You're {Math.round(userState.decodingProgress)}% through your consciousness blueprint. If you leave now, this progress cannot be recovered.
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <button
+                            onClick={() => setShowExitWarning(false)}
+                            style={{
+                                padding: '10px 24px', background: 'linear-gradient(135deg, #35f8ff, #0080ff)',
+                                color: '#0a0a1a', border: 'none', borderRadius: '8px',
+                                fontFamily: 'Orbitron, sans-serif', fontSize: '0.7rem', fontWeight: 700,
+                                letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
+                            }}
+                        >
+                            Continue Blueprint
+                        </button>
+                        <button
+                            onClick={() => { setShowExitWarning(false); setShowChat(false); }}
+                            style={{
+                                padding: '10px 24px', background: 'transparent',
+                                color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.2)',
+                                borderRadius: '8px', fontSize: '0.7rem', cursor: 'pointer',
+                            }}
+                        >
+                            Leave Anyway
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Email Capture Overlay at 50% progress */}
+            {showEmailCapture && !emailCaptured && (
+                <div style={{
+                    position: 'absolute', inset: 0, zIndex: 10001,
+                    background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    padding: '24px', textAlign: 'center', borderRadius: '16px',
+                }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📧</div>
+                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1rem', fontWeight: 700, marginBottom: '8px', color: '#fff' }}>
+                        Your blueprint is almost ready
+                    </h3>
+                    <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginBottom: '20px', maxWidth: '280px', lineHeight: 1.5 }}>
+                        Where should we send your copy? We'll also notify you when your personalized solutions are ready.
+                    </p>
+                    <form
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            if (!emailValue.trim()) return;
+                            try {
+                                await fetch('/api/user/profile', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email: emailValue.trim() }),
+                                });
+                            } catch { /* non-blocking */ }
+                            setEmailCaptured(true);
+                            setShowEmailCapture(false);
+                        }}
+                        style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '320px' }}
+                    >
+                        <input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={emailValue}
+                            onChange={(e) => setEmailValue(e.target.value)}
+                            required
+                            style={{
+                                flex: 1, minWidth: '180px', padding: '10px 16px',
+                                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(53, 248, 255, 0.3)',
+                                borderRadius: '8px', color: '#fff', fontSize: '0.85rem',
+                                outline: 'none',
+                            }}
+                        />
+                        <button
+                            type="submit"
+                            style={{
+                                padding: '10px 20px', background: 'linear-gradient(135deg, #35f8ff, #0080ff)',
+                                color: '#0a0a1a', border: 'none', borderRadius: '8px',
+                                fontFamily: 'Orbitron, sans-serif', fontSize: '0.7rem', fontWeight: 700,
+                                letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
+                            }}
+                        >
+                            Save
+                        </button>
+                    </form>
+                    <button
+                        onClick={() => setShowEmailCapture(false)}
+                        style={{ marginTop: '12px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', cursor: 'pointer' }}
+                    >
+                        Skip for now
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

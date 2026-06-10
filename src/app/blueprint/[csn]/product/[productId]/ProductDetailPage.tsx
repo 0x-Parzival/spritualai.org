@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface ProductDetailPageProps {
   product: any;
@@ -12,6 +13,13 @@ interface ProductDetailPageProps {
 }
 
 export default function ProductDetailPage({ product, csn, mbti, identity }: ProductDetailPageProps) {
+  const { convertPrice, loading: currencyLoading } = useCurrency();
+
+  const formatPrice = (priceUSD: number) => {
+    if (currencyLoading) return `$${priceUSD}`;
+    return convertPrice(priceUSD);
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-8 font-sans">
       <div className="max-w-4xl mx-auto">
@@ -51,13 +59,17 @@ export default function ProductDetailPage({ product, csn, mbti, identity }: Prod
               </ul>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-8 border border-white/10 flex flex-column justify-between">
+            <div className="bg-white/5 rounded-xl p-8 border border-white/10 flex flex-col justify-between">
               <div>
                 <h3 className="text-white/40 text-sm uppercase font-mono mb-2">Investment</h3>
                 <div className="flex items-baseline gap-4">
-                  <span className="text-4xl font-bold text-[#35f8ff]">₹{product.price?.discounted || product.price}</span>
+                  <span className="text-4xl font-bold text-[#35f8ff]">
+                    {formatPrice(product.price?.discounted || product.price)}
+                  </span>
                   {product.price?.original && (
-                    <span className="text-white/30 line-through text-xl">₹{product.price.original}</span>
+                    <span className="text-white/30 line-through text-xl">
+                      {formatPrice(product.price.original)}
+                    </span>
                   )}
                 </div>
                 <p className="text-white/40 text-xs mt-4 uppercase tracking-wider">{product.urgencyLine || 'Limited founding member pricing'}</p>

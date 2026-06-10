@@ -4,11 +4,11 @@ import SocialProofTicker from './SocialProofTicker';
 import ProcessDiagram from './ProcessDiagram';
 import PretextWrapper from './home/PretextWrapper';
 
-export default function HeroTitle({ isGlassActive = false, className = '', style = {} }: { isGlassActive?: boolean, className?: string, style?: React.CSSProperties }) {
+export default function HeroTitle({ isGlassActive = false, isMobile = false, className = '', style = {} }: { isGlassActive?: boolean, isMobile?: boolean, className?: string, style?: React.CSSProperties }) {
     return (
-        <div className={`${styles.container} ${className}`} style={{ transform: 'translateY(-6.04cm)', opacity: 1, ...style }}>
-            <div className={styles.tickerWrapper} style={{ 
-                position: 'relative', 
+        <div className={`${styles.container} ${className}`} style={{ opacity: 1, ...style }}>
+            <div className={styles.tickerWrapper} style={{
+                position: 'relative',
                 zIndex: 80,
                 filter: isGlassActive ? 'blur(10px)' : 'none',
                 opacity: isGlassActive ? 0.3 : 1,
@@ -16,14 +16,12 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
             }}>
                 <SocialProofTicker />
             </div>
-            {/* SEO: Hidden Semantic H1 */}
             <h1 className={styles.visuallyHidden}>Spiritual AI — Discover Your Consciousness Type</h1>
-            
+
             <div className={styles.neon}>
                 <div className={styles.titleWrapper}>
-                    {/* Main Title - Above Glass (110 > 90) */}
-                    <div className={styles.title} aria-hidden="true" style={{ 
-                        position: 'relative', 
+                    <div className={styles.title} aria-hidden="true" style={{
+                        position: 'relative',
                         zIndex: 110,
                         transform: isGlassActive ? 'translateY(-2cm)' : 'translateY(0)',
                         transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -34,9 +32,8 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                         </div>
                     </div>
 
-                    {/* Subtitles & Diagram - Behind Glass Simulation */}
-                    <div className={styles.subtitleLotusContainer} style={{ 
-                        position: 'relative', 
+                    <div className={styles.subtitleLotusContainer} style={{
+                        position: 'relative',
                         zIndex: 80,
                         filter: isGlassActive ? 'blur(15px)' : 'none',
                         opacity: isGlassActive ? 0.4 : 1,
@@ -45,29 +42,45 @@ export default function HeroTitle({ isGlassActive = false, className = '', style
                         flexDirection: 'column',
                         alignItems: 'center'
                     }}>
-                        <PretextWrapper 
-                            text="The Evolution of Consciousness, Powered by Intelligence."
+                        {/* Mobile plain text — shown via CSS, hidden on desktop */}
+                        <p className={`${styles.subtitleText} ${styles.mobileText}`}>
+                            Tell us what&apos;s blocking you. Our AI identifies your exact psychological type and builds a personalized ebook, audiobook, or AI guide — made specifically for how your mind works.
+                        </p>
+                        <p className={`${styles.subheadingText} ${styles.mobileText}`}>
+                            The only system decoding you through astrology, analytical psychology, and MBTI architecture.
+                        </p>
+
+                        {/* Desktop PretextWrapper — hidden on mobile */}
+                        <PretextWrapper
+                            text="Tell us what's blocking you. Our AI identifies your exact psychological type and builds a personalized ebook, audiobook, or AI guide — made specifically for how your mind works."
                             font="300 clamp(10px, 1vw, 15.4px) 'Inter', sans-serif"
-                            width={1200}
-                            centerExclusion={true}
-                            className={styles.subtitleText}
+                            width={600}
+                            centerExclusion={false}
+                            className={`${styles.subtitleText} ${styles.desktopText}`}
                         />
-                        <PretextWrapper 
+                        <PretextWrapper
                             text="The only system decoding you through astrology, analytical psychology, and MBTI architecture."
                             font="400 clamp(12px, 1.5vw, 20px) 'Inter', sans-serif"
                             width={1100}
-                            centerExclusion={true}
-                            className={styles.subheadingText}
+                            centerExclusion={false}
+                            className={`${styles.subheadingText} ${styles.desktopText}`}
                         />
+
                         <div style={{ marginTop: '1.5rem', width: '100%' }}>
                             <ProcessDiagram />
                         </div>
-                        <PretextWrapper 
+
+                        {/* Mobile info text */}
+                        <p className={`${styles.infoText} ${styles.mobileText}`} style={{ marginTop: '0.75rem', opacity: 0.6, letterSpacing: '0.05em' }}>
+                            If you don&apos;t notice a real shift in how you see yourself within 21 days — full refund. No questions, no conditions. We only win when you do.
+                        </p>
+                        {/* Desktop info text */}
+                        <PretextWrapper
                             text="If you don't notice a real shift in how you see yourself within 21 days — full refund. No questions, no conditions. We only win when you do."
                             font="300 0.8rem 'Inter', sans-serif"
                             width={1000}
                             centerExclusion={true}
-                            className={styles.infoText}
+                            className={`${styles.infoText} ${styles.desktopText}`}
                             style={{ marginTop: '1rem', opacity: 0.6, letterSpacing: '0.05em' }}
                         />
                     </div>

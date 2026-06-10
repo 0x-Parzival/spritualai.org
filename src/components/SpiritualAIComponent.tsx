@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useSpring, useTransform, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import HeroTitle from './HeroTitle';
-import HeroCTA from './HeroCTA';
 import NavButtons from './NavButtons';
 import Page2Landing from './Page2Landing';
 import SocialLinks from './home/SocialLinks';
@@ -13,6 +12,7 @@ import dynamic from 'next/dynamic';
 import { useUser } from '@clerk/nextjs';
 import { useIsMobile } from '@/lib/useIsMobile';
 
+const HeroCTA = dynamic(() => import('./HeroCTA'), { ssr: false });
 const FishTank = dynamic(() => import('./artistic/FishTank'), { ssr: false });
 const Lotus = dynamic(() => import('./Lotus'), { ssr: false });
 const OceanBackground = dynamic(() => import('./OceanBackground'), { ssr: false });
@@ -211,7 +211,7 @@ export default function SpiritualAIComponent() {
                     <AnimatePresence>
                         {!isChatActive && (
                             <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-                                <HeroTitle isGlassActive={isGlassActive} />
+                                <HeroTitle isGlassActive={isGlassActive} isMobile={isMobile ?? false} />
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -297,22 +297,46 @@ export default function SpiritualAIComponent() {
                         </div>
                     </div>
                     
-                    <div style={{ position: 'absolute', bottom: (mounted && isMobile) ? 'calc(19vh + 3cm)' : 'calc(19vh + 3cm)', left: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
-                        {mounted && <PatternDeconstruction startIndex={0} initialDelay={5000} randomize={true} />}
+                    {/* Social Links + Pattern Deconstruction — stacked on mobile */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: isMobile ? 'calc(12vh + 1cm)' : 'calc(19vh + 3cm)',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: isMobile ? '90vw' : '90vw',
+                        display: 'flex',
+                        flexDirection: isMobile ? 'column' : 'row',
+                        gap: isMobile ? '12px' : '2vw',
+                        zIndex: 8000,
+                        pointerEvents: 'auto',
+                        alignItems: 'center',
+                    }}>
+                        <div style={{ width: isMobile ? '100%' : '43vw' }}>
+                            {mounted && <PatternDeconstruction startIndex={0} initialDelay={5000} randomize={true} />}
+                        </div>
+                        <div style={{ width: isMobile ? '100%' : '43vw' }}>
+                            {mounted && <PatternDeconstruction startIndex={2} initialDelay={10000} randomize={true} />}
+                        </div>
                     </div>
 
-                    <div style={{ position: 'absolute', bottom: (mounted && isMobile) ? 'calc(19vh + 3cm)' : 'calc(19vh + 3cm)', right: '1vw', width: '43vw', zIndex: '8000', pointerEvents: 'auto' }}>
-                        {mounted && <PatternDeconstruction startIndex={2} initialDelay={10000} randomize={true} />}
+                    {/* EGO Orb — scaled down on mobile */}
+                    <div style={{
+                        transform: isMobile ? 'scale(0.5)' : 'scale(1)',
+                        transformOrigin: 'top left',
+                        position: 'absolute',
+                        left: isMobile ? '-10px' : '20px',
+                        pointerEvents: 'none',
+                        zIndex: 1,
+                    }}>
+                        {mounted && <EyeComponent />}
                     </div>
-
-                    {mounted && <EyeComponent />}
 
                     {/* Social Links (Top Right on Page 3) */}
                     <div style={{
                         position: 'absolute',
                         top: '60px',
-                        right: '40px', 
-                        zIndex: '8000' 
+                        right: isMobile ? '10px' : '40px',
+                        zIndex: '8000'
                     }}>
                         <SocialLinks />
                     </div>

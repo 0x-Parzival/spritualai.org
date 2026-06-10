@@ -247,43 +247,6 @@ function SectionInvitation() {
                     </div>
                 </AnimatedSection>
             </div>
-
-            {showPopup && (
-                <div style={{
-                    position: 'fixed',
-                    bottom: '40px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 1000,
-                    background: 'rgba(0, 0, 0, 0.8)',
-                    backdropFilter: 'blur(20px)',
-                    padding: '24px',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    textAlign: 'center',
-                    maxWidth: '400px',
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-                }}>
-                    <p style={{ fontSize: '1.1rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                        Complete your report just by copying this prompt to the AI you use the most and pasting it in the message box of spiritualai
-                    </p>
-                    <button
-                        onClick={() => setShowPopup(false)}
-                        style={{
-                            background: 'rgba(255,255,255,0.1)',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            color: '#fff',
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem'
-                        }}
-                    >
-                        Dismiss
-                    </button>
-                </div>
-            )}
         </section>
     );
 }
