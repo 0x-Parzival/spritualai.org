@@ -41,9 +41,9 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 
 const MODELS = {
   chat: "llama-3.1-8b-instant",
-  report: "llama-3.1-8b-instant",
-  reasoning: "llama-3.1-8b-instant",
-  architect: "llama-3.1-8b-instant",
+  report: "llama-3.3-70b-versatile",
+  reasoning: "llama-3.3-70b-versatile",
+  architect: "llama-3.3-70b-versatile",
 };
 
 // --- SPECIALIZED AGENT PROMPTS ---
@@ -319,11 +319,14 @@ OUTPUT JSON ONLY:
     "birth_date": "YYYY-MM-DD",
     "ready_for_report": true/false
   },
-  "mirror": {
+    "mirror": {
     "mirroringLine": "Surgical description of what you have decoded. Quote their exact words. Name the defense if present. Go one layer deeper than their answer.",
     "contextLine": "A sharp observation on how their revealed pattern is currently limiting their evolution. Connect across turns if possible.",
     "question": "The NEXT unique, creative surgical probe. Built on their PREVIOUS answer, not a script. <20 words.",
-    "options": [],
+    "options": [
+      { "text": "Unique Option A", "subLabel": "Vibe-specific context" },
+      { "text": "Unique Option B", "subLabel": "Vibe-specific context" }
+    ],
     "type": "question"
   }
 }
@@ -799,6 +802,19 @@ async function processAnswer(userState: UserState | null, history: any[], userAn
         dimensions.vedic = Math.max(dimensions.vedic || 0, 100);
     } else {
         dimensions.vedic = 0;
+    }
+
+    // STRATEGY: If this is Round 1 and the user chose a specific struggle bubble, 
+    // force-lock the problem dimension so the AI doesn't repeat the question.
+    const struggles = ["peace", "abundance", "love", "energy", "purpose", "clarity"];
+    const chosenStruggle = struggles.find(s => 
+        userAnswer.toLowerCase().includes(s) || 
+        (userState.firstAnswer && userState.firstAnswer.toLowerCase().includes(s))
+    );
+
+    if (chosenStruggle) {
+        dimensions.problem = Math.max(dimensions.problem, 100);
+        parsedArchitect.problem_id = chosenStruggle.charAt(0).toUpperCase() + chosenStruggle.slice(1);
     }
 
     const hasPattern = dimensions.pattern >= THRESHOLD_PATTERN || !!detectedPattern;

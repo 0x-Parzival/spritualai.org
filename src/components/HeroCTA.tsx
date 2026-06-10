@@ -231,10 +231,21 @@ export default function HeroCTA({
             await new Promise(r => setTimeout(r, 15));
         }
 
-        if (autoSkip) {
+        if (struggle) {
+            // User chose a specific struggle from the homepage.
+            const historyWithGreeting = [{ role: 'ai' as const, content: greeting }];
+            const historyWithUser = [...historyWithGreeting, { role: 'user' as const, content: struggle }];
+            setMessages([{ role: 'ai', content: greeting }, { role: 'user', content: struggle }]);
+            setConversationHistory(historyWithUser);
+            const updatedState = { ...DEFAULT_USER_STATE, chipSelected: struggle, firstAnswer: struggle, questionCount: 0 };
+            setUserState(updatedState);
+            await sendToAI(struggle, historyWithUser, updatedState);
+        } else if (autoSkip) {
             // Wait a moment then ask the first real question from conversation engine
             await new Promise(r => setTimeout(r, 800));
-            const firstQuestion = "What area of your life needs transformation: peace, abundance, love, energy, purpose, or clarity?";
+            const firstQuestion = "What area of your life needs transformation?";
+            const struggleOptions = STRUGGLES.map(s => ({ text: s, subLabel: "Transformation" }));
+            
             setIsTyping(true);
             const currentMsgs = [{ role: 'ai' as const, content: greeting }];
             setMessages(currentMsgs);
@@ -244,7 +255,7 @@ export default function HeroCTA({
                 setMessages([...currentMsgs, { role: 'ai', content: firstQuestion.substring(0, i) }]);
                 await new Promise(r => setTimeout(r, 10));
             }
-            setMessages([...currentMsgs, { role: 'ai', content: firstQuestion }]);
+            setMessages([...currentMsgs, { role: 'ai', content: firstQuestion, options: struggleOptions }]);
             setConversationHistory([...currentMsgs, { role: 'ai', content: firstQuestion }]);
         } else {
             setMessages([{ role: 'ai', content: greeting, options }]);
@@ -305,16 +316,26 @@ export default function HeroCTA({
         window.speechSynthesis.speak(utterance);
     };
 
-    const sendToAI = async (text: string, history: any[]) => {
+    const sendToAI = async (text: string, history: any[], stateOverride?: UserState) => {
         setIsTyping(true);
-        const nextRound = round + 1;
+        const currentState = stateOverride || userState;
+        const nextRound = (currentState.questionCount || 0) + 1;
         try {
             // Retry logic for rate limits (429) — up to 3 retries with server-specified wait
             let res: Response | null = null;
             let data: any = null;
             const maxRetries = 3;
             for (let attempt = 0; attempt <= maxRetries; attempt++) {
-                res = await fetch('/api/spiritual', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'process_answer', userState: { ...userState, questionCount: nextRound }, conversationHistory: history, userAnswer: text }) });
+                res = await fetch('/api/spiritual', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        action: 'process_answer', 
+                        userState: { ...currentState, questionCount: nextRound }, 
+                        conversationHistory: history, 
+                        userAnswer: text 
+                    }) 
+                });
                 data = await res.json();
                 if (res.status === 429 && data.isRateLimit && attempt < maxRetries) {
                     const waitMs = data.retryAfterMs || 5000;
@@ -332,39 +353,39 @@ export default function HeroCTA({
                 throw new Error(data?.error || 'AI response failed');
             }
             const aiData = data.data;
-                if (aiData.emotionScore !== undefined) setUserEmotion(aiData.emotionScore);
-                
-                const transmission = aiData.mirroringLine ? `${aiData.mirroringLine}\n\n${aiData.question}` : (aiData.question || "Continue...");
-                const prevPillars = Object.values(userState.identifiedLayers?.scoringDimensions || {}).filter((v: any) => v >= 78).length;
-                const nextPillars = Object.values(aiData.identifiedLayers?.scoringDimensions || {}).filter((v: any) => (v as number) >= 78).length;
-                if (nextPillars > prevPillars) setInsightTrigger(prev => prev + 1);
-                
-                setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
-                
-                // Speak if in interactive mode
-                speakChaitanya(transmission);
+            if (aiData.emotionScore !== undefined) setUserEmotion(aiData.emotionScore);
+            
+            const transmission = aiData.mirroringLine ? `${aiData.mirroringLine}\n\n${aiData.question}` : (aiData.question || "Continue...");
+            const prevPillars = Object.values(currentState.identifiedLayers?.scoringDimensions || {}).filter((v: any) => v >= 78).length;
+            const nextPillars = Object.values(aiData.identifiedLayers?.scoringDimensions || {}).filter((v: any) => (v as number) >= 78).length;
+            if (nextPillars > prevPillars) setInsightTrigger(prev => prev + 1);
+            
+            setMessages(prev => [...prev, { role: 'ai', content: "", options: [] }]);
+            
+            // Speak if in interactive mode
+            speakChaitanya(transmission);
 
-                for (let j = 0; j <= transmission.length; j++) {
-                    setMessages(prev => { const n = [...prev]; n[n.length - 1].content = transmission.substring(0, j); return n; });
-                    await new Promise(r => setTimeout(r, 15));
-                }
-                setMessages(prev => { const n = [...prev]; n[n.length - 1].options = aiData.options || []; return n; });
-                setConversationHistory([...history, { role: 'ai', content: transmission }]);
-                setRound(nextRound);
-                if (onRoundChange) onRoundChange(nextRound);
-                setUserState(prev => ({ ...prev, ...aiData, questionCount: nextRound }));
-                if (aiData.decodingProgress >= 100) {
-                    if (onGeneratingReport) onGeneratingReport(true);
-                    // Capture aiData in a local variable so the setTimeout callback
-                    // uses the fresh API response, not the stale userState
-                    const finalState = aiData;
-                    console.log('[HeroCTA] Conversation complete. Report present:', !!finalState.report, 'Products:', finalState.recommendedProducts?.length || 0);
-                    setTimeout(() => {
-                        setIsHandover(true);
-                        // Save to blockplain and redirect to report page
-                        saveAndRedirect(finalState);
-                    }, 2000);
-                }
+            for (let j = 0; j <= transmission.length; j++) {
+                setMessages(prev => { const n = [...prev]; n[n.length - 1].content = transmission.substring(0, j); return n; });
+                await new Promise(r => setTimeout(r, 15));
+            }
+            setMessages(prev => { const n = [...prev]; n[n.length - 1].options = aiData.options || []; return n; });
+            setConversationHistory([...history, { role: 'ai', content: transmission }]);
+            setRound(nextRound);
+            if (onRoundChange) onRoundChange(nextRound);
+            setUserState(prev => ({ ...prev, ...aiData, questionCount: nextRound }));
+            if (aiData.decodingProgress >= 100) {
+                if (onGeneratingReport) onGeneratingReport(true);
+                // Capture aiData in a local variable so the setTimeout callback
+                // uses the fresh API response, not the stale userState
+                const finalState = aiData;
+                console.log('[HeroCTA] Conversation complete. Report present:', !!finalState.report, 'Products:', finalState.recommendedProducts?.length || 0);
+                setTimeout(() => {
+                    setIsHandover(true);
+                    // Save to blockplain and redirect to report page
+                    saveAndRedirect(finalState);
+                }, 2000);
+            }
         } catch (err) { console.error(err); } finally { setIsTyping(false); }
     };
 
@@ -570,10 +591,10 @@ export default function HeroCTA({
                                     <motion.div key={idx} className={`${styles.messageRow} ${msg.role === 'ai' ? styles.aiRow : styles.userRow}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                                         <div className={`${styles.chatBubble} ${msg.role === 'ai' ? styles.aiBubble : styles.userBubble}`}>{msg.content}</div>
                                         {msg.options && idx === messages.length - 1 && !isTyping && (
-                                            <div className={(idx === 0 || (idx === 1 && messages[0].role === 'user')) ? styles.verticalOptions : styles.optionsMarqueeContainer}>
-                                                <div className={(idx === 0 || (idx === 1 && messages[0].role === 'user')) ? "" : styles.optionsMarqueeTrack}>
+                                            <div className={(round === 0) ? styles.verticalOptions : styles.optionsMarqueeContainer}>
+                                                <div className={(round === 0) ? "" : styles.optionsMarqueeTrack}>
                                                     {msg.options.map((opt, oi) => (
-                                                        <motion.button key={oi} className={styles.optionBubble} onClick={() => handleOptionClick(opt.text)} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: oi * 0.15, duration: 0.6 }}>
+                                                        <motion.button key={oi} className={styles.optionBubble} onClick={() => handleOptionClick(opt.text)} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (oi % msg.options!.length) * 0.1, duration: 0.6 }}>
                                                             <span style={{ fontWeight: 500 }}>{opt.text}</span>
                                                             {opt.subLabel && <span style={{ fontSize: '0.65rem', opacity: 0.6, marginTop: '2px' }}>{opt.subLabel}</span>}
                                                         </motion.button>
