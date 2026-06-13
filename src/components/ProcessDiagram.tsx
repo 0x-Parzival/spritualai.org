@@ -40,8 +40,8 @@ export default function ProcessDiagram() {
             <div className={styles.processSteps}>
                 <Step 
                     num="1" 
-                    title="Pattern Initialization" 
-                    desc="Isolate the entry point of your recursive loop via struggle selection and birth data." 
+                    title="1. Start Your Scan" 
+                    desc="Select your struggle and enter your birth data to begin the analysis." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -53,8 +53,8 @@ export default function ProcessDiagram() {
                 
                 <Step 
                     num="2" 
-                    title="Neural Mapping" 
-                    desc="A 4-round deep interrogation mapping your Jungian architecture and Vedic timing." 
+                    title="2. Answer 4 Questions" 
+                    desc="Chat with the AI for a few minutes to map your unique life patterns." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="3"></circle>
@@ -65,8 +65,8 @@ export default function ProcessDiagram() {
                 
                 <Step 
                     num="3" 
-                    title="Blueprint Synthesis" 
-                    desc="Deployment of your surgical protocol to dissolve the pattern and regain agency." 
+                    title="3. Get Your Solution" 
+                    desc="Receive a personalized blueprint (ebook or audio) to fix your problem forever." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
