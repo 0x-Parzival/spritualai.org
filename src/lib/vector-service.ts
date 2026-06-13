@@ -13,7 +13,7 @@ export interface KnowledgeFragment {
 export async function embedText(text: string): Promise<number[]> {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1000); // 1s timeout for embeddings
+    const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout for embeddings
 
     const res = await fetch(`${OLLAMA_URL}/api/embeddings`, {
       method: 'POST',

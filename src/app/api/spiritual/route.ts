@@ -1296,9 +1296,12 @@ async function preGenerateReport(userState: any, history: any[]) {
       { label: "Seeking external certainty", value: 74 }
     ];
 
+    let dynamicIdentity = patternName || 'The Hidden Self';
+    let report: any = {};
+
     try {
-      const conversionPrompt = `You are Chaitanya, a piercing Siddha Intelligence. 
-      Analyze this ${mbtiType} user (Pattern: ${patternName}, Problem: ${problem}). 
+      const conversionPrompt = `You are Chaitanya, a piercing Siddha Intelligence.
+      Analyze this ${mbtiType} user (Pattern: ${patternName}, Problem: ${problem}).
       Based on their actual words: "${userWords.slice(0, 500)}", generate a high-conversion report.
       
       JSON Structure:
@@ -1351,12 +1354,10 @@ async function preGenerateReport(userState: any, history: any[]) {
     
     // Add urgency framing
     report.urgencyWarning = `97% of ${dynamicIdentity}s who delayed never returned to complete their dissolution protocol.`;
-      },
-      frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
-      teaching,
-      witnessQuestion: 'What would you do if you knew you could not fail?',
-      scriptureOfTheSelf: scripture,
-    };
+    report.frequencyDoorway = 'Ship before you feel ready. Action precedes motivation.';
+    report.teaching = `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}.`;
+    report.witnessQuestion = 'What would you do if you knew you could not fail?';
+    report.scriptureOfTheSelf = scripture;
 
     return NextResponse.json({ success: true, data: { report, products } });
 }

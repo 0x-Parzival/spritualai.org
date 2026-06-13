@@ -12,7 +12,7 @@ The current CHAITANYA AI has been evaluated against 4 personas (Intellectualizer
 - Every identifier (MBTI, Shadow, Jungian, LOC, Problem, Product) scored **MISSED** or at best **PARTIAL** across all personas
 - Defense navigation effectiveness: **0%** — all defense types pass through unchallenged
 - The `knowledge_base`, `user_memory`, `ai_memory`, `response_cache`, and `UserSummary` tables do **not exist** in the database
-- The RAG layer silently fails: Ollama embeddings use a 1-second timeout + zero-vector fallback, so retrieved context is always noise
+- The RAG layer silently fails: Ollama embeddings use a 1-second timeout + zero-vector fallback, so retrieved context is always noise **(fix: timeout increased to 10s in vector-service.ts)**
 - The single monolithic CHAITANYA prompt (~300 lines) tries to simultaneously detect MBTI, detect patterns, navigate defenses, track emotion, select the next question, and generate the response — causing loss of precision across all tasks
 - Conversation length is irregular: either premature completion (before identifiers are confirmed) or pointless extra rounds (asking questions that reveal nothing new)
 
@@ -27,7 +27,7 @@ A **2-agent pipeline per conversation turn** that:
 3. Selects the next question using a **deterministic information-gain function** — every question targets the most uncertain identifier and is designed to confirm multiple unknowns simultaneously
 4. Grounds CHAITANYA's mirroring in real tradition passages retrieved from the knowledge base
 5. Displays reasoning to users — the Blueprint report shows exactly which words/behaviors led to each identification
-6. Uses **Google `text-embedding-004`** for reliable, fast embeddings instead of Ollama
+6. Uses **Ollama `nomic-embed-text`** (768-dim, running locally) for embeddings — timeout increased from 1s to 10s to eliminate silent zero-vector fallback
 
 ---
 
@@ -39,7 +39,7 @@ User Answer
     ▼
 ┌────────────────────────────────────────────────────┐
 │  PRE-RAG: IDENTIFIER_SIGNALS retrieval             │
-│  (pgvector + text-embedding-004)                   │
+│  (pgvector + nomic-embed-text via Ollama)          │
 │    Match: user's answer text                       │
 │    Returns: 3-5 behavioral fingerprint fragments   │
 │    Collection: identifier_signals                  │
@@ -47,7 +47,7 @@ User Answer
                       │ signal fragments
                       ▼
 ┌────────────────────────────────────────────────────┐
-│  PHASE 1: Analyst Agent  (llama-3.1-8b-instant)    │
+│  PHASE 1: Analyst Agent  (llama-4-scout-17b-16e)   │
 │                                                    │
 │  Input:                                            │
 │    - userAnswer (raw text)                         │
@@ -87,7 +87,7 @@ User Answer
                       ▼
 ┌────────────────────────────────────────────────────┐
 │  POST-RAG: TRADITION_PASSAGES retrieval            │
-│  (pgvector + text-embedding-004)                   │
+│  (pgvector + nomic-embed-text via Ollama)          │
 │    Match: detected pattern + current answer        │
 │    Returns: 1-2 tradition quotes for mirroring     │
 │    Collection: tradition_passages                  │
@@ -372,7 +372,7 @@ CREATE TABLE knowledge_base (
   collection  TEXT NOT NULL,  -- 'identifier_signals' | 'tradition_passages' | 'pattern_diagnostics'
   content     TEXT NOT NULL,
   metadata    JSONB NOT NULL DEFAULT '{}',
-  embedding   vector(768),    -- text-embedding-004 dimensions
+  embedding   vector(768),    -- nomic-embed-text (Ollama) dimensions
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX kb_embedding_idx ON knowledge_base USING ivfflat (embedding vector_cosine_ops);
@@ -455,32 +455,18 @@ Each passage tagged with: `applicable_patterns[]`, `applicable_mbti[]`, `traditi
 - Yoga path assignment
 - Report narrative templates (validation paragraph, real cause paragraph, scripture of the self)
 
-### 8.3 Embedding Service — Switch to Google text-embedding-004
+### 8.3 Embedding Service — Fix Ollama Timeout
 
-Replace Ollama with Google's embedding API:
+**Status:** Ollama IS running locally with `nomic-embed-text` (768-dim). The only bug was a 1-second timeout that caused silent zero-vector fallback. Fix: increase to 10 seconds in `src/lib/vector-service.ts`.
+
+The Google `text-embedding-004` API key in `.env.local` is **invalid** — do not use it.
 
 ```typescript
-// src/lib/embedding.ts (new file)
-const GEMINI_EMBED_URL = 
-  `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent`;
-
-export async function embedText(text: string): Promise<number[]> {
-  const res = await fetch(`${GEMINI_EMBED_URL}?key=${process.env.GOOGLE_AI_STUDIO_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'models/text-embedding-004',
-      content: { parts: [{ text: text.substring(0, 2048) }] },
-      taskType: 'RETRIEVAL_QUERY'
-    })
-  });
-  if (!res.ok) throw new Error(`Embedding failed: ${res.status}`);
-  const data = await res.json();
-  return data.embedding.values;  // 768-dim float array
-}
+// src/lib/vector-service.ts — only change needed
+const timeout = setTimeout(() => controller.abort(), 10000); // was 1000ms — too short
 ```
 
-No timeout issues. Syncs with existing pgvector 768-dim index. Free tier: 1,500 requests/minute.
+This is already applied. No new embedding file needed. The existing 768-dim pgvector index is compatible.
 
 ---
 
@@ -599,9 +585,7 @@ src/lib/analyst-agent.ts          — Phase 1: Analyst prompt + output parser
 src/lib/speaker-agent.ts          — Phase 2: CHAITANYA speaker prompt
 src/lib/identifier-graph.ts       — IdentifierGraph type + merge logic + completion check
 src/lib/information-gain.ts       — Deterministic probe selector
-src/lib/embedding.ts              — Google text-embedding-004 (replaces Ollama)
 src/lib/vedic-engine.ts           — Real Jyotish computation
-src/lib/knowledge-service.ts      — RAG retrieval (replaces vector-service.ts)
 scripts/seed-knowledge.ts         — Seeds all 3 knowledge collections into knowledge_base
 scripts/migrate-db.ts             — Creates missing tables (knowledge_base, user_memory, etc.)
 ```
@@ -609,7 +593,7 @@ scripts/migrate-db.ts             — Creates missing tables (knowledge_base, us
 ### Modified files:
 ```
 src/app/api/spiritual/route.ts    — Replace processAnswer() with 2-agent pipeline
-src/lib/vector-service.ts         — Replace embedText() calls with new embedding.ts
+src/lib/vector-service.ts         — Timeout fix already applied (1s → 10s)
 src/app/blueprint/[csn]/          — Add reasoning display sidebar to report UI
 ```
 
@@ -626,9 +610,9 @@ src/lib/eq-engine.ts                      — Kept, called by Speaker agent only
 
 | Failure | Recovery |
 |---------|----------|
-| Analyst (8B) returns invalid JSON | Retry once; if still invalid, use current graph unchanged and log |
+| Analyst (17B Scout) returns invalid JSON | Retry once; if still invalid, use current graph unchanged and log |
 | Speaker (70B) returns invalid JSON | Retry once with temperature 0; if still invalid, use previous question format |
-| Google embedding API fails | Fall back to keyword-based retrieval from knowledge_base (no vector, just ILIKE on content) |
+| Ollama embedding times out (>10s) | Fall back to keyword-based retrieval from knowledge_base (no vector, just ILIKE on content) |
 | Swiss Ephemeris computation fails | Fall back to sun-sign-only (from birth month) and mark vedic.computed as partial |
 | All LLM providers fail | Return a curated fallback question from the probe strategy's fallback bank |
 | knowledge_base table empty | Skip RAG retrieval, Speaker operates without tradition passages |
@@ -639,7 +623,7 @@ src/lib/eq-engine.ts                      — Kept, called by Speaker agent only
 
 1. **Migrate DB** — create missing tables (no risk to existing data)
 2. **Seed knowledge base** — run `scripts/seed-knowledge.ts` (idempotent)
-3. **New embedding service** — swap `src/lib/embedding.ts` (Ollama → Google)
+3. **Fix embedding timeout** — ✅ done (vector-service.ts timeout 1s → 10s)
 4. **Analyst agent** — build `src/lib/analyst-agent.ts`
 5. **Identifier graph + selector** — build `src/lib/identifier-graph.ts` + `src/lib/information-gain.ts`
 6. **Speaker agent** — build `src/lib/speaker-agent.ts`
