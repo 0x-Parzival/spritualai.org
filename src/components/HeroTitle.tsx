@@ -45,11 +45,11 @@ export default function HeroTitle({ isGlassActive = false, isMobile = false, cla
                             the evolution of consciousness, powered by intelligence
                         </p>
                         <p className={styles.leadText}>
-                            Chat with the AI in the message box below. It asks a few precise questions,<br />
-                            analyzes your problem, and finds the hidden pattern causing it.
+                            Click the message box below to begin. The AI will talk with you<br />
+                            to understand your problem and find the hidden pattern causing it.
                         </p>
                         <p className={styles.subheadingText}>
-                            You receive a clear diagnosis — and a personalized digital product <span className={styles.formatAccent}>(ebook, audiobook, or AI guide)</span> built to solve your exact problem.
+                            A personal report is generated — with digital products <span className={styles.formatAccent}>(ebook, audiobook, or AI guide)</span> built specifically to solve your exact problem.
                         </p>
 
                         <div style={{ marginTop: '1.5rem', width: '100%' }}>

@@ -1142,6 +1142,165 @@
 }
 
 /* ── Additional Products ── */
+
+/* ── The Internal Script (Confessional) ── */
+.scriptBox {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid #ff3cf5;
+  padding: 24px;
+  margin: 40px 0;
+  border-radius: 0 16px 16px 0;
+  font-style: italic;
+  position: relative;
+  overflow: hidden;
+}
+
+.scriptBox::after {
+  content: 'INTERNAL SCRIPT';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: rgba(255, 60, 245, 0.4);
+  letter-spacing: 2px;
+}
+
+.scriptText {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ── Micro-Symptom Grid ── */
+.symptomGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.symptomItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0, 255, 255, 0.03);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.symptomItem:hover {
+  background: rgba(0, 255, 255, 0.08);
+  border-color: rgba(0, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.symptomIcon {
+  color: #35f8ff;
+  font-weight: 800;
+}
+
+/* ── The Cognitive Gap ── */
+.gapSection {
+  margin: 60px 0;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.05), transparent);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  border-radius: 24px;
+  text-align: center;
+}
+
+.gapTitle {
+  font-family: 'Orbitron', sans-serif;
+  color: #ff3333;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.gapText {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ── Insight Glimpse (Interactive Locked Points) ── */
+.lockedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.glimpseItem {
+  position: relative;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: help;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.glimpseItem:hover {
+  border-color: #35f8ff;
+  color: #fff;
+  background: rgba(53, 248, 255, 0.05);
+}
+
+.glimpseLabel {
+  font-weight: 700;
+  color: #35f8ff;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.glimpseSecret {
+  font-size: 0.7rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+.glimpseItem:hover .glimpseSecret {
+  opacity: 1;
+}
+
+/* ── The Inevitability Product Card ── */
+.inevitableCard {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(53, 248, 255, 0.15) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.inevitableCard:hover {
+  border-color: #35f8ff !important;
+  box-shadow: 0 0 30px rgba(53, 248, 255, 0.15) !important;
+  transform: translateY(-5px) !important;
+}
+
+.inevitableReason {
+  font-size: 0.9rem;
+  color: #35f8ff;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(53, 248, 255, 0.05);
+  border-radius: 4px;
+  border-left: 2px solid #35f8ff;
+}
+
 .additionalSection {
   margin-top: 40px;
 }

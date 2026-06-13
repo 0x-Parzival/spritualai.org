@@ -41,7 +41,7 @@ export default function ProcessDiagram() {
                 <Step 
                     num="1" 
                     title="1. Start Your Scan" 
-                    desc="Select your struggle and enter your birth data to begin the analysis." 
+                    desc="Click the message box below to begin. Enter your struggle and birth data." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -53,8 +53,8 @@ export default function ProcessDiagram() {
                 
                 <Step 
                     num="2" 
-                    title="2. Answer 4 Questions" 
-                    desc="Chat with the AI for a few minutes to map your unique life patterns." 
+                    title="2. Neural Analysis" 
+                    desc="The AI will talk with you to understand the exact problem you are facing." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="3"></circle>
@@ -66,7 +66,7 @@ export default function ProcessDiagram() {
                 <Step 
                     num="3" 
                     title="3. Get Your Solution" 
-                    desc="Receive a personalized blueprint (ebook or audio) to fix your problem forever." 
+                    desc="A report is generated with products built personally to solve your specific problem." 
                     icon={
                         <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
