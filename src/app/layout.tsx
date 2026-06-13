@@ -261,6 +261,8 @@ export default function RootLayout({
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          {/* The whole UI declares font-family: 'Inter' but it was never loaded — register the real family */}
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
           <link rel="icon" href="/images/logo.png" type="image/png" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="preload" href="/images/titleimage.png" as="image" />

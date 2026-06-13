@@ -17,7 +17,7 @@ export default function ProcessDiagram() {
             </svg>
 
             <div className={styles.processSteps}>
-                {/* STEP 1: TALK TO AI */}
+                {/* STEP 1: CHAT */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -29,14 +29,15 @@ export default function ProcessDiagram() {
                             <path d="M8 13h6"></path>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>1. Talk to AI</div>
-                    <div className={styles.stepDescription}>Initiate the decoding below</div>
-                    <div className={styles.downArrow}>↓</div>
+                    <div className={styles.processStep}>1. Interactive Chat</div>
+                    <div className={styles.stepDescription}>
+                        Identify the hidden pattern<br />causing your current block
+                    </div>
                 </div>
                 
                 <span className={styles.stepArrow}>→</span>
                 
-                {/* STEP 2: GET YOUR BLUEPRINT */}
+                {/* STEP 2: MAPPING */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -47,13 +48,15 @@ export default function ProcessDiagram() {
                             <path d="M3 12h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7l-.7.7m0 11.4l.7.7m-12.1-.7l-.7.7"></path>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>2. Get Blueprint</div>
-                    <div className={styles.stepDescription}>Identify your Pattern, MBTI, Astrology, and Archetype</div>
+                    <div className={styles.processStep}>2. Identity Mapping</div>
+                    <div className={styles.stepDescription}>
+                        Align your mind type with<br />Vedic & Jungian architecture
+                    </div>
                 </div>
                 
                 <span className={styles.stepArrow}>→</span>
                 
-                {/* STEP 3: RECEIVE YOUR CUSTOM PRODUCT */}
+                {/* STEP 3: SOLUTION */}
                 <div className={styles.stepContainer}>
                     <div className={styles.iconWrapper}>
                         <div className={styles.particles}>
@@ -67,8 +70,10 @@ export default function ProcessDiagram() {
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
                     </div>
-                    <div className={styles.processStep}>3. Personalized Tool</div>
-                    <div className={styles.stepDescription}>Receive custom solutions built to solve your exact problem</div>
+                    <div className={styles.processStep}>3. Custom Solution</div>
+                    <div className={styles.stepDescription}>
+                        Get your protocol in ebook,<br />audiobook, or AI guide format
+                    </div>
                 </div>
             </div>
         </div>

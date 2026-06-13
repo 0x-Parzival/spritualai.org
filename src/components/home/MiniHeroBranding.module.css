@@ -15,10 +15,11 @@
 
 .titleMain {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 108px; /* Increased by another 1.5x (72 * 1.5) */
+    /* Fluid: matches page 1 title exactly */
+    font-size: clamp(55px, 11vw, 110px);
     font-weight: 300;
     text-transform: uppercase;
-    letter-spacing: 18px; /* 13.5 * 1.5 */
+    letter-spacing: clamp(4px, 2vw, 16px);
     white-space: nowrap;
     color: transparent;
     text-align: center;
@@ -36,24 +37,24 @@
     width: 100%;
     text-align: center;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 108px; /* Increased to 108px */
+    font-size: clamp(55px, 11vw, 110px);
     font-weight: 300;
     text-transform: uppercase;
-    letter-spacing: 18px; /* 13.5 * 1.5 */
+    letter-spacing: clamp(4px, 2vw, 16px);
     white-space: nowrap;
-    /* 100% Brightness gradient */
+    /* 100% Brightness gradient matching the front wave */
     background: linear-gradient(to top,
-            #B76E79 0%,
-            #6a1bc9 33%,
-            #35F8FF 66%,
-            #B76E79 100%); 
+            #ffffff 0%,
+            #35f8ff 35%,
+            #ff3cf5 70%,
+            #ffffff 100%); 
     background-size: 100% 200%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-stroke: 0;
-    /* Cinematic animation */
-    animation: holographic 15s linear infinite, wave 4s ease-in-out infinite;
+    /* Cinematic animation synced with waveFrontGradient duration (24s) */
+    animation: holographic 24s linear infinite, wave 4s ease-in-out infinite;
     pointer-events: none;
     z-index: 3;
     opacity: 1; 
@@ -76,11 +77,13 @@
     100% { background-position: center 200%; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 520px) {
     .titleMain,
     .titleGlow {
-        font-size: 48px;
-        letter-spacing: 6px;
-        -webkit-text-stroke: 1px #35f8ff; 
+        font-size: clamp(28px, 9vw, 50px);
+        letter-spacing: 0.12em;
+        -webkit-text-stroke: 1px #35f8ff;
+        white-space: normal;
+        line-height: 1.1;
     }
 }

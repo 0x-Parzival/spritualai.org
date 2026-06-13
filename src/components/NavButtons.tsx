@@ -47,7 +47,7 @@ export default function NavButtons() {
                         <span className={styles.navLinkContrast}>How This Works</span>
                         <div className={styles.contactIconWrapper} style={{ background: 'transparent', padding: '4px' }}>
                             <Image
-                                src="/images/lotusgod.png"
+                                src="/images/logo.png"
                                 alt="Lotus"
                                 width={40}
                                 height={40}

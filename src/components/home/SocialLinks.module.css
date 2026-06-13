@@ -21,6 +21,7 @@
     align-items: center;
     gap: 12px;
     padding: 10px 20px;
+    min-height: 44px; /* WCAG touch target */
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);

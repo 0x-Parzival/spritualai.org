@@ -205,3 +205,30 @@ h4,
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(20px);
 }
+
+/* ─── Accessibility hardening ─────────────────────────────── */
+
+/* Respect users who ask for less motion (vestibular disorders, low-end devices) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible keyboard focus without affecting mouse users */
+:focus-visible {
+  outline: 2px solid #35f8ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Belt-and-braces: never allow horizontal scroll */
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}

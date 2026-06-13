@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
 import styles from './blueprint-detail.module.css';
 import { useCurrency } from '@/context/CurrencyContext';
+import SpaceBackground from '@/components/SpaceBackground';
 
 /* ── Types ── */
 interface Product {
@@ -18,6 +19,9 @@ interface Product {
   ctaText: string;
   headline?: string;
   semanticSlug?: string;
+  targetProblem?: string;
+  tagline?: string;
+  whatYouGet?: string[];
 }
 
 interface BlueprintData {
@@ -118,7 +122,7 @@ function TextScramble({ phrases, className }: { phrases: string[]; className?: s
   return <span ref={elRef} className={className} />;
 }
 
-/* ── Share Button Component (FIXED: proper clipboard, no alert) ── */
+/* ── Share Button Component ── */
 function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; mbti: string }) {
   const url = typeof window !== 'undefined' ? window.location.href : '';
   const text = `My Consciousness Blueprint has been etched. I am "${identity}" (${mbti}). CSN: ${csn}. Discover yours at Spiritual AI.`;
@@ -157,8 +161,6 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
         handleCopy();
-        // Since we can't deep link to Instagram stories with a URL directly, 
-        // we copy the link and hint the user.
       },
     },
     {
@@ -178,14 +180,14 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
   ];
 
   return (
-    <div className={styles.shareSection}>
+    <div className={styles.shareSectionInCard}>
       <div className={styles.shareLabel}>Share Your Blueprint</div>
       <div className={styles.shareButtons}>
         {shareLinks.map((link) => (
           <a
             key={link.name}
             href={link.href}
-            className={styles.shareBtn}
+            className={styles.shareBtnMinimal}
             target={link.href !== '#' ? '_blank' : undefined}
             rel="noopener noreferrer"
             onClick={(e) => {
@@ -205,7 +207,6 @@ function ShareButtons({ csn, identity, mbti }: { csn: string; identity: string; 
 
 /* ── Main Component ── */
 export default function BlueprintClient({ data, csn }: Props) {
-  const [activePage, setActivePage] = useState<1 | 2>(1);
   const [message, setMessage] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackSaving, setFeedbackSaving] = useState(false);
@@ -287,247 +288,319 @@ export default function BlueprintClient({ data, csn }: Props) {
       </Head>
 
       {/* Background Effects */}
+      <SpaceBackground />
       <div className={styles.scanlines} />
       <div className={styles.vignette} />
 
       <div className={styles.container}>
-        {/* Page Navigation */}
-        <div className={styles.pageNav}>
-          <button
-            className={`${styles.pageTab} ${activePage === 1 ? styles.pageTabActive : ''}`}
-            onClick={() => setActivePage(1)}
-          >
-            📋 Report
-          </button>
-          <button
-            className={`${styles.pageTab} ${activePage === 2 ? styles.pageTabActive : ''}`}
-            onClick={() => setActivePage(2)}
-          >
-            🎯 Solutions
-          </button>
-        </div>
+        {/* Consolidated Page Layout */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '80px' }}>
+          
+          {/* ── SECTION 1: THE REPORT ── */}
+          <section id="report-section">
+            <div className={styles.twoColumn}>
+              {/* ── LEFT: ID Card ── */}
+              <motion.div
+                className={styles.idCard}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className={styles.idCardImage}>
+                  <img
+                    src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${encodeURIComponent(identity)}&backgroundColor=0a0a1a&backgroundType=gradientLinear&backgroundRotation=180`}
+                    alt="Consciousness Signature"
+                    className={styles.premiumAvatar}
+                  />
+                  <div className={styles.idCardImageOverlay} />
+                </div>
+                <div className={styles.idCardContent}>
+                  <div className={styles.idCardCSN}>VERIFIED CSN: {csn}</div>
+                  <h2 className={styles.idCardTitle}>{identity}</h2>
+                  <p className={styles.idCardSubtitle}>{mbti} · {archetype} {symbol}</p>
 
-        <AnimatePresence mode="wait">
-          {activePage === 1 && (
-            <motion.div
-              key="page1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className={styles.twoColumn}>
-                {/* ── LEFT: ID Card ── */}
-                <motion.div
-                  className={styles.idCard}
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
+                  <div className={styles.idCardDivider} />
+
+                  <div className={styles.idCardMeta}>
+                    <div className={styles.idCardMetaItem}>
+                      <span className={styles.idCardMetaLabel}>Cognitive Type</span>
+                      <span className={styles.idCardMetaValue}>{mbti}</span>
+                    </div>
+                    <div className={styles.idCardMetaItem}>
+                      <span className={styles.idCardMetaLabel}>Detected Pattern</span>
+                      <span className={styles.idCardMetaValue}>{header.patternName || data.metadata?.patternName || 'Identified'}</span>
+                    </div>
+                    <div className={styles.idCardMetaItem}>
+                      <span className={styles.idCardMetaLabel}>Shadow Core</span>
+                      <span className={styles.idCardMetaValue}>{meta.coreShadowPattern || data.metadata?.shadow || 'Identified'}</span>
+                    </div>
+                    <div className={styles.idCardMetaItem}>
+                      <span className={styles.idCardMetaLabel}>Current Phase</span>
+                      <span className={styles.idCardMetaValue}>{meta.dharmaPhase || 'Active'}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.urgencyBar}>
+                    <div className={styles.urgencyFill} style={{ width: `${header.urgencyPercent || 75}%` }} />
+                    <span className={styles.urgencyText}>DECODING STRENGTH: {header.urgencyPercent || 75}%</span>
+                  </div>
+
+                  <ShareButtons csn={csn} identity={identity} mbti={mbti} />
+                </div>
+              </motion.div>
+
+              {/* ── RIGHT: Report Content ── */}
+              <motion.div
+                className={styles.reportContent}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className={styles.reportHeader}>
+                  <h1 className={styles.reportTitle}>Consciousness Analysis</h1>
+                  <p className={styles.reportDate}>{formattedDate} · Session Secure</p>
+                </div>
+
+                {/* Featured Archetype Image Restored */}
+                <motion.div 
+                  className={styles.featuredImageContainer}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 1, delay: 0.3 }}
                 >
-                  <div className={styles.idCardImage}>
-                    <img
-                      src={`/images/mbti/${mbti.toLowerCase()}.svg`}
-                      alt={`${mbti} archetype`}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/images/mbti/default.svg';
-                      }}
-                    />
-                    <div className={styles.idCardImageOverlay} />
-                  </div>
-                  <div className={styles.idCardContent}>
-                    <div className={styles.idCardCSN}>CSN: {csn}</div>
-                    <h2 className={styles.idCardTitle}>{identity}</h2>
-                    <p className={styles.idCardSubtitle}>{mbti} · {archetype} {symbol}</p>
-
-                    <div className={styles.idCardDivider} />
-
-                    <div className={styles.idCardMeta}>
-                      <div className={styles.idCardMetaItem}>
-                        <span className={styles.idCardMetaLabel}>Type</span>
-                        <span className={styles.idCardMetaValue}>{mbti}</span>
-                      </div>
-                      <div className={styles.idCardMetaItem}>
-                        <span className={styles.idCardMetaLabel}>Pattern</span>
-                        <span className={styles.idCardMetaValue}>{header.patternName || data.metadata?.patternName || 'Identified'}</span>
-                      </div>
-                      <div className={styles.idCardMetaItem}>
-                        <span className={styles.idCardMetaLabel}>Shadow</span>
-                        <span className={styles.idCardMetaValue}>{meta.coreShadowPattern || data.metadata?.shadow || 'Identified'}</span>
-                      </div>
-                      <div className={styles.idCardMetaItem}>
-                        <span className={styles.idCardMetaLabel}>Phase</span>
-                        <span className={styles.idCardMetaValue}>{meta.dharmaPhase || 'Active'}</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.urgencyBar}>
-                      <div className={styles.urgencyFill} style={{ width: `${header.urgencyPercent || 75}%` }} />
-                      <span className={styles.urgencyText}>URGENCY: {header.urgencyPercent || 75}%</span>
-                    </div>
-
-                    <ShareButtons csn={csn} identity={identity} mbti={mbti} />
-                  </div>
+                  <img 
+                    src={`https://api.dicebear.com/7.x/notionists/svg?seed=${encodeURIComponent(identity)}&backgroundColor=0a0a1a&gesture=wave,raisedHand,ok`} 
+                    className={styles.featuredAvatar}
+                    alt="Identified Archetype"
+                  />
+                  <div className={styles.featuredImageOverlay} />
                 </motion.div>
 
-                {/* ── RIGHT: Report Content ── */}
-                <motion.div
-                  className={styles.reportContent}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <div className={styles.reportHeader}>
-                    <h1 className={styles.reportTitle}>Scan Results</h1>
-                    <p className={styles.reportDate}>{formattedDate}</p>
+                {/* Scrambling Identity */}
+                <div className={styles.reportArticle} style={{ borderTop: 'none', marginTop: 0 }}>
+                  <small className={styles.articleLabel}>CONSCIOUSNESS IDENTITY</small>
+                  <div className={styles.textScramble}>
+                    <TextScramble phrases={scramblePhrases} />
                   </div>
+                </div>
 
-                  {/* Scrambling Identity */}
-                  <div className={styles.reportArticle}>
-                    <small className={styles.articleLabel}>CONSCIOUSNESS IDENTITY</small>
-                    <div className={styles.textScramble}>
-                      <TextScramble phrases={scramblePhrases} />
-                    </div>
-                  </div>
-
-                  {/* Validation */}
-                  {report?.validation && (
-                    <motion.div
-                      className={styles.reportArticle}
-                      initial="hidden"
-                      animate="visible"
-                      variants={FADE_UP}
-                      custom={1}
-                    >
-                      <small className={styles.articleLabel}>SCANNING ARTICLE</small>
-                      <h2 className={styles.articleTitle}>The Validation</h2>
-                      <p className={styles.articleText}>&ldquo;{report.validation}&rdquo;</p>
-                    </motion.div>
-                  )}
-
-                  {/* The Mirror */}
+                {/* Validation */}
+                {report?.validation && (
                   <motion.div
                     className={styles.reportArticle}
                     initial="hidden"
-                    animate="visible"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={FADE_UP}
+                    custom={1}
+                  >
+                    <small className={styles.articleLabel}>STRENGTHS VALIDATION</small>
+                    <h2 className={styles.articleTitle}>The Validation</h2>
+                    <p className={styles.articleText}>&ldquo;{report.validation}&rdquo;</p>
+                  </motion.div>
+                )}
+
+                {/* Exposure: Hidden Signs */}
+                {report?.hiddenSigns && report.hiddenSigns.length > 0 && (
+                  <motion.div
+                    className={styles.reportArticle}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={FADE_UP}
+                    custom={1.5}
+                  >
+                    <small className={styles.articleLabel}>THINGS YOU NEVER TOLD US</small>
+                    <h2 className={styles.articleTitle}>Signs This Pattern Controls You</h2>
+                    <div className={styles.signsGrid}>
+                      {report.hiddenSigns.map((sign: string, i: number) => (
+                        <div key={i} className={styles.signItem}>
+                          <span className={styles.checkmark}>✓</span>
+                          <span>{sign}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Probability Engine */}
+                {report?.probabilities && report.probabilities.length > 0 && (
+                  <motion.div
+                    className={styles.reportArticle}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={FADE_UP}
+                    custom={1.8}
+                  >
+                    <small className={styles.articleLabel}>PROBABILITY ENGINE</small>
+                    <h2 className={styles.articleTitle}>Blueprint Predictions</h2>
+                    <div className={styles.probabilityGrid}>
+                      {report.probabilities.map((prob: any, i: number) => (
+                        <div key={i} className={styles.probItem}>
+                          <div className={styles.probHeader}>
+                            <span className={styles.probLabel}>{prob.label}</span>
+                            <span className={styles.probValue}>{prob.value}%</span>
+                          </div>
+                          <div className={styles.probTrack}>
+                            <div className={styles.probFill} style={{ width: `${prob.value}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Origin Analysis */}
+                {report?.originAnalysis && (
+                  <motion.div
+                    className={styles.reportArticle}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
                     variants={FADE_UP}
                     custom={2}
                   >
-                    <small className={styles.articleLabel}>SCANNING ARTICLE</small>
-                    <h2 className={styles.articleTitle}>The Mirror</h2>
-                    <p className={styles.articleText}>
-                      {report?.realCause || report?.root || 'A pattern installed before conscious choice was possible. Your mind made a decision to survive your environment. That decision became automatic.'}
-                    </p>
+                    <small className={styles.articleLabel}>ORIGIN ANALYSIS</small>
+                    <h2 className={styles.articleTitle}>How This Was Installed</h2>
+                    <p className={styles.articleText}>{report.originAnalysis}</p>
                   </motion.div>
+                )}
 
-                  {/* Pattern Loop */}
-                  {(report?.patternLoop || report?.loop) && (
-                    <motion.div
-                      className={styles.reportArticle}
-                      initial="hidden"
-                      animate="visible"
-                      variants={FADE_UP}
-                      custom={3}
-                    >
-                      <small className={styles.articleLabel}>SCANNING ARTICLE</small>
-                      <h2 className={styles.articleTitle}>The Pattern Loop</h2>
-                      <p className={styles.articleText}>
-                        <strong>Trigger:</strong> {(report.patternLoop || report.loop)?.trigger || 'New opportunity or challenge'}<br /><br />
-                        <strong>Coping:</strong> {(report.patternLoop || report.loop)?.copingMechanism || 'Initial excitement followed by avoidance'}<br /><br />
-                        <strong>Cost:</strong> {(report.patternLoop || report.loop)?.humanCost || 'Years of unfinished potential and growing self-doubt'}
-                      </p>
-                    </motion.div>
-                  )}
-
-                  {/* NODE Highlight — FIXED: explain what "IDENTITY LOCKED" means */}
+                {/* Core Conflict */}
+                {report?.coreConflict && (
                   <motion.div
+                    className={styles.reportArticle}
                     initial="hidden"
-                    animate="visible"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
                     variants={FADE_UP}
-                    custom={4}
+                    custom={2.5}
                   >
-                    <div className={styles.cyberHighlight}>NODE-3X</div>
-                    <br /><br />
-                    <div className={styles.cyberHighlightDark}>IDENTITY LOCKED</div>
-                    <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginTop: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-                      Your consciousness signature has been permanently etched into the Blockplain. This identity is unique to you — no other person on Earth shares this pattern.
-                    </p>
+                    <small className={styles.articleLabel}>PSYCHOLOGICAL TENSION</small>
+                    <h2 className={styles.articleTitle}>Your Core Conflict</h2>
+                    <p className={styles.articleText}>{report.coreConflict}</p>
                   </motion.div>
+                )}
 
-                  {/* Teaching */}
-                  {report?.teaching && (
-                    <motion.div
-                      className={styles.reportArticle}
-                      initial="hidden"
-                      animate="visible"
-                      variants={FADE_UP}
-                      custom={5}
-                    >
-                      <small className={styles.articleLabel}>SCANNING ARTICLE</small>
-                      <h2 className={styles.articleTitle}>The Teaching</h2>
-                      <p className={styles.articleText}>{report.teaching}</p>
-                    </motion.div>
-                  )}
+                {/* Future Cost */}
+                {report?.futureCost && (
+                  <motion.div
+                    className={styles.reportArticle}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={FADE_UP}
+                    custom={3}
+                  >
+                    <small className={styles.articleLabel}>COST CALCULATOR</small>
+                    <h2 className={styles.articleTitle}>If This Continues...</h2>
+                    <div className={styles.costGrid}>
+                      <div className={styles.costItem}>
+                        <div className={styles.costLabel}>IN 1 YEAR:</div>
+                        <div className={styles.costValue}>{report.futureCost.oneYear}</div>
+                      </div>
+                      <div className={styles.costItem}>
+                        <div className={styles.costLabel}>IN 5 YEARS:</div>
+                        <div className={styles.costValue}>{report.futureCost.fiveYears}</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
 
-                  {/* Cosmic Confirmation */}
-                  {report?.cosmicConfirmation && (
-                    <motion.div
-                      className={styles.reportArticle}
-                      initial="hidden"
-                      animate="visible"
-                      variants={FADE_UP}
-                      custom={6}
-                    >
-                      <small className={styles.articleLabel}>SCANNING ARTICLE</small>
-                      <h2 className={styles.articleTitle}>Cosmic Confirmation</h2>
-                      <p className={styles.articleText}>{report.cosmicConfirmation}</p>
-                    </motion.div>
-                  )}
+                {/* The Mirror */}
+                <motion.div
+                  className={styles.reportArticle}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-100px" }}
+                  variants={FADE_UP}
+                  custom={3.2}
+                >
+                  <small className={styles.articleLabel}>ROOT PATTERN ANALYSIS</small>
+                  <h2 className={styles.articleTitle}>The Mirror</h2>
+                  <p className={styles.articleText}>
+                    {report?.realCause || report?.root || 'A pattern installed before conscious choice was possible. Your mind made a decision to survive your environment. That decision became automatic.'}
+                  </p>
+                </motion.div>
 
-                  {/* FIXED: Explain the countdown timer */}
-                  <div className={styles.connectedFooter}>
-                    Connected via S-NET-{data.planeX}{data.planeY} · Exclusive access window: {formatTime(timeLeft)} remaining
-                    <br />
-                    <span style={{ fontSize: '0.6rem', opacity: 0.6 }}>
-                      Your personalized solutions are held in this reserved window. After this period, the instruments return to the general pool.
-                    </span>
+                {/* Transition: The Truth */}
+                <motion.div
+                  className={styles.truthSection}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={FADE_UP}
+                  custom={4}
+                >
+                  <h2 className={styles.truthTitle}>The Truth</h2>
+                  <p className={styles.truthText}>
+                    You do not need more motivation. You do not need another productivity system. You do not need to become someone else.
+                  </p>
+                  <p className={styles.truthHighlight}>
+                    You need to dissolve the pattern that convinced you your worth depends on performance.
+                  </p>
+                </motion.div>
+
+                {/* Curiosity Gap: Locked Points */}
+                <motion.div
+                  className={styles.lockedSection}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={FADE_UP}
+                  custom={4.5}
+                >
+                  <div className={styles.lockedHeader}>
+                    <span className={styles.lockedIcon}>🔒</span>
+                    <span>87 ADDITIONAL DATA POINTS REMAIN LOCKED</span>
+                  </div>
+                  <div className={styles.lockedGrid}>
+                    <div>• Relationship blueprint</div>
+                    <div>• Money psychology</div>
+                    <div>• Purpose architecture</div>
+                    <div>• Shadow triggers</div>
+                    <div>• Self-sabotage map</div>
+                    <div>• Fulfillment pathway</div>
                   </div>
                 </motion.div>
-              </div>
 
-              {/* ── Message Box ── */}
-              <motion.div
-                className={styles.messageBox}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-              >
-                <div className={styles.messageBoxLabel}>
-                  💬 Anything else you want the AI to know about?
+                {/* Teaching */}
+                {report?.teaching && (
+                  <motion.div
+                    className={styles.reportArticle}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={FADE_UP}
+                    custom={5}
+                  >
+                    <small className={styles.articleLabel}>DISSOLUTION PROTOCOL</small>
+                    <h2 className={styles.articleTitle}>The Teaching</h2>
+                    <p className={styles.articleText}>{report.teaching}</p>
+                  </motion.div>
+                )}
+
+                <div className={styles.connectedFooter}>
+                  Connected via S-NET-{data.planeX}{data.planeY} · Exclusive access window: {formatTime(timeLeft)} remaining
                 </div>
-                <textarea
-                  className={styles.messageBoxInput}
-                  placeholder="Share additional context, thoughts, or questions about your blueprint..."
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={3}
-                />
               </motion.div>
-            </motion.div>
-          )}
+            </div>
+          </section>
 
-          {activePage === 2 && (
+          {/* ── SECTION 2: THE SOLUTIONS ── */}
+          <section id="solutions-section">
             <motion.div
-              key="page2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
             >
-              <div className={styles.solutionsPage}>
+              <div className={styles.solutionsPage} style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <div className={styles.solutionsHeader}>
                   <h2 className={styles.solutionsTitle}>Your Personalized Solutions</h2>
                   <p className={styles.solutionsSubtitle}>
-                    3 instruments generated from your {mbti} blueprint — each targeting a different layer of your consciousness architecture
+                    Instruments specifically designed to dissolve your identified patterns.
                   </p>
                 </div>
 
@@ -536,16 +609,17 @@ export default function BlueprintClient({ data, csn }: Props) {
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
                       transition={{ delay: i * 0.15 }}
                       style={{
                         background: 'rgba(255,255,255,0.02)',
                         border: '1px solid rgba(53, 248, 255, 0.1)',
                         borderRadius: '16px',
-                        padding: '28px',
+                        padding: '32px',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '16px',
+                        gap: '20px',
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
@@ -553,73 +627,55 @@ export default function BlueprintClient({ data, csn }: Props) {
                           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#35f8ff', letterSpacing: '0.2em', marginBottom: '6px' }}>
                             INSTRUMENT {String(i + 1).padStart(2, '0')}
                           </div>
-                          <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.1rem', fontWeight: 700, marginBottom: '4px' }}>
+                          <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '4px', color: '#fff' }}>
                             {product.name}
                           </h3>
-                          <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                          <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.6)' }}>
                             {product.tagline}
                           </p>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>
-                            {formatPrice(product.price?.original || product.originalPrice || 97)}
+                          <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>
+                            {formatPrice(997)}
                           </div>
-                          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.3rem', color: '#35f8ff', fontWeight: 700 }}>
-                            {formatPrice(product.price?.discounted || product.price || 67)}
+                          <div style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.5rem', color: '#35f8ff', fontWeight: 700 }}>
+                            {formatPrice(497)}
                           </div>
                         </div>
                       </div>
 
-                      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
-                        {product.targetProblem}
-                      </p>
-
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        {product.whatYouGet?.slice(0, 3).map((item: string, j: number) => (
-                          <span key={j} style={{ fontSize: '0.7rem', padding: '4px 10px', background: 'rgba(53, 248, 255, 0.08)', borderRadius: '12px', color: 'rgba(255,255,255,0.6)' }}>
-                            {item.split('—')[0].trim()}
-                          </span>
-                        ))}
+                      <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, borderLeft: '2px solid #35f8ff', paddingLeft: '20px' }}>
+                        {product.targetProblem || "Designed specifically for people whose self-worth depends on achievement, approval, or external success."}
                       </div>
 
-                      <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                      <div className={styles.productIncludes}>
+                        <div style={{ color: '#35f8ff', fontSize: '0.7rem', fontWeight: 700, marginBottom: '12px', letterSpacing: '1px' }}>INSIDE YOU'LL DISCOVER:</div>
+                        <div className={styles.features}>
+                          <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', marginBottom: '8px' }}>The exact moment this pattern became your operating system</li>
+                          <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', marginBottom: '8px' }}>The hidden belief controlling your daily decisions</li>
+                          <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', marginBottom: '8px' }}>A 21-day nervous system rewiring sequence</li>
+                          <li style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', marginBottom: '8px' }}>The pattern dissolution framework</li>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
                         <a
                           href={`/blueprint/${encodeURIComponent(csn)}/product/${product.id}`}
                           style={{
-                            display: 'inline-block',
-                            padding: '12px 28px',
-                            background: 'linear-gradient(135deg, #35f8ff 0%, #0080ff 100%)',
-                            color: '#0a0a1a',
+                            padding: '16px 40px',
+                            background: '#35f8ff',
+                            color: '#000',
                             fontFamily: 'Orbitron, sans-serif',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
                             letterSpacing: '0.1em',
                             textTransform: 'uppercase',
                             borderRadius: '8px',
                             textDecoration: 'none',
-                            boxShadow: '0 4px 15px rgba(53, 248, 255, 0.25)',
+                            boxShadow: '0 0 20px rgba(53, 248, 255, 0.4)',
                           }}
                         >
-                          {product.ctaText}
-                        </a>
-                        <a
-                          href={`/blueprint/${encodeURIComponent(csn)}/product/${product.id}`}
-                          style={{
-                            display: 'inline-block',
-                            padding: '12px 20px',
-                            background: 'transparent',
-                            color: 'rgba(255,255,255,0.6)',
-                            fontFamily: 'Orbitron, sans-serif',
-                            fontSize: '0.7rem',
-                            fontWeight: 500,
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                            borderRadius: '8px',
-                            textDecoration: 'none',
-                            border: '1px solid rgba(255,255,255,0.15)',
-                          }}
-                        >
-                          View Details
+                          {product.ctaText || 'Get Access Now'}
                         </a>
                       </div>
                     </motion.div>
@@ -627,8 +683,50 @@ export default function BlueprintClient({ data, csn }: Props) {
                 </div>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </section>
+
+          {/* ── SECTION 3: FINAL FEEDBACK ── */}
+          <section id="feedback-section" style={{ paddingBottom: '100px' }}>
+            <motion.div
+              className={styles.messageBox}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className={styles.messageBoxLabel}>
+                💬 Anything else you want the AI to know about?
+              </div>
+              <textarea
+                className={styles.messageBoxInput}
+                placeholder="Share additional context, thoughts, or questions about your blueprint..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={3}
+              />
+              <button 
+                onClick={handleSubmitFeedback}
+                disabled={!message.trim() || feedbackSaving}
+                style={{
+                  marginTop: '16px',
+                  padding: '12px 32px',
+                  background: 'rgba(53, 248, 255, 0.1)',
+                  border: '1px solid #35f8ff',
+                  color: '#35f8ff',
+                  borderRadius: '8px',
+                  fontFamily: 'Orbitron, sans-serif',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  opacity: feedbackSubmitted ? 0.5 : 1
+                }}
+              >
+                {feedbackSaving ? 'SAVING...' : (feedbackSubmitted ? 'FEEDBACK RECORDED ✓' : 'SAVE FEEDBACK')}
+              </button>
+            </motion.div>
+          </section>
+
+        </div>
       </div>
     </>
   );

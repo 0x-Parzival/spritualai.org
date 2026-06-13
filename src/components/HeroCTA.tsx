@@ -136,9 +136,63 @@ export default function HeroCTA({
     const [selectedVoiceIndex, setSelectedVoiceIndex] = useState(0);
     const decodedCount = 14847;
     void decodedCount;
+    const [placeholderText, setPlaceholderText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
     const chatThreadRef = useRef<HTMLDivElement>(null);
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const hasPlayedSoundRef = useRef(false);
+
+    const playOnce = () => {
+        if (!hasPlayedSoundRef.current) {
+            playOmSound();
+            hasPlayedSoundRef.current = true;
+        }
+    };
+
+    // Initial greeting typing effect for placeholder
+    useEffect(() => {
+        if (showChat) {
+            setPlaceholderText("Ask anything...");
+            return;
+        }
+
+        const getGreeting = () => {
+            const hour = new Date().getHours();
+            if (hour < 5) return "Good night";
+            if (hour < 12) return "Good morning";
+            if (hour < 17) return "Good afternoon";
+            if (hour < 21) return "Good evening";
+            return "Good night";
+        };
+
+        const greeting = `${getGreeting()}, Welcome to Spiritual AI. Click here to begin chat...`;
+        let currentIndex = 0;
+        let isCancelled = false;
+
+        const typeWriter = () => {
+            if (isCancelled) return;
+            if (currentIndex <= greeting.length) {
+                setPlaceholderText(greeting.substring(0, currentIndex));
+                currentIndex++;
+                setTimeout(typeWriter, 50);
+            } else {
+                // Blink cursor effect at the end
+                setTimeout(() => {
+                    if (!isCancelled) setPlaceholderText(greeting + "|");
+                }, 400);
+                setTimeout(() => {
+                    if (!isCancelled) setPlaceholderText(greeting);
+                }, 800);
+            }
+        };
+
+        const startTimeout = setTimeout(typeWriter, 800);
+
+        return () => {
+            isCancelled = true;
+            clearTimeout(startTimeout);
+        };
+    }, [showChat]);
 
     // Initialize TTS voices
     useEffect(() => {
@@ -221,53 +275,137 @@ export default function HeroCTA({
         return { greeting, options, autoSkip: langInfo.autoSkip };
     };
 
+    const CHALLENGES = [
+        { id: "purpose", label: "Purpose & Direction", subLabel: "Feeling lost or stuck" },
+        { id: "love", label: "Love & Relationships", subLabel: "Connection struggles" },
+        { id: "career", label: "Career & Money", subLabel: "Financial or work blocks" },
+        { id: "self", label: "Self-Worth & Identity", subLabel: "Not feeling enough" },
+        { id: "energy", label: "Energy & Health", subLabel: "Burnout or exhaustion" },
+        { id: "peace", label: "Inner Peace", subLabel: "Anxiety or overthinking" },
+    ];
+
+    const CHALLENGE_SUBOPTIONS: Record<string, { text: string; subLabel: string }[]> = {
+        purpose: [
+            { text: "I feel lost", subLabel: "No clear direction in life" },
+            { text: "I don't know what I should do next", subLabel: "Paralyzed by choices" },
+            { text: "I have goals but no clarity", subLabel: "Can't see the path forward" },
+            { text: "I feel disconnected from myself", subLabel: "Lost touch with who I am" },
+        ],
+        love: [
+            { text: "I can't find the right person", subLabel: "Dating feels hopeless" },
+            { text: "I keep attracting the wrong people", subLabel: "Same toxic patterns repeat" },
+            { text: "I feel alone even in a relationship", subLabel: "Emotionally disconnected" },
+            { text: "I'm afraid of being vulnerable", subLabel: "Walls up, can't let anyone in" },
+        ],
+        career: [
+            { text: "I hate my job but I'm stuck", subLabel: "Fear keeps me trapped" },
+            { text: "I don't know what I'm good at", subLabel: "No confidence in my skills" },
+            { text: "I'm not making enough money", subLabel: "Financial stress is constant" },
+            { text: "I procrastinate everything", subLabel: "Can't seem to take action" },
+        ],
+        self: [
+            { text: "I never feel good enough", subLabel: "Constant self-doubt" },
+            { text: "I compare myself to everyone", subLabel: "Never measure up" },
+            { text: "I don't know who I really am", subLabel: "Lost my sense of self" },
+            { text: "I seek approval from others", subLabel: "Can't validate myself" },
+        ],
+        energy: [
+            { text: "I'm always exhausted", subLabel: "No energy for anything" },
+            { text: "I can't sleep properly", subLabel: "Mind won't shut off" },
+            { text: "I've lost motivation for everything", subLabel: "Nothing excites me anymore" },
+            { text: "My body feels heavy and slow", subLabel: "Physical fatigue won't go away" },
+        ],
+        peace: [
+            { text: "My mind never stops racing", subLabel: "Constant overthinking" },
+            { text: "I feel anxious all the time", subLabel: "Can't relax or feel safe" },
+            { text: "I'm haunted by my past", subLabel: "Old wounds still hurt" },
+            { text: "I can't control my emotions", subLabel: "Everything feels overwhelming" },
+        ],
+    };
+
+    // Track which screen we're on: 'challenge' | 'suboptions' | 'conversation'
+    const [ritualScreen, setRitualScreen] = useState<'challenge' | 'suboptions' | 'conversation'>('challenge');
+    const [selectedChallenge, setSelectedChallenge] = useState<string | null>(null);
+
     const startRitual = async (struggle?: string) => {
-        playOmSound();
+        playOnce();
         setShowChat(true);
-        
-        const { greeting: hook, options, autoSkip } = getMagicalOpening();
-        const greeting = struggle 
-            ? `You seek ${struggle.toLowerCase()}.\n\n${hook}`
-            : hook;
-            
+        setRitualScreen('challenge');
+        setSelectedChallenge(null);
+
+        // Screen 1: Ask the biggest challenge question
+        const screen1Question = "What is the biggest challenge in your life right now?";
+        const challengeOptions = CHALLENGES.map(c => ({ text: c.label, subLabel: c.subLabel }));
+
         setIsTyping(true);
-        setMessages([{ role: 'ai', content: "" }]);
-        for (let i = 0; i <= greeting.length; i++) {
-            setMessages([{ role: 'ai', content: greeting.substring(0, i) }]);
-            await new Promise(r => setTimeout(r, 15));
+        setMessages([{ role: 'ai', content: '' }]);
+
+        // Type out the question
+        for (let i = 0; i <= screen1Question.length; i++) {
+            setMessages([{ role: 'ai', content: screen1Question.substring(0, i) }]);
+            await new Promise(r => setTimeout(r, 12));
         }
 
-        if (struggle) {
-            // User chose a specific struggle from the homepage.
-            const historyWithGreeting = [{ role: 'ai' as const, content: greeting }];
-            const historyWithUser = [...historyWithGreeting, { role: 'user' as const, content: struggle }];
-            setMessages([{ role: 'ai', content: greeting }, { role: 'user', content: struggle }]);
-            setConversationHistory(historyWithUser);
-            const updatedState = { ...DEFAULT_USER_STATE, chipSelected: struggle, firstAnswer: struggle, questionCount: 0 };
-            setUserState(updatedState);
-            await sendToAI(struggle, historyWithUser, updatedState);
-        } else if (autoSkip) {
-            // Wait a moment then ask the first real question from conversation engine
-            await new Promise(r => setTimeout(r, 800));
-            const firstQuestion = "What area of your life needs transformation?";
-            const struggleOptions = STRUGGLES.map(s => ({ text: s, subLabel: "Transformation" }));
-            
-            setIsTyping(true);
-            const currentMsgs = [{ role: 'ai' as const, content: greeting }];
-            setMessages(currentMsgs);
-            
-            let tempMsg = "";
-            for (let i = 0; i <= firstQuestion.length; i++) {
-                setMessages([...currentMsgs, { role: 'ai', content: firstQuestion.substring(0, i) }]);
-                await new Promise(r => setTimeout(r, 10));
-            }
-            setMessages([...currentMsgs, { role: 'ai', content: firstQuestion, options: struggleOptions }]);
-            setConversationHistory([...currentMsgs, { role: 'ai', content: firstQuestion }]);
-        } else {
-            setMessages([{ role: 'ai', content: greeting, options }]);
-            setConversationHistory([{ role: 'ai', content: greeting }]);
-        }
+        // Show options
+        setMessages([{ role: 'ai', content: screen1Question, options: challengeOptions, inputType: 'options' }]);
+        setConversationHistory([{ role: 'ai', content: screen1Question }]);
         setIsTyping(false);
+    };
+
+    const handleChallengeSelect = async (challengeId: string, challengeLabel: string) => {
+        if (isTyping || sacredPause) return;
+        playOnce();
+
+        setSelectedChallenge(challengeId);
+        setRitualScreen('suboptions');
+
+        // Show user's selection
+        const currentMsgs = [...messages, { role: 'user' as const, content: challengeLabel }];
+        setMessages(currentMsgs);
+
+        // Screen 2: Ask "Which describes you best?"
+        const screen2Question = "Which describes you best?";
+        const subOptions = CHALLENGE_SUBOPTIONS[challengeId] || [];
+
+        await new Promise(r => setTimeout(r, 400));
+        setIsTyping(true);
+
+        // Type out the question
+        const msgsWithQuestion = [...currentMsgs, { role: 'ai' as const, content: '' }];
+        setMessages(msgsWithQuestion);
+        for (let i = 0; i <= screen2Question.length; i++) {
+            setMessages([...currentMsgs, { role: 'ai' as const, content: screen2Question.substring(0, i) }]);
+            await new Promise(r => setTimeout(r, 12));
+        }
+
+        // Show sub-options
+        setMessages([...currentMsgs, { role: 'ai', content: screen2Question, options: subOptions, inputType: 'options' }]);
+        setConversationHistory([...currentMsgs, { role: 'ai', content: screen2Question }]);
+        setIsTyping(false);
+    };
+
+    const handleSuboptionSelect = async (suboptionText: string) => {
+        if (isTyping || sacredPause) return;
+        playOnce();
+
+        setRitualScreen('conversation');
+
+        // Show user's selection
+        const currentMsgs = [...messages, { role: 'user' as const, content: suboptionText }];
+        setMessages(currentMsgs);
+        setConversationHistory([...currentMsgs]);
+
+        // Now start the real conversation with the API
+        const updatedState = {
+            ...DEFAULT_USER_STATE,
+            chipSelected: selectedChallenge || 'unknown',
+            firstAnswer: suboptionText,
+            questionCount: 0,
+        };
+        setUserState(updatedState);
+
+        // Send to API for deep analysis
+        await sendToAI(suboptionText, currentMsgs, updatedState);
     };
 
     const getProgressLabel = (progress: number): string => {
@@ -279,7 +417,7 @@ export default function HeroCTA({
 
     const handleStruggleClick = async (struggle: string) => {
         if (isTyping || sacredPause) return;
-        playOmSound();
+        playOnce();
         if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
         let i = 0; setInputValue("");
         const nextChar = () => {
@@ -305,14 +443,28 @@ export default function HeroCTA({
 
         // Retry saving blueprint — re-call saveAndRedirect with the last known state
         if (optionText === "Retry Saving Blueprint") {
-            playOmSound();
+            playOnce();
             setMessages(prev => [...prev, { role: 'user', content: optionText }]);
-            // Re-trigger save with the current userState (which was updated by setUserState)
             setTimeout(() => saveAndRedirect(userState), 500);
             return;
         }
 
-        playOmSound();
+        // Route based on current ritual screen
+        if (ritualScreen === 'challenge') {
+            const challenge = CHALLENGES.find(c => c.label === optionText);
+            if (challenge) {
+                await handleChallengeSelect(challenge.id, challenge.label);
+            }
+            return;
+        }
+
+        if (ritualScreen === 'suboptions') {
+            await handleSuboptionSelect(optionText);
+            return;
+        }
+
+        // Conversation mode — normal API flow
+        playOnce();
         const updatedHistory = [...conversationHistory, { role: 'user', content: optionText }];
         setMessages(prev => [...prev, { role: 'user', content: optionText }]);
         setConversationHistory(updatedHistory);
@@ -332,7 +484,6 @@ export default function HeroCTA({
     const sendToAI = async (text: string, history: any[], stateOverride?: UserState) => {
         setIsTyping(true);
         const currentState = stateOverride || userState;
-        const nextRound = (currentState.questionCount || 0) + 1;
         try {
             // Retry logic for rate limits (429) — up to 3 retries with server-specified wait
             let res: Response | null = null;
@@ -344,7 +495,7 @@ export default function HeroCTA({
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ 
                         action: 'process_answer', 
-                        userState: { ...currentState, questionCount: nextRound }, 
+                        userState: currentState, 
                         conversationHistory: history, 
                         userAnswer: text 
                     }) 
@@ -384,9 +535,10 @@ export default function HeroCTA({
             }
             setMessages(prev => { const n = [...prev]; n[n.length - 1].options = aiData.options || []; n[n.length - 1].inputType = aiData.inputType || 'options'; return n; });
             setConversationHistory([...history, { role: 'ai', content: transmission }]);
-            setRound(nextRound);
-            if (onRoundChange) onRoundChange(nextRound);
-            setUserState(prev => ({ ...prev, ...aiData, questionCount: nextRound }));
+            const responseRound = aiData.questionCount || (currentState.questionCount || 0) + 1;
+            setRound(responseRound);
+            if (onRoundChange) onRoundChange(responseRound);
+            setUserState(prev => ({ ...prev, ...aiData, questionCount: responseRound }));
 
             // Trigger email capture at 50% progress
             if (aiData.decodingProgress >= 50 && !emailCaptured && !showEmailCapture) {
@@ -468,6 +620,51 @@ export default function HeroCTA({
         }
     };
 
+    const handleEarlyReport = async () => {
+        if ((userState.decodingProgress || 0) < 33) return;
+        
+        // Check if there is "something to show" (at least one dimension has some confidence)
+        const dimensions = userState.identifiedLayers?.scoringDimensions || {};
+        const hasData = Object.values(dimensions).some((v: any) => v > 20);
+        
+        if (!hasData) {
+            setMessages(prev => [...prev, { role: 'ai', content: "I'm still forming the initial patterns of your consciousness. Answer a few more questions so I have a solid foundation for your report." }]);
+            return;
+        }
+
+        setIsTyping(true);
+        if (onGeneratingReport) onGeneratingReport(true);
+        
+        try {
+            const res = await fetch('/api/spiritual', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'generate_report',
+                    userState: userState,
+                    conversationHistory: conversationHistory,
+                })
+            });
+            const data = await res.json();
+            if (data.success && data.data) {
+                const finalState = {
+                    ...userState,
+                    ...data.data,
+                    recommendedProducts: data.data.products || []
+                };
+                setIsHandover(true);
+                saveAndRedirect(finalState);
+            } else {
+                throw new Error(data.error || 'Early report generation failed');
+            }
+        } catch (err) {
+            console.error(err);
+            setIsTyping(false);
+            if (onGeneratingReport) onGeneratingReport(false);
+            setMessages(prev => [...prev, { role: 'ai', content: "I need a few more answers before I can finalize your blueprint. Let's continue." }]);
+        }
+    };
+
     const handleContainerClick = () => {
         if (!showChat) {
             startRitual();
@@ -494,7 +691,7 @@ export default function HeroCTA({
                   <div className={styles.topMetaContainer}>
                     <div className={styles.ctaPromptText}>Talk to Intelligence below ↓<br/>It will guide you step-by-step</div>
                     <div className={styles.staticCounter}>
-                      <span className={styles.counterHighlight}>{decodedCount.toLocaleString()}</span> souls identified.<br/>Yours is next.
+                      No real shift in 21 days? Full refund.<br/>No questions asked. We only win when you do.
                     </div>
                   </div>
 
@@ -512,11 +709,11 @@ export default function HeroCTA({
                                 <div className={styles.progressModule}>
                                     <div className={styles.progressLabel}>
                                         <span>CONSCIOUSNESS DECODING</span>
-                                        <span>{getProgressLabel(userState.decodingProgress || 0)}</span>
+                                        <span>{Math.round(userState.decodingProgress || 0)}% {getProgressLabel(userState.decodingProgress || 0)}</span>
                                     </div>
                                     <div className={styles.progressBarTrack}><div className={styles.progressBarFill} style={{ width: `${userState.decodingProgress || 0}%` }} /></div>
                                 </div>
-                                <div className={styles.pillarsModule}>
+                                <div className={styles.pillarsModule} style={{ position: 'relative' }}>
                                     <div className={styles.pillarsContainer}>
                                         {[
                                             { id: 'pattern', label: 'Pattern' },
@@ -530,7 +727,9 @@ export default function HeroCTA({
                                             const isActive = confidence >= 78;
                                             return (
                                                 <div key={pillar.id} className={styles.pillarWrapper}>
-                                                    <div className={`${styles.pillarIndicator} ${isActive ? styles.pillarActive : ''}`} />
+                                                    <div className={styles.confidenceMiniBar}>
+                                                        <div className={styles.confidenceMiniFill} style={{ width: `${confidence}%`, background: '#35f8ff' }} />
+                                                    </div>
                                                     <span className={styles.pillarLabel}>{pillar.label}</span>
                                                     {isActive && userState.identifiedLayers?.proofs?.[pillar.id] && (
                                                         <div className={styles.proofTooltip}>
@@ -542,6 +741,18 @@ export default function HeroCTA({
                                             );
                                         })}
                                     </div>
+                                    
+                                    <button 
+                                        className={styles.earlyReportBtn}
+                                        onClick={handleEarlyReport}
+                                        disabled={(userState.decodingProgress || 0) < 33 || isTyping}
+                                        style={{ 
+                                            opacity: (userState.decodingProgress || 0) < 33 ? 0.3 : 1,
+                                            cursor: (userState.decodingProgress || 0) < 33 ? 'not-allowed' : 'pointer'
+                                        }}
+                                    >
+                                        {(userState.decodingProgress || 0) < 33 ? "MIN. 33% NEEDED" : "GENERATE REPORT NOW"}
+                                    </button>
                                 </div>
                             </div>
 
@@ -620,9 +831,22 @@ export default function HeroCTA({
                                             <div className={(round === 0) ? styles.verticalOptions : styles.optionsMarqueeContainer}>
                                                 <div className={(round === 0) ? "" : styles.optionsMarqueeTrack}>
                                                     {msg.options.map((opt, oi) => (
-                                                        <motion.button key={oi} className={styles.optionBubble} onClick={() => handleOptionClick(opt.text)} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (oi % msg.options!.length) * 0.1, duration: 0.6 }}>
-                                                            <span style={{ fontWeight: 500 }}>{opt.text}</span>
-                                                            {opt.subLabel && <span style={{ fontSize: '0.65rem', opacity: 0.6, marginTop: '2px' }}>{opt.subLabel}</span>}
+                                                        <motion.button 
+                                                            key={oi} 
+                                                            className={(round === 0) ? styles.optionCard : styles.optionBubble} 
+                                                            onClick={() => handleOptionClick(opt.text)} 
+                                                            initial={{ opacity: 0, y: 15 }} 
+                                                            animate={{ opacity: 1, y: 0 }} 
+                                                            transition={{ delay: (oi % msg.options!.length) * 0.1, duration: 0.6 }}
+                                                        >
+                                                            {(round === 0) ? (
+                                                                <>
+                                                                    <div className={styles.optionTitle}>{opt.text}</div>
+                                                                    {opt.subLabel && <div className={styles.optionSublabel}>{opt.subLabel}</div>}
+                                                                </>
+                                                            ) : (
+                                                                <span style={{ fontWeight: 500 }}>{opt.text}</span>
+                                                            )}
                                                         </motion.button>
                                                     ))}
                                                 </div>
@@ -688,13 +912,23 @@ export default function HeroCTA({
                                 onTranscript={(text, isFinal) => {
                                     setInputValue(text);
                                     if (isFinal && text.trim().length > 2) {
-                                        handleOptionClick(text);
+                                        if (!showChat) startRitual(text.trim());
+                                        else handleOptionClick(text);
                                         setInputValue("");
                                     }
-                                }} 
+                                }}
                             />
                         ) : (
-                            <form style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onSubmit={(e) => { e.preventDefault(); if (inputValue.trim()) handleOptionClick(inputValue); setInputValue(""); }}>
+                            <form style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }} onSubmit={(e) => {
+                                e.preventDefault();
+                                const text = inputValue.trim();
+                                if (!text) return;
+                                setInputValue("");
+                                // Before the chat is open, typed text must start the ritual —
+                                // handleOptionClick alone appends to a thread that isn't visible yet.
+                                if (!showChat) startRitual(text);
+                                else handleOptionClick(text);
+                            }}>
                                 <div className={styles.inputInner}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', paddingLeft: '8px' }}>
                                         <div className={styles.nIcon}>N</div>
@@ -702,7 +936,7 @@ export default function HeroCTA({
                                             ref={inputRef} 
                                             type="text" 
                                             className={styles.messageInput} 
-                                            placeholder="Ask anything..." 
+                                            placeholder={placeholderText || "Ask anything..."}
                                             value={inputValue} 
                                             onChange={(e) => setInputValue(e.target.value)} 
                                             disabled={showChat && (isTyping || sacredPause)} 
@@ -771,17 +1005,21 @@ export default function HeroCTA({
             {/* Email Capture Overlay at 50% progress */}
             {showEmailCapture && !emailCaptured && (
                 <div style={{
-                    position: 'absolute', inset: 0, zIndex: 10001,
-                    background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+                    position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 11000,
+                    width: 'min(calc(100vw - 40px), 400px)',
+                    background: 'rgba(10, 15, 30, 0.95)', backdropFilter: 'blur(40px)',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    padding: '24px', textAlign: 'center', borderRadius: '16px',
+                    padding: '40px 32px', textAlign: 'center', borderRadius: '24px',
+                    border: '1px solid rgba(53, 248, 255, 0.2)',
+                    boxShadow: '0 20px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(53, 248, 255, 0.1)',
+                    pointerEvents: 'auto'
                 }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📧</div>
-                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1rem', fontWeight: 700, marginBottom: '8px', color: '#fff' }}>
-                        Your blueprint is almost ready
+                    <div style={{ fontSize: '3rem', marginBottom: '20px', filter: 'drop-shadow(0 0 15px rgba(53, 248, 255, 0.4))' }}>📧</div>
+                    <h3 style={{ fontFamily: 'Orbitron, sans-serif', fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: '#fff', letterSpacing: '1px' }}>
+                        YOUR BLUEPRINT IS ALMOST READY
                     </h3>
-                    <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginBottom: '20px', maxWidth: '280px', lineHeight: 1.5 }}>
-                        Where should we send your copy? We'll also notify you when your personalized solutions are ready.
+                    <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '32px', maxWidth: '300px', lineHeight: 1.6 }}>
+                        Where should we send your copy? We'll notify you the moment your personalized protocol is etched.
                     </p>
                     <form
                         onSubmit={async (e) => {

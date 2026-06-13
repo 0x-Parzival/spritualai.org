@@ -238,7 +238,6 @@ function SectionInvitation() {
                             className={styles.gradientFlowBtn}
                             style={{ padding: '24px 60px', fontSize: '1.2rem' }}
                             onClick={() => {
-                                playOmSound();
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
                         >

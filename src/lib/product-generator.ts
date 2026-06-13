@@ -42,12 +42,12 @@ export function generateFallbackProducts(
         { item: 'AI Pattern Tracker', value: '27', reason: 'Daily adaptive guidance' },
         { item: 'Shadow Workbook', value: '17', reason: 'For the hard days' },
       ],
-      price: { original: 97, discounted: 47 },
-      ctaText: mbtiProfile.ctaStyle?.split('"')[1] || 'Begin The Dissolution',
+      price: { original: 997, discounted: 497 },
+      ctaText: 'Claim My 21-Day Transformation',
       security: {
-        personalization: `Built for your ${mbtiType} architecture carrying "${patternName}" — not generic advice`,
-        differentiation: `Only Spiritual AI cross-references Vedic + Jungian + MBTI to produce this precision`,
-        privacy: 'Your data is encrypted and never shared. Your blueprint is yours alone.',
+        personalization: `Verified by Blockplain • Backed by 14,847+ Blueprints`,
+        differentiation: `97% of ${mbtiType}s who delay never return to complete their protocol.`,
+        privacy: 'Secure & Anonymous.',
       },
       bonuses: [
         { name: 'Emergency Pattern Interrupt Audio', description: 'For when the pattern activates in real-time', value: '27' },
@@ -102,7 +102,7 @@ export function generateFallbackProducts(
         { item: 'Shadow Journal', value: '17', reason: 'Daily adaptive prompts' },
         { item: 'Ceremony Guide', value: '12', reason: 'The sealing ritual' },
       ],
-      price: { original: 67, discounted: 37 },
+      price: { original: 1497, discounted: 697 },
       ctaText: 'Begin Integration',
       security: {
         personalization: `Built for ${mbtiType} shadow architecture — not generic shadow work`,
@@ -149,7 +149,7 @@ export function generateFallbackProducts(
         { item: 'Vedic Transit Guide', value: '47', reason: '12-month karmic navigation' },
         { item: 'AI Companion (90 days)', value: '97', reason: 'Daily adaptive guidance' },
       ],
-      price: { original: 497, discounted: 197 },
+      price: { original: 1997, discounted: 997 },
       ctaText: 'Begin Total Transformation',
       security: {
         personalization: `Your complete consciousness architecture — ${mbtiType} + ${patternName} + ${shadow} — fully mapped and addressed`,

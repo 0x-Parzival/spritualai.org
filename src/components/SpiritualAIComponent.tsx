@@ -7,12 +7,34 @@ import NavButtons from './NavButtons';
 import Page2Landing from './Page2Landing';
 import SocialLinks from './home/SocialLinks';
 import MiniHeroBranding from './home/MiniHeroBranding';
-import PretextWrapper from './home/PretextWrapper';
 import dynamic from 'next/dynamic';
 import { useUser } from '@clerk/nextjs';
 import { useIsMobile } from '@/lib/useIsMobile';
 
-const HeroCTA = dynamic(() => import('./HeroCTA'), { ssr: false });
+// Skeleton input bar so the primary CTA never looks missing while the chunk loads
+const HeroCTA = dynamic(() => import('./HeroCTA'), {
+    ssr: false,
+    loading: () => (
+        <div aria-hidden="true" style={{
+            width: 'min(calc(100vw - 76px), 1180px)',
+            height: '75px',
+            marginBottom: '25px',
+            borderRadius: '50px',
+            border: '2px solid rgba(112, 0, 255, 0.4)',
+            background: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 25px',
+            color: 'rgba(255, 255, 255, 0.3)',
+            fontSize: '0.75rem',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            fontFamily: "'Inter', sans-serif"
+        }}>
+            Ask anything...
+        </div>
+    )
+});
 const FishTank = dynamic(() => import('./artistic/FishTank'), { ssr: false });
 const Lotus = dynamic(() => import('./Lotus'), { ssr: false });
 const OceanBackground = dynamic(() => import('./OceanBackground'), { ssr: false });
@@ -88,15 +110,24 @@ export default function SpiritualAIComponent() {
         } else {
             if (atBottom) setAtBottom(false);
         }
+        // Sink the lotus behind the black waves as page 3 approaches.
+        // Quantized to 20px steps to keep re-renders cheap; .stage smooths via its bottom transition.
+        const sink = latest <= 0.5 ? 0 : Math.min(340, Math.round(((latest - 0.5) / 0.25) * 340 / 20) * 20);
+        setLotusOffset(prev => (prev === sink ? prev : sink));
     });
+
+    // Fade the lotus out in the same scroll window (motion value: no re-renders)
+    const lotusFade = useTransform(scrollYProgress, [0.52, 0.72], [1, 0]);
+    const lotusVisibility = useTransform(lotusFade, (v) => (v < 0.03 ? 'hidden' : 'visible'));
 
     // Determine if we should show the CTA
     const showHeroCTA = (!finalState || isSignedIn);
 
     return (
-        <main style={{ 
-            position: 'relative', 
-            height: isChatActive ? '100vh' : '300vh', 
+        <main style={{
+            position: 'relative',
+            height: isChatActive ? '100vh' : 'auto',
+            minHeight: isChatActive ? undefined : '300vh',
             width: '100%',
             maxWidth: '100%',
             background: '#030303',
@@ -207,7 +238,7 @@ export default function SpiritualAIComponent() {
                 }} />
 
                 {/* ─── PAGE 1: Hero ─── */}
-                <section style={{ height: (mounted && isMobile) ? '80vh' : '100vh', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: (mounted && isMobile) ? 'flex-start' : 'center', paddingTop: (mounted && isMobile) ? '10vh' : '0', position: 'relative', zIndex: '3100' }}>
+                <section style={{ height: (mounted && isMobile) ? 'auto' : '100vh', minHeight: (mounted && isMobile) ? '80vh' : undefined, width: '100%', display: 'flex', flexDirection: 'column', justifyContent: (mounted && isMobile) ? 'flex-start' : 'center', paddingTop: (mounted && isMobile) ? '10vh' : '0', paddingBottom: (mounted && isMobile) ? '2rem' : '0', position: 'relative', zIndex: '3100' }}>
                     <AnimatePresence>
                         {!isChatActive && (
                             <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
@@ -231,7 +262,7 @@ export default function SpiritualAIComponent() {
 
                 {/* ─── PAGE 3: Final Context ─── */}
                 <section style={{
-                    height: '100vh',
+                    minHeight: '100vh',
                     width: '100%',
                     backgroundColor: '#030303',
                     position: 'relative',
@@ -267,55 +298,69 @@ export default function SpiritualAIComponent() {
                         {mounted && <WavesHero variant="spiritual" isMobile={isMobile} />}
                     </div>
 
+                    {/* Page 3 content — normal flow so nothing overlaps; capped for ultrawide */}
                     <div style={{
-                        position: 'absolute',
-                        top: '22px', 
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: '8000',
+                        position: 'relative',
+                        zIndex: 8000,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         width: '100%',
-                        textAlign: 'center'
+                        maxWidth: '1900px',
+                        margin: '0 auto',
+                        minHeight: '100vh',
+                        padding: isMobile ? '14vh 5vw 40vh' : '8vh 5vw 24vh',
+                        textAlign: 'center',
+                        pointerEvents: 'none'
                     }}>
-                        <MiniHeroBranding />
-                        <div style={{ marginTop: '0.5rem', width: '100%' }}>
-                            <PretextWrapper
-                                text="Your pattern is not the problem. The way you’re trying to solve it is."
-                                font="300 clamp(10px, 1vw, 15.4px) 'Inter', sans-serif"
-                                width={1200}
-                                align="center"
-                                style={{
-                                    color: 'rgba(53, 248, 255, 0.85)',
-                                    letterSpacing: '0.4em',
-                                    textTransform: 'uppercase',
-                                    opacity: '0.9',
-                                    filter: 'drop-shadow(0 0 10px rgba(53, 248, 255, 0.3))'
-                                }}
-                            />
+                        <div style={{ transform: isMobile ? 'scale(0.9)' : 'scale(0.72)', transformOrigin: 'center' }}>
+                            <MiniHeroBranding />
                         </div>
-                    </div>
-                    
-                    {/* Social Links + Pattern Deconstruction — stacked on mobile */}
-                    <div style={{
-                        position: 'absolute',
-                        bottom: isMobile ? 'calc(12vh + 1cm)' : 'calc(19vh + 3cm)',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: isMobile ? '90vw' : '90vw',
-                        display: 'flex',
-                        flexDirection: isMobile ? 'column' : 'row',
-                        gap: isMobile ? '12px' : '2vw',
-                        zIndex: 8000,
-                        pointerEvents: 'auto',
-                        alignItems: 'center',
-                    }}>
-                        <div style={{ width: isMobile ? '100%' : '43vw' }}>
-                            {mounted && <PatternDeconstruction startIndex={0} initialDelay={5000} randomize={true} />}
-                        </div>
-                        <div style={{ width: isMobile ? '100%' : '43vw' }}>
-                            {mounted && <PatternDeconstruction startIndex={2} initialDelay={10000} randomize={true} />}
+                        <p style={{
+                            margin: '0.6rem 0 0',
+                            fontFamily: "'Inter', sans-serif",
+                            fontWeight: 300,
+                            fontSize: 'clamp(0.7rem, 0.4rem + 0.7vw, 0.95rem)',
+                            color: 'rgba(53, 248, 255, 0.85)',
+                            letterSpacing: '0.18em',
+                            textIndent: '0.18em',
+                            textTransform: 'uppercase',
+                            maxWidth: '90vw',
+                            filter: 'drop-shadow(0 0 10px rgba(53, 248, 255, 0.3))'
+                        }}>
+                            Your pattern is not the problem. The way you&apos;re trying to solve it is.
+                        </p>
+                        <p style={{
+                            margin: '0.9rem 0 0',
+                            fontFamily: "'Inter', sans-serif",
+                            fontWeight: 400,
+                            fontSize: 'clamp(0.85rem, 0.6rem + 0.6vw, 1.05rem)',
+                            color: 'rgba(222, 235, 255, 0.75)',
+                            maxWidth: '100%',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1.55
+                        }}>
+                            Every protocol below was bought by a real member after their diagnosis — here&apos;s what they paid, and what it fixed.
+                        </p>
+
+                        {/* Member protocol cards */}
+                        <div style={{
+                            marginTop: isMobile ? '1.6rem' : '2.4rem',
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: isMobile ? 'column' : 'row',
+                            gap: isMobile ? '14px' : 'clamp(16px, 2vw, 48px)',
+                            alignItems: isMobile ? 'center' : 'stretch',
+                            justifyContent: 'center',
+                            pointerEvents: 'auto'
+                        }}>
+                            <div style={{ width: isMobile ? '100%' : 'min(43vw, 890px)' }}>
+                                {mounted && <PatternDeconstruction startIndex={0} initialDelay={5000} randomize={false} />}
+                            </div>
+                            <div style={{ width: isMobile ? '100%' : 'min(43vw, 890px)' }}>
+                                {mounted && <PatternDeconstruction startIndex={2} initialDelay={10000} randomize={false} />}
+                            </div>
                         </div>
                     </div>
 
@@ -343,9 +388,11 @@ export default function SpiritualAIComponent() {
                 </section>
             </div>
 
-            {/* Fixed Floating Elements */}
+            {/* Fixed Floating Elements — lotus sinks behind the black waves on scroll */}
             {(mounted && !isGeneratingReport && (!finalState || isSignedIn)) && (
-                <Lotus quizMode={isChatActive} lotusOffset={lotusOffset} isChatActive={isChatActive} />
+                <motion.div style={{ opacity: isChatActive ? 1 : lotusFade, visibility: isChatActive ? 'visible' : lotusVisibility }}>
+                    <Lotus quizMode={isChatActive} lotusOffset={isChatActive ? 0 : lotusOffset} isChatActive={isChatActive} />
+                </motion.div>
             )}
         </main>
     );

@@ -67,12 +67,17 @@
 .contactSectionButton {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
     color: inherit;
+    /* WCAG 2.5.5: the anchor itself is the hit target.
+       50px base so the parent's scale(0.9) still yields ≥44px. */
+    min-height: 50px;
+    min-width: 50px;
 }
 
 .creatorSection:hover,
@@ -98,11 +103,16 @@
     padding: 4px 8px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     white-space: nowrap;
     position: relative;
     z-index: 5001;
     pointer-events: auto;
+    /* WCAG 2.5.5: the anchor itself is the hit target.
+       50px base so the parent's scale(0.9) still yields ≥44px. */
+    min-height: 50px;
+    min-width: 50px;
 }
 
 .creatorSection:hover .navLinkContrast,
@@ -303,7 +313,7 @@
     .navLinkContrast {
         font-size: 0.7rem;
         letter-spacing: 0.4px;
-        padding: 0; 
+        padding: 0;
         gap: 0;
     }
 
@@ -311,9 +321,17 @@
         display: none;
     }
 
+    /* Keep the visual icon at 32px but guarantee a 44px hit area (WCAG 2.5.5) */
     .iconWrapper,
     .contactIconWrapper {
-        width: 32px; 
+        width: 32px;
         height: 32px;
+    }
+
+    .creatorSection,
+    .contactSection {
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
     }
 }

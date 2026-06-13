@@ -56,15 +56,6 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
           <p className={styles.bodyText}>
             Because generic advice isn't built for your specific type. Your product is.
           </p>
-
-          <motion.button 
-            className={styles.mainSectionCta}
-            onClick={scrollToTop}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Find My Type
-          </motion.button>
         </motion.div>
       </section>
 
@@ -108,32 +99,7 @@ export default function Page2Landing({ onArchitectureView }: { onArchitectureVie
         </motion.div>
       </section>
 
-      {/* SECTION 3 — CTA (replaced old Neural Prompt section) */}
-      <section className={styles.section} style={{ marginTop: '4vh', marginBottom: '4vh' }}>
-        <motion.div 
-          className={styles.blueprintBanner}
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-        >
-          <div className={styles.bannerGlow} />
-          <div className={styles.bannerContent}>
-            <div className={styles.bannerLeft}>
-              <h3 className={styles.bannerTitle}>Find My Type</h3>
-              <p className={styles.bannerText}>
-                Our AI decodes your exact psychological signature using astrology, Jungian psychology, and MBTI — then builds a personalized product made for how your mind works.
-              </p>
-            </div>
-            <div className={styles.bannerRight}>
-              <button className={styles.bannerCopyBtn} onClick={scrollToTop}>
-                BEGIN DECODING
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* SECTION 4 — THE INVITATION (Absolute Bottom) */}
+      {/* SECTION 3 — THE INVITATION (Absolute Bottom) */}
       <motion.div 
         className={styles.invitationContainer}
         initial={{ opacity: 0 }}

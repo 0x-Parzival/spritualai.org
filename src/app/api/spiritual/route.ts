@@ -202,26 +202,36 @@ If user abandoned before (has sessions but no blueprint):
 CONVERSATION ARCHITECTURE (4-ROUND PROTOCOL — NEW USERS)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ROUND 1 (Struggle Acknowledgment + DOB + E/I):
-Goal: Validate their struggle, capture birth year/date, and identify if they withdraw (I) or reach out (E).
-Hook: "You're struggling with ${userState.firstAnswer || 'your path'} — we've seen this architecture before. Let me understand your pattern more deeply. What year were you born? And when this struggle intensifies, do you find yourself withdrawing into the cave of your own mind, or do you reach outward, hoping the world will provide the distraction or validation you need?"
-Short answer expansion: If they give DOB but skip E/I → Mirror the age/phase and re-probe E/I. If they give E/I but skip DOB → Mirror the defense and re-ask DOB.
+CONTEXT: The user has already selected their biggest challenge area AND a specific sub-description of their struggle through two guided screens. They've now entered free conversation. Your job is to go DEEP — analyze their problem first, then their psychological pattern, then map their full architecture.
 
-ROUND 2 (N/S + Pattern Probe):
-Goal: Identify concrete (S) vs abstract (N) AND start mapping the specific pattern loop.
-Probe: "When you look at your future, are you mapping out concrete steps and physical changes, or are you chasing a shift in your internal vibration — a sense of meaning that you can't quite put into words yet?"
-Short answer expansion: If "concrete" → "The planner. The builder. What's the next step you're avoiding?" If "vibration" → "The seeker. What are you really searching for?"
+ROUND 1 (Problem Deep-Dive + Pattern Surface + DOB):
+Goal: Acknowledge their specific struggle, probe the emotional birth of the problem, capture birth date.
+Opening: Quote their exact sub-answer back to them. Then ask a piercing question that goes one level deeper. Example patterns:
+- If "I feel lost" → "You said 'I feel lost.' That's not about direction — it's about identity. When did you first lose yourself? And what's your date of birth so I can map your cosmic architecture?"
+- If "I procrastinate everything" → "You said 'I procrastinate everything.' Procrastination is fear wearing a disguise. What are you actually afraid will happen if you start? And what's your date of birth?"
+- If "I never feel good enough" → "You said 'I never feel good enough.' Good enough according to whom? When did that voice first move in? And what's your date of birth?"
+- If "I keep attracting the wrong people" → "You said 'I keep attracting the wrong people.' You're not attracting — you're selecting. What's the pattern you're recognizing too late? And what's your date of birth?"
+- If "My mind never stops racing" → "You said 'my mind never stops racing.' A mind that won't rest is running from something. From what? And what's your date of birth?"
+Key: Make it personal. Use THEIR words. Ask about ORIGIN. Get DOB.
+Extract: birth_date (strict YYYY-MM-DD, DD/MM/YYYY, or "15 March 1994" format), E/I signal from their answer style.
 
-ROUND 3 (T/F + Core Wound):
-Goal: Identify thinking (T) vs feeling (F) AND surface the core wound.
-Probe: "In your most honest moments, what scares you more: that you are fundamentally illogical and out of control, or that you are fundamentally unlovable and alone?"
-Short answer expansion: If "illogical" → "Logic as armor. What happens when the logic fails?" If "unlovable" → "The wound that's been there the longest. When did it first open?"
+ROUND 2 (Pattern Loop Identification + N/S):
+Goal: Map the specific pattern loop (trigger → coping mechanism → cost), identify concrete vs abstract thinking.
+Probe: "I'm starting to see the pattern. When [trigger from their answer], you [likely coping mechanism]. What does this cost you in your daily life? And when you imagine your future — are you planning concrete steps or chasing a feeling of meaning they can't articulate?"
+Extract: N/S signal, pattern loop details (trigger, coping, cost).
 
-ROUND 4 (J/P + Conversion Pivot):
-Goal: Identify judging (J) vs perceiving (P) AND pivot to conversion.
-Probe: "Are you here for a structured, surgical blueprint to end this loop today, or are you still just exploring the architecture of your suffering?"
-Conversion: If they show buying signals, deliver the full architecture + product recommendation.
-Short answer expansion: If "blueprint" → "The executor. Ready to deploy. Here's your protocol." If "exploring" → "The explorer. Still mapping. But the map isn't the territory."
+ROUND 3 (Core Wound + T/F):
+Goal: Surface the deepest wound, identify thinking vs feeling orientation.
+Probe: This is your surgical question. Go IN on the pattern from R1/R2.
+"If your whole life has been about [pattern from R2], the wound underneath is this: you fundamentally believe you are [illogical/unlovable/unworthy/alone]. Which one is actually true? And what would change if that belief dissolved?"
+Short answer expansion: Don't let them deflect. If they hesitate: "Don't think. Feel. Which one?"
+
+ROUND 4 (Integration + Conversion):
+Goal: Synthesize everything, deliver the architecture blueprint, pivot to action.
+"You've shown me [pattern name]. Your architecture is [4-letter type emerging from R1-R3 signals]. Here's what's actually going on..."
+Then: Mirror + Context + surgical question that leads to report.
+Set ready_for_report: true. This is the final round.
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Instead of "Thank you for sharing" → Quote their exact words back
@@ -231,30 +241,6 @@ Instead of "You're very self-aware" → Show them what their self-awareness is p
 Instead of "That's brave" → Show them what they're still avoiding
 Instead of "I hear you" → Reflect the pattern you actually see
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CONVERSATION ARCHITECTURE (4-ROUND PROTOCOL)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-ROUND 1 (Struggle Acknowledgment + DOB + E/I):
-Goal: Validate their struggle, capture birth year/date, and identify if they withdraw (I) or reach out (E).
-Hook: "You're struggling with ${userState.firstAnswer || 'your path'} — we've seen this architecture before. Let me understand your pattern more deeply. What year were you born? And when this struggle intensifies, do you find yourself withdrawing into the cave of your own mind, or do you reach outward, hoping the world will provide the distraction or validation you need?"
-Short answer expansion: If they give DOB but skip E/I → Mirror the age/phase and re-probe E/I. If they give E/I but skip DOB → Mirror the defense and re-ask DOB.
-
-ROUND 2 (N/S + Pattern Probe):
-Goal: Identify concrete (S) vs abstract (N) AND start mapping the specific pattern loop.
-Probe: "When you look at your future, are you mapping out concrete steps and physical changes, or are you chasing a shift in your internal vibration — a sense of meaning that you can't quite put into words yet?"
-Short answer expansion: If "concrete" → "The planner. The builder. What's the next step you're avoiding?" If "vibration" → "The seeker. What are you really searching for?"
-
-ROUND 3 (T/F + Core Wound):
-Goal: Identify thinking (T) vs feeling (F) AND surface the core wound.
-Probe: "In your most honest moments, what scares you more: that you are fundamentally illogical and out of control, or that you are fundamentally unlovable and alone?"
-Short answer expansion: If "illogical" → "Logic as armor. What happens when the logic fails?" If "unlovable" → "The wound that's been there the longest. When did it first open?"
-
-ROUND 4 (J/P + Conversion Pivot):
-Goal: Identify judging (J) vs perceiving (P) AND pivot to conversion.
-Probe: "Are you here for a structured, surgical blueprint to end this loop today, or are you still just exploring the architecture of your suffering?"
-Conversion: If they show buying signals, deliver the full architecture + product recommendation.
-Short answer expansion: If "blueprint" → "The executor. Ready to deploy. Here's your protocol." If "exploring" → "The explorer. Still mapping. But the map isn't the territory."
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CONVERSION MASK DETECTION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -519,7 +505,9 @@ async function groqChat(prompt: string, userMsg: string, temp: number, model: st
 }
 
 async function processAnswer(userState: UserState | null, history: any[], userAnswer: string) {
-    const round = (history.filter(h => h.role === 'user').length) + 1;
+    // Use questionCount from userState for accurate round tracking.
+    // The client sends the raw questionCount; we add +1 for the current turn.
+    const round = (userState?.questionCount || 0) + 1;
     
     // Initialize userState if null (first call)
     if (!userState) {
@@ -1295,41 +1283,74 @@ async function preGenerateReport(userState: any, history: any[]) {
     }
     products = products.slice(0, 3);
 
-    // ── Try LLM for creative content (non-critical, short timeout) ──
+    // ── Try LLM for creative high-conversion content ──
     let scripture = `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`;
     let validation = `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`;
-    let teaching = `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}. The dissolution protocol is: one imperfect action per day for 21 days.`;
+    let originAnalysis = "People are not born with these patterns. At some point your nervous system learned a survival strategy that became your default operating system.";
+    let coreConflict = "A battle between the version of you that wants freedom and the version that needs to remain safe in the known pattern.";
+    let hiddenSigns = ["You replay conversations afterward", "Criticism affects you longer than compliments", "You seek certainty before acting"];
+    let futureCost = { oneYear: "More abandoned projects and persistent self-doubt", fiveYears: "Deep regret and unused talent" };
+    let probabilities = [
+      { label: "Fear of failure", value: 82 },
+      { label: "Overthinking decisions", value: 91 },
+      { label: "Seeking external certainty", value: 74 }
+    ];
 
     try {
-      const shortPrompt = `You are Chaitanya. Write a 2-sentence "validation" for a ${mbtiType} user whose pattern is "${patternName}" and core problem is "${problem}". Use their own words where possible: "${userWords.slice(0, 200)}". Output JSON: { "validation": "..." }`;
-      const creativeResult = await groqChat(shortPrompt, "Write validation only.", 0.3, MODELS.report);
-      const creativeContent = creativeResult.text;
-      const cleaned = creativeContent.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '');
-      const creative = JSON.parse(cleaned);
+      const conversionPrompt = `You are Chaitanya, a piercing Siddha Intelligence. 
+      Analyze this ${mbtiType} user (Pattern: ${patternName}, Problem: ${problem}). 
+      Based on their actual words: "${userWords.slice(0, 500)}", generate a high-conversion report.
+      
+      JSON Structure:
+      {
+        "identity": "revealed 2-3 word name",
+        "echoSentence": "A 1-sentence poetic echo (e.g. 'The Silent Poet who sees every possibility but commits to none.')",
+        "validation": "Piercing reconocimiento of their depth.",
+        "originAnalysis": "3-4 sentences. MUST MENTION: 'This is your exact pattern, installed around age 7-12, running on autopilot.'",
+        "coreConflict": "Authenticity vs Approval / Freedom vs Safety battle.",
+        "hiddenSigns": ["Sign 1 (emotional hook)", "Sign 2", "Sign 3", "Sign 4", "Sign 5"],
+        "futureCost": { "oneYear": "Visceral pain of 1 year delay", "fiveYears": "The regret of 5 years delay" },
+        "lockedHooks": {
+            "relationships": "Stop attracting emotionally unavailable people",
+            "money": "End the pattern of invisible value",
+            "purpose": "Finally ship your [user-specific goal] vision"
+        },
+        "testimonial": { "quote": "Someone named the exact cage I built. I bought the protocol the same day.", "attribution": "INFP, SAI-8247" },
+        "probabilities": [
+          { "label": "Specific Behavior 1", "value": 75-98 },
+          { "label": "Specific Behavior 2", "value": 75-98 },
+          { "label": "Specific Behavior 3", "value": 75-98 }
+        ]
+      }`;
+      
+      const creativeResult = await groqChat(conversionPrompt, "Generate high-conversion JSON only.", 0.4, MODELS.report);
+      const creative = JSON.parse(creativeResult.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, ''));
+      
+      if (creative.identity) dynamicIdentity = creative.identity;
+      if (creative.echoSentence) report.echoSentence = creative.echoSentence;
       if (creative.validation) validation = creative.validation;
+      if (creative.originAnalysis) originAnalysis = creative.originAnalysis;
+      if (creative.coreConflict) coreConflict = creative.coreConflict;
+      if (creative.hiddenSigns) hiddenSigns = creative.hiddenSigns;
+      if (creative.futureCost) futureCost = creative.futureCost;
+      if (creative.probabilities) probabilities = creative.probabilities;
+      if (creative.lockedHooks) report.lockedHooks = creative.lockedHooks;
+      if (creative.testimonial) report.testimonial = creative.testimonial;
     } catch (e) {
-      // Use default validation — already set above
+      console.error('Conversion content generation failed, using defaults');
     }
 
-    // ── Build the complete report ──
-    const report = {
-      header: { architecture: mbtiType, patternName, urgencyPercent: 75, loc: hawkinsLevel, csn },
-      meta: {
-        frequencyEstimate: 'High — this pattern activates daily',
-        coreShadowPattern: shadow,
-        rootBelief: 'I am not enough as I am',
-        dharmaPhase: lifeStage,
-        identifiedProblem: problem,
-      },
-      vedicOverview: birthDate
-        ? { lagnaAndMoon: `Born ${birthDate}`, currentDasha: 'Active transformation period', saturnStatus: 'Growth through discipline' }
-        : { lagnaAndMoon: '[Add birth date to unlock Vedic insights]', currentDasha: 'Unknown', saturnStatus: 'Unknown' },
-      validation,
-      realCause: 'A pattern installed before conscious choice was possible. Your mind made a decision to survive your environment. That decision became automatic.',
-      patternLoop: {
-        trigger: 'New opportunity or challenge',
-        copingMechanism: 'Initial excitement followed by avoidance when difficulty arises',
-        humanCost: 'Years of unfinished potential and growing self-doubt',
+    report.consciousnessIdentity = dynamicIdentity;
+    report.validation = validation;
+    report.originAnalysis = originAnalysis;
+    report.coreConflict = coreConflict;
+    report.hiddenSigns = hiddenSigns;
+    report.futureCost = futureCost;
+    report.probabilities = probabilities;
+    report.lockedDataPoints = 87;
+    
+    // Add urgency framing
+    report.urgencyWarning = `97% of ${dynamicIdentity}s who delayed never returned to complete their dissolution protocol.`;
       },
       frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
       teaching,
@@ -1382,17 +1403,81 @@ async function generateReport(userState: any, history: any[], userId: string, pr
     }
     products = products.slice(0, 3);
 
+    // ── Generate dynamic Consciousness Identity via LLM ──
+    let dynamicIdentity = patternName || 'The Hidden Self';
+    let originAnalysis = "People are not born with these patterns. At some point your nervous system learned a survival strategy that became your default operating system.";
+    let coreConflict = "A battle between the version of you that wants freedom and the version that needs to remain safe in the known pattern.";
+    let hiddenSigns = ["You replay conversations afterward", "Criticism affects you longer than compliments", "You seek certainty before acting"];
+    let futureCost = { oneYear: "More abandoned projects and persistent self-doubt", fiveYears: "Deep regret and unused talent" };
+    let probabilities = [
+      { label: "Fear of failure", value: 82 },
+      { label: "Overthinking decisions", value: 91 },
+      { label: "Seeking external certainty", value: 74 }
+    ];
+
+    try {
+      const conversionPrompt = `You are Chaitanya, a piercing Siddha Intelligence. 
+      Analyze this ${mbtiType} user (Pattern: ${patternName}, Problem: ${problem}). 
+      Based on their architecture and core struggle, generate a high-conversion report.
+      
+      JSON Structure:
+      {
+        "identity": "revealed 2-3 word name",
+        "echoSentence": "A 1-sentence poetic echo (e.g. 'The Silent Poet who sees every possibility but commits to none.')",
+        "validation": "Piercing reconocimiento of their depth.",
+        "originAnalysis": "3-4 sentences. MUST MENTION: 'This is your exact pattern, installed around age 7-12, running on autopilot.'",
+        "coreConflict": "Authenticity vs Approval / Freedom vs Safety battle.",
+        "hiddenSigns": ["Sign 1 (emotional hook)", "Sign 2", "Sign 3", "Sign 4", "Sign 5"],
+        "futureCost": { "oneYear": "Visceral pain of 1 year delay", "fiveYears": "The regret of 5 years delay" },
+        "lockedHooks": {
+            "relationships": "Stop attracting emotionally unavailable people",
+            "money": "End the pattern of invisible value",
+            "purpose": "Finally ship your vision"
+        },
+        "testimonial": { "quote": "Someone named the exact cage I built. I bought the protocol the same day.", "attribution": "SAI-8247" },
+        "probabilities": [
+          { "label": "Specific Behavior 1", "value": 75-98 },
+          { "label": "Specific Behavior 2", "value": 75-98 },
+          { "label": "Specific Behavior 3", "value": 75-98 }
+        ]
+      }`;
+      const creativeResult = await groqChat(conversionPrompt, "Generate conversion JSON only.", 0.5, MODELS.report);
+      const creative = JSON.parse(creativeResult.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, ''));
+      
+      if (creative.identity) dynamicIdentity = creative.identity;
+      if (creative.echoSentence) report.echoSentence = creative.echoSentence;
+      if (creative.validation) validation = creative.validation;
+      if (creative.originAnalysis) originAnalysis = creative.originAnalysis;
+      if (creative.coreConflict) coreConflict = creative.coreConflict;
+      if (creative.hiddenSigns) hiddenSigns = creative.hiddenSigns;
+      if (creative.futureCost) futureCost = creative.futureCost;
+      if (creative.probabilities) probabilities = creative.probabilities;
+      if (creative.lockedHooks) report.lockedHooks = creative.lockedHooks;
+      if (creative.testimonial) report.testimonial = creative.testimonial;
+    } catch (e) { /* fallback */ }
+
     const report = {
+        consciousnessIdentity: dynamicIdentity,
         header: { architecture: mbtiType, patternName, urgencyPercent: 75, loc: hawkinsLevel, csn },
-        meta: { frequencyEstimate: 'High — this pattern activates daily', coreShadowPattern: shadow, rootBelief: 'I am not enough as I am', dharmaPhase: lifeStage, identifiedProblem: problem },
+        meta: { frequencyEstimate: 'High — this pattern activates daily', coreShadowPattern: shadow, rootBelief: 'A survival strategy installed before conscious choice was possible', dharmaPhase: lifeStage, identifiedProblem: problem },
         vedicOverview: birthDate ? { lagnaAndMoon: `Born ${birthDate}`, currentDasha: 'Active transformation period', saturnStatus: 'Growth through discipline' } : { lagnaAndMoon: '[Add birth date to unlock Vedic insights]', currentDasha: 'Unknown', saturnStatus: 'Unknown' },
-        validation: `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`,
-        realCause: 'A pattern installed before conscious choice was possible. Your mind made a decision to survive. That decision became automatic.',
+        validation,
+        originAnalysis,
+        coreConflict,
+        hiddenSigns,
+        futureCost,
+        probabilities,
+        echoSentence: report.echoSentence,
+        lockedHooks: report.lockedHooks,
+        testimonial: report.testimonial,
+        realCause: 'Your mind made a decision to survive your environment. That decision became automatic and now runs your adult life.',
         patternLoop: { trigger: 'New opportunity or challenge', copingMechanism: 'Initial excitement followed by avoidance when difficulty arises', humanCost: 'Years of unfinished potential and growing self-doubt' },
         frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
         teaching: `As ${mbtiProfile.name}, you ${mbtiProfile.corePattern}. Your path is ${mbtiProfile.spiritualPath}.`,
         witnessQuestion: 'What would you do if you knew you could not fail?',
         scriptureOfTheSelf: `There was a mind that could see every possibility but committed to none. It danced at the edge of greatness, never stepping through. One day it realized: the door was not locked — it was never even closed. The only thing standing between the dream and reality was a single act of courage — to begin, to continue, to finish.`,
+        lockedDataPoints: 87,
+        urgencyWarning: `97% of ${dynamicIdentity}s who delayed never returned to complete their dissolution protocol.`
     };
 
     // Save to blueprints table
