@@ -953,14 +953,6 @@ export default function HeroCTA({
                         </button>
                     </div>
                 </div>
-
-                {!showChat && (
-                  <div className={styles.struggleBubbles} style={{ marginTop: '20px' }}>
-                    {STRUGGLES.map((s, idx) => (
-                      <button key={idx} className={styles.bubble} onClick={() => handleStruggleClick(s)}>{s}</button>
-                    ))}
-                  </div>
-                )}
             </div>
 
             {/* Exit Warning Overlay */}
