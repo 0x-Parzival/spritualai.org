@@ -338,7 +338,7 @@ export default function SpiritualAIComponent() {
                             fontSize: 'clamp(0.85rem, 0.6rem + 0.6vw, 1.05rem)',
                             color: 'rgba(222, 235, 255, 0.75)',
                             maxWidth: '100%',
-                            whiteSpace: 'nowrap',
+                            whiteSpace: isMobile ? 'normal' : 'nowrap',
                             lineHeight: 1.55
                         }}>
                             Every protocol below was bought by a real member after their diagnosis — here&apos;s what they paid, and what it fixed.

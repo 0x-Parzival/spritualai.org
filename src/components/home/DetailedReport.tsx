@@ -10,6 +10,7 @@ import { Share2, MessageCircle, Twitter, Lock } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
 import LegacyLogin from '../LegacyLogin';
 import { ARCHETYPE_THEMES } from '../CosmicBackground';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 interface DetailedReportProps {
     userState: UserState | null;
@@ -22,17 +23,18 @@ export default function DetailedReport({ userState, onClose, publicView = false 
     const [isVisible, setIsVisible] = useState(false);
     const [containerWidth, setContainerWidth] = useState(1200);
     const reportRef = useRef<HTMLDivElement>(null);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         setIsVisible(true);
         const handleResize = () => {
-            const width = Math.min(1400, window.innerWidth - 120);
+            const width = isMobile ? window.innerWidth - 40 : Math.min(1400, window.innerWidth - 120);
             setContainerWidth(width);
         };
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [isMobile]);
 
     if (!userState) return null;
 
@@ -162,8 +164,8 @@ export default function DetailedReport({ userState, onClose, publicView = false 
                         <h2 className={styles.smallHeading}>IV. THE VALIDATION</h2>
                         <PretextWrapper 
                             text={validation || ""}
-                            font="300 1.2rem 'Inter', sans-serif"
-                            lineHeight={36}
+                            font={isMobile ? "300 0.95rem 'Inter', sans-serif" : "300 1.2rem 'Inter', sans-serif"}
+                            lineHeight={isMobile ? 24 : 36}
                             width={containerWidth}
                             className={styles.pretextBody}
                             centerExclusion={true}
@@ -180,8 +182,8 @@ export default function DetailedReport({ userState, onClose, publicView = false 
                         <h2 className={styles.smallHeading}>V. THE REAL CAUSE</h2>
                         <PretextWrapper 
                             text={realCause || ""}
-                            font="300 1.1rem 'Inter', sans-serif"
-                            lineHeight={32}
+                            font={isMobile ? "300 0.9rem 'Inter', sans-serif" : "300 1.1rem 'Inter', sans-serif"}
+                            lineHeight={isMobile ? 22 : 32}
                             width={containerWidth}
                             className={styles.pretextBody}
                             centerExclusion={true}
@@ -226,8 +228,8 @@ export default function DetailedReport({ userState, onClose, publicView = false 
                         <div className={styles.doorwayBox}>
                             <PretextWrapper 
                                 text={frequencyDoorway || ""}
-                                font="400 1.3rem 'Orbitron', sans-serif"
-                                lineHeight={40}
+                                font={isMobile ? "400 1rem 'Orbitron', sans-serif" : "400 1.3rem 'Orbitron', sans-serif"}
+                                lineHeight={isMobile ? 28 : 40}
                                 width={containerWidth}
                                 className={styles.pretextBody}
                                 centerExclusion={true}
@@ -237,8 +239,8 @@ export default function DetailedReport({ userState, onClose, publicView = false 
                         <blockquote className={styles.teachingQuote} style={{ marginTop: '40px' }}>
                             <PretextWrapper 
                                 text={teaching || ""}
-                                font="italic 300 1.2rem 'Inter', sans-serif"
-                                lineHeight={34}
+                                font={isMobile ? "italic 300 0.95rem 'Inter', sans-serif" : "italic 300 1.2rem 'Inter', sans-serif"}
+                                lineHeight={isMobile ? 24 : 34}
                                 width={containerWidth}
                                 className={styles.pretextBody}
                                 centerExclusion={true}

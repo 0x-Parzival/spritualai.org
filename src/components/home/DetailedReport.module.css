@@ -372,41 +372,101 @@
     letter-spacing: 2px;
 }
 
-@media (max-width: 1024px) {
-    .sectionsGrid {
-        grid-template-columns: 1fr;
-    }
-    .metaGrid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .vedicGrid {
-        grid-template-columns: 1fr 1fr;
+@media (max-width: 768px) {
+    .reportContainer {
+        padding: 60px 0;
     }
     .reportContent {
-        padding: 0 30px;
+        padding: 0 20px;
     }
-}
-
-@media (max-width: 768px) {
     .headerTop {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+    }
+    .urgencySection {
+        text-align: center;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .urgencyBar {
+        width: 100%;
+        max-width: 300px;
+    }
+    .blueprintTitle {
+        letter-spacing: 4px;
+        font-size: 1.5rem;
+    }
+    .metadataRow {
+        justify-content: center;
+        gap: 20px;
+        font-size: 0.7rem;
+        flex-wrap: wrap;
     }
     .metaGrid {
         grid-template-columns: 1fr;
+        margin-bottom: 40px;
+    }
+    .metaItem {
+        padding: 15px;
+    }
+    .metaValue {
+        font-size: 0.9rem;
     }
     .vedicSection {
-        padding: 30px;
+        padding: 20px;
+        margin-bottom: 40px;
     }
-    .vedicGrid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+    .sectionTitle {
+        letter-spacing: 4px;
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+    .sectionsGrid {
+        gap: 40px;
+    }
+    .smallHeading {
+        font-size: 0.75rem;
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+    }
+    .doorwayBox {
+        padding: 30px 15px;
+    }
+    .teachingQuote {
+        padding: 0 20px;
+    }
+    .witnessBox {
+        padding: 30px 15px;
+    }
+    .witnessQuestion {
+        font-size: 1.1rem;
+    }
+    .shareCard {
+        padding: 30px 15px;
+        width: 100%;
     }
     .shareActions {
         flex-direction: column;
+        width: 100%;
     }
-    .productsGrid {
-        grid-template-columns: 1fr;
+    .shareBtn {
+        width: 100%;
+        justify-content: center;
+    }
+    .loopVisual {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .loopArrow {
+        transform: rotate(90deg);
+        margin: 5px 0;
+    }
+    .productCard {
+        padding: 30px 20px;
     }
 }
+

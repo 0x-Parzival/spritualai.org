@@ -524,7 +524,32 @@
     animation-duration: 120s;
   }
   .smallExampleCard {
-    width: 220px;
-    padding: 15px;
+    width: 280px; /* Slightly wider for better text flow */
+    padding: 20px;
+  }
+  .smallTitle {
+    font-size: 1.1rem;
+  }
+  .smallDescription {
+    font-size: 0.85rem;
+  }
+
+  .invitationContainer {
+    flex-direction: column;
+    border-radius: 24px;
+    padding: 20px;
+    gap: 20px;
+    bottom: 5vh;
+    text-align: center;
+  }
+  .invitationText {
+    text-align: center;
+  }
+  .invitationText p {
+    font-size: 0.8rem;
+  }
+  .ctaButton {
+    width: 100%;
   }
 }
+

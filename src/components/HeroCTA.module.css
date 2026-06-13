@@ -1048,10 +1048,30 @@
     /* Options list: scrollable, max height so they don't overflow */
     .optionsContainer,
     .verticalOptions {
-        max-height: 55vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .optionCard {
+        padding: 14px 18px;
+    }
+
+    .topHeader {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .progressModule, .pillarsModule {
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+
+    .closeChatBtn {
+        top: 80px; /* Lower on mobile to not overlap header as much */
+        right: 15px;
+        width: 36px;
+        height: 36px;
     }
 
     /* Tabs row: horizontal scroll instead of overflow */
