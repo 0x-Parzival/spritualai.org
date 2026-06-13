@@ -374,90 +374,86 @@
 }
 
 .verticalOptions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(12px, 2vw, 20px);
-    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
     width: 100%;
-    max-width: 900px;
+    max-width: 800px;
+    justify-content: flex-start;
 }
 
 .optionCard {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-    border: 1px solid rgba(53, 248, 255, 0.12);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 24px 28px;
-    border-radius: 18px;
+    background: rgba(20, 20, 35, 0.6);
+    border: 1px solid rgba(53, 248, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 8px 20px;
+    border-radius: 9999px; /* Pill/Capsule shape */
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* Horizontal layout for capsule */
+    align-items: center;
+    gap: 12px;
     text-align: left;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.optionCard::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(to bottom, #35f8ff, transparent);
-    opacity: 0.3;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .optionCard:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(53, 248, 255, 0.5);
-    transform: translateY(-6px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(53, 248, 255, 0.1);
+    background: rgba(53, 248, 255, 0.1);
+    border-color: rgba(53, 248, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(53, 248, 255, 0.2);
+}
+
+.optionCard::before {
+    display: none; /* Removed the line accent for cleaner capsule look */
 }
 
 .optionTitle {
     font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 0.85rem; /* Smaller text */
+    font-weight: 500;
     color: #fff;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-    z-index: 1;
+    margin-bottom: 0;
+    white-space: nowrap;
 }
 
 .optionSublabel {
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.5;
-    z-index: 1;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 300;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    padding-left: 10px;
 }
 
 .optionBubble {
-    padding: 14px 30px;
-    background: rgba(10, 10, 20, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.8);
-    border-radius: 9999px;
-    font-size: 0.95rem;
+    padding: 8px 18px; /* More compact */
+    background: rgba(20, 20, 35, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 9999px; /* Capsule shape */
+    font-size: 0.85rem; /* Smaller text */
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.3s ease;
     white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .optionBubble:hover {
-    background: rgba(53, 248, 255, 0.08);
-    border-color: rgba(53, 248, 255, 0.6);
+    background: rgba(53, 248, 255, 0.1);
+    border-color: rgba(53, 248, 255, 0.5);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
     color: #fff;
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(53, 248, 255, 0.15);
