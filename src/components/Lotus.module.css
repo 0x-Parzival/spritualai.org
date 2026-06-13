@@ -1,6 +1,6 @@
 .stage {
     position: fixed;
-    bottom: calc(110px - var(--lotus-offset, 0px));
+    bottom: calc(40px - var(--lotus-offset, 0px));
     left: 50%;
     transform: translateX(-50%);
     width: 220px;
@@ -17,10 +17,11 @@
 
 @media (max-width: 640px) {
     .stage {
-        bottom: calc(180px - var(--lotus-offset, 0px));
+        bottom: calc(100px - var(--lotus-offset, 0px));
         transform: translateX(-50%) scale(0.65);
     }
 }
+
 
 .stage::before {
     content: "";
@@ -257,7 +258,7 @@
 
 .stemWrapper {
     position: fixed;
-    bottom: calc(110px - var(--lotus-offset, 0px));
+    bottom: calc(40px - var(--lotus-offset, 0px));
     left: 50%;
     transform: translateX(-50%);
     width: 220px;
