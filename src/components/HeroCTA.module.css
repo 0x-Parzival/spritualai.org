@@ -371,90 +371,93 @@
 .verticalOptions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: clamp(12px, 2vw, 20px);
     margin-top: 32px;
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
 }
 
 .optionCard {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 20px 24px;
-    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(53, 248, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 24px 28px;
+    border-radius: 18px;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .optionCard::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(53, 248, 255, 0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom, #35f8ff, transparent);
+    opacity: 0.3;
 }
 
 .optionCard:hover {
     background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(53, 248, 255, 0.4);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-}
-
-.optionCard:hover::before {
-    opacity: 1;
+    border-color: rgba(53, 248, 255, 0.5);
+    transform: translateY(-6px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(53, 248, 255, 0.1);
 }
 
 .optionTitle {
     font-family: 'Inter', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: #fff;
-    margin-bottom: 6px;
-    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
     z-index: 1;
 }
 
 .optionSublabel {
     font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.4;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
     z-index: 1;
+    font-weight: 300;
 }
 
 .optionBubble {
-    padding: 12px 28px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.9);
+    padding: 14px 30px;
+    background: rgba(10, 10, 20, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
     border-radius: 9999px;
     font-size: 0.95rem;
     font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     white-space: nowrap;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .optionBubble:hover {
-    background: rgba(53, 248, 255, 0.1);
-    border-color: rgba(53, 248, 255, 0.5);
+    background: rgba(53, 248, 255, 0.08);
+    border-color: rgba(53, 248, 255, 0.6);
     color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(53, 248, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(53, 248, 255, 0.15);
 }
+
 
 .closeChatBtn {
     position: fixed;
