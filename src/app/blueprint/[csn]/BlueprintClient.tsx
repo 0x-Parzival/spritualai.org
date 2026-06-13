@@ -277,6 +277,29 @@ export default function BlueprintClient({ data, csn }: Props) {
     return convertPrice(priceUSD);
   };
 
+  // Hyper-Mirror Insight Helpers
+  const getInternalScript = () => {
+    if (report?.internalScript) return report.internalScript;
+    return `You have spent a lifetime convincing yourself that your worth is a variable tied to your output. You believe that if you just achieve "that one thing," the void will finally close. But the void is where your true self is hiding, terrified of being seen as ordinary.`;
+  };
+
+  const getMicroSymptoms = () => {
+    if (report?.microSymptoms) return report.microSymptoms;
+    return [
+      "The compulsive need to apologize for things that aren't your fault.",
+      "A secret feeling that you are an impostor even when you are winning.",
+      "The mental loop of rehearsing conversations 10 times before they happen.",
+      "The inability to relax unless every single task is marked 'complete'.",
+      "A profound fear that if you stop running, the sadness will finally catch up."
+    ];
+  };
+
+  const getCognitiveGap = () => {
+    if (report?.cognitiveGap) return report.cognitiveGap;
+    return "You've tried mindfulness, productivity hacks, and perhaps even therapy. They failed because they treated the symptoms of your stress, not the architecture of your pattern. You cannot 'think' your way out of a pattern that was installed before you knew how to think.";
+  };
+
+
   return (
     <>
       <Head>

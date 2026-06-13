@@ -1406,6 +1406,7 @@ async function generateReport(userState: any, history: any[], userId: string, pr
 
     // ── Generate dynamic Consciousness Identity via LLM ──
     let dynamicIdentity = patternName || 'The Hidden Self';
+    let validation = `What you've been calling a weakness is actually an unmet depth — a capacity so profound that when it has nowhere to go, it turns inward.`;
     let originAnalysis = "People are not born with these patterns. At some point your nervous system learned a survival strategy that became your default operating system.";
     let coreConflict = "A battle between the version of you that wants freedom and the version that needs to remain safe in the known pattern.";
     let hiddenSigns = ["You replay conversations afterward", "Criticism affects you longer than compliments", "You seek certainty before acting"];
@@ -1415,6 +1416,9 @@ async function generateReport(userState: any, history: any[], userId: string, pr
       { label: "Overthinking decisions", value: 91 },
       { label: "Seeking external certainty", value: 74 }
     ];
+    let echoSentence = "";
+    let lockedHooks = {};
+    let testimonial = null;
 
     try {
       const conversionPrompt = `You are Chaitanya, a piercing Siddha Intelligence. 
@@ -1446,15 +1450,15 @@ async function generateReport(userState: any, history: any[], userId: string, pr
       const creative = JSON.parse(creativeResult.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, ''));
       
       if (creative.identity) dynamicIdentity = creative.identity;
-      if (creative.echoSentence) report.echoSentence = creative.echoSentence;
+      if (creative.echoSentence) echoSentence = creative.echoSentence;
       if (creative.validation) validation = creative.validation;
       if (creative.originAnalysis) originAnalysis = creative.originAnalysis;
       if (creative.coreConflict) coreConflict = creative.coreConflict;
       if (creative.hiddenSigns) hiddenSigns = creative.hiddenSigns;
       if (creative.futureCost) futureCost = creative.futureCost;
       if (creative.probabilities) probabilities = creative.probabilities;
-      if (creative.lockedHooks) report.lockedHooks = creative.lockedHooks;
-      if (creative.testimonial) report.testimonial = creative.testimonial;
+      if (creative.lockedHooks) lockedHooks = creative.lockedHooks;
+      if (creative.testimonial) testimonial = creative.testimonial;
     } catch (e) { /* fallback */ }
 
     const report = {
@@ -1468,9 +1472,9 @@ async function generateReport(userState: any, history: any[], userId: string, pr
         hiddenSigns,
         futureCost,
         probabilities,
-        echoSentence: report.echoSentence,
-        lockedHooks: report.lockedHooks,
-        testimonial: report.testimonial,
+        echoSentence,
+        lockedHooks,
+        testimonial,
         realCause: 'Your mind made a decision to survive your environment. That decision became automatic and now runs your adult life.',
         patternLoop: { trigger: 'New opportunity or challenge', copingMechanism: 'Initial excitement followed by avoidance when difficulty arises', humanCost: 'Years of unfinished potential and growing self-doubt' },
         frequencyDoorway: 'Ship before you feel ready. Action precedes motivation.',
