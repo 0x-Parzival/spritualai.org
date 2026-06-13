@@ -354,7 +354,7 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    margin-top: 24px;
+    margin-top: 14px;
     position: relative;
     pointer-events: auto;
     mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
@@ -454,10 +454,6 @@
     transform: translateY(-1px);
 }
 
-    color: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(53, 248, 255, 0.15);
-}
 
 
 .closeChatBtn {
@@ -1049,16 +1045,18 @@
         font-size: 0.95rem;
     }
 
-    /* Options list: scrollable, max height so they don't overflow */
     .optionsContainer,
     .verticalOptions {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
         gap: 8px;
-        margin-top: 16px;
+        margin-top: 14px;
     }
 
     .optionCard {
-        padding: 14px 18px;
+        padding: 10px 20px;
+        width: 100%;
+        max-width: 320px;
     }
 
     .topHeader {
