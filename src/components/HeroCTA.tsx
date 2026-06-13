@@ -687,18 +687,12 @@ export default function HeroCTA({
 
             <div className={styles.buttonGroup}>
               {!showChat && (
-                <div style={{ width: '100%', position: 'relative' }}>
+                <div style={{ width: '100%', position: 'relative', minHeight: '40px' }}>
                   <div className={styles.topMetaContainer}>
                     <div className={styles.ctaPromptText}>Talk to Intelligence below ↓<br/>It will guide you step-by-step</div>
                     <div className={styles.staticCounter}>
                       No real shift in 21 days? Full refund.<br/>No questions asked. We only win when you do.
                     </div>
-                  </div>
-
-                  <div className={styles.struggleBubbles}>
-                    {STRUGGLES.map((s, idx) => (
-                      <button key={idx} className={styles.bubble} onClick={() => handleStruggleClick(s)}>{s}</button>
-                    ))}
                   </div>
                 </div>
               )}
@@ -959,6 +953,14 @@ export default function HeroCTA({
                         </button>
                     </div>
                 </div>
+
+                {!showChat && (
+                  <div className={styles.struggleBubbles} style={{ marginTop: '20px' }}>
+                    {STRUGGLES.map((s, idx) => (
+                      <button key={idx} className={styles.bubble} onClick={() => handleStruggleClick(s)}>{s}</button>
+                    ))}
+                  </div>
+                )}
             </div>
 
             {/* Exit Warning Overlay */}
